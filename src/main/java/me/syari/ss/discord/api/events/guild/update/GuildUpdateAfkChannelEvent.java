@@ -9,13 +9,7 @@ import me.syari.ss.discord.api.entities.VoiceChannel;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-/**
- * Indicates that the afk-channel of a {@link Guild Guild} changed.
- *
- * <p>Can be used to detect when an afk channel changes and retrieve the old one
- *
- * <p>Identifier: {@code afk_channel}
- */
+
 public class GuildUpdateAfkChannelEvent extends GenericGuildUpdateEvent<VoiceChannel>
 {
     public static final String IDENTIFIER = "afk_channel";
@@ -25,22 +19,14 @@ public class GuildUpdateAfkChannelEvent extends GenericGuildUpdateEvent<VoiceCha
         super(api, responseNumber, guild, oldAfkChannel, guild.getAfkChannel(), IDENTIFIER);
     }
 
-    /**
-     * The old afk channel
-     *
-     * @return The old afk channel, or null
-     */
+
     @Nullable
     public VoiceChannel getOldAfkChannel()
     {
         return getOldValue();
     }
 
-    /**
-     * The new afk channel
-     *
-     * @return The new afk channel, or null
-     */
+
     @Nullable
     public VoiceChannel getNewAfkChannel()
     {

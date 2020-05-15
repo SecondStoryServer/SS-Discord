@@ -25,40 +25,13 @@ public class ChannelOrderActionImpl
     protected final Guild guild;
     protected final int bucket;
 
-    /**
-     * Creates a new ChannelOrderAction instance
-     *
-     * @param  guild
-     *         The target {@link Guild Guild}
-     *         of which to order the channels defined by the specified type
-     * @param  bucket
-     *         The sorting bucket
-     */
+
     public ChannelOrderActionImpl(Guild guild, int bucket)
     {
         this(guild, bucket, getChannelsOfType(guild, bucket));
     }
 
-    /**
-     * Creates a new ChannelOrderAction instance using the provided
-     * {@link Guild Guild}, as well as the provided
-     * list of {@link GuildChannel Channels}.
-     *
-     * @param  guild
-     *         The target {@link Guild Guild}
-     *         of which to order the channels defined by the specified type
-     * @param  bucket
-     *         The sorting bucket
-     * @param  channels
-     *         The {@link GuildChannel Channels} to order, all of which
-     *         are on the same Guild specified, and all of which are of the same generic type of GuildChannel
-     *         corresponding to the the ChannelType specified.
-     *
-     * @throws java.lang.IllegalArgumentException
-     *         If the channels are {@code null}, an empty collection,
-     *         or any of them do not have the same ChannelType as the one
-     *         provided.
-     */
+
     public ChannelOrderActionImpl(Guild guild, int bucket, Collection<? extends GuildChannel> channels)
     {
         super(guild.getJDA(), Route.Guilds.MODIFY_CHANNELS.compile(guild.getId()));

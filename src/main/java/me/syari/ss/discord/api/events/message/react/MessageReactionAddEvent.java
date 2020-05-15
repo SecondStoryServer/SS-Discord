@@ -10,12 +10,7 @@ import me.syari.ss.discord.api.entities.User;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-/**
- * Indicates that a user added a reaction to a message
- * <br>This includes unicode and custom emoji
- *
- * <p>Can be used to track when a user adds a reaction to a message
- */
+
 public class MessageReactionAddEvent extends GenericMessageReactionEvent
 {
     public MessageReactionAddEvent(@Nonnull JDA api, long responseNumber, @Nonnull User user,

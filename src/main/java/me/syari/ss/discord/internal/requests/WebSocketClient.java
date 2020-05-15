@@ -491,13 +491,7 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
         reconnect(false);
     }
 
-    /**
-     * This method is used to start the reconnect of the JDA instance.
-     * It is public for access from SessionReconnectQueue extensions.
-     *
-     * @param  callFromQueue
-     *         whether this was in SessionReconnectQueue and got polled
-     */
+
     public void reconnect(boolean callFromQueue) throws InterruptedException
     {
         Set<MDC.MDCCloseable> contextEntries = null;

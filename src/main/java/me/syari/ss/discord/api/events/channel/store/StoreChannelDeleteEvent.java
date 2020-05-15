@@ -7,11 +7,7 @@ import me.syari.ss.discord.api.entities.StoreChannel;
 
 import javax.annotation.Nonnull;
 
-/**
- * Indicates that a {@link StoreChannel StoreChannel} has been deleted.
- *
- * <p>Can be used to detect when a StoreChannel has been deleted.
- */
+
 public class StoreChannelDeleteEvent extends GenericStoreChannelEvent
 {
     public StoreChannelDeleteEvent(@Nonnull JDA api, long responseNumber, @Nonnull StoreChannel channel)

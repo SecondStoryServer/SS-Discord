@@ -18,69 +18,25 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-/**
- * Represents an embed displayed by Discord.
- * <br>A visual representation of an Embed can be found at:
- * <a href="https://raw.githubusercontent.com/DV8FromTheWorld/JDA/assets/assets/docs/embeds/01-Overview.png" target="_blank">Embed Overview</a>
- * <br>This class has many possibilities for null values, so be careful!
- *
- * @see EmbedBuilder
- * @see Message#getEmbeds()
- */
+
 public class MessageEmbed implements SerializableData
 {
-    /**
-     * The maximum length an embed title can have
-     *
-     * @see EmbedBuilder#setTitle(String) EmbedBuilder.setTitle(title)
-     * @see EmbedBuilder#addField(String, String, boolean) EmbedBuilder.addField(title, value, inline)
-     */
+
     public static final int TITLE_MAX_LENGTH = 256;
 
-    /**
-     * The maximum length an embed field value can have
-     *
-     * @see EmbedBuilder#addField(String, String, boolean) EmbedBuilder.addField(title, value, inline)
-     */
+
     public static final int VALUE_MAX_LENGTH = 1024;
 
-    /**
-     * The maximum length the description and footer of an embed can have
-     *
-     * @see EmbedBuilder#setFooter(String, String) EmbedBuilder.setFooter(text, iconUrl)
-     * @see EmbedBuilder#setDescription(CharSequence) EmbedBuilder.setDescription(text)
-     */
+
     public static final int TEXT_MAX_LENGTH = 2048;
 
-    /**
-     * The maximum length any URL can have inside an embed
-     *
-     * @see EmbedBuilder#setTitle(String, String) EmbedBuilder.setTitle(text, url)
-     * @see EmbedBuilder#setAuthor(String, String, String) EmbedBuilder.setAuthor(text, url, iconUrl)
-     * @see EmbedBuilder#setFooter(String, String) EmbedBuilder.setFooter(text, url)
-     */
+
     public static final int URL_MAX_LENGTH = 2000;
 
-    /**
-     * The maximum amount of total visible characters an embed can have
-     * <br>This limit depends on the current {@link AccountType AccountType} and applies to BOT
-     *
-     * @see EmbedBuilder#setDescription(CharSequence)
-     * @see EmbedBuilder#setTitle(String)
-     * @see EmbedBuilder#setFooter(String, String)
-     * @see EmbedBuilder#addField(String, String, boolean)
-     */
+
     public static final int EMBED_MAX_LENGTH_BOT = 6000;
 
-    /**
-     * The maximum amount of total visible characters an embed can have
-     * <br>This limit depends on the current {@link AccountType AccountType} and applies to CLIENT
-     *
-     * @see EmbedBuilder#setDescription(CharSequence)
-     * @see EmbedBuilder#setTitle(String)
-     * @see EmbedBuilder#setFooter(String, String)
-     * @see EmbedBuilder#addField(String, String, boolean)
-     */
+
     public static final int EMBED_MAX_LENGTH_CLIENT = 2000;
 
     protected final Object mutex = new Object();
@@ -123,187 +79,104 @@ public class MessageEmbed implements SerializableData
             ? Collections.unmodifiableList(fields) : Collections.emptyList();
     }
 
-    /**
-     * The that was originally placed into chat that spawned this embed.
-     *
-     * @return Possibly-null String containing the original message url.
-     */
+
     @Nullable
     public String getUrl()
     {
         return url;
     }
 
-    /**
-     * The title of the embed. Typically this will be the html title of the webpage that is being embedded.<br>
-     * If no title could be found, like the case of {@link EmbedType EmbedType} = {@link EmbedType#IMAGE IMAGE},
-     * this method will return null.
-     *
-     * @return Possibly-null String containing the title of the embedded resource.
-     */
+
     @Nullable
     public String getTitle()
     {
         return title;
     }
 
-    /**
-     * The description of the embedded resource.
-     * <br>This is provided only if Discord could find a description for the embedded resource using the provided url.
-     * <br>Commonly, this is null. Be careful when using it.
-     *
-     * @return Possibly-null String containing a description of the embedded resource.
-     */
+
     @Nullable
     public String getDescription()
     {
         return description;
     }
 
-    /**
-     * The {@link EmbedType EmbedType} of this embed.
-     *
-     * @return The {@link EmbedType EmbedType} of this embed.
-     */
+
     @Nonnull
     public EmbedType getType()
     {
         return type;
     }
 
-    /**
-     * The information about the {@link MessageEmbed.Thumbnail Thumbnail} image to be displayed with the embed.
-     * <br>If a {@link MessageEmbed.Thumbnail Thumbnail} was not part of this embed, this returns null.
-     *
-     * @return Possibly-null {@link MessageEmbed.Thumbnail Thumbnail} instance
-     *         containing general information on the displayable thumbnail.
-     */
+
     @Nullable
     public Thumbnail getThumbnail()
     {
         return thumbnail;
     }
 
-    /**
-     * The information on site from which the embed was generated from.
-     * <br>If Discord did not generate any deliverable information about the site, this returns null.
-     *
-     * @return Possibly-null {@link MessageEmbed.Provider Provider}
-     *         containing site information.
-     */
+
     @Nullable
     public Provider getSiteProvider()
     {
         return siteProvider;
     }
 
-    /**
-     * The information on the creator of the embedded content.
-     * <br>This is typically used to represent the account on the providing site.
-     *
-     * @return Possibly-null {@link MessageEmbed.AuthorInfo AuthorInfo}
-     *         containing author information.
-     */
+
     @Nullable
     public AuthorInfo getAuthor()
     {
         return author;
     }
 
-    /**
-     * The information about the video which should be displayed as an embed.
-     * <br>This is used when sites with HTML5 players are linked and embedded. Most commonly Youtube.
-     * <br>If this {@link EmbedType EmbedType} != {@link EmbedType#VIDEO VIDEO}
-     * this will always return null.
-     *
-     * @return Possibly-null {@link MessageEmbed.VideoInfo VideoInfo}
-     *         containing the information about the video which should be embedded.
-     */
+
     @Nullable
     public VideoInfo getVideoInfo()
     {
         return videoInfo;
     }
     
-    /**
-     * The footer (bottom) of the embedded content.
-     * <br>This is typically used for timestamps or site icons.
-     *
-     * @return Possibly-null {@link MessageEmbed.Footer Footer}
-     *         containing the embed footer content.
-     */
+
     @Nullable
     public Footer getFooter()
     {
         return footer;
     }
     
-    /**
-     * The information about the image in the message embed
-     *
-     * @return Possibly-null {@link MessageEmbed.ImageInfo ImageInfo}
-     *         containing image information.
-     */
+
     @Nullable
     public ImageInfo getImage()
     {
         return image;
     }
     
-    /**
-     * The fields in a message embed.
-     * <br>Message embeds can contain multiple fields, each with a name, value, and a boolean
-     * to determine if it will fall in-line with other fields. If the embed contains no
-     * fields, an empty list will be returned.
-     *
-     * @return Never-null (but possibly empty) immutable  List of {@link MessageEmbed.Field Field} objects
-     *         containing field information.
-     */
+
     @Nonnull
     public List<Field> getFields()
     {
         return fields;
     }
     
-    /**
-     * The color of the stripe on the side of the embed.
-     * <br>If the color is 0 (no color), this will return null.
-     *
-     * @return Possibly-null Color.
-     */
+
     @Nullable
     public Color getColor()
     {
         return color != Role.DEFAULT_COLOR_RAW ? new Color(color) : null;
     }
 
-    /**
-     * The raw RGB color value for this embed
-     * <br>Defaults to {@link Role#DEFAULT_COLOR_RAW} if no color is set
-     *
-     * @return The raw RGB color value or default
-     */
+
     public int getColorRaw()
     {
         return color;
     }
     
-    /**
-     * The timestamp of the embed.
-     *
-     * @return Possibly-null OffsetDateTime object representing the timestamp.
-     */
+
     @Nullable
     public OffsetDateTime getTimestamp()
     {
         return timestamp;
     }
 
-    /**
-     * Whether this embed is empty.
-     *
-     * @return True, if this embed has no content
-     */
+
     public boolean isEmpty()
     {
         return color == Role.DEFAULT_COLOR_RAW
@@ -313,17 +186,7 @@ public class MessageEmbed implements SerializableData
             && getLength() == 0;
     }
 
-    /**
-     * The total amount of characters that is displayed when this embed is displayed by the Discord client.
-     *
-     * <p>An Embed can only have, at max, {@value #EMBED_MAX_LENGTH_BOT} displayable text characters for {@link AccountType#BOT AccountType.BOT}
-     * accounts or {@value #EMBED_MAX_LENGTH_CLIENT} displayable text characters for {@link AccountType#CLIENT AccountType.CLIENT} accounts.
-     *
-     * <p>Both of these values are defined by {@link #EMBED_MAX_LENGTH_BOT EMBED_MAX_LENGTH_BOT} and
-     * {@link #EMBED_MAX_LENGTH_CLIENT EMBED_MAX_LENGTH_CLIENT} respectively.
-     *
-     * @return A never-negative sum of all displayed text characters.
-     */
+
     public int getLength()
     {
         if (length > -1)
@@ -352,26 +215,7 @@ public class MessageEmbed implements SerializableData
         }
     }
 
-    /**
-     * Whether this MessageEmbed can be used in a message.
-     * <br>This applies to {@link AccountType#BOT Bot}- and {@link AccountType#CLIENT Client Accounts}
-     *
-     * <p>Total Character Limits
-     * <ul>
-     *     <li>Bot: {@value #EMBED_MAX_LENGTH_BOT}</li>
-     *     <li>Client: {@value #EMBED_MAX_LENGTH_CLIENT}</li>
-     * </ul>
-     *
-     * @param  type
-     *         The {@link AccountType AccountType} to inspect
-     *
-     * @throws java.lang.IllegalArgumentException
-     *         If the provided AccountType is {@code null} or not supported by this operation
-     *
-     * @return True, if this MessageEmbed can be used to send messages for this specified AccountType
-     *
-     * @see    #getLength()
-     */
+
     public boolean isSendable(@Nonnull AccountType type)
     {
         Checks.notNull(type, "AccountType");
@@ -410,12 +254,7 @@ public class MessageEmbed implements SerializableData
             && Helpers.deepEquals(fields, other.fields);
     }
 
-    /**
-     * Creates a new {@link DataObject}
-     * used for sending.
-     *
-     * @return JSONObject for this embed
-     */
+
     @Nonnull
     @Override
     public DataObject toData()
@@ -489,10 +328,7 @@ public class MessageEmbed implements SerializableData
         }
     }
 
-    /**
-     * Represents the information Discord provided about a thumbnail image that should be
-     * displayed with an embed message.
-     */
+
     public static class Thumbnail
     {
         protected final String url;
@@ -508,44 +344,27 @@ public class MessageEmbed implements SerializableData
             this.height = height;
         }
 
-        /**
-         * The web url of this thumbnail image.
-         *
-         * @return Possibly-null String containing the url of the displayed image.
-         */
+
         @Nullable
         public String getUrl()
         {
             return url;
         }
 
-        /**
-         * The Discord proxied url of the thumbnail image.
-         * <br>This url is used to access the image through Discord instead of directly to prevent ip scraping.
-         *
-         * @return Possibly-null String containing the proxied url of this image.
-         */
+
         @Nullable
         public String getProxyUrl()
         {
             return proxyUrl;
         }
 
-        /**
-         * The width of the thumbnail image.
-         *
-         * @return Never-negative, Never-zero int containing the width of the image.
-         */
+
         public int getWidth()
         {
             return width;
         }
 
-        /**
-         * The height of the thumbnail image.
-         *
-         * @return Never-negative, Never-zero int containing the height of the image.
-         */
+
         public int getHeight()
         {
             return height;
@@ -564,10 +383,7 @@ public class MessageEmbed implements SerializableData
         }
     }
 
-    /**
-     * Multipurpose class that represents a provider of content,
-     * whether directly through creation or indirectly through hosting.
-     */
+
     public static class Provider
     {
         protected final String name;
@@ -579,24 +395,14 @@ public class MessageEmbed implements SerializableData
             this.url = url;
         }
 
-        /**
-         * The name of the provider.
-         * <br>If this is an author, most likely the author's username.
-         * <br>If this is a website, most likely the site's name.
-         *
-         * @return Possibly-null String containing the name of the provider.
-         */
+
         @Nullable
         public String getName()
         {
             return name;
         }
 
-        /**
-         * The url of the provider.
-         *
-         * @return Possibly-null String containing the url of the provider.
-         */
+
         @Nullable
         public String getUrl()
         {
@@ -614,11 +420,7 @@ public class MessageEmbed implements SerializableData
         }
     }
 
-    /**
-     * Represents the information provided to embed a video.
-     * <br>The videos represented are expected to be played using an HTML5 player from the
-     * site which the url belongs to.
-     */
+
     public static class VideoInfo
     {
         protected final String url;
@@ -632,39 +434,20 @@ public class MessageEmbed implements SerializableData
             this.height = height;
         }
 
-        /**
-         * The url of the video.
-         *
-         * @return Possibly-null String containing the video url.
-         */
+
         @Nullable
         public String getUrl()
         {
             return url;
         }
 
-        /**
-         * The width of the video.
-         * <br>This usually isn't the actual video width, but instead the starting embed window size.
-         *
-         * <p>Basically: Don't rely on this to represent the actual video's quality or size.
-         *
-         * @return Non-negative, Non-zero int containing the width of the embedded video.
-         */
+
         public int getWidth()
         {
             return width;
         }
 
-        /**
-         * The height of the video.
-         * <br>This usually isn't the actual video height, but instead the starting embed window size.
-         *
-         * <p>Basically: Don't rely on this to represent the actual video's quality or size.
-         *
-         * @return
-         *      Non-negative, Non-zero int containing the height of the embedded video.
-         */
+
         public int getHeight()
         {
             return height;
@@ -682,9 +465,7 @@ public class MessageEmbed implements SerializableData
         }
     }
     
-    /**
-     * Represents the information provided to embed an image.
-     */
+
     public static class ImageInfo
     {
         protected final String url;
@@ -700,44 +481,27 @@ public class MessageEmbed implements SerializableData
             this.height = height;
         }
 
-        /**
-         * The url of the image.
-         *
-         * @return Possibly-null String containing the image url.
-         */
+
         @Nullable
         public String getUrl()
         {
             return url;
         }
         
-        /**
-         * The url of the image, proxied by Discord
-         * <br>This url is used to access the image through Discord instead of directly to prevent ip scraping.
-         *
-         * @return Possibly-null String containing the proxied image url.
-         */
+
         @Nullable
         public String getProxyUrl()
         {
             return proxyUrl;
         }
 
-        /**
-         * The width of the image.
-         *
-         * @return Non-negative, Non-zero int containing the width of the embedded image.
-         */
+
         public int getWidth()
         {
             return width;
         }
 
-        /**
-         * The height of the image.
-         *
-         * @return Non-negative, Non-zero int containing the height of the embedded image.
-         */
+
         public int getHeight()
         {
             return height;
@@ -756,10 +520,7 @@ public class MessageEmbed implements SerializableData
         }
     }
     
-    /**
-     * Class that represents the author of content, possibly including an icon
-     * that Discord proxies.
-     */
+
     public static class AuthorInfo
     {
         protected final String name;
@@ -775,46 +536,28 @@ public class MessageEmbed implements SerializableData
             this.proxyIconUrl = proxyIconUrl;
         }
 
-        /**
-         * The name of the Author.
-         * <br>This is most likely the name of the account associated with the embed
-         *
-         * @return Possibly-null String containing the name of the author.
-         */
+
         @Nullable
         public String getName()
         {
             return name;
         }
 
-        /**
-         * The url of the author.
-         *
-         * @return Possibly-null String containing the url of the author.
-         */
+
         @Nullable
         public String getUrl()
         {
             return url;
         }
         
-        /**
-         * The url of the author's icon.
-         *
-         * @return Possibly-null String containing the author's icon url.
-         */
+
         @Nullable
         public String getIconUrl()
         {
             return iconUrl;
         }
         
-        /**
-         * The url of the author's icon, proxied by Discord
-         * <br>This url is used to access the image through Discord instead of directly to prevent ip scraping.
-         *
-         * @return Possibly-null String containing the proxied icon url.
-         */
+
         @Nullable
         public String getProxyIconUrl()
         {
@@ -834,9 +577,7 @@ public class MessageEmbed implements SerializableData
         }
     }
     
-    /**
-     * Class that represents a footer at the bottom of an embed
-     */
+
     public static class Footer
     {
         protected final String text;
@@ -850,34 +591,21 @@ public class MessageEmbed implements SerializableData
             this.proxyIconUrl = proxyIconUrl;
         }
 
-        /**
-         * The text in the footer
-         *
-         * @return Possibly-null String containing the text in the footer.
-         */
+
         @Nullable
         public String getText()
         {
             return text;
         }
         
-        /**
-         * The url of the footer's icon.
-         *
-         * @return Possibly-null String containing the footer's icon url.
-         */
+
         @Nullable
         public String getIconUrl()
         {
             return iconUrl;
         }
         
-        /**
-         * The url of the footer's icon, proxied by Discord
-         * <br>This url is used to access the image through Discord instead of directly to prevent ip scraping.
-         *
-         * @return Possibly-null String containing the proxied icon url.
-         */
+
         @Nullable
         public String getProxyIconUrl()
         {
@@ -896,15 +624,7 @@ public class MessageEmbed implements SerializableData
         }
     }
     
-    /**
-     * Represents a field in an embed. A single embed contains an array of
-     * embed fields, each with a name and value, and a boolean determining if
-     * the field can display on the same line as previous fields if there is
-     * enough space horizontally.
-     *
-     * @since  3.0
-     * @author John A. Grosh
-     */
+
     public static class Field
     {
         protected final String name;
@@ -946,33 +666,21 @@ public class MessageEmbed implements SerializableData
             this(name, value, inline, true);
         }
 
-        /**
-         * The name of the field
-         *
-         * @return Possibly-null String containing the name of the field.
-         */
+
         @Nullable
         public String getName()
         {
             return name;
         }
 
-        /**
-         * The value of the field
-         *
-         * @return Possibly-null String containing the value (contents) of the field.
-         */
+
         @Nullable
         public String getValue()
         {
             return value;
         }
         
-        /**
-         * If the field is in line.
-         *
-         * @return true if the field can be in line with other fields, false otherwise.
-         */
+
         public boolean isInline()
         {
             return inline;

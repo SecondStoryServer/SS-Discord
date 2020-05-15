@@ -10,9 +10,7 @@ import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
 
-/**
- * Class that wraps functionality around the Opus decoder.
- */
+
 public class Decoder
 {
     protected int ssrc;

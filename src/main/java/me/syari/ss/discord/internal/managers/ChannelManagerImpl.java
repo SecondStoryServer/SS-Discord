@@ -40,13 +40,7 @@ public class ChannelManagerImpl extends ManagerBase<ChannelManager> implements C
     protected final TLongObjectHashMap<PermOverrideData> overridesAdd;
     protected final TLongSet overridesRem;
 
-    /**
-     * Creates a new ChannelManager instance
-     *
-     * @param channel
-     *        {@link GuildChannel GuildChannel} that should be modified
-     *        <br>Either {@link VoiceChannel Voice}- or {@link TextChannel TextChannel}
-     */
+    
     public ChannelManagerImpl(GuildChannel channel)
     {
         super(channel.getJDA(),

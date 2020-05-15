@@ -25,11 +25,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
 
-/**
- * Represents a Custom Emote. (Emoji in official Discord API terminology)
- *
- * @since  2.2
- */
+
 public class EmoteImpl implements ListedEmote
 {
     private final long id;

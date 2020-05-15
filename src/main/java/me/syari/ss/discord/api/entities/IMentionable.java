@@ -9,40 +9,10 @@ import java.util.Formattable;
 import java.util.FormattableFlags;
 import java.util.Formatter;
 
-/**
- * Marks a mentionable entity.
- *
- * <h1>Formattable</h1>
- * This interface extends {@link java.util.Formattable Formattable} and can be used with a {@link java.util.Formatter Formatter}
- * such as used by {@link String#format(String, Object...) String.format(String, Object...)}
- * or {@link java.io.PrintStream#printf(String, Object...) PrintStream.printf(String, Object...)}.
- *
- * <p>This will use {@link #getAsMention()} rather than {@link Object#toString()}!
- * <br>Supported Features:
- * <ul>
- *     <li><b>Width/Left-Justification</b>
- *     <br>   - Ensures the size of a format
- *              (Example: {@code %20s} - uses at minimum 20 chars;
- *              {@code %-10s} - uses left-justified padding)</li>
- *
- *     <li><b>Precision</b>
- *     <br>   - Cuts the content to the specified size
- *              (Example: {@code %.20s})</li>
- * </ul>
- *
- * <p>More information on formatting syntax can be found in the {@link java.util.Formatter format syntax documentation}!
- * <br><b>Note</b>: Some implementations also support the <b>alternative</b> flag.
- *
- * @since 3.0
- */
+
 public interface IMentionable extends Formattable, ISnowflake
 {
-    /**
-     * Retrieve a Mention for this Entity.
-     * For the public {@link Role Role} (@everyone), this will return the literal string {@code "@everyone"}.
-     *
-     * @return A resolvable mention.
-     */
+
     @Nonnull
     String getAsMention();
 

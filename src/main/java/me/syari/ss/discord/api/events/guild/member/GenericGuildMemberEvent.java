@@ -9,12 +9,7 @@ import me.syari.ss.discord.api.entities.User;
 
 import javax.annotation.Nonnull;
 
-/**
- * Indicates that a {@link Guild Guild} member event is fired.
- * <br>Every GuildMemberEvent is an instance of this event and can be casted.
- *
- * <p>Can be used to detect any GuildMemberEvent.
- */
+
 public abstract class GenericGuildMemberEvent extends GenericGuildEvent
 {
     private final Member member;
@@ -25,23 +20,14 @@ public abstract class GenericGuildMemberEvent extends GenericGuildEvent
         this.member = member;
     }
 
-    /**
-     * The {@link User User} instance
-     * <br>Shortcut for {@code getMember().getUser()}
-     *
-     * @return The User instance
-     */
+    
     @Nonnull
     public User getUser()
     {
         return getMember().getUser();
     }
 
-    /**
-     * The {@link Member Member} instance
-     *
-     * @return The Member instance
-     */
+    
     @Nonnull
     public Member getMember()
     {

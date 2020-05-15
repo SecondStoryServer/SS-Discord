@@ -8,12 +8,7 @@ import me.syari.ss.discord.api.events.Event;
 
 import javax.annotation.Nonnull;
 
-/**
- * Indicates that a {@link Message Message} event is fired from a {@link PrivateChannel PrivateChannel}.
- * <br>Every PrivateMessageEvent is an instance of this event and can be casted.
- * 
- * <p>Can be used to detect any PrivateMessageEvent.
- */
+
 public abstract class GenericPrivateMessageEvent extends Event
 {
     protected final long messageId;
@@ -26,33 +21,21 @@ public abstract class GenericPrivateMessageEvent extends Event
         this.channel = channel;
     }
 
-    /**
-     * The {@link PrivateChannel PrivateChannel} for the message
-     *
-     * @return The PrivateChannel
-     */
+    
     @Nonnull
     public PrivateChannel getChannel()
     {
         return channel;
     }
 
-    /**
-     * The id for this message
-     *
-     * @return The id for this message
-     */
+    
     @Nonnull
     public String getMessageId()
     {
         return Long.toUnsignedString(messageId);
     }
 
-    /**
-     * The id for this message
-     *
-     * @return The id for this message
-     */
+    
     public long getMessageIdLong()
     {
         return messageId;

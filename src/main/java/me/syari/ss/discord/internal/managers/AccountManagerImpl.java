@@ -27,12 +27,7 @@ public class AccountManagerImpl extends ManagerBase<AccountManager> implements A
     protected String email;
     protected String password;
 
-    /**
-     * Creates a new AccountManager instance
-     *
-     * @param selfUser
-     *        The {@link SelfUser SelfUser} to manage
-     */
+
     public AccountManagerImpl(SelfUser selfUser)
     {
         super(selfUser.getJDA(), Route.Self.MODIFY_SELF.compile());

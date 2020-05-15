@@ -32,20 +32,7 @@ public abstract class PaginationActionImpl<T, M extends PaginationAction<T, M>>
     protected volatile T last = null;
     protected volatile boolean useCache = true;
 
-    /**
-     * Creates a new PaginationAction instance
-     *
-     * @param api
-     *        The current JDA instance
-     * @param route
-     *        The base route
-     * @param maxLimit
-     *        The inclusive maximum limit that can be used in {@link #limit(int)}
-     * @param minLimit
-     *        The inclusive minimum limit that can be used in {@link #limit(int)}
-     * @param initialLimit
-     *        The initial limit to use on the pagination endpoint
-     */
+
     public PaginationActionImpl(JDA api, Route.CompiledRoute route, int minLimit, int maxLimit, int initialLimit)
     {
         super(api, route);
@@ -54,14 +41,7 @@ public abstract class PaginationActionImpl<T, M extends PaginationAction<T, M>>
         this.limit = new AtomicInteger(initialLimit);
     }
 
-    /**
-     * Creates a new PaginationAction instance
-     * <br>This is used for PaginationActions that should not deal with
-     * {@link #limit(int)}
-     *
-     * @param api
-     *        The current JDA instance
-     */
+
     public PaginationActionImpl(JDA api)
     {
         super(api, null);

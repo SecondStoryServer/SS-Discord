@@ -6,13 +6,7 @@ import me.syari.ss.discord.api.JDA;
 
 import javax.annotation.Nonnull;
 
-/**
- * Indicates that you login to your discord account with a mobile device for the first time. (client-only)
- *
- * <p>Can be used to detect that your account was used with a mobile device.
- *
- * <p>Identifier: {@code mobile}
- */
+
 public class SelfUpdateMobileEvent extends GenericSelfUpdateEvent<Boolean>
 {
     public static final String IDENTIFIER = "mobile";
@@ -22,11 +16,7 @@ public class SelfUpdateMobileEvent extends GenericSelfUpdateEvent<Boolean>
         super(api, responseNumber, wasMobile, !wasMobile, IDENTIFIER);
     }
 
-    /**
-     * The old mobile status. <i>Should</i> always be {@code false}.
-     *
-     * @return The mobile status.
-     */
+    
     public boolean wasMobile()
     {
         return getOldValue();

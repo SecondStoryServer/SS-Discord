@@ -8,12 +8,7 @@ import me.syari.ss.discord.api.entities.TextChannel;
 
 import javax.annotation.Nonnull;
 
-/**
- * Indicates that a {@link Message Message} event is fired from a {@link TextChannel TextChannel}.
- * <br>Every GuildMessageEvent is derived from this event and can be casted.
- * 
- * <p>Can be used to detect any GuildMessageEvent.
- */
+
 public abstract class GenericGuildMessageEvent extends GenericGuildEvent
 {
     protected final long messageId;
@@ -26,32 +21,20 @@ public abstract class GenericGuildMessageEvent extends GenericGuildEvent
         this.channel = channel;
     }
 
-    /**
-     * The message id
-     *
-     * @return The message id
-     */
+    
     @Nonnull
     public String getMessageId()
     {
         return Long.toUnsignedString(messageId);
     }
 
-    /**
-     * The message id
-     *
-     * @return The message id
-     */
+    
     public long getMessageIdLong()
     {
         return messageId;
     }
 
-    /**
-     * The {@link TextChannel TextChannel} for this message
-     *
-     * @return The TextChannel for this message
-     */
+    
     @Nonnull
     public TextChannel getChannel()
     {

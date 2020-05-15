@@ -7,13 +7,7 @@ import me.syari.ss.discord.api.entities.Guild;
 
 import javax.annotation.Nonnull;
 
-/**
- * Indicates that the name of a {@link Guild Guild} changed.
- *
- * <p>Can be used to detect when a guild name changes and retrieve the old one
- *
- * <p>Identifier: {@code name}
- */
+
 public class GuildUpdateNameEvent extends GenericGuildUpdateEvent<String>
 {
     public static final String IDENTIFIER = "name";
@@ -23,22 +17,14 @@ public class GuildUpdateNameEvent extends GenericGuildUpdateEvent<String>
         super(api, responseNumber, guild, oldName, guild.getName(), IDENTIFIER);
     }
 
-    /**
-     * The old name
-     *
-     * @return The old name
-     */
+
     @Nonnull
     public String getOldName()
     {
         return getOldValue();
     }
 
-    /**
-     * The new name
-     *
-     * @return The new name
-     */
+
     @Nonnull
     public String getNewName()
     {

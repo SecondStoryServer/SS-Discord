@@ -9,11 +9,7 @@ import me.syari.ss.discord.api.entities.Guild;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-/**
- * Indicates that a {@link Guild Guild} was updated.
- *
- * <p>Can be used to detect when a Guild is updated.
- */
+
 public abstract class GenericGuildUpdateEvent<T> extends GenericGuildEvent implements UpdateEvent<Guild, T>
 {
     protected final T previous;

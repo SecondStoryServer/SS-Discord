@@ -8,15 +8,7 @@ import me.syari.ss.discord.api.entities.VoiceChannel;
 
 import javax.annotation.Nonnull;
 
-/**
- * Indicates that a {@link Member Member} moves between {@link VoiceChannel VoiceChannels}.
- *
- * <p><b>When the {@link Member Member} is leaving a {@link GuildVoiceLeaveEvent GuildVoiceLeaveEvent} is fired instead</b>
- *
- * <p>Can be used to detect when a member moves from one voice channel to another in the same guild.
- *
- * @see GuildVoiceUpdateEvent GuildVoiceUpdateEvent
- */
+
 public class GuildVoiceMoveEvent extends GenericGuildVoiceUpdateEvent
 {
     public GuildVoiceMoveEvent(@Nonnull JDA api, long responseNumber, @Nonnull Member member, @Nonnull VoiceChannel channelLeft)

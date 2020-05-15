@@ -21,11 +21,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Single entry for an {@link AuditLogPaginationAction AuditLogPaginationAction}.
- * <br>This entry contains all options/changes and details for the action
- * that was logged by the {@link Guild Guild} audit-logs.
- */
+
 public class AuditLogEntry implements ISnowflake
 {
     protected final long id;
@@ -65,142 +61,76 @@ public class AuditLogEntry implements ISnowflake
         return id;
     }
 
-    /**
-     * The id for the target entity.
-     * <br>This references an entity based on the {@link TargetType TargetType}
-     * which is specified by {@link #getTargetType()}!
-     *
-     * @return The target id
-     */
+
     public long getTargetIdLong()
     {
         return targetId;
     }
 
-    /**
-     * The id for the target entity.
-     * <br>This references an entity based on the {@link TargetType TargetType}
-     * which is specified by {@link #getTargetType()}!
-     *
-     * @return The target id
-     */
+
     @Nonnull
     public String getTargetId()
     {
         return Long.toUnsignedString(targetId);
     }
 
-    /**
-     * The {@link Webhook Webhook} that the target id of this audit-log entry refers to
-     *
-     * @return Possibly-null Webhook instance
-     */
+
     @Nullable
     public Webhook getWebhook()
     {
         return webhook;
     }
 
-    /**
-     * The {@link Guild Guild} this audit-log entry refers to
-     *
-     * @return The Guild instance
-     */
+
     @Nonnull
     public Guild getGuild()
     {
         return guild;
     }
 
-    /**
-     * The {@link User User} responsible
-     * for this action.
-     *
-     * @return Possibly-null User instance
-     */
+
     @Nullable
     public User getUser()
     {
         return user;
     }
 
-    /**
-     * The optional reason why this action was executed.
-     *
-     * @return Possibly-null reason String
-     */
+
     @Nullable
     public String getReason()
     {
         return reason;
     }
 
-    /**
-     * The corresponding JDA instance of the referring Guild
-     *
-     * @return The corresponding JDA instance
-     */
+
     @Nonnull
     public JDA getJDA()
     {
         return guild.getJDA();
     }
 
-    /**
-     * Key-Value {@link java.util.Map Map} containing all {@link AuditLogChange
-     * AuditLogChanges} made in this entry.
-     * The keys for the returned map are case-insensitive keys defined in the regarding AuditLogChange value.
-     * <br>To iterate only the changes you can use {@link java.util.Map#values() Map.values()}!
-     *
-     * @return Key-Value Map of changes
-     */
+
     @Nonnull
     public Map<String, AuditLogChange> getChanges()
     {
         return changes;
     }
 
-    /**
-     * Shortcut to <code>{@link #getChanges() getChanges()}.get(key)</code> lookup!
-     * <br>This lookup is case-insensitive!
-     *
-     * @param  key
-     *         The {@link AuditLogKey AuditLogKey} to look for
-     *
-     * @return Possibly-null value corresponding to the specified key
-     */
+
     @Nullable
     public AuditLogChange getChangeByKey(@Nullable final AuditLogKey key)
     {
         return key == null ? null : getChangeByKey(key.getKey());
     }
 
-    /**
-     * Shortcut to <code>{@link #getChanges() getChanges()}.get(key)</code> lookup!
-     * <br>This lookup is case-insensitive!
-     *
-     * @param  key
-     *         The key to look for
-     *
-     * @return Possibly-null value corresponding to the specified key
-     */
+
     @Nullable
     public AuditLogChange getChangeByKey(@Nullable final String key)
     {
         return changes.get(key);
     }
 
-    /**
-     * Filters all changes by the specified keys
-     *
-     * @param  keys
-     *         Varargs {@link AuditLogKey AuditLogKeys} to look for
-     *
-     * @throws java.lang.IllegalArgumentException
-     *         If provided with null array
-     *
-     * @return Possibly-empty, never-null immutable list of {@link AuditLogChange AuditLogChanges}
-     */
+
     @Nonnull
     public List<AuditLogChange> getChangesForKeys(@Nonnull AuditLogKey... keys)
     {
@@ -215,38 +145,14 @@ public class AuditLogEntry implements ISnowflake
         return Collections.unmodifiableList(changes);
     }
 
-    /**
-     * Key-Value {@link java.util.Map Map} containing all Options made in this entry. The keys for the returned map are
-     * case-insensitive keys defined in the regarding AuditLogChange value.
-     * <br>To iterate only the changes you can use {@link java.util.Map#values() Map.values()}!
-     *
-     * <p>Options may include secondary targets or details that do not qualify as "change".
-     * <br>An example of that would be the {@code member} option
-     * for {@link ActionType#CHANNEL_OVERRIDE_UPDATE CHANNEL_OVERRIDE_UPDATE}
-     * containing the user_id of a {@link Member Member}.
-     *
-     * @return Key-Value Map of changes
-     */
+
     @Nonnull
     public Map<String, Object> getOptions()
     {
         return options;
     }
 
-    /**
-     * Shortcut to <code>{@link #getOptions() getOptions()}.get(name)</code> lookup!
-     * <br>This lookup is case-insensitive!
-     *
-     * @param  <T>
-     *         The expected type for this option <br>Will be used for casting
-     * @param  name
-     *         The field name to look for
-     *
-     * @throws java.lang.ClassCastException
-     *         If the type-cast failed for the generic type.
-     *
-     * @return Possibly-null value corresponding to the specified key
-     */
+
     @Nullable
     @SuppressWarnings("unchecked")
     public <T> T getOptionByName(@Nullable String name)
@@ -254,21 +160,7 @@ public class AuditLogEntry implements ISnowflake
         return (T) options.get(name);
     }
 
-    /**
-     * Shortcut to <code>{@link #getOptions() getOptions()}.get(name)</code> lookup!
-     *
-     * @param  <T>
-     *         The expected type for this option <br>Will be used for casting
-     * @param  option
-     *         The {@link AuditLogOption AuditLogOption}
-     *
-     * @throws java.lang.ClassCastException
-     *         If the type-cast failed for the generic type.
-     * @throws java.lang.IllegalArgumentException
-     *         If provided with {@code null} option.
-     *
-     * @return Possibly-null value corresponding to the specified option constant
-     */
+
     @Nullable
     public <T> T getOption(@Nonnull AuditLogOption option)
     {
@@ -276,20 +168,7 @@ public class AuditLogEntry implements ISnowflake
         return getOptionByName(option.getKey());
     }
 
-    /**
-     * Constructs a filtered, immutable list of options corresponding to
-     * the provided {@link AuditLogOption AuditLogOptions}.
-     * <br>This will exclude options with {@code null} values!
-     *
-     * @param  options
-     *         The not-null {@link AuditLogOption AuditLogOptions}
-     *         which will be used to gather option values via {@link #getOption(AuditLogOption) getOption(AuditLogOption)}!
-     *
-     * @throws java.lang.IllegalArgumentException
-     *         If provided with null options
-     *
-     * @return Unmodifiable list of representative values
-     */
+
     @Nonnull
     public List<Object> getOptions(@Nonnull AuditLogOption... options)
     {
@@ -304,36 +183,20 @@ public class AuditLogEntry implements ISnowflake
         return Collections.unmodifiableList(items);
     }
 
-    /**
-     * The {@link ActionType ActionType} defining what auditable
-     * Action is referred to by this entry.
-     *
-     * @return The {@link ActionType ActionType}
-     */
+
     @Nonnull
     public ActionType getType()
     {
         return type;
     }
 
-    /**
-     * The raw type value used to derive {@link #getType()}.
-     * <br>This can be used when a new action type is not yet supported by JDA.
-     *
-     * @return The raw type value
-     */
+
     public int getTypeRaw()
     {
         return rawType;
     }
 
-    /**
-     * The {@link TargetType TargetType} defining what kind of
-     * entity was targeted by this action.
-     * <br>Shortcut for {@code getType().getTargetType()}
-     *
-     * @return The {@link TargetType TargetType}
-     */
+
     @Nonnull
     public TargetType getTargetType()
     {

@@ -7,13 +7,7 @@ import me.syari.ss.discord.api.entities.Guild;
 
 import javax.annotation.Nonnull;
 
-/**
- * Indicates that the {@link Guild.MFALevel MFALevel} of a {@link Guild Guild} changed.
- *
- * <p>Can be used to detect when a MFALevel changes and retrieve the old one
- *
- * <p>Identifier: {@code mfa_level}
- */
+
 public class GuildUpdateMFALevelEvent extends GenericGuildUpdateEvent<Guild.MFALevel>
 {
     public static final String IDENTIFIER = "mfa_level";
@@ -23,22 +17,14 @@ public class GuildUpdateMFALevelEvent extends GenericGuildUpdateEvent<Guild.MFAL
         super(api, responseNumber, guild, oldMFALevel, guild.getRequiredMFALevel(), IDENTIFIER);
     }
 
-    /**
-     * The old {@link Guild.MFALevel MFALevel}
-     *
-     * @return The old MFALevel
-     */
+    
     @Nonnull
     public Guild.MFALevel getOldMFALevel()
     {
         return getOldValue();
     }
 
-    /**
-     * The new {@link Guild.MFALevel MFALevel}
-     *
-     * @return The new MFALevel
-     */
+    
     @Nonnull
     public Guild.MFALevel getNewMFALevel()
     {

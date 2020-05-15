@@ -25,20 +25,7 @@ public class RoleOrderActionImpl
 {
     protected final Guild guild;
 
-    /**
-     * Creates a new RoleOrderAction instance
-     *
-     * @param  guild
-     *         The target {@link Guild Guild} of which
-     *         to change the {@link Role Role} order
-     * @param  useAscendingOrder
-     *         Defines the ordering of the OrderAction. If {@code false}, the OrderAction will be in the ordering
-     *         defined by Discord for roles, which is Descending. This means that the highest role appears at index {@code 0}
-     *         and the lowest role at index {@code n - 1}. Providing {@code true} will result in the ordering being
-     *         in ascending order, with the lower role at index {@code 0} and the highest at index {@code n - 1}.
-     *         <br>As a note: {@link Member#getRoles() Member.getRoles()}
-     *         and {@link Guild#getRoles() Guild.getRoles()} are both in descending order.
-     */
+
     public RoleOrderActionImpl(Guild guild, boolean useAscendingOrder)
     {
         super(guild.getJDA(), !useAscendingOrder, Route.Guilds.MODIFY_ROLES.compile(guild.getId()));

@@ -23,33 +23,13 @@ public abstract class OrderActionImpl<T, M extends OrderAction<T, M>>
     protected final boolean ascendingOrder;
     protected int selectedPosition = -1;
 
-    /**
-     * Creates a new OrderAction instance
-     *
-     * @param api
-     *        JDA instance which is associated with the entities contained
-     *        in the order list
-     * @param route
-     *        The {@link Route.CompiledRoute CompiledRoute}
-     *        which is provided to the {@link RestActionImpl#RestActionImpl(JDA, Route.CompiledRoute, okhttp3.RequestBody) RestAction Constructor}
-     */
+
     public OrderActionImpl(JDA api, Route.CompiledRoute route)
     {
         this(api, true, route);
     }
 
-    /**
-     * Creates a new OrderAction instance
-     *
-     * @param api
-     *        JDA instance which is associated with the entities contained
-     *        in the order list
-     * @param ascendingOrder
-     *        Whether or not the order of items should be ascending
-     * @param route
-     *        The {@link Route.CompiledRoute CompiledRoute}
-     *        which is provided to the {@link RestActionImpl#RestActionImpl(JDA, Route.CompiledRoute, okhttp3.RequestBody) RestAction Constructor}
-     */
+
     public OrderActionImpl(JDA api, boolean ascendingOrder, Route.CompiledRoute route)
     {
         super(api, route);

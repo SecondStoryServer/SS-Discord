@@ -8,11 +8,7 @@ import me.syari.ss.discord.api.entities.TextChannel;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-/**
- * Indicates that a Guild Message contains one or more {@link MessageEmbed Embeds}.
- * 
- * <p>Can be used to retrieve the affected TextChannel, the id of the affected Message and a list of MessageEmbeds.
- */
+
 public class GuildMessageEmbedEvent extends GenericGuildMessageEvent
 {
     private final List<MessageEmbed> embeds;
@@ -23,11 +19,7 @@ public class GuildMessageEmbedEvent extends GenericGuildMessageEvent
         this.embeds = embeds;
     }
 
-    /**
-     * The {@link MessageEmbed MessageEmbeds}
-     *
-     * @return The MessageEmbeds
-     */
+    
     @Nonnull
     public List<MessageEmbed> getMessageEmbeds()
     {

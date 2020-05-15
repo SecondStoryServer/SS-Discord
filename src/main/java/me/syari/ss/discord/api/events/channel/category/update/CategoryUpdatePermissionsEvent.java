@@ -13,11 +13,7 @@ import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * Indicates that the permissions of a {@link Category Category} were updated.
- *
- * <p>Can be used to retrieve the changed permissions
- */
+
 public class CategoryUpdatePermissionsEvent extends GenericCategoryEvent
 {
     protected final List<IPermissionHolder> changed;
@@ -28,22 +24,14 @@ public class CategoryUpdatePermissionsEvent extends GenericCategoryEvent
         this.changed = changed;
     }
 
-    /**
-     * List of all affected {@link IPermissionHolder IPermissionHolders}
-     *
-     * @return Immutable list of permission holders affected by this event
-     */
+
     @Nonnull
     public List<IPermissionHolder> getChangedPermissionHolders()
     {
         return changed;
     }
 
-    /**
-     * Filtered list of affected {@link Role Roles}
-     *
-     * @return Immutable list of affected roles
-     */
+
     @Nonnull
     public List<Role> getChangedRoles()
     {
@@ -53,11 +41,7 @@ public class CategoryUpdatePermissionsEvent extends GenericCategoryEvent
             .collect(Collectors.toList());
     }
 
-    /**
-     * Filtered list of affected {@link Member Members}
-     *
-     * @return Immutable list of affected members
-     */
+
     @Nonnull
     public List<Member> getChangedMembers()
     {

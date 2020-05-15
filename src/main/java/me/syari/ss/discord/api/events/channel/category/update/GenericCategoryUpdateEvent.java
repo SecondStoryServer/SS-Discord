@@ -10,12 +10,7 @@ import me.syari.ss.discord.api.entities.Category;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-/**
- * Indicates that a {@link Category Category} was updated.
- * <br>Every category update event derived from this event and can be casted.
- *
- * <p>Can be used to detect any category update event
- */
+
 public abstract class GenericCategoryUpdateEvent<T> extends GenericCategoryEvent implements UpdateEvent<Category, T>
 {
     protected final T previous;

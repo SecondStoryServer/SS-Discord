@@ -10,12 +10,7 @@ import me.syari.ss.discord.api.entities.StoreChannel;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-/**
- * Indicates that a {@link StoreChannel StoreChannel} was updated.
- * <br>Every StoreChannelUpdateEvent is derived from this event and can be casted.
- *
- * <p>Can be used to detect any StoreChannelUpdateEvent.
- */
+
 public abstract class GenericStoreChannelUpdateEvent<T> extends GenericStoreChannelEvent implements UpdateEvent<StoreChannel, T>
 {
     protected final T prev;

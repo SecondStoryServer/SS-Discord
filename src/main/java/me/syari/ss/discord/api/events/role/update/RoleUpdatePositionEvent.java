@@ -7,13 +7,7 @@ import me.syari.ss.discord.api.entities.Role;
 
 import javax.annotation.Nonnull;
 
-/**
- * Indicates that a {@link Role Role} updated its position.
- *
- * <p>Can be used to retrieve the old position.
- *
- * <p>Identifier: {@code position}
- */
+
 public class RoleUpdatePositionEvent extends GenericRoleUpdateEvent<Integer>
 {
     public static final String IDENTIFIER = "position";
@@ -28,41 +22,25 @@ public class RoleUpdatePositionEvent extends GenericRoleUpdateEvent<Integer>
         this.newPositionRaw = role.getPositionRaw();
     }
 
-    /**
-     * The old position
-     *
-     * @return The old position
-     */
+
     public int getOldPosition()
     {
         return getOldValue();
     }
 
-    /**
-     * The old position
-     *
-     * @return The old position
-     */
+
     public int getOldPositionRaw()
     {
         return oldPositionRaw;
     }
 
-    /**
-     * The new position
-     *
-     * @return The new position
-     */
+
     public int getNewPosition()
     {
         return getNewValue();
     }
 
-    /**
-     * The new position
-     *
-     * @return The new position
-     */
+
     public int getNewPositionRaw()
     {
         return newPositionRaw;

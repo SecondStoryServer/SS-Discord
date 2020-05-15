@@ -8,11 +8,7 @@ import me.syari.ss.discord.api.entities.PrivateChannel;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-/**
- * Indicates that a Message contains {@link MessageEmbed Embeds} in a {@link PrivateChannel PrivateChannel}.
- * 
- * <p>Can be used to retrieve affected PrivateChannel, the ID of the deleted Message and a list of MessageEmbeds.
- */
+
 public class PrivateMessageEmbedEvent extends GenericPrivateMessageEvent
 {
     private final List<MessageEmbed> embeds;
@@ -23,11 +19,7 @@ public class PrivateMessageEmbedEvent extends GenericPrivateMessageEvent
         this.embeds = embeds;
     }
 
-    /**
-     * The {@link MessageEmbed MessageEmbeds}
-     *
-     * @return The MessageEmbeds
-     */
+
     @Nonnull
     public List<MessageEmbed> getMessageEmbeds()
     {

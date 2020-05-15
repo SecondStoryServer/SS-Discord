@@ -14,10 +14,7 @@ import java.net.NoRouteToHostException;
 import java.net.SocketException;
 import java.util.concurrent.ConcurrentMap;
 
-/**
- * The default implementation of the {@link IAudioSendSystem IAudioSendSystem}.
- * <br>This implementation uses a Java thread, named based on: {@link IPacketProvider#getIdentifier()} + " Sending Thread".
- */
+
 public class DefaultSendSystem implements IAudioSendSystem
 {
     private final IPacketProvider packetProvider;

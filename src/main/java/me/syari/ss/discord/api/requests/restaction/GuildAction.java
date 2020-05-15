@@ -23,239 +23,84 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.function.BooleanSupplier;
 
-/**
- * {@link RestAction RestAction} extension
- * specifically designed to allow for the creation of {@link Guild Guilds}.
- * <br>This is available to all account types but may undergo certain restrictions by Discord.
- *
- * @since  3.4.0
- *
- * @see    JDA#createGuild(String)
- */
+
 public interface GuildAction extends RestAction<Void>
 {
     @Nonnull
     @Override
     GuildAction setCheck(@Nullable BooleanSupplier checks);
 
-    /**
-     * Sets the voice {@link Region Region} of
-     * the resulting {@link Guild Guild}.
-     *
-     * @param  region
-     *         The {@link Region Region} to use
-     *
-     * @throws java.lang.IllegalArgumentException
-     *         If the provided region is a VIP region as per {@link Region#isVip() Region.isVip()}
-     *
-     * @return The current GuildAction for chaining convenience
-     */
+
     @Nonnull
     @CheckReturnValue
     GuildAction setRegion(@Nullable Region region);
 
-    /**
-     * Sets the {@link Icon Icon}
-     * for the resulting {@link Guild Guild}
-     *
-     * @param  icon
-     *         The {@link Icon Icon} to use
-     *
-     * @return The current GuildAction for chaining convenience
-     */
+
     @Nonnull
     @CheckReturnValue
     GuildAction setIcon(@Nullable Icon icon);
 
-    /**
-     * Sets the name for the resulting {@link Guild Guild}
-     *
-     * @param  name
-     *         The name to use
-     *
-     * @throws java.lang.IllegalArgumentException
-     *         If the provided name is {@code null}, blank or not between 2-100 characters long
-     *
-     * @return The current GuildAction for chaining convenience
-     */
+
     @Nonnull
     @CheckReturnValue
     GuildAction setName(@Nonnull String name);
 
-    /**
-     * Sets the {@link Guild.VerificationLevel VerificationLevel}
-     * for the resulting {@link Guild Guild}
-     *
-     * @param  level
-     *         The {@link Guild.VerificationLevel VerificationLevel} to use
-     *
-     * @return The current GuildAction for chaining convenience
-     */
+
     @Nonnull
     @CheckReturnValue
     GuildAction setVerificationLevel(@Nullable Guild.VerificationLevel level);
 
-    /**
-     * Sets the {@link Guild.NotificationLevel NotificationLevel}
-     * for the resulting {@link Guild Guild}
-     *
-     * @param  level
-     *         The {@link Guild.NotificationLevel NotificationLevel} to use
-     *
-     * @return The current GuildAction for chaining convenience
-     */
+
     @Nonnull
     @CheckReturnValue
     GuildAction setNotificationLevel(@Nullable Guild.NotificationLevel level);
 
-    /**
-     * Sets the {@link Guild.ExplicitContentLevel ExplicitContentLevel}
-     * for the resulting {@link Guild Guild}
-     *
-     * @param  level
-     *         The {@link Guild.ExplicitContentLevel ExplicitContentLevel} to use
-     *
-     * @return The current GuildAction for chaining convenience
-     */
+
     @Nonnull
     @CheckReturnValue
     GuildAction setExplicitContentLevel(@Nullable Guild.ExplicitContentLevel level);
 
-    /**
-     * Adds a {@link GuildChannel GuildChannel} to the resulting
-     * Guild. This cannot be of type {@link ChannelType#CATEGORY CATEGORY}!
-     *
-     * @param  channel
-     *         The {@link ChannelData ChannelData}
-     *         to use for the construction of the GuildChannel
-     *
-     * @throws java.lang.IllegalArgumentException
-     *         If the provided channel is {@code null}!
-     *
-     * @return The current GuildAction for chaining convenience
-     */
+
     @Nonnull
     @CheckReturnValue
     GuildAction addChannel(@Nonnull ChannelData channel);
 
-    /**
-     * Gets the {@link ChannelData ChannelData}
-     * of the specified index. The index is 0 based on insertion order of {@link #addChannel(ChannelData)}!
-     *
-     * @param  index
-     *         The 0 based index of the channel
-     *
-     * @throws java.lang.IndexOutOfBoundsException
-     *         If the provided index is not in bounds
-     *
-     * @return The current GuildAction for chaining convenience
-     */
+
     @Nonnull
     @CheckReturnValue
     ChannelData getChannel(int index);
 
-    /**
-     * Removes the {@link ChannelData ChannelData}
-     * at the specified index and returns the removed object.
-     *
-     * @param  index
-     *         The index of the channel
-     *
-     * @throws java.lang.IndexOutOfBoundsException
-     *         If the index is out of bounds
-     *
-     * @return The removed object
-     */
+
     @Nonnull
     @CheckReturnValue
     ChannelData removeChannel(int index);
 
-    /**
-     * Removes the provided {@link ChannelData ChannelData}
-     * from this GuildAction if present.
-     *
-     * @param  data
-     *         The ChannelData to remove
-     *
-     * @return The current GuildAction for chaining convenience
-     */
+
     @Nonnull
     @CheckReturnValue
     GuildAction removeChannel(@Nonnull ChannelData data);
 
-    /**
-     * Creates a new {@link ChannelData ChannelData}
-     * instance and adds it to this GuildAction.
-     *
-     * @param  type
-     *         The {@link ChannelType ChannelType} of the resulting GuildChannel
-     *         <br>This may be of type {@link ChannelType#TEXT TEXT} or {@link ChannelType#VOICE VOICE}!
-     * @param  name
-     *         The name of the channel. This must be alphanumeric with underscores for type TEXT
-     *
-     * @throws java.lang.IllegalArgumentException
-     *         <ul>
-     *             <li>If provided with an invalid ChannelType</li>
-     *             <li>If the provided name is {@code null} or blank</li>
-     *             <li>If the provided name is not between 2-100 characters long</li>
-     *             <li>If the type is TEXT and the provided name is not alphanumeric with underscores</li>
-     *         </ul>
-     *
-     * @return The new ChannelData instance
-     */
+
     @Nonnull
     @CheckReturnValue
     ChannelData newChannel(@Nonnull ChannelType type, @Nonnull String name);
 
-    /**
-     * Retrieves the {@link RoleData RoleData} for the
-     * public role ({@link Guild#getPublicRole() Guild.getPublicRole()}) for the resulting Guild.
-     * <br>The public role is also known in the official client as the {@code @everyone} role.
-     *
-     * <p><b>You can only change the permissions of the public role!</b>
-     *
-     * @return RoleData of the public role
-     */
+
     @Nonnull
     @CheckReturnValue
     RoleData getPublicRole();
 
-    /**
-     * Retrieves the {@link RoleData RoleData} for the
-     * provided index.
-     * <br>The public role is at the index 0 and all others are ordered by insertion order!
-     *
-     * @param  index
-     *         The index of the role
-     *
-     * @throws java.lang.IndexOutOfBoundsException
-     *         If the provided index is out of bounds
-     *
-     * @return RoleData of the provided index
-     */
+
     @Nonnull
     @CheckReturnValue
     RoleData getRole(int index);
 
-    /**
-     * Creates and add a new {@link RoleData RoleData} object
-     * representing a Role for the resulting Guild.
-     *
-     * <p>This can be used in {@link GuildAction.ChannelData#addPermissionOverride(GuildAction.RoleData, long, long) ChannelData.addPermissionOverride(...)}.
-     * <br>You may change any properties of this {@link RoleData RoleData} instance!
-     *
-     * @return RoleData for the new Role
-     */
+
     @Nonnull
     @CheckReturnValue
     RoleData newRole();
 
-    /**
-     * Mutable object containing information on a {@link Role Role}
-     * of the resulting {@link Guild Guild} that is constructed by a GuildAction instance
-     *
-     * <p>This may be used in {@link GuildAction.ChannelData#addPermissionOverride(GuildAction.RoleData, long, long)}  ChannelData.addPermissionOverride(...)}!
-     */
+
     class RoleData implements SerializableData
     {
         protected final long id;
@@ -273,17 +118,7 @@ public interface GuildAction extends RestAction<Void>
             this.isPublicRole = id == 0;
         }
 
-        /**
-         * Sets the raw permission value for this Role
-         *
-         * @param  rawPermissions
-         *         Raw permission value
-         *
-         * @throws java.lang.IllegalArgumentException
-         *         If the provided permissions are negative or exceed the maximum permissions
-         *
-         * @return The current RoleData instance for chaining convenience
-         */
+
         @Nonnull
         public RoleData setPermissionsRaw(@Nullable Long rawPermissions)
         {
@@ -296,17 +131,7 @@ public interface GuildAction extends RestAction<Void>
             return this;
         }
 
-        /**
-         * Adds the provided permissions to the Role
-         *
-         * @param  permissions
-         *         The permissions to add
-         *
-         * @throws java.lang.IllegalArgumentException
-         *         If any of the provided permissions is {@code null}
-         *
-         * @return The current RoleData instance for chaining convenience
-         */
+
         @Nonnull
         public RoleData addPermissions(@Nonnull Permission... permissions)
         {
@@ -319,17 +144,7 @@ public interface GuildAction extends RestAction<Void>
             return this;
         }
 
-        /**
-         * Adds the provided permissions to the Role
-         *
-         * @param  permissions
-         *         The permissions to add
-         *
-         * @throws java.lang.IllegalArgumentException
-         *         If any of the provided permissions is {@code null}
-         *
-         * @return The current RoleData instance for chaining convenience
-         */
+
         @Nonnull
         public RoleData addPermissions(@Nonnull Collection<Permission> permissions)
         {
@@ -340,17 +155,7 @@ public interface GuildAction extends RestAction<Void>
             return this;
         }
 
-        /**
-         * Sets the name for this Role
-         *
-         * @param  name
-         *         The name
-         *
-         * @throws java.lang.IllegalStateException
-         *         If this is the public role
-         *
-         * @return The current RoleData instance for chaining convenience
-         */
+
         @Nonnull
         public RoleData setName(@Nullable String name)
         {
@@ -359,17 +164,7 @@ public interface GuildAction extends RestAction<Void>
             return this;
         }
 
-        /**
-         * Sets the color for this Role
-         *
-         * @param  color
-         *         The color for this Role
-         *
-         * @throws java.lang.IllegalStateException
-         *         If this is the public role
-         *
-         * @return The current RoleData instance for chaining convenience
-         */
+
         @Nonnull
         public RoleData setColor(@Nullable Color color)
         {
@@ -378,17 +173,7 @@ public interface GuildAction extends RestAction<Void>
             return this;
         }
 
-        /**
-         * Sets the color for this Role
-         *
-         * @param  color
-         *         The color for this Role, or {@code null} to unset
-         *
-         * @throws java.lang.IllegalStateException
-         *         If this is the public role
-         *
-         * @return The current RoleData instance for chaining convenience
-         */
+
         @Nonnull
         public RoleData setColor(@Nullable Integer color)
         {
@@ -397,17 +182,7 @@ public interface GuildAction extends RestAction<Void>
             return this;
         }
 
-        /**
-         * Sets the position for this Role
-         *
-         * @param  position
-         *         The position
-         *
-         * @throws java.lang.IllegalStateException
-         *         If this is the public role
-         *
-         * @return The current RoleData instance for chaining convenience
-         */
+
         @Nonnull
         public RoleData setPosition(@Nullable Integer position)
         {
@@ -416,17 +191,7 @@ public interface GuildAction extends RestAction<Void>
             return this;
         }
 
-        /**
-         * Sets whether the Role is mentionable
-         *
-         * @param  mentionable
-         *         Whether the role is mentionable
-         *
-         * @throws java.lang.IllegalStateException
-         *         If this is the public role
-         *
-         * @return The current RoleData instance for chaining convenience
-         */
+
         @Nonnull
         public RoleData setMentionable(@Nullable Boolean mentionable)
         {
@@ -435,17 +200,7 @@ public interface GuildAction extends RestAction<Void>
             return this;
         }
 
-        /**
-         * Sets whether the Role is hoisted
-         *
-         * @param  hoisted
-         *         Whether the role is hoisted
-         *
-         * @throws java.lang.IllegalStateException
-         *         If this is the public role
-         *
-         * @return The current RoleData instance for chaining convenience
-         */
+
         @Nonnull
         public RoleData setHoisted(@Nullable Boolean hoisted)
         {
@@ -481,12 +236,7 @@ public interface GuildAction extends RestAction<Void>
         }
     }
 
-    /**
-     * GuildChannel information used for the creation of {@link GuildChannel Channels} within
-     * the construction of a {@link Guild Guild} via GuildAction.
-     *
-     * <p>Use with {@link #addChannel(ChannelData) GuildAction.addChannel(ChannelData)}.
-     */
+
     class ChannelData implements SerializableData
     {
         protected final ChannelType type;
@@ -502,25 +252,7 @@ public interface GuildAction extends RestAction<Void>
         // Voice only
         protected Integer bitrate, userlimit;
 
-        /**
-         * Constructs a data object containing information on
-         * a {@link GuildChannel GuildChannel} to be used in the construction
-         * of a {@link Guild Guild}!
-         *
-         * @param  type
-         *         The {@link ChannelType ChannelType} of the resulting GuildChannel
-         *         <br>This may be of type {@link ChannelType#TEXT TEXT} or {@link ChannelType#VOICE VOICE}!
-         * @param  name
-         *         The name of the channel. This must be alphanumeric with underscores for type TEXT
-         *
-         * @throws java.lang.IllegalArgumentException
-         *         <ul>
-         *             <li>If provided with an invalid ChannelType</li>
-         *             <li>If the provided name is {@code null} or blank</li>
-         *             <li>If the provided name is not between 2-100 characters long</li>
-         *             <li>If the type is TEXT and the provided name is not alphanumeric with underscores</li>
-         *         </ul>
-         */
+
         public ChannelData(ChannelType type, String name)
         {
             Checks.notBlank(name, "Name");
@@ -532,18 +264,7 @@ public interface GuildAction extends RestAction<Void>
             this.name = name;
         }
 
-        /**
-         * Sets the topic for this channel.
-         * <br>These are only relevant to channels of type {@link ChannelType#TEXT TEXT}.
-         *
-         * @param  topic
-         *         The topic for the channel
-         *
-         * @throws java.lang.IllegalArgumentException
-         *         If the provided topic is bigger than 1024 characters
-         *
-         * @return This ChannelData instance for chaining convenience
-         */
+
         @Nonnull
         public ChannelData setTopic(@Nullable String topic)
         {
@@ -553,15 +274,7 @@ public interface GuildAction extends RestAction<Void>
             return this;
         }
 
-        /**
-         * Sets the whether this channel should be marked NSFW.
-         * <br>These are only relevant to channels of type {@link ChannelType#TEXT TEXT}.
-         *
-         * @param  nsfw
-         *         Whether this channel should be marked NSFW
-         *
-         * @return This ChannelData instance for chaining convenience
-         */
+
         @Nonnull
         public ChannelData setNSFW(@Nullable Boolean nsfw)
         {
@@ -569,18 +282,7 @@ public interface GuildAction extends RestAction<Void>
             return this;
         }
 
-        /**
-         * Sets the bitrate for this channel.
-         * <br>These are only relevant to channels of type {@link ChannelType#VOICE VOICE}.
-         *
-         * @param  bitrate
-         *         The bitrate for the channel (8000-96000)
-         *
-         * @throws java.lang.IllegalArgumentException
-         *         If the provided bitrate is not between 8000-96000
-         *
-         * @return This ChannelData instance for chaining convenience
-         */
+
         @Nonnull
         public ChannelData setBitrate(@Nullable Integer bitrate)
         {
@@ -593,18 +295,7 @@ public interface GuildAction extends RestAction<Void>
             return this;
         }
 
-        /**
-         * Sets the userlimit for this channel.
-         * <br>These are only relevant to channels of type {@link ChannelType#VOICE VOICE}.
-         *
-         * @param  userlimit
-         *         The userlimit for the channel (0-99)
-         *
-         * @throws java.lang.IllegalArgumentException
-         *         If the provided userlimit is not between 0-99
-         *
-         * @return This ChannelData instance for chaining convenience
-         */
+
         @Nonnull
         public ChannelData setUserlimit(@Nullable Integer userlimit)
         {
@@ -614,14 +305,7 @@ public interface GuildAction extends RestAction<Void>
             return this;
         }
 
-        /**
-         * Sets the position for this channel.
-         *
-         * @param  position
-         *         The position for the channel
-         *
-         * @return This ChannelData instance for chaining convenience
-         */
+
         @Nonnull
         public ChannelData setPosition(@Nullable Integer position)
         {
@@ -629,27 +313,7 @@ public interface GuildAction extends RestAction<Void>
             return this;
         }
 
-        /**
-         * Adds a {@link PermissionOverride PermissionOverride} to this channel
-         * with the provided {@link RoleData RoleData}!
-         * <br>Use {@link #newRole() GuildAction.newRole()} to retrieve an instance of RoleData.
-         *
-         * @param  role
-         *         The target role
-         * @param  allow
-         *         The permissions to grant in the override
-         * @param  deny
-         *         The permissions to deny in the override
-         *
-         * @throws java.lang.IllegalArgumentException
-         *         <ul>
-         *             <li>If the provided role is {@code null}</li>
-         *             <li>If the provided allow value is negative or exceeds maximum permissions</li>
-         *             <li>If the provided deny value is negative or exceeds maximum permissions</li>
-         *         </ul>
-         *
-         * @return This ChannelData instance for chaining convenience
-         */
+
         @Nonnull
         public ChannelData addPermissionOverride(@Nonnull GuildActionImpl.RoleData role, long allow, long deny)
         {
@@ -662,26 +326,7 @@ public interface GuildAction extends RestAction<Void>
             return this;
         }
 
-        /**
-         * Adds a {@link PermissionOverride PermissionOverride} to this channel
-         * with the provided {@link GuildAction.RoleData RoleData}!
-         * <br>Use {@link #newRole() GuildAction.newRole()} to retrieve an instance of RoleData.
-         *
-         * @param  role
-         *         The target role
-         * @param  allow
-         *         The permissions to grant in the override
-         * @param  deny
-         *         The permissions to deny in the override
-         *
-         * @throws java.lang.IllegalArgumentException
-         *         <ul>
-         *             <li>If the provided role is {@code null}</li>
-         *             <li>If any permission is {@code null}</li>
-         *         </ul>
-         *
-         * @return This ChannelData instance for chaining convenience
-         */
+
         @Nonnull
         public ChannelData addPermissionOverride(@Nonnull GuildActionImpl.RoleData role, @Nullable Collection<Permission> allow, @Nullable Collection<Permission> deny)
         {

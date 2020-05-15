@@ -7,114 +7,51 @@ import javax.annotation.Nullable;
 import java.util.EnumSet;
 import java.util.Objects;
 
-/**
- * Used to hold additional information about a users {@link Activity Activity}
- * relevant to <a href="https://discordapp.com/developers/docs/rich-presence/best-practices" target="_blank">Rich Presence</a>.
- *
- * @since  3.4.0
- *
- * @see    Activity#asRichPresence()
- */
+
 public interface RichPresence extends Activity
 {
-    /**
-     * The ID for the responsible application.
-     *
-     * @return The ID for the application
-     */
+    
     long getApplicationIdLong();
 
-    /**
-     * The ID for the responsible application.
-     *
-     * @return The ID for the application
-     */
+    
     @Nonnull
     String getApplicationId();
 
-    /**
-     * Session ID for this presence.
-     * <br>Used by spotify integration.
-     *
-     * @return Session ID
-     */
+    
     @Nullable
     String getSessionId();
 
-    /**
-     * Sync ID for this presence.
-     * <br>Used by spotify integration.
-     *
-     * @return Sync ID
-     */
+    
     @Nullable
     String getSyncId();
 
-    /**
-     * Flags for this presence
-     *
-     * @return The flags for this presence
-     *
-     * @see    ActivityFlag
-     * @see    ActivityFlag#getFlags(int)
-     */
+    
     int getFlags();
 
-    /**
-     * Flags for this presence in an enum set
-     *
-     * @return The flags for this presence
-     *
-     * @see    ActivityFlag
-     * @see    ActivityFlag#getFlags(int)
-     */
+    
     EnumSet<ActivityFlag> getFlagSet();
 
-    /**
-     * The user's current party status
-     * <br>Example: "Looking to Play", "Playing Solo", "In a Group"
-     *
-     * @return The user's current party status
-     */
+    
     @Nullable
     String getState();
 
-    /**
-     * What the player is currently doing
-     * <br>Example: "Competitive - Captain's Mode", "In Queue", "Unranked PvP"
-     *
-     * @return What the player is currently doing
-     */
+    
     @Nullable
     String getDetails();
 
-    /**
-     * Information on the active party of the player
-     *
-     * @return {@link RichPresence.Party Party} wrapper or {@code null} if unset
-     */
+    
     @Nullable
     Party getParty();
 
-    /**
-     * Information on the large image displayed in the profile view
-     *
-     * @return {@link RichPresence.Image Image} wrapper or {@code null} if unset
-     */
+    
     @Nullable
     Image getLargeImage();
 
-    /**
-     * Information on the small corner image displayed in the profile view
-     *
-     * @return {@link RichPresence.Image Image} wrapper or {@code null} if unset
-     */
+    
     @Nullable
     Image getSmallImage();
 
-    /**
-     * Used to hold information on images within a Rich Presence profile
-     */
+    
     class Image
     {
         protected final String key;
@@ -128,33 +65,21 @@ public interface RichPresence extends Activity
             this.text = text;
         }
 
-        /**
-         * The key for this image, used for {@link #getUrl()}
-         *
-         * @return The key for this image
-         */
+        
         @Nonnull
         public String getKey()
         {
             return key;
         }
 
-        /**
-         * Text which is displayed when hovering the image in the official client
-         *
-         * @return Hover text for this image, or {@code null}
-         */
+        
         @Nullable
         public String getText()
         {
             return text;
         }
 
-        /**
-         * URL for this image, combination of {@link #getApplicationId()} and {@link #getKey()}
-         *
-         * @return URL for this image
-         */
+        
         @Nonnull
         public String getUrl()
         {
@@ -187,9 +112,7 @@ public interface RichPresence extends Activity
         }
     }
 
-    /**
-     * Holds information on a player's party
-     */
+    
     class Party
     {
         protected final String id;
@@ -203,32 +126,20 @@ public interface RichPresence extends Activity
             this.max = max;
         }
 
-        /**
-         * ID for this party, relevant to the game.
-         *
-         * @return The ID for this party, or {@code null} if unset
-         */
+        
         @Nullable
         public String getId()
         {
             return id;
         }
 
-        /**
-         * The current size of this party, or {@code 0} if unset
-         *
-         * @return The current size of this party, or {@code 0} if unset
-         */
+        
         public long getSize()
         {
             return size;
         }
 
-        /**
-         * The maximum size of this party, or {@code 0} if unset
-         *
-         * @return The maximum size of this party, or {@code 0} if unset
-         */
+        
         public long getMax()
         {
             return max;

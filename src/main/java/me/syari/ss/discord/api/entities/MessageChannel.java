@@ -33,74 +33,17 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
-/**
- * Represents a Discord channel that can have {@link Message Messages} and files sent to it.
- *
- * <h1>Formattable</h1>
- * This interface extends {@link java.util.Formattable Formattable} and can be used with a {@link java.util.Formatter Formatter}
- * such as used by {@link String#format(String, Object...) String.format(String, Object...)}
- * or {@link java.io.PrintStream#printf(String, Object...) PrintStream.printf(String, Object...)}.
- *
- * <p>This will use {@link #getName()} rather than {@link Object#toString()}!
- * <br>Supported Features:
- * <ul>
- *     <li><b>Alternative</b>
- *     <br>   - Prepends the name with {@code #}
- *              (Example: {@code %#s} - results in <code>#{@link #getName()}</code>)</li>
- *
- *     <li><b>Width/Left-Justification</b>
- *     <br>   - Ensures the size of a format
- *              (Example: {@code %20s} - uses at minimum 20 chars;
- *              {@code %-10s} - uses left-justified padding)</li>
- *
- *     <li><b>Precision</b>
- *     <br>   - Cuts the content to the specified size
- *              (Example: {@code %.20s})</li>
- * </ul>
- *
- * <p>More information on formatting syntax can be found in the {@link java.util.Formatter format syntax documentation}!
- * <br><b>{@link TextChannel TextChannel} is a special case which uses {@link IMentionable#getAsMention() IMentionable.getAsMention()}
- * by default and uses the <code>#{@link #getName()}</code> format as <u>alternative</u></b>
- *
- * @see TextChannel
- * @see PrivateChannel
- */
+
 public interface MessageChannel extends ISnowflake, Formattable
 {
-    /**
-     * The id for the most recent message sent
-     * in this current MessageChannel.
-     * <br>This should only be used if {@link #hasLatestMessage()} returns {@code true}!
-     *
-     * <p>This value is updated on each {@link MessageReceivedEvent MessageReceivedEvent}
-     * and <u><b>will be reset to {@code null} if the message associated with this ID gets deleted</b></u>
-     *
-     * @throws java.lang.IllegalStateException
-     *         If no message id is available
-     *
-     * @return The most recent message's id
-     */
+
     @Nonnull
     default String getLatestMessageId()
     {
         return Long.toUnsignedString(getLatestMessageIdLong());
     }
 
-    /**
-     * Convenience method to delete messages in the most efficient way available.
-     * <br>This combines both {@link TextChannel#deleteMessagesByIds(Collection)} as well as {@link #deleteMessageById(long)}
-     * to delete all messages provided. No checks will be done to prevent failures, use {@link java.util.concurrent.CompletionStage#exceptionally(Function)}
-     * to handle failures.
-     *
-     * <p>For possible ErrorResponses see {@link #purgeMessagesById(long...)}.
-     *
-     * @param  messageIds
-     *         The message ids to delete
-     *
-     * @return List of futures representing all deletion tasks
-     *
-     * @see    CompletableFuture#allOf(java.util.concurrent.CompletableFuture[])
-     */
+
     @Nonnull
     default List<CompletableFuture<Void>> purgeMessagesById(@Nonnull List<String> messageIds)
     {
@@ -112,21 +55,7 @@ public interface MessageChannel extends ISnowflake, Formattable
         return purgeMessagesById(ids);
     }
 
-    /**
-     * Convenience method to delete messages in the most efficient way available.
-     * <br>This combines both {@link TextChannel#deleteMessagesByIds(Collection)} as well as {@link #deleteMessageById(long)}
-     * to delete all messages provided. No checks will be done to prevent failures, use {@link java.util.concurrent.CompletionStage#exceptionally(Function)}
-     * to handle failures.
-     *
-     * <p>For possible ErrorResponses see {@link #purgeMessagesById(long...)}.
-     *
-     * @param  messageIds
-     *         The message ids to delete
-     *
-     * @return List of futures representing all deletion tasks
-     *
-     * @see    CompletableFuture#allOf(java.util.concurrent.CompletableFuture[])
-     */
+
     @Nonnull
     default List<CompletableFuture<Void>> purgeMessagesById(@Nonnull String... messageIds)
     {
@@ -135,26 +64,7 @@ public interface MessageChannel extends ISnowflake, Formattable
         return purgeMessagesById(Arrays.asList(messageIds));
     }
 
-    /**
-     * Convenience method to delete messages in the most efficient way available.
-     * <br>This combines both {@link TextChannel#deleteMessagesByIds(Collection)} as well as {@link Message#delete()}
-     * to delete all messages provided. No checks will be done to prevent failures, use {@link java.util.concurrent.CompletionStage#exceptionally(Function)}
-     * to handle failures.
-     *
-     * <p>For possible ErrorResponses see {@link #purgeMessagesById(long...)}.
-     *
-     * @param  messages
-     *         The messages to delete
-     *
-     * @throws InsufficientPermissionException
-     *         If one of the provided messages is from another user and cannot be deleted due to permissions
-     * @throws IllegalArgumentException
-     *         If one of the provided messages is from another user and cannot be deleted because this is not in a guild
-     *
-     * @return List of futures representing all deletion tasks
-     *
-     * @see    CompletableFuture#allOf(java.util.concurrent.CompletableFuture[])
-     */
+
     @Nonnull
     default List<CompletableFuture<Void>> purgeMessages(@Nonnull Message... messages)
     {
@@ -163,26 +73,7 @@ public interface MessageChannel extends ISnowflake, Formattable
         return purgeMessages(Arrays.asList(messages));
     }
 
-    /**
-     * Convenience method to delete messages in the most efficient way available.
-     * <br>This combines both {@link TextChannel#deleteMessagesByIds(Collection)} as well as {@link Message#delete()}
-     * to delete all messages provided. No checks will be done to prevent failures, use {@link java.util.concurrent.CompletionStage#exceptionally(Function)}
-     * to handle failures.
-     *
-     * <p>For possible ErrorResponses see {@link #purgeMessagesById(long...)}.
-     *
-     * @param  messages
-     *         The messages to delete
-     *
-     * @throws InsufficientPermissionException
-     *         If one of the provided messages is from another user and cannot be deleted due to permissions
-     * @throws IllegalArgumentException
-     *         If one of the provided messages is from another user and cannot be deleted because this is not in a guild
-     *
-     * @return List of futures representing all deletion tasks
-     *
-     * @see    CompletableFuture#allOf(java.util.concurrent.CompletableFuture[])
-     */
+
     @Nonnull
     default List<CompletableFuture<Void>> purgeMessages(@Nonnull List<? extends Message> messages)
     {
@@ -194,35 +85,7 @@ public interface MessageChannel extends ISnowflake, Formattable
         return purgeMessagesById(ids);
     }
 
-    /**
-     * Convenience method to delete messages in the most efficient way available.
-     * <br>This combines both {@link TextChannel#deleteMessagesByIds(Collection)} as well as {@link #deleteMessageById(long)}
-     * to delete all messages provided. No checks will be done to prevent failures, use {@link java.util.concurrent.CompletionStage#exceptionally(Function)}
-     * to handle failures.
-     *
-     * <p>Possible ErrorResponses include:
-     * <ul>
-     *     <li>{@link ErrorResponse#UNKNOWN_CHANNEL UNKNOWN_CHANNEL}
-     *     <br>if this channel was deleted</li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_MESSAGE UNKNOWN_MESSAGE}
-     *     <br>if any of the provided messages does not exist</li>
-     *
-     *     <li>{@link ErrorResponse#MISSING_ACCESS MISSING_ACCESS}
-     *     <br>if we were removed from the channel</li>
-     *
-     *     <li>{@link ErrorResponse#MISSING_PERMISSIONS MISSING_PERMISSIONS}
-     *     <br>The send request was attempted after the account lost
-     *         {@link Permission#MESSAGE_MANAGE Permission.MESSAGE_MANAGE} in the channel.</li>
-     * </ul>
-     *
-     * @param  messageIds
-     *         The message ids to delete
-     *
-     * @return List of futures representing all deletion tasks
-     *
-     * @see    CompletableFuture#allOf(java.util.concurrent.CompletableFuture[])
-     */
+
     @Nonnull
     default List<CompletableFuture<Void>> purgeMessagesById(@Nonnull long... messageIds)
     {
@@ -237,96 +100,25 @@ public interface MessageChannel extends ISnowflake, Formattable
         return list;
     }
 
-    /**
-     * The id for the most recent message sent
-     * in this current MessageChannel.
-     * <br>This should only be used if {@link #hasLatestMessage()} returns {@code true}!
-     *
-     * <p>This value is updated on each {@link MessageReceivedEvent MessageReceivedEvent}
-     * and <u><b>will be reset to {@code null} if the message associated with this ID gets deleted</b></u>
-     *
-     * @throws java.lang.IllegalStateException
-     *         If no message id is available
-     *
-     * @return The most recent message's id
-     */
+
     long getLatestMessageIdLong();
 
-    /**
-     * Whether this MessageChannel contains a tracked most recent
-     * message or not.
-     *
-     * <p>This does not directly mean that {@link #getHistory()} will be unable to retrieve past messages,
-     * it merely means that the latest message is untracked by our internal cache meaning that
-     * if this returns {@code false} the {@link #getLatestMessageId()}
-     * method will throw an {@link java.util.NoSuchElementException NoSuchElementException}
-     *
-     * @return True, if a latest message id is available for retrieval by {@link #getLatestMessageId()}
-     *
-     * @see    #getLatestMessageId()
-     */
+
     boolean hasLatestMessage();
 
-    /**
-     * This method is a shortcut method to return the following information in the following situation:
-     * If the MessageChannel is instance of..
-     * <ul>
-     *     <li><b>TextChannel</b> - Returns {@link TextChannel#getName()}</li>
-     *     <li><b>PrivateChannel</b> Returns {@link PrivateChannel#getUser()}{@link User#getName() .getName()}</li>
-     * </ul>
-     *
-     * @return Never-null "name" of the MessageChannel. Different implementations determine what the name.
-     */
+
     @Nonnull
     String getName();
 
-    /**
-     * The {@link ChannelType ChannelType} of this MessageChannel.
-     *
-     * @return The ChannelType for this channel
-     */
+
     @Nonnull
     ChannelType getType();
 
-    /**
-     * Returns the {@link JDA JDA} instance of this MessageChannel
-     *
-     * @return the corresponding JDA instance
-     */
+
     @Nonnull
     JDA getJDA();
 
-    /**
-     * Sends a plain text message to this channel.
-     * <br>This will fail if this channel is an instance of {@link TextChannel TextChannel} and
-     * the currently logged in account does not have permissions to send a message to this channel.
-     * <br>To determine if you are able to send a message in a {@link TextChannel TextChannel} use
-     * {@link Member#hasPermission(GuildChannel, Permission...)
-     *  guild.getSelfMember().hasPermission(channel, Permission.MESSAGE_WRITE)}.
-     *
-     * <p>For {@link ErrorResponse} information, refer to {@link #sendMessage(Message)}.
-     *
-     * @param  text
-     *         the text to send to the MessageChannel.
-     *
-     * @throws InsufficientPermissionException
-     *         If this is a {@link TextChannel TextChannel} and the logged in account does
-     *         not have {@link Permission#MESSAGE_WRITE Permission.MESSAGE_WRITE}
-     * @throws VerificationLevelException
-     *         If this is a {@link TextChannel} and
-     *         {@link TextChannel#getGuild() TextChannel.getGuild()}{@link Guild#checkVerification() .checkVerification()}
-     *         returns false.
-     * @throws java.lang.IllegalArgumentException
-     *         if the provided text is null, empty or longer than 2000 characters
-     * @throws java.lang.UnsupportedOperationException
-     *         If this is a {@link PrivateChannel PrivateChannel}
-     *         and both the currently logged in account and the target user are bots.
-     *
-     * @return {@link MessageAction MessageAction}
-     *         <br>The newly created Message after it has been sent to Discord.
-     *
-     * @see MessageBuilder
-     */
+
     @Nonnull
     @CheckReturnValue
     default MessageAction sendMessage(@Nonnull CharSequence text)
@@ -341,49 +133,7 @@ public interface MessageChannel extends ISnowflake, Formattable
             return new MessageActionImpl(getJDA(), route, this).append(text);
     }
 
-    /**
-     * Sends a formatted text message to this channel.
-     * <br>This will fail if this channel is an instance of {@link TextChannel TextChannel} and
-     * the currently logged in account does not have permissions to send a message to this channel.
-     * <br>To determine if you are able to send a message in a {@link TextChannel TextChannel} use
-     * {@link Member#hasPermission(GuildChannel, Permission...)
-     *  guild.getSelfMember().hasPermission(channel, Permission.MESSAGE_WRITE)}.
-     *
-     * <p>For {@link ErrorResponse} information, refer to {@link #sendMessage(Message)}.
-     *
-     * @param  format
-     *         The string that should be formatted, if this is {@code null} or empty
-     *         the content of the Message would be empty and cause a builder exception.
-     * @param  args
-     *         The arguments for your format
-     *
-     * @throws InsufficientPermissionException
-     *         If this is a {@link TextChannel TextChannel} and the logged in account does
-     *         not have
-     *         <ul>
-     *             <li>{@link Permission#MESSAGE_READ Permission.MESSAGE_READ}</li>
-     *             <li>{@link Permission#MESSAGE_WRITE Permission.MESSAGE_WRITE}</li>
-     *         </ul>
-     * @throws VerificationLevelException
-     *         If this is a {@link TextChannel} and
-     *         {@link TextChannel#getGuild() TextChannel.getGuild()}{@link Guild#checkVerification() .checkVerification()}
-     *         returns false.
-     * @throws java.lang.IllegalArgumentException
-     *         If the provided format text is {@code null}, empty or longer than 2000 characters
-     * @throws java.lang.UnsupportedOperationException
-     *         If this is a {@link PrivateChannel PrivateChannel}
-     *         and both the currently logged in account and the target user are bots.
-     * @throws java.util.IllegalFormatException
-     *         If a format string contains an illegal syntax,
-     *         a format specifier that is incompatible with the given arguments,
-     *         insufficient arguments given the format string, or other illegal conditions.
-     *         For specification of all possible formatting errors,
-     *         see the <a href="../util/Formatter.html#detail">Details</a>
-     *         section of the formatter class specification.
-     *
-     * @return {@link MessageAction MessageAction}
-     *         <br>The newly created Message after it has been sent to Discord.
-     */
+
     @Nonnull
     @CheckReturnValue
     default MessageAction sendMessageFormat(@Nonnull String format, @Nonnull Object... args)
@@ -392,45 +142,7 @@ public interface MessageChannel extends ISnowflake, Formattable
         return sendMessage(String.format(format, args));
     }
 
-    /**
-     * Sends a specified {@link MessageEmbed MessageEmbed} as a {@link Message Message}
-     * to this channel.
-     * <br>This will fail if this channel is an instance of {@link TextChannel TextChannel} and
-     * the currently logged in account does not have permissions to send a message to this channel.
-     * <br>To determine if you are able to send a message in a {@link TextChannel TextChannel} use
-     * {@link Member#hasPermission(GuildChannel, Permission...)
-     *  guild.getSelfMember().hasPermission(channel, Permission.MESSAGE_WRITE)}.
-     *
-     * <p>For {@link ErrorResponse} information, refer to {@link #sendMessage(Message)}.
-     *
-     * @param  embed
-     *         the {@link MessageEmbed MessageEmbed} to send
-     *
-     * @throws InsufficientPermissionException
-     *         If this is a {@link TextChannel TextChannel} and the logged in account does
-     *         not have
-     *         <ul>
-     *             <li>{@link Permission#MESSAGE_READ Permission.MESSAGE_READ}</li>
-     *             <li>{@link Permission#MESSAGE_WRITE Permission.MESSAGE_WRITE}</li>
-     *             <li>{@link Permission#MESSAGE_EMBED_LINKS Permission.MESSAGE_EMBED_LINKS}</li>
-     *         </ul>
-     * @throws VerificationLevelException
-     *         If this is a {@link TextChannel} and
-     *         {@link TextChannel#getGuild() TextChannel.getGuild()}{@link Guild#checkVerification() .checkVerification()}
-     *         returns false.
-     * @throws java.lang.IllegalArgumentException
-     *         If the provided embed is {@code null} or if the provided {@link MessageEmbed MessageEmbed}
-     *         is not {@link MessageEmbed#isSendable(AccountType) sendable}
-     * @throws java.lang.UnsupportedOperationException
-     *         If this is a {@link PrivateChannel PrivateChannel}
-     *         and both the currently logged in account and the target user are bots.
-     *
-     * @return {@link MessageAction MessageAction}
-     *         <br>The newly created Message after it has been sent to Discord.
-     *
-     * @see    MessageBuilder
-     * @see    EmbedBuilder
-     */
+
     @Nonnull
     @CheckReturnValue
     default MessageAction sendMessage(@Nonnull MessageEmbed embed)
@@ -441,64 +153,7 @@ public interface MessageChannel extends ISnowflake, Formattable
         return new MessageActionImpl(getJDA(), route, this).embed(embed);
     }
 
-    /**
-     * Sends a specified {@link Message Message} to this channel.
-     * <br>This will fail if this channel is an instance of {@link TextChannel TextChannel} and
-     * the currently logged in account does not have permissions to send a message to this channel.
-     * <br>To determine if you are able to send a message in a {@link TextChannel TextChannel} use
-     * {@link Member#hasPermission(GuildChannel, Permission...)
-     *  guild.getSelfMember().hasPermission(channel, Permission.MESSAGE_WRITE)}.
-     *
-     * <p>The following {@link ErrorResponse ErrorResponses} are possible:
-     * <ul>
-     *     <li>{@link ErrorResponse#MISSING_ACCESS MISSING_ACCESS}
-     *     <br>The request was attempted after the account lost access to the {@link Guild Guild}
-     *         typically due to being kicked or removed, or after {@link Permission#MESSAGE_READ Permission.MESSAGE_READ}
-     *         was revoked in the {@link TextChannel TextChannel}</li>
-     *
-     *     <li>{@link ErrorResponse#MISSING_PERMISSIONS MISSING_PERMISSIONS}
-     *     <br>The send request was attempted after the account lost {@link Permission#MESSAGE_WRITE Permission.MESSAGE_WRITE} in
-     *         the {@link TextChannel TextChannel}.</li>
-     *
-     *     <li>{@link ErrorResponse#UNAUTHORIZED UNAUTHORIZED}
-     *     <br>If this is a {@link PrivateChannel PrivateChannel} and the recipient User blocked you</li>
-     *
-     *     <li>{@link ErrorResponse#CANNOT_SEND_TO_USER CANNOT_SEND_TO_USER}
-     *     <br>If this is a {@link PrivateChannel PrivateChannel} and the currently logged in account
-     *         does not share any Guilds with the recipient User</li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_CHANNEL UNKNOWN_CHANNEL}
-     *     <br>The send request was attempted after the channel was deleted.</li>
-     * </ul>
-     *
-     * @param  msg
-     *         the {@link Message Message} to send
-     *
-     * @throws InsufficientPermissionException
-     *         If this is a {@link TextChannel TextChannel} and the logged in account does
-     *         not have
-     *         <ul>
-     *             <li>{@link Permission#MESSAGE_READ Permission.MESSAGE_READ}</li>
-     *             <li>{@link Permission#MESSAGE_WRITE Permission.MESSAGE_WRITE}</li>
-     *             <li>{@link Permission#MESSAGE_EMBED_LINKS Permission.MESSAGE_EMBED_LINKS} (if this message is only an embed)</li>
-     *         </ul>
-     * @throws VerificationLevelException
-     *         If this is a {@link TextChannel} and
-     *         {@link TextChannel#getGuild() TextChannel.getGuild()}{@link Guild#checkVerification() .checkVerification()}
-     *         returns false.
-     * @throws java.lang.IllegalArgumentException
-     *         If the provided message is {@code null} or the provided {@link Message Message}
-     *         contains an {@link MessageEmbed MessageEmbed}
-     *         that is not {@link MessageEmbed#isSendable(AccountType) sendable}
-     * @throws java.lang.UnsupportedOperationException
-     *         If this is a {@link PrivateChannel PrivateChannel}
-     *         and both the currently logged in account and the target user are bots.
-     *
-     * @return {@link MessageAction MessageAction}
-     *         <br>The newly created Message after it has been sent to Discord.
-     *
-     * @see    MessageBuilder
-     */
+
     @Nonnull
     @CheckReturnValue
     default MessageAction sendMessage(@Nonnull Message msg)
@@ -509,56 +164,7 @@ public interface MessageChannel extends ISnowflake, Formattable
         return new MessageActionImpl(getJDA(), route, this).apply(msg);
     }
 
-    /**
-     * Uploads a file to the Discord servers and sends it to this {@link MessageChannel MessageChannel}.
-     * Sends the provided {@link Message Message} with the uploaded file.
-     * <br>If you want to send a Message with the uploaded file, you can add the file to the {@link MessageAction}
-     * returned by {@link #sendMessage(Message)}.
-     *
-     * <p>This is a shortcut to {@link #sendFile(java.io.File, String, AttachmentOption...)} by way of using {@link java.io.File#getName()}.
-     * <pre>sendFile(file, file.getName())</pre>
-     *
-     * <p><b>Uploading images with Embeds</b>
-     * <br>When uploading an <u>image</u> you can reference said image using the specified filename as URI {@code attachment://filename.ext}.
-     *
-     * <p><u>Example</u>
-     * <pre><code>
-     * MessageChannel channel; // = reference of a MessageChannel
-     * EmbedBuilder embed = new EmbedBuilder();
-     * File file = new File("cat.gif");
-     * embed.setImage("attachment://cat.gif")
-     *      .setDescription("This is a cute cat :3");
-     * channel.sendFile(file).embed(embed.build()).queue();
-     * </code></pre>
-     *
-     * <p>For {@link ErrorResponse} information, refer to the documentation for {@link #sendFile(java.io.File, String, AttachmentOption...)}.
-     *
-     * @param  file
-     *         The file to upload to the {@link MessageChannel MessageChannel}.
-     * @param  options
-     *         Possible options to apply to this attachment, such as marking it as spoiler image
-     *
-     * @throws java.lang.IllegalArgumentException
-     *         <ul>
-     *             <li>Provided {@code file} is null.</li>
-     *             <li>Provided {@code file} does not exist.</li>
-     *             <li>Provided {@code file} is unreadable.</li>
-     *             <li>Provided {@code file} is greater than 8 MiB on a normal or 50 MiB on a nitro account.</li>
-     *         </ul>
-     * @throws InsufficientPermissionException
-     *         If this is a {@link TextChannel TextChannel} and the logged in account does not have
-     *         <ul>
-     *             <li>{@link Permission#MESSAGE_READ Permission.MESSAGE_READ}</li>
-     *             <li>{@link Permission#MESSAGE_WRITE Permission.MESSAGE_WRITE}</li>
-     *             <li>{@link Permission#MESSAGE_ATTACH_FILES Permission.MESSAGE_ATTACH_FILES}</li>
-     *         </ul>
-     * @throws java.lang.UnsupportedOperationException
-     *         If this is a {@link PrivateChannel PrivateChannel}
-     *         and both the currently logged in account and the target user are bots.
-     *
-     * @return {@link MessageAction MessageAction}
-     *         <br>Providing the {@link Message Message} created from this upload.
-     */
+
     @Nonnull
     @CheckReturnValue
     default MessageAction sendFile(@Nonnull File file, @Nonnull AttachmentOption... options)
@@ -568,87 +174,7 @@ public interface MessageChannel extends ISnowflake, Formattable
         return sendFile(file, file.getName(), options);
     }
 
-    /**
-     * Uploads a file to the Discord servers and sends it to this {@link MessageChannel MessageChannel}.
-     * Sends the provided {@link Message Message} with the uploaded file.
-     * <br>If you want to send a Message with the uploaded file, you can add the file to the {@link MessageAction}
-     * returned by {@link #sendMessage(Message)}.
-     *
-     * <p>The {@code fileName} parameter is used to inform Discord about what the file should be called. This is 2 fold:
-     * <ol>
-     *     <li>The file name provided is the name that is found in {@link Message.Attachment#getFileName()}
-     *          after upload and it is the name that will show up in the client when the upload is displayed.
-     *     <br>Note: The fileName does not show up on the Desktop client for images. It does on mobile however.</li>
-     *     <li>The extension of the provided fileName also determines how Discord will treat the file. Discord currently only
-     *         has special handling for image file types, but the fileName's extension must indicate that it is an image file.
-     *         This means it has to end in something like .png, .jpg, .jpeg, .gif, etc. As a note, you can also not provide
-     *         a full name for the file and instead ONLY provide the extension like "png" or "gif" and Discord will generate
-     *         a name for the upload and append the fileName as the extension.</li>
-     * </ol>
-     *
-     * <p><b>Uploading images with Embeds</b>
-     * <br>When uploading an <u>image</u> you can reference said image using the specified filename as URI {@code attachment://filename.ext}.
-     *
-     * <p><u>Example</u>
-     * <pre><code>
-     * MessageChannel channel; // = reference of a MessageChannel
-     * EmbedBuilder embed = new EmbedBuilder();
-     * File file = new File("cat_01.gif");
-     * embed.setImage("attachment://cat.gif") // we specify this in sendFile as "cat.gif"
-     *      .setDescription("This is a cute cat :3");
-     * channel.sendFile(file, "cat.gif").embed(embed.build()).queue();
-     * </code></pre>
-     *
-     * <p>The following {@link ErrorResponse ErrorResponses} are possible:
-     * <ul>
-     *     <li>{@link ErrorResponse#MISSING_ACCESS MISSING_ACCESS}
-     *     <br>The send request was attempted after the account lost access to the {@link Guild Guild}
-     *         typically due to being kicked or removed.</li>
-     *
-     *     <li>{@link ErrorResponse#MISSING_PERMISSIONS MISSING_PERMISSIONS}
-     *     <br>The send request was attempted after the account lost {@link Permission#MESSAGE_WRITE Permission.MESSAGE_WRITE} or
-     *         {@link Permission#MESSAGE_ATTACH_FILES Permission.MESSAGE_ATTACH_FILES}
-     *         in the {@link TextChannel TextChannel}.</li>
-     *
-     *     <li>{@link ErrorResponse#UNAUTHORIZED UNAUTHORIZED}
-     *     <br>If this is a {@link PrivateChannel PrivateChannel} and the recipient User blocked you</li>
-     *
-     *     <li>{@link ErrorResponse#CANNOT_SEND_TO_USER CANNOT_SEND_TO_USER}
-     *     <br>If this is a {@link PrivateChannel PrivateChannel} and the currently logged in account
-     *         does not share any Guilds with the recipient User</li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_CHANNEL UNKNOWN_CHANNEL}
-     *     <br>The send request was attempted after the channel was deleted.</li>
-     * </ul>
-     *
-     * @param  file
-     *         The file to upload to the {@link MessageChannel MessageChannel}.
-     * @param  fileName
-     *         The name that should be sent to discord
-     * @param  options
-     *         Possible options to apply to this attachment, such as marking it as spoiler image
-     *
-     * @throws java.lang.IllegalArgumentException
-     *         <ul>
-     *             <li>Provided {@code file} is null.</li>
-     *             <li>Provided {@code file} does not exist.</li>
-     *             <li>Provided {@code file} is unreadable.</li>
-     *             <li>Provided {@code file} is greater than 8 MiB on a normal or 50 MiB on a nitro account.</li>
-     *         </ul>
-     * @throws InsufficientPermissionException
-     *         If this is a {@link TextChannel TextChannel} and the logged in account does not have
-     *         <ul>
-     *             <li>{@link Permission#MESSAGE_READ Permission.MESSAGE_READ}</li>
-     *             <li>{@link Permission#MESSAGE_WRITE Permission.MESSAGE_WRITE}</li>
-     *             <li>{@link Permission#MESSAGE_ATTACH_FILES Permission.MESSAGE_ATTACH_FILES}</li>
-     *         </ul>
-     * @throws java.lang.UnsupportedOperationException
-     *         If this is a {@link PrivateChannel PrivateChannel}
-     *         and both the currently logged in account and the target user are bots.
-     *
-     * @return {@link MessageAction MessageAction}
-     *         <br>Providing the {@link Message Message} created from this upload.
-     */
+
     @Nonnull
     @CheckReturnValue
     default MessageAction sendFile(@Nonnull File file, @Nonnull String fileName, @Nonnull AttachmentOption... options)
@@ -670,53 +196,7 @@ public interface MessageChannel extends ISnowflake, Formattable
         }
     }
 
-    /**
-     * Uploads a file to the Discord servers and sends it to this {@link MessageChannel MessageChannel}.
-     * Sends the provided {@link Message Message} with the uploaded file.
-     * <br>If you want to send a Message with the uploaded file, you can add the file to the {@link MessageAction}
-     * returned by {@link #sendMessage(Message)}.
-     * <br>This allows you to send an {@link java.io.InputStream InputStream} as substitute to a file.
-     *
-     * <p>For information about the {@code fileName} parameter, Refer to the documentation for {@link #sendFile(java.io.File, String, AttachmentOption...)}.
-     * <br>For {@link ErrorResponse} information, refer to the documentation for {@link #sendFile(java.io.File, String, AttachmentOption...)}.
-     *
-     * <p><b>Uploading images with Embeds</b>
-     * <br>When uploading an <u>image</u> you can reference said image using the specified filename as URI {@code attachment://filename.ext}.
-     *
-     * <p><u>Example</u>
-     * <pre><code>
-     * MessageChannel channel; // = reference of a MessageChannel
-     * EmbedBuilder embed = new EmbedBuilder();
-     * InputStream file = new URL("https://http.cat/500").openStream();
-     * embed.setImage("attachment://cat.png") // we specify this in sendFile as "cat.png"
-     *      .setDescription("This is a cute cat :3");
-     * channel.sendFile(file, "cat.png").embed(embed.build()).queue();
-     * </code></pre>
-     *
-     * @param  data
-     *         The InputStream data to upload to the {@link MessageChannel MessageChannel}.
-     * @param  fileName
-     *         The name that should be sent to discord
-     *         <br>Refer to the documentation for {@link #sendFile(java.io.File, String, AttachmentOption...)} for information about this parameter.
-     * @param  options
-     *         Possible options to apply to this attachment, such as marking it as spoiler image
-     *
-     * @throws java.lang.IllegalArgumentException
-     *         If the provided file or filename is {@code null} or {@code empty}.
-     * @throws InsufficientPermissionException
-     *         If this is a {@link TextChannel TextChannel} and the logged in account does not have
-     *         <ul>
-     *             <li>{@link Permission#MESSAGE_READ Permission.MESSAGE_READ}</li>
-     *             <li>{@link Permission#MESSAGE_WRITE Permission.MESSAGE_WRITE}</li>
-     *             <li>{@link Permission#MESSAGE_ATTACH_FILES Permission.MESSAGE_ATTACH_FILES}</li>
-     *         </ul>
-     * @throws java.lang.UnsupportedOperationException
-     *         If this is a {@link PrivateChannel PrivateChannel}
-     *         and both the currently logged in account and the target user are bots.
-     *
-     * @return {@link MessageAction MessageAction}
-     *         <br>Provides the {@link Message Message} created from this upload.
-     */
+
     @Nonnull
     @CheckReturnValue
     default MessageAction sendFile(@Nonnull InputStream data, @Nonnull String fileName, @Nonnull AttachmentOption... options)
@@ -728,56 +208,7 @@ public interface MessageChannel extends ISnowflake, Formattable
         return new MessageActionImpl(getJDA(), route, this).addFile(data, fileName, options);
     }
 
-    /**
-     * Uploads a file to the Discord servers and sends it to this {@link MessageChannel MessageChannel}.
-     * Sends the provided {@link Message Message} with the uploaded file.
-     * <br>If you want to send a Message with the uploaded file, you can add the file to the {@link MessageAction}
-     * returned by {@link #sendMessage(Message)}.
-     * <br>This allows you to send an {@code byte[]} as substitute to a file.
-     *
-     * <p>For information about the {@code fileName} parameter, Refer to the documentation for {@link #sendFile(java.io.File, String, AttachmentOption...)}.
-     * <br>For {@link ErrorResponse} information, refer to the documentation for {@link #sendFile(java.io.File, String, AttachmentOption...)}.
-     *
-     * <p><b>Uploading images with Embeds</b>
-     * <br>When uploading an <u>image</u> you can reference said image using the specified filename as URI {@code attachment://filename.ext}.
-     *
-     * <p><u>Example</u>
-     * <pre><code>
-     * MessageChannel channel; // = reference of a MessageChannel
-     * EmbedBuilder embed = new EmbedBuilder();
-     * byte[] file = IOUtil.readFully(new URL("https://http.cat/500").openStream());
-     * embed.setImage("attachment://cat.png") // we specify this in sendFile as "cat.png"
-     *      .setDescription("This is a cute cat :3");
-     * channel.sendFile(file, "cat.png").embed(embed.build()).queue();
-     * </code></pre>
-     *
-     * @param  data
-     *         The {@code byte[]} data to upload to the {@link MessageChannel MessageChannel}.
-     * @param  fileName
-     *         The name that should be sent to discord.
-     *         <br>Refer to the documentation for {@link #sendFile(java.io.File, String, AttachmentOption...)} for information about this parameter.
-     * @param  options
-     *         Possible options to apply to this attachment, such as marking it as spoiler image
-     *
-     * @throws java.lang.IllegalArgumentException
-     *         <ul>
-     *             <li>If the provided filename is {@code null} or {@code empty}</li>
-     *             <li>If the provided data is larger than 8 MiB on a normal or 50 MiB on a nitro account</li>
-     *         </ul>
-     * @throws InsufficientPermissionException
-     *         If this is a {@link TextChannel TextChannel} and the logged in account does not have
-     *         <ul>
-     *             <li>{@link Permission#MESSAGE_READ Permission.MESSAGE_READ}</li>
-     *             <li>{@link Permission#MESSAGE_WRITE Permission.MESSAGE_WRITE}</li>
-     *             <li>{@link Permission#MESSAGE_ATTACH_FILES Permission.MESSAGE_ATTACH_FILES}</li>
-     *         </ul>
-     * @throws java.lang.UnsupportedOperationException
-     *         If this is a {@link PrivateChannel PrivateChannel}
-     *         and both the currently logged in account and the target user are bots.
-     *
-     * @return {@link MessageAction MessageAction}
-     *         <br>Provides the {@link Message Message} created from this upload.
-     */
+
     @Nonnull
     @CheckReturnValue
     default MessageAction sendFile(@Nonnull byte[] data, @Nonnull String fileName, @Nonnull AttachmentOption... options)
@@ -789,48 +220,7 @@ public interface MessageChannel extends ISnowflake, Formattable
         return sendFile(new ByteArrayInputStream(data), fileName, options);
     }
 
-    /**
-     * Attempts to get a {@link Message Message} from the Discord's servers that has
-     * the same id as the id provided.
-     * <br>Note: when retrieving a Message, you must retrieve it from the channel it was sent in!
-     *
-     * <p><b>Only bots can use this endpoint! A similar behaviour can be simulated using {@link #getHistoryAround(long, int)}!</b>
-     *
-     * <p>The following {@link ErrorResponse ErrorResponses} are possible:
-     * <ul>
-     *     <li>{@link ErrorResponse#MISSING_ACCESS MISSING_ACCESS}
-     *     <br>The request was attempted after the account lost access to the {@link Guild Guild}
-     *         typically due to being kicked or removed, or after {@link Permission#MESSAGE_READ Permission.MESSAGE_READ}
-     *         was revoked in the {@link TextChannel TextChannel}</li>
-     *
-     *     <li>{@link ErrorResponse#MISSING_PERMISSIONS MISSING_PERMISSIONS}
-     *     <br>The request was attempted after the account lost {@link Permission#MESSAGE_HISTORY Permission.MESSAGE_HISTORY}
-     *         in the {@link TextChannel TextChannel}.</li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_MESSAGE UNKNOWN_MESSAGE}
-     *     <br>The provided {@code id} does not refer to a message sent in this channel or the message has already been deleted.</li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_CHANNEL UNKNOWN_CHANNEL}
-     *     <br>The request was attempted after the channel was deleted.</li>
-     * </ul>
-     *
-     * @param  messageId
-     *         The id of the sought after Message
-     *
-     * @throws AccountTypeException
-     *         If the currently logged in account is not from {@link AccountType#BOT AccountType.BOT}
-     * @throws IllegalArgumentException
-     *         if the provided {@code messageId} is null or empty.
-     * @throws InsufficientPermissionException
-     *         If this is a {@link TextChannel TextChannel} and the logged in account does not have
-     *         <ul>
-     *             <li>{@link Permission#MESSAGE_READ Permission.MESSAGE_READ}</li>
-     *             <li>{@link Permission#MESSAGE_HISTORY Permission.MESSAGE_HISTORY}</li>
-     *         </ul>
-     *
-     * @return {@link RestAction RestAction} - Type: Message
-     *         <br>The Message defined by the provided id.
-     */
+
     @Nonnull
     @CheckReturnValue
     default RestAction<Message> retrieveMessageById(@Nonnull String messageId)
@@ -844,46 +234,7 @@ public interface MessageChannel extends ISnowflake, Formattable
             (response, request) -> jda.getEntityBuilder().createMessage(response.getObject(), MessageChannel.this, false));
     }
 
-    /**
-     * Attempts to get a {@link Message Message} from the Discord's servers that has
-     * the same id as the id provided.
-     * <br>Note: when retrieving a Message, you must retrieve it from the channel it was sent in!
-     *
-     * <p><b>Only bots can use this endpoint! A similar behaviour can be simulated using {@link #getHistoryAround(long, int)}!</b>
-     *
-     * <p>The following {@link ErrorResponse ErrorResponses} are possible:
-     * <ul>
-     *     <li>{@link ErrorResponse#MISSING_ACCESS MISSING_ACCESS}
-     *     <br>The request was attempted after the account lost access to the {@link Guild Guild}
-     *         typically due to being kicked or removed, or after {@link Permission#MESSAGE_READ Permission.MESSAGE_READ}
-     *         was revoked in the {@link TextChannel TextChannel}</li>
-     *
-     *     <li>{@link ErrorResponse#MISSING_PERMISSIONS MISSING_PERMISSIONS}
-     *     <br>The request was attempted after the account lost {@link Permission#MESSAGE_HISTORY Permission.MESSAGE_HISTORY}
-     *         in the {@link TextChannel TextChannel}.</li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_MESSAGE UNKNOWN_MESSAGE}
-     *     <br>The provided {@code id} does not refer to a message sent in this channel or the message has already been deleted.</li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_CHANNEL UNKNOWN_CHANNEL}
-     *     <br>The request was attempted after the channel was deleted.</li>
-     * </ul>
-     *
-     * @param  messageId
-     *         The id of the sought after Message
-     *
-     * @throws AccountTypeException
-     *         If the currently logged in account is not from {@link AccountType#BOT AccountType.BOT}
-     * @throws InsufficientPermissionException
-     *         If this is a {@link TextChannel TextChannel} and the logged in account does not have
-     *         <ul>
-     *             <li>{@link Permission#MESSAGE_READ Permission.MESSAGE_READ}</li>
-     *             <li>{@link Permission#MESSAGE_HISTORY Permission.MESSAGE_HISTORY}</li>
-     *         </ul>
-     *
-     * @return {@link RestAction RestAction} - Type: Message
-     *         <br>The Message defined by the provided id.
-     */
+
     @Nonnull
     @CheckReturnValue
     default RestAction<Message> retrieveMessageById(long messageId)
@@ -891,43 +242,7 @@ public interface MessageChannel extends ISnowflake, Formattable
         return retrieveMessageById(Long.toUnsignedString(messageId));
     }
 
-    /**
-     * Attempts to delete a {@link Message Message} from the Discord servers that has
-     * the same id as the id provided.
-     *
-     * <p>The following {@link ErrorResponse ErrorResponses} are possible:
-     * <ul>
-     *     <li>{@link ErrorResponse#MISSING_ACCESS MISSING_ACCESS}
-     *     <br>The request was attempted after the account lost access to the {@link Guild Guild}
-     *         typically due to being kicked or removed, or after {@link Permission#MESSAGE_READ Permission.MESSAGE_READ}
-     *         was revoked in the {@link TextChannel TextChannel}</li>
-     *
-     *     <li>{@link ErrorResponse#MISSING_PERMISSIONS MISSING_PERMISSIONS}
-     *     <br>The request attempted to delete a Message in a {@link TextChannel TextChannel}
-     *         that was not sent by the currently logged in account.</li>
-     *
-     *     <li>{@link ErrorResponse#INVALID_DM_ACTION INVALID_DM_ACTION}
-     *     <br>Attempted to delete a Message in a {@link PrivateChannel PrivateChannel}
-     *         that was not sent by the currently logged in account.</li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_MESSAGE UNKNOWN_MESSAGE}
-     *     <br>The provided {@code id} does not refer to a message sent in this channel or the message has already been deleted.</li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_CHANNEL UNKNOWN_CHANNEL}
-     *     <br>The request was attempted after the channel was deleted.</li>
-     * </ul>
-     *
-     * @param  messageId
-     *         The id of the Message that should be deleted
-     *
-     * @throws IllegalArgumentException
-     *         if the provided messageId is null
-     * @throws InsufficientPermissionException
-     *         If this is a {@link TextChannel TextChannel} and the logged in account does not have
-     *         {@link Permission#MESSAGE_READ Permission.MESSAGE_READ}.
-     *
-     * @return {@link RestAction RestAction} - Type: Void
-     */
+
     @Nonnull
     @CheckReturnValue
     default AuditableRestAction<Void> deleteMessageById(@Nonnull String messageId)
@@ -938,43 +253,7 @@ public interface MessageChannel extends ISnowflake, Formattable
         return new AuditableRestActionImpl<>(getJDA(), route);
     }
 
-    /**
-     * Attempts to delete a {@link Message Message} from the Discord servers that has
-     * the same id as the id provided.
-     *
-     * <p>The following {@link ErrorResponse ErrorResponses} are possible:
-     * <ul>
-     *     <li>{@link ErrorResponse#MISSING_ACCESS MISSING_ACCESS}
-     *     <br>The request was attempted after the account lost access to the {@link Guild Guild}
-     *         typically due to being kicked or removed, or after {@link Permission#MESSAGE_READ Permission.MESSAGE_READ}
-     *         was revoked in the {@link TextChannel TextChannel}</li>
-     *
-     *     <li>{@link ErrorResponse#MISSING_PERMISSIONS MISSING_PERMISSIONS}
-     *     <br>The request attempted to delete a Message in a {@link TextChannel TextChannel}
-     *         that was not sent by the currently logged in account.</li>
-     *
-     *     <li>{@link ErrorResponse#INVALID_DM_ACTION INVALID_DM_ACTION}
-     *     <br>Attempted to delete a Message in a {@link PrivateChannel PrivateChannel}
-     *         that was not sent by the currently logged in account.</li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_MESSAGE UNKNOWN_MESSAGE}
-     *     <br>The provided {@code id} does not refer to a message sent in this channel or the message has already been deleted.</li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_CHANNEL UNKNOWN_CHANNEL}
-     *     <br>The request was attempted after the channel was deleted.</li>
-     * </ul>
-     *
-     * @param  messageId
-     *         The id of the Message that should be deleted
-     *
-     * @throws IllegalArgumentException
-     *         if the provided messageId is not positive
-     * @throws InsufficientPermissionException
-     *         If this is a {@link TextChannel TextChannel} and the logged in account does not have
-     *         {@link Permission#MESSAGE_READ Permission.MESSAGE_READ}.
-     *
-     * @return {@link RestAction RestAction} - Type: Void
-     */
+
     @Nonnull
     @CheckReturnValue
     default AuditableRestAction<Void> deleteMessageById(long messageId)
@@ -982,50 +261,13 @@ public interface MessageChannel extends ISnowflake, Formattable
         return deleteMessageById(Long.toUnsignedString(messageId));
     }
 
-    /**
-     * Creates a new {@link MessageHistory MessageHistory} object for each call of this method.
-     * <br>MessageHistory is <b>NOT</b> an internal message cache, but rather it queries the Discord servers for previously sent messages.
-     *
-     * @throws InsufficientPermissionException
-     *         If this is a {@link TextChannel TextChannel}
-     *         and the currently logged in account does not have the permission {@link Permission#MESSAGE_HISTORY MESSAGE_HISTORY}
-     *
-     * @return A {@link MessageHistory MessageHistory} related to this channel.
-     */
+
     default MessageHistory getHistory()
     {
         return new MessageHistory(this);
     }
 
-    /**
-     * A {@link PaginationAction PaginationAction} implementation
-     * that allows to {@link Iterable iterate} over recent {@link Message Messages} of
-     * this MessageChannel.
-     * <br>This is <b>not</b> a cache for received messages and it can only view messages that were sent
-     * before. This iterates chronologically backwards (from present to past).
-     *
-     * <p><b><u>It is recommended not to use this in an enhanced for-loop without end conditions as it might cause memory
-     * overflows in channels with a long message history.</u></b>
-     *
-     * <h1>Examples</h1>
-     * <pre>{@code
-     * public CompletableFuture<List<Message>> getMessagesByUser(MessageChannel channel, User user) {
-     *     return channel.getIterableHistory()
-     *         .takeAsync(1000) // Collect 1000 messages
-     *         .thenApply(list ->
-     *             list.stream()
-     *                 .filter(m -> m.getAuthor().equals(user)) // Filter messages by author
-     *                 .collect(Collectors.toList())
-     *         );
-     * }
-     * }</pre>
-     *
-     * @throws InsufficientPermissionException
-     *         If this is a {@link TextChannel TextChannel}
-     *         and the currently logged in account does not have the permission {@link Permission#MESSAGE_HISTORY MESSAGE_HISTORY}
-     *
-     * @return {@link MessagePaginationAction MessagePaginationAction}
-     */
+
     @Nonnull
     @CheckReturnValue
     default MessagePaginationAction getIterableHistory()
@@ -1033,65 +275,7 @@ public interface MessageChannel extends ISnowflake, Formattable
         return new MessagePaginationActionImpl(this);
     }
 
-    /**
-     * Uses the provided {@code id} of a message as a marker and retrieves messages sent around
-     * the marker. The {@code limit} determines the amount of messages retrieved near the marker. Discord will
-     * attempt to evenly split the limit between before and after the marker, however in the case that the marker is set
-     * near the beginning or near the end of the channel's history the amount of messages on each side of the marker may
-     * be different, and their total count may not equal the provided {@code limit}.
-     *
-     * <p><b>Examples:</b>
-     * <br>Retrieve 100 messages from the middle of history. {@literal >}100 message exist in history and the marker is {@literal >}50 messages
-     * from the edge of history.
-     * <br>{@code getHistoryAround(messageId, 100)} - This will retrieve 100 messages from history, 50 before the marker
-     * and 50 after the marker.
-     *
-     * <p>Retrieve 10 messages near the end of history. Provided id is for a message that is the 3rd most recent message.
-     * <br>{@code getHistoryAround(messageId, 10)} - This will retrieve 10 messages from history, 8 before the marker
-     * and 2 after the marker.
-     *
-     * <p>The following {@link ErrorResponse ErrorResponses} are possible:
-     * <ul>
-     *     <li>{@link ErrorResponse#MISSING_ACCESS MISSING_ACCESS}
-     *     <br>The request was attempted after the account lost access to the {@link Guild Guild}
-     *         typically due to being kicked or removed, or after {@link Permission#MESSAGE_READ Permission.MESSAGE_READ}
-     *         was revoked in the {@link TextChannel TextChannel}</li>
-     *
-     *     <li>{@link ErrorResponse#MISSING_PERMISSIONS MISSING_PERMISSIONS}
-     *     <br>The request was attempted after the account lost
-     *         {@link Permission#MESSAGE_HISTORY Permission.MESSAGE_HISTORY} in the
-     *         {@link TextChannel TextChannel}.</li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_MESSAGE UNKNOWN_MESSAGE}
-     *     <br>The provided {@code messageId} is unknown in this MessageChannel, either due to the id being invalid, or
-     *         the message it referred to has already been deleted, thus could not be used as a marker.</li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_CHANNEL UNKNOWN_CHANNEL}
-     *     <br>The request was attempted after the channel was deleted.</li>
-     * </ul>
-     *
-     * @param  messageId
-     *         The id of the message that will act as a marker.
-     * @param  limit
-     *         The amount of messages to be retrieved around the marker. Minimum: 1, Max: 100.
-     *
-     * @throws java.lang.IllegalArgumentException
-     *         <ul>
-     *             <li>Provided {@code messageId} is {@code null} or empty.</li>
-     *             <li>Provided {@code limit} is less than {@code 1} or greater than {@code 100}.</li>
-     *         </ul>
-     * @throws InsufficientPermissionException
-     *         If this is a {@link TextChannel TextChannel} and the logged in account does not have
-     *         <ul>
-     *             <li>{@link Permission#MESSAGE_READ Permission.MESSAGE_READ}</li>
-     *             <li>{@link Permission#MESSAGE_HISTORY Permission.MESSAGE_HISTORY}</li>
-     *         </ul>
-     *
-     * @return {@link MessageHistory.MessageRetrieveAction MessageHistory.MessageRetrieveAction}
-     *         <br>Provides a {@link MessageHistory MessageHistory} object with messages around the provided message loaded into it.
-     *
-     * @see    MessageHistory#getHistoryAround(MessageChannel, String) MessageHistory.getHistoryAround(MessageChannel, String)
-     */
+
     @Nonnull
     @CheckReturnValue
     default MessageHistory.MessageRetrieveAction getHistoryAround(@Nonnull String messageId, int limit)
@@ -1099,65 +283,7 @@ public interface MessageChannel extends ISnowflake, Formattable
         return MessageHistory.getHistoryAround(this, messageId).limit(limit);
     }
 
-    /**
-     * Uses the provided {@code id} of a message as a marker and retrieves messages around
-     * the marker. The {@code limit} determines the amount of messages retrieved near the marker. Discord will
-     * attempt to evenly split the limit between before and after the marker, however in the case that the marker is set
-     * near the beginning or near the end of the channel's history the amount of messages on each side of the marker may
-     * be different, and their total count may not equal the provided {@code limit}.
-     *
-     * <p><b>Examples:</b>
-     * <br>Retrieve 100 messages from the middle of history. {@literal >}100 message exist in history and the marker is {@literal >}50 messages
-     * from the edge of history.
-     * <br>{@code getHistoryAround(messageId, 100)} - This will retrieve 100 messages from history, 50 before the marker
-     * and 50 after the marker.
-     *
-     * <p>Retrieve 10 messages near the end of history. Provided id is for a message that is the 3rd most recent message.
-     * <br>{@code getHistoryAround(messageId, 10)} - This will retrieve 10 messages from history, 8 before the marker
-     * and 2 after the marker.
-     *
-     * <p>The following {@link ErrorResponse ErrorResponses} are possible:
-     * <ul>
-     *     <li>{@link ErrorResponse#MISSING_ACCESS MISSING_ACCESS}
-     *     <br>The request was attempted after the account lost access to the {@link Guild Guild}
-     *         typically due to being kicked or removed, or after {@link Permission#MESSAGE_READ Permission.MESSAGE_READ}
-     *         was revoked in the {@link TextChannel TextChannel}</li>
-     *
-     *     <li>{@link ErrorResponse#MISSING_PERMISSIONS MISSING_PERMISSIONS}
-     *     <br>The request was attempted after the account lost
-     *         {@link Permission#MESSAGE_HISTORY Permission.MESSAGE_HISTORY} in the
-     *         {@link TextChannel TextChannel}.</li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_MESSAGE UNKNOWN_MESSAGE}
-     *     <br>The provided {@code messageId} is unknown in this MessageChannel, either due to the id being invalid, or
-     *         the message it referred to has already been deleted, thus could not be used as a marker.</li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_CHANNEL UNKNOWN_CHANNEL}
-     *     <br>The request was attempted after the channel was deleted.</li>
-     * </ul>
-     *
-     * @param  messageId
-     *         The id of the message that will act as a marker. The id must refer to a message from this MessageChannel.
-     * @param  limit
-     *         The amount of messages to be retrieved around the marker. Minimum: 1, Max: 100.
-     *
-     * @throws java.lang.IllegalArgumentException
-     *         <ul>
-     *             <li>Provided {@code messageId} is not positive.</li>
-     *             <li>Provided {@code limit} is less than {@code 1} or greater than {@code 100}.</li>
-     *         </ul>
-     * @throws InsufficientPermissionException
-     *         If this is a {@link TextChannel TextChannel} and the logged in account does not have
-     *         <ul>
-     *             <li>{@link Permission#MESSAGE_READ Permission.MESSAGE_READ}</li>
-     *             <li>{@link Permission#MESSAGE_HISTORY Permission.MESSAGE_HISTORY}</li>
-     *         </ul>
-     *
-     * @return {@link MessageHistory.MessageRetrieveAction MessageHistory.MessageRetrieveAction}
-     *         <br>Provides a {@link MessageHistory MessageHistory} object with messages around the provided message loaded into it.
-     *
-     * @see    MessageHistory#getHistoryAround(MessageChannel, String) MessageHistory.getHistoryAround(MessageChannel, String)
-     */
+
     @Nonnull
     @CheckReturnValue
     default MessageHistory.MessageRetrieveAction getHistoryAround(long messageId, int limit)
@@ -1165,65 +291,7 @@ public interface MessageChannel extends ISnowflake, Formattable
         return getHistoryAround(Long.toUnsignedString(messageId), limit );
     }
 
-    /**
-     * Uses the provided {@link Message Message} as a marker and retrieves messages around
-     * the marker. The {@code limit} determines the amount of messages retrieved near the marker. Discord will
-     * attempt to evenly split the limit between before and after the marker, however in the case that the marker is set
-     * near the beginning or near the end of the channel's history the amount of messages on each side of the marker may
-     * be different, and their total count may not equal the provided {@code limit}.
-     *
-     * <p><b>Examples:</b>
-     * <br>Retrieve 100 messages from the middle of history. {@literal >}100 message exist in history and the marker is {@literal >}50 messages
-     * from the edge of history.
-     * <br>{@code getHistoryAround(message, 100)} - This will retrieve 100 messages from history, 50 before the marker
-     * and 50 after the marker.
-     *
-     * <p>Retrieve 10 messages near the end of history. Provided message is the 3rd most recent message.
-     * <br>{@code getHistoryAround(message, 10)} - This will retrieve 10 messages from history, 8 before the marker
-     * and 2 after the marker.
-     *
-     * <p>The following {@link ErrorResponse ErrorResponses} are possible:
-     * <ul>
-     *     <li>{@link ErrorResponse#MISSING_ACCESS MISSING_ACCESS}
-     *     <br>The request was attempted after the account lost access to the {@link Guild Guild}
-     *         typically due to being kicked or removed, or after {@link Permission#MESSAGE_READ Permission.MESSAGE_READ}
-     *         was revoked in the {@link TextChannel TextChannel}</li>
-     *
-     *     <li>{@link ErrorResponse#MISSING_PERMISSIONS MISSING_PERMISSIONS}
-     *     <br>The request was attempted after the account lost
-     *         {@link Permission#MESSAGE_HISTORY Permission.MESSAGE_HISTORY} in the
-     *         {@link TextChannel TextChannel}.</li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_MESSAGE UNKNOWN_MESSAGE}
-     *     <br>The provided {@code message} has already been deleted, thus could not be used as a marker.</li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_CHANNEL UNKNOWN_CHANNEL}
-     *     <br>The request was attempted after the channel was deleted.</li>
-     * </ul>
-     *
-     * @param  message
-     *         The {@link Message Message} that will act as a marker. The provided Message
-     *         must be from this MessageChannel.
-     * @param  limit
-     *         The amount of messages to be retrieved around the marker. Minimum: 1, Max: 100.
-     *
-     * @throws java.lang.IllegalArgumentException
-     *         <ul>
-     *             <li>Provided {@code message} is {@code null}.</li>
-     *             <li>Provided {@code limit} is less than {@code 1} or greater than {@code 100}.</li>
-     *         </ul>
-     * @throws InsufficientPermissionException
-     *         If this is a {@link TextChannel TextChannel} and the logged in account does not have
-     *         <ul>
-     *             <li>{@link Permission#MESSAGE_READ Permission.MESSAGE_READ}</li>
-     *             <li>{@link Permission#MESSAGE_HISTORY Permission.MESSAGE_HISTORY}</li>
-     *         </ul>
-     *
-     * @return {@link MessageHistory.MessageRetrieveAction MessageHistory.MessageRetrieveAction}
-     *         <br>Provides a {@link MessageHistory MessageHistory} object with messages around the provided message loaded into it.
-     *
-     * @see    MessageHistory#getHistoryAround(MessageChannel, String) MessageHistory.getHistoryAround(MessageChannel, String)
-     */
+
     @Nonnull
     @CheckReturnValue
     default MessageHistory.MessageRetrieveAction getHistoryAround(@Nonnull Message message, int limit)
@@ -1232,57 +300,7 @@ public interface MessageChannel extends ISnowflake, Formattable
         return getHistoryAround(message.getId(), limit);
     }
 
-    /**
-     * Uses the provided {@code id} of a message as a marker and retrieves messages sent after
-     * the marker ID. The {@code limit} determines the amount of messages retrieved near the marker.
-     *
-     * <p><b>Examples:</b>
-     * <br>Retrieve 100 messages from the middle of history. {@literal >}100 message exist in history and the marker is {@literal >}50 messages
-     * from the edge of history.
-     * <br>{@code getHistoryAfter(messageId, 100)} - This will retrieve 100 messages from history sent after the marker.
-     *
-     * <p>The following {@link ErrorResponse ErrorResponses} are possible:
-     * <ul>
-     *     <li>{@link ErrorResponse#MISSING_ACCESS MISSING_ACCESS}
-     *     <br>The request was attempted after the account lost access to the {@link Guild Guild}
-     *         typically due to being kicked or removed, or after {@link Permission#MESSAGE_READ Permission.MESSAGE_READ}
-     *         was revoked in the {@link TextChannel TextChannel}</li>
-     *
-     *     <li>{@link ErrorResponse#MISSING_PERMISSIONS MISSING_PERMISSIONS}
-     *     <br>The request was attempted after the account lost
-     *         {@link Permission#MESSAGE_HISTORY Permission.MESSAGE_HISTORY} in the
-     *         {@link TextChannel TextChannel}.</li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_MESSAGE UNKNOWN_MESSAGE}
-     *     <br>The provided {@code messageId} is unknown in this MessageChannel, either due to the id being invalid, or
-     *         the message it referred to has already been deleted, thus could not be used as a marker.</li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_CHANNEL UNKNOWN_CHANNEL}
-     *     <br>The request was attempted after the channel was deleted.</li>
-     * </ul>
-     *
-     * @param  messageId
-     *         The id of the message that will act as a marker.
-     * @param  limit
-     *         The amount of messages to be retrieved after the marker. Minimum: 1, Max: 100.
-     *
-     * @throws java.lang.IllegalArgumentException
-     *         <ul>
-     *             <li>Provided {@code messageId} is {@code null} or empty.</li>
-     *             <li>Provided {@code limit} is less than {@code 1} or greater than {@code 100}.</li>
-     *         </ul>
-     * @throws InsufficientPermissionException
-     *         If this is a {@link TextChannel TextChannel} and the logged in account does not have
-     *         <ul>
-     *             <li>{@link Permission#MESSAGE_READ Permission.MESSAGE_READ}</li>
-     *             <li>{@link Permission#MESSAGE_HISTORY Permission.MESSAGE_HISTORY}</li>
-     *         </ul>
-     *
-     * @return {@link MessageHistory.MessageRetrieveAction MessageHistory.MessageRetrieveAction}
-     *         <br>Provides a {@link MessageHistory MessageHistory} object with messages after the provided message loaded into it.
-     *
-     * @see    MessageHistory#getHistoryAfter(MessageChannel, String) MessageHistory.getHistoryAfter(MessageChannel, String)
-     */
+
     @Nonnull
     @CheckReturnValue
     default MessageHistory.MessageRetrieveAction getHistoryAfter(@Nonnull String messageId, int limit)
@@ -1290,54 +308,7 @@ public interface MessageChannel extends ISnowflake, Formattable
         return MessageHistory.getHistoryAfter(this, messageId).limit(limit);
     }
 
-    /**
-     * Uses the provided {@code id} of a message as a marker and retrieves messages sent after
-     * the marker ID. The {@code limit} determines the amount of messages retrieved near the marker.
-     *
-     * <p><b>Examples:</b>
-     * <br>Retrieve 100 messages from the middle of history. {@literal >}100 message exist in history and the marker is {@literal >}50 messages
-     * from the edge of history.
-     * <br>{@code getHistoryAfter(messageId, 100)} - This will retrieve 100 messages from history sent after the marker.
-     *
-     * <p>The following {@link ErrorResponse ErrorResponses} are possible:
-     * <ul>
-     *     <li>{@link ErrorResponse#MISSING_ACCESS MISSING_ACCESS}
-     *     <br>The request was attempted after the account lost access to the {@link Guild Guild}
-     *         typically due to being kicked or removed, or after {@link Permission#MESSAGE_READ Permission.MESSAGE_READ}
-     *         was revoked in the {@link TextChannel TextChannel}</li>
-     *
-     *     <li>{@link ErrorResponse#MISSING_PERMISSIONS MISSING_PERMISSIONS}
-     *     <br>The request was attempted after the account lost
-     *         {@link Permission#MESSAGE_HISTORY Permission.MESSAGE_HISTORY} in the
-     *         {@link TextChannel TextChannel}.</li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_MESSAGE UNKNOWN_MESSAGE}
-     *     <br>The provided {@code messageId} is unknown in this MessageChannel, either due to the id being invalid, or
-     *         the message it referred to has already been deleted, thus could not be used as a marker.</li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_CHANNEL UNKNOWN_CHANNEL}
-     *     <br>The request was attempted after the channel was deleted.</li>
-     * </ul>
-     *
-     * @param  messageId
-     *         The id of the message that will act as a marker.
-     * @param  limit
-     *         The amount of messages to be retrieved after the marker. Minimum: 1, Max: 100.
-     *
-     * @throws java.lang.IllegalArgumentException
-     *         Provided {@code limit} is less than {@code 1} or greater than {@code 100}.
-     * @throws InsufficientPermissionException
-     *         If this is a {@link TextChannel TextChannel} and the logged in account does not have
-     *         <ul>
-     *             <li>{@link Permission#MESSAGE_READ Permission.MESSAGE_READ}</li>
-     *             <li>{@link Permission#MESSAGE_HISTORY Permission.MESSAGE_HISTORY}</li>
-     *         </ul>
-     *
-     * @return {@link MessageHistory.MessageRetrieveAction MessageHistory.MessageRetrieveAction}
-     *         <br>Provides a {@link MessageHistory MessageHistory} object with messages after the provided message loaded into it.
-     *
-     * @see    MessageHistory#getHistoryAfter(MessageChannel, String) MessageHistory.getHistoryAfter(MessageChannel, String)
-     */
+
     @Nonnull
     @CheckReturnValue
     default MessageHistory.MessageRetrieveAction getHistoryAfter(long messageId, int limit)
@@ -1345,57 +316,7 @@ public interface MessageChannel extends ISnowflake, Formattable
         return getHistoryAfter(Long.toUnsignedString(messageId), limit);
     }
 
-    /**
-     * Uses the provided message as a marker and retrieves messages sent after
-     * the marker. The {@code limit} determines the amount of messages retrieved near the marker.
-     *
-     * <p><b>Examples:</b>
-     * <br>Retrieve 100 messages from the middle of history. {@literal >}100 message exist in history and the marker is {@literal >}50 messages
-     * from the edge of history.
-     * <br>{@code getHistoryAfter(message, 100)} - This will retrieve 100 messages from history sent after the marker.
-     *
-     * <p>The following {@link ErrorResponse ErrorResponses} are possible:
-     * <ul>
-     *     <li>{@link ErrorResponse#MISSING_ACCESS MISSING_ACCESS}
-     *     <br>The request was attempted after the account lost access to the {@link Guild Guild}
-     *         typically due to being kicked or removed, or after {@link Permission#MESSAGE_READ Permission.MESSAGE_READ}
-     *         was revoked in the {@link TextChannel TextChannel}</li>
-     *
-     *     <li>{@link ErrorResponse#MISSING_PERMISSIONS MISSING_PERMISSIONS}
-     *     <br>The request was attempted after the account lost
-     *         {@link Permission#MESSAGE_HISTORY Permission.MESSAGE_HISTORY} in the
-     *         {@link TextChannel TextChannel}.</li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_MESSAGE UNKNOWN_MESSAGE}
-     *     <br>The provided {@code messageId} is unknown in this MessageChannel, either due to the id being invalid, or
-     *         the message it referred to has already been deleted, thus could not be used as a marker.</li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_CHANNEL UNKNOWN_CHANNEL}
-     *     <br>The request was attempted after the channel was deleted.</li>
-     * </ul>
-     *
-     * @param  message
-     *         The message that will act as a marker.
-     * @param  limit
-     *         The amount of messages to be retrieved after the marker. Minimum: 1, Max: 100.
-     *
-     * @throws java.lang.IllegalArgumentException
-     *         <ul>
-     *             <li>Provided {@code message} is {@code null}.</li>
-     *             <li>Provided {@code limit} is less than {@code 1} or greater than {@code 100}.</li>
-     *         </ul>
-     * @throws InsufficientPermissionException
-     *         If this is a {@link TextChannel TextChannel} and the logged in account does not have
-     *         <ul>
-     *             <li>{@link Permission#MESSAGE_READ Permission.MESSAGE_READ}</li>
-     *             <li>{@link Permission#MESSAGE_HISTORY Permission.MESSAGE_HISTORY}</li>
-     *         </ul>
-     *
-     * @return {@link MessageHistory.MessageRetrieveAction MessageHistory.MessageRetrieveAction}
-     *         <br>Provides a {@link MessageHistory MessageHistory} object with messages after the provided message loaded into it.
-     *
-     * @see    MessageHistory#getHistoryAfter(MessageChannel, String) MessageHistory.getHistoryAfter(MessageChannel, String)
-     */
+
     @Nonnull
     @CheckReturnValue
     default MessageHistory.MessageRetrieveAction getHistoryAfter(@Nonnull Message message, int limit)
@@ -1404,57 +325,7 @@ public interface MessageChannel extends ISnowflake, Formattable
         return getHistoryAfter(message.getId(), limit);
     }
 
-    /**
-     * Uses the provided {@code id} of a message as a marker and retrieves messages sent before
-     * the marker ID. The {@code limit} determines the amount of messages retrieved near the marker.
-     *
-     * <p><b>Examples:</b>
-     * <br>Retrieve 100 messages from the middle of history. {@literal >}100 message exist in history and the marker is {@literal >}50 messages
-     * from the edge of history.
-     * <br>{@code getHistoryBefore(messageId, 100)} - This will retrieve 100 messages from history sent before the marker.
-     *
-     * <p>The following {@link ErrorResponse ErrorResponses} are possible:
-     * <ul>
-     *     <li>{@link ErrorResponse#MISSING_ACCESS MISSING_ACCESS}
-     *     <br>The request was attempted after the account lost access to the {@link Guild Guild}
-     *         typically due to being kicked or removed, or after {@link Permission#MESSAGE_READ Permission.MESSAGE_READ}
-     *         was revoked in the {@link TextChannel TextChannel}</li>
-     *
-     *     <li>{@link ErrorResponse#MISSING_PERMISSIONS MISSING_PERMISSIONS}
-     *     <br>The request was attempted after the account lost
-     *         {@link Permission#MESSAGE_HISTORY Permission.MESSAGE_HISTORY} in the
-     *         {@link TextChannel TextChannel}.</li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_MESSAGE UNKNOWN_MESSAGE}
-     *     <br>The provided {@code messageId} is unknown in this MessageChannel, either due to the id being invalid, or
-     *         the message it referred to has already been deleted, thus could not be used as a marker.</li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_CHANNEL UNKNOWN_CHANNEL}
-     *     <br>The request was attempted after the channel was deleted.</li>
-     * </ul>
-     *
-     * @param  messageId
-     *         The id of the message that will act as a marker.
-     * @param  limit
-     *         The amount of messages to be retrieved after the marker. Minimum: 1, Max: 100.
-     *
-     * @throws java.lang.IllegalArgumentException
-     *         <ul>
-     *             <li>Provided {@code messageId} is {@code null} or empty.</li>
-     *             <li>Provided {@code limit} is less than {@code 1} or greater than {@code 100}.</li>
-     *         </ul>
-     * @throws InsufficientPermissionException
-     *         If this is a {@link TextChannel TextChannel} and the logged in account does not have
-     *         <ul>
-     *             <li>{@link Permission#MESSAGE_READ Permission.MESSAGE_READ}</li>
-     *             <li>{@link Permission#MESSAGE_HISTORY Permission.MESSAGE_HISTORY}</li>
-     *         </ul>
-     *
-     * @return {@link MessageHistory.MessageRetrieveAction MessageHistory.MessageRetrieveAction}
-     *         <br>Provides a {@link MessageHistory MessageHistory} object with messages before the provided message loaded into it.
-     *
-     * @see    MessageHistory#getHistoryBefore(MessageChannel, String) MessageHistory.getHistoryBefore(MessageChannel, String)
-     */
+
     @Nonnull
     @CheckReturnValue
     default MessageHistory.MessageRetrieveAction getHistoryBefore(@Nonnull String messageId, int limit)
@@ -1462,57 +333,7 @@ public interface MessageChannel extends ISnowflake, Formattable
         return MessageHistory.getHistoryBefore(this, messageId).limit(limit);
     }
 
-    /**
-     * Uses the provided {@code id} of a message as a marker and retrieves messages sent before
-     * the marker ID. The {@code limit} determines the amount of messages retrieved near the marker.
-     *
-     * <p><b>Examples:</b>
-     * <br>Retrieve 100 messages from the middle of history. {@literal >}100 message exist in history and the marker is {@literal >}50 messages
-     * from the edge of history.
-     * <br>{@code getHistoryBefore(messageId, 100)} - This will retrieve 100 messages from history sent before the marker.
-     *
-     * <p>The following {@link ErrorResponse ErrorResponses} are possible:
-     * <ul>
-     *     <li>{@link ErrorResponse#MISSING_ACCESS MISSING_ACCESS}
-     *     <br>The request was attempted after the account lost access to the {@link Guild Guild}
-     *         typically due to being kicked or removed, or after {@link Permission#MESSAGE_READ Permission.MESSAGE_READ}
-     *         was revoked in the {@link TextChannel TextChannel}</li>
-     *
-     *     <li>{@link ErrorResponse#MISSING_PERMISSIONS MISSING_PERMISSIONS}
-     *     <br>The request was attempted after the account lost
-     *         {@link Permission#MESSAGE_HISTORY Permission.MESSAGE_HISTORY} in the
-     *         {@link TextChannel TextChannel}.</li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_MESSAGE UNKNOWN_MESSAGE}
-     *     <br>The provided {@code messageId} is unknown in this MessageChannel, either due to the id being invalid, or
-     *         the message it referred to has already been deleted, thus could not be used as a marker.</li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_CHANNEL UNKNOWN_CHANNEL}
-     *     <br>The request was attempted after the channel was deleted.</li>
-     * </ul>
-     *
-     * @param  messageId
-     *         The id of the message that will act as a marker.
-     * @param  limit
-     *         The amount of messages to be retrieved after the marker. Minimum: 1, Max: 100.
-     *
-     * @throws java.lang.IllegalArgumentException
-     *         <ul>
-     *             <li>Provided {@code messageId} is {@code null} or empty.</li>
-     *             <li>Provided {@code limit} is less than {@code 1} or greater than {@code 100}.</li>
-     *         </ul>
-     * @throws InsufficientPermissionException
-     *         If this is a {@link TextChannel TextChannel} and the logged in account does not have
-     *         <ul>
-     *             <li>{@link Permission#MESSAGE_READ Permission.MESSAGE_READ}</li>
-     *             <li>{@link Permission#MESSAGE_HISTORY Permission.MESSAGE_HISTORY}</li>
-     *         </ul>
-     *
-     * @return {@link MessageHistory.MessageRetrieveAction MessageHistory.MessageRetrieveAction}
-     *         <br>Provides a {@link MessageHistory MessageHistory} object with messages before the provided message loaded into it.
-     *
-     * @see    MessageHistory#getHistoryBefore(MessageChannel, String) MessageHistory.getHistoryBefore(MessageChannel, String)
-     */
+
     @Nonnull
     @CheckReturnValue
     default MessageHistory.MessageRetrieveAction getHistoryBefore(long messageId, int limit)
@@ -1520,57 +341,7 @@ public interface MessageChannel extends ISnowflake, Formattable
         return getHistoryBefore(Long.toUnsignedString(messageId), limit);
     }
 
-    /**
-     * Uses the provided message as a marker and retrieves messages sent before
-     * the marker. The {@code limit} determines the amount of messages retrieved near the marker.
-     *
-     * <p><b>Examples:</b>
-     * <br>Retrieve 100 messages from the middle of history. {@literal >}100 message exist in history and the marker is {@literal >}50 messages
-     * from the edge of history.
-     * <br>{@code getHistoryAfter(message, 100)} - This will retrieve 100 messages from history sent before the marker.
-     *
-     * <p>The following {@link ErrorResponse ErrorResponses} are possible:
-     * <ul>
-     *     <li>{@link ErrorResponse#MISSING_ACCESS MISSING_ACCESS}
-     *     <br>The request was attempted after the account lost access to the {@link Guild Guild}
-     *         typically due to being kicked or removed, or after {@link Permission#MESSAGE_READ Permission.MESSAGE_READ}
-     *         was revoked in the {@link TextChannel TextChannel}</li>
-     *
-     *     <li>{@link ErrorResponse#MISSING_PERMISSIONS MISSING_PERMISSIONS}
-     *     <br>The request was attempted after the account lost
-     *         {@link Permission#MESSAGE_HISTORY Permission.MESSAGE_HISTORY} in the
-     *         {@link TextChannel TextChannel}.</li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_MESSAGE UNKNOWN_MESSAGE}
-     *     <br>The provided {@code messageId} is unknown in this MessageChannel, either due to the id being invalid, or
-     *         the message it referred to has already been deleted, thus could not be used as a marker.</li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_CHANNEL UNKNOWN_CHANNEL}
-     *     <br>The request was attempted after the channel was deleted.</li>
-     * </ul>
-     *
-     * @param  message
-     *         The message that will act as a marker.
-     * @param  limit
-     *         The amount of messages to be retrieved after the marker. Minimum: 1, Max: 100.
-     *
-     * @throws java.lang.IllegalArgumentException
-     *         <ul>
-     *             <li>Provided {@code message} is {@code null}.</li>
-     *             <li>Provided {@code limit} is less than {@code 1} or greater than {@code 100}.</li>
-     *         </ul>
-     * @throws InsufficientPermissionException
-     *         If this is a {@link TextChannel TextChannel} and the logged in account does not have
-     *         <ul>
-     *             <li>{@link Permission#MESSAGE_READ Permission.MESSAGE_READ}</li>
-     *             <li>{@link Permission#MESSAGE_HISTORY Permission.MESSAGE_HISTORY}</li>
-     *         </ul>
-     *
-     * @return {@link MessageHistory.MessageRetrieveAction MessageHistory.MessageRetrieveAction}
-     *         <br>Provides a {@link MessageHistory MessageHistory} object with messages before the provided message loaded into it.
-     *
-     * @see    MessageHistory#getHistoryBefore(MessageChannel, String) MessageHistory.getHistoryBefore(MessageChannel, String)
-     */
+
     @Nonnull
     @CheckReturnValue
     default MessageHistory.MessageRetrieveAction getHistoryBefore(@Nonnull Message message, int limit)
@@ -1579,62 +350,7 @@ public interface MessageChannel extends ISnowflake, Formattable
         return getHistoryBefore(message.getId(), limit);
     }
 
-    /**
-     * Retrieves messages from the beginning of this {@link MessageChannel MessageChannel}.
-     * The {@code limit} determines the amount of messages being retrieved.
-     *
-     * <h2>Example</h2>
-     * <pre><code>
-     * public void resendFirstMessage(MessageChannel channel)
-     * {
-     *     channel.getHistoryFromBeginning(1).queue(history {@literal ->}
-     *     {
-     *         if (!history.isEmpty())
-     *         {
-     *             Message firstMsg = history.getRetrievedHistory().get(0);
-     *             channel.sendMessage(firstMsg).queue();
-     *         }
-     *         else
-     *             channel.sendMessage("No history for this channel!").queue();
-     *     });
-     * }
-     * </code></pre>
-     *
-     * <p>The following {@link ErrorResponse ErrorResponses} are possible:
-     * <ul>
-     *     <li>{@link ErrorResponse#MISSING_ACCESS MISSING_ACCESS}
-     *     <br>The request was attempted after the account lost access to the {@link Guild Guild}
-     *         typically due to being kicked or removed, or after {@link Permission#MESSAGE_READ Permission.MESSAGE_READ}
-     *         was revoked in the {@link TextChannel TextChannel}</li>
-     *
-     *     <li>{@link ErrorResponse#MISSING_PERMISSIONS MISSING_PERMISSIONS}
-     *     <br>The request was attempted after the account lost
-     *         {@link Permission#MESSAGE_HISTORY Permission.MESSAGE_HISTORY} in the
-     *         {@link TextChannel TextChannel}.</li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_CHANNEL UNKNOWN_CHANNEL}
-     *     <br>The request was attempted after the channel was deleted.</li>
-     * </ul>
-     *
-     * @param  limit
-     *         The amount of messages to be retrieved. Minimum: 1, Max: 100.
-     *
-     * @throws java.lang.IllegalArgumentException
-     *         Provided {@code limit} is less than {@code 1} or greater than {@code 100}.
-     * @throws InsufficientPermissionException
-     *         If this is a {@link TextChannel TextChannel} and the logged in account does not have
-     *         <ul>
-     *             <li>{@link Permission#MESSAGE_READ Permission.MESSAGE_READ}</li>
-     *             <li>{@link Permission#MESSAGE_HISTORY Permission.MESSAGE_HISTORY}</li>
-     *         </ul>
-     *
-     * @return {@link MessageHistory.MessageRetrieveAction MessageHistory.MessageRetrieveAction}
-     *         <br>Provides a {@link MessageHistory MessageHistory} object with with the first messages of this channel loaded into it.
-     *         <br><b>Note: The messages are ordered from the most recent to oldest!</b>
-     *
-     * @see    MessageHistory#retrieveFuture(int)                     MessageHistory.retrieveFuture(int)
-     * @see    MessageHistory#getHistoryAfter(MessageChannel, String) MessageHistory.getHistoryAfter(MessageChannel, String)
-     */
+
     @Nonnull
     @CheckReturnValue
     default MessageHistory.MessageRetrieveAction getHistoryFromBeginning(int limit)
@@ -1642,34 +358,7 @@ public interface MessageChannel extends ISnowflake, Formattable
         return MessageHistory.getHistoryFromBeginning(this).limit(limit);
     }
 
-    /**
-     * Sends the typing status to discord. This is what is used to make the message "X is typing..." appear.
-     * <br>The typing status only lasts for 10 seconds or until a message is sent.
-     * <br>So if you wish to show continuous typing you will need to call this method once every 10 seconds.
-     *
-     * <p>The official discord client sends this every 5 seconds even though the typing status lasts 10.
-     *
-     * <p>The following {@link ErrorResponse ErrorResponses} are possible:
-     * <ul>
-     *     <li>{@link ErrorResponse#MISSING_ACCESS MISSING_ACCESS}
-     *     <br>The request was attempted after the account lost access to the {@link Guild Guild}
-     *         typically due to being kicked or removed, or after {@link Permission#MESSAGE_READ Permission.MESSAGE_READ}
-     *         or {@link Permission#MESSAGE_WRITE Permission.MESSAGE_WRITE}
-     *         was revoked in the {@link TextChannel TextChannel}</li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_CHANNEL UNKNOWN_CHANNEL}
-     *     <br>The request was attempted after the channel was deleted.</li>
-     * </ul>
-     *
-     * @throws InsufficientPermissionException
-     *         If this is a {@link TextChannel TextChannel} and the logged in account does not have
-     *         <ul>
-     *             <li>{@link Permission#MESSAGE_READ Permission.MESSAGE_READ}</li>
-     *             <li>{@link Permission#MESSAGE_WRITE Permission.MESSAGE_WRITE}</li>
-     *         </ul>
-     *
-     * @return {@link RestAction RestAction} - Type: Void
-     */
+
     @Nonnull
     @CheckReturnValue
     default RestAction<Void> sendTyping()
@@ -1678,76 +367,7 @@ public interface MessageChannel extends ISnowflake, Formattable
         return new RestActionImpl<>(getJDA(), route);
     }
 
-    /**
-     * Attempts to react to a message represented by the specified {@code messageId}
-     * in this MessageChannel.
-     *
-     * <p>The unicode provided has to be a unicode representation of the emoji
-     * that is supposed to be used for the Reaction.
-     * <br>To retrieve the characters needed you can use an api or
-     * the official discord client by escaping the emoji (\:emoji-name:)
-     * and copying the resulting emoji from the sent message.
-     *
-     * <p>This method encodes the provided unicode for you.
-     * <b>Do not encode the emoji before providing the unicode.</b>
-     *
-     * <h2>Examples</h2>
-     * <code>
-     * // custom<br>
-     * channel.addReactionById(messageId, "minn:245267426227388416").queue();<br>
-     * // unicode escape<br>
-     * channel.addReactionById(messageId, "&#92;uD83D&#92;uDE02").queue();<br>
-     * // codepoint notation<br>
-     * channel.addReactionById(messageId, "U+1F602").queue();
-     * </code>
-     *
-     * <p>The following {@link ErrorResponse ErrorResponses} are possible:
-     * <ul>
-     *     <li>{@link ErrorResponse#MISSING_ACCESS MISSING_ACCESS}
-     *     <br>The request was attempted after the account lost access to the {@link Guild Guild}
-     *         typically due to being kicked or removed, or after {@link Permission#MESSAGE_READ Permission.MESSAGE_READ}
-     *         was revoked in the {@link TextChannel TextChannel}
-     *     <br>Also can happen if the account lost the {@link Permission#MESSAGE_HISTORY Permission.MESSAGE_HISTORY}</li>
-     *
-     *
-     *     <li>{@link ErrorResponse#MISSING_PERMISSIONS MISSING_PERMISSIONS}
-     *     <br>The request was attempted after the account lost
-     *         {@link Permission#MESSAGE_ADD_REACTION Permission.MESSAGE_ADD_REACTION} in the
-     *         {@link TextChannel TextChannel}.</li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_EMOJI UNKNOWN_EMOJI}
-     *     <br>The provided unicode character does not refer to a known emoji unicode character.
-     *     <br>Proper unicode characters for emojis can be found at
-     *         <a href="http://unicode.org/emoji/charts/full-emoji-list.html" target="_blank">http://unicode.org/emoji/charts/full-emoji-list.html</a></li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_MESSAGE UNKNOWN_MESSAGE}
-     *     <br>The provided {@code messageId} is unknown in this MessageChannel, either due to the id being invalid, or
-     *         the message it referred to has already been deleted.</li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_CHANNEL UNKNOWN_CHANNEL}
-     *     <br>The request was attempted after the channel was deleted.</li>
-     * </ul>
-     *
-     * @param  messageId
-     *         The messageId to attach the reaction to
-     * @param  unicode
-     *         The unicode characters to react with
-     *
-     * @throws java.lang.IllegalArgumentException
-     *         <ul>
-     *             <li>If provided {@code messageId} is {@code null} or empty.</li>
-     *             <li>If provided {@code unicode} is {@code null} or empty.</li>
-     *         </ul>
-     * @throws InsufficientPermissionException
-     *         If the MessageChannel this message was sent in was a {@link TextChannel TextChannel}
-     *         and the logged in account does not have:
-     *         <ul>
-     *             <li>{@link Permission#MESSAGE_ADD_REACTION Permission.MESSAGE_ADD_REACTION}</li>
-     *             <li>{@link Permission#MESSAGE_HISTORY Permission.MESSAGE_HISTORY}</li>
-     *         </ul>
-     *
-     * @return {@link RestAction}
-     */
+
     @Nonnull
     @CheckReturnValue
     default RestAction<Void> addReactionById(@Nonnull String messageId, @Nonnull String unicode)
@@ -1763,73 +383,7 @@ public interface MessageChannel extends ISnowflake, Formattable
         return new RestActionImpl<>(getJDA(), route);
     }
 
-    /**
-     * Attempts to react to a message represented by the specified {@code messageId}
-     * in this MessageChannel.
-     *
-     * <p>The unicode provided has to be a unicode representation of the emoji
-     * that is supposed to be used for the Reaction.
-     * <br>To retrieve the characters needed you can use an api or
-     * the official discord client by escaping the emoji (\:emoji-name:)
-     * and copying the resulting emoji from the sent message.
-     *
-     * <p>This method encodes the provided unicode for you.
-     * <b>Do not encode the emoji before providing the unicode.</b>
-     *
-     * <h2>Examples</h2>
-     * <code>
-     * // custom<br>
-     * channel.addReactionById(messageId, "minn:245267426227388416").queue();<br>
-     * // unicode escape<br>
-     * channel.addReactionById(messageId, "&#92;uD83D&#92;uDE02").queue();<br>
-     * // codepoint notation<br>
-     * channel.addReactionById(messageId, "U+1F602").queue();
-     * </code>
-     *
-     * <p>The following {@link ErrorResponse ErrorResponses} are possible:
-     * <ul>
-     *     <li>{@link ErrorResponse#MISSING_ACCESS MISSING_ACCESS}
-     *     <br>The request was attempted after the account lost access to the {@link Guild Guild}
-     *         typically due to being kicked or removed, or after {@link Permission#MESSAGE_READ Permission.MESSAGE_READ}
-     *         was revoked in the {@link TextChannel TextChannel}
-     *     <br>Also can happen if the account lost the {@link Permission#MESSAGE_HISTORY Permission.MESSAGE_HISTORY}</li>
-     *
-     *
-     *     <li>{@link ErrorResponse#MISSING_PERMISSIONS MISSING_PERMISSIONS}
-     *     <br>The request was attempted after the account lost
-     *         {@link Permission#MESSAGE_ADD_REACTION Permission.MESSAGE_ADD_REACTION} in the
-     *         {@link TextChannel TextChannel}.</li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_EMOJI UNKNOWN_EMOJI}
-     *     <br>The provided unicode character does not refer to a known emoji unicode character.
-     *     <br>Proper unicode characters for emojis can be found at
-     *         <a href="http://unicode.org/emoji/charts/full-emoji-list.html" target="_blank">http://unicode.org/emoji/charts/full-emoji-list.html</a></li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_MESSAGE UNKNOWN_MESSAGE}
-     *     <br>The provided {@code messageId} is unknown in this MessageChannel, either due to the id being invalid, or
-     *         the message it referred to has already been deleted.</li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_CHANNEL UNKNOWN_CHANNEL}
-     *     <br>The request was attempted after the channel was deleted.</li>
-     * </ul>
-     *
-     * @param  messageId
-     *         The messageId to attach the reaction to
-     * @param  unicode
-     *         The unicode characters to react with
-     *
-     * @throws java.lang.IllegalArgumentException
-     *         If provided {@code unicode} is {@code null} or empty.
-     * @throws InsufficientPermissionException
-     *         If the MessageChannel this message was sent in was a {@link TextChannel TextChannel}
-     *         and the logged in account does not have:
-     *         <ul>
-     *             <li>{@link Permission#MESSAGE_ADD_REACTION Permission.MESSAGE_ADD_REACTION}</li>
-     *             <li>{@link Permission#MESSAGE_HISTORY Permission.MESSAGE_HISTORY}</li>
-     *         </ul>
-     *
-     * @return {@link RestAction}
-     */
+
     @Nonnull
     @CheckReturnValue
     default RestAction<Void> addReactionById(long messageId, @Nonnull String unicode)
@@ -1837,62 +391,7 @@ public interface MessageChannel extends ISnowflake, Formattable
         return addReactionById(Long.toUnsignedString(messageId), unicode);
     }
 
-    /**
-     * Attempts to react to a message represented by the specified {@code messageId}
-     * in this MessageChannel.
-     *
-     * <p><b>An Emote is not the same as an emoji!</b>
-     * <br>Emotes are custom guild-specific images unlike global unicode emojis!
-     *
-     * <p><b><u>Unicode emojis are not included as {@link Emote Emote}!</u></b>
-     *
-     * <p>The following {@link ErrorResponse ErrorResponses} are possible:
-     * <ul>
-     *     <li>{@link ErrorResponse#MISSING_ACCESS MISSING_ACCESS}
-     *     <br>The request was attempted after the account lost access to the {@link Guild Guild}
-     *         typically due to being kicked or removed, or after {@link Permission#MESSAGE_READ Permission.MESSAGE_READ}
-     *         was revoked in the {@link TextChannel TextChannel}
-     *     <br>Also can happen if the account lost the {@link Permission#MESSAGE_HISTORY Permission.MESSAGE_HISTORY}</li>
-     *
-     *
-     *     <li>{@link ErrorResponse#MISSING_PERMISSIONS MISSING_PERMISSIONS}
-     *     <br>The request was attempted after the account lost
-     *         {@link Permission#MESSAGE_ADD_REACTION Permission.MESSAGE_ADD_REACTION} in the
-     *         {@link TextChannel TextChannel}.</li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_EMOJI}
-     *     <br>The provided unicode character does not refer to a known emoji unicode character.
-     *     <br>Proper unicode characters for emojis can be found at
-     *         <a href="http://unicode.org/emoji/charts/full-emoji-list.html" target="_blank">http://unicode.org/emoji/charts/full-emoji-list.html</a></li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_MESSAGE UNKNOWN_MESSAGE}
-     *     <br>The provided {@code messageId} is unknown in this MessageChannel, either due to the id being invalid, or
-     *         the message it referred to has already been deleted.</li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_CHANNEL UNKNOWN_CHANNEL}
-     *     <br>The request was attempted after the channel was deleted.</li>
-     * </ul>
-     *
-     * @param  messageId
-     *         The messageId to attach the reaction to
-     * @param  emote
-     *         The not-null {@link Emote} to react with
-     *
-     * @throws java.lang.IllegalArgumentException
-     *         <ul>
-     *             <li>If provided {@code messageId} is {@code null} or empty.</li>
-     *             <li>If provided {@code emote} is {@code null}.</li>
-     *         </ul>
-     * @throws InsufficientPermissionException
-     *         If the MessageChannel this message was sent in was a {@link TextChannel TextChannel}
-     *         and the logged in account does not have
-     *         <ul>
-     *             <li>{@link Permission#MESSAGE_ADD_REACTION Permission.MESSAGE_ADD_REACTION}</li>
-     *             <li>{@link Permission#MESSAGE_HISTORY Permission.MESSAGE_HISTORY}</li>
-     *         </ul>
-     *
-     * @return {@link RestAction}
-     */
+
     @Nonnull
     @CheckReturnValue
     default RestAction<Void> addReactionById(@Nonnull String messageId, @Nonnull Emote emote)
@@ -1901,61 +400,7 @@ public interface MessageChannel extends ISnowflake, Formattable
         return addReactionById(messageId, emote.getName() + ":" + emote.getId());
     }
 
-    /**
-     * Attempts to react to a message represented by the specified {@code messageId}
-     * in this MessageChannel.
-     *
-     * <p><b>An Emote is not the same as an emoji!</b>
-     * <br>Emotes are custom guild-specific images unlike global unicode emojis!
-     *
-     * <p><b><u>Unicode emojis are not included as {@link Emote Emote}!</u></b>
-     *
-     * <p>The following {@link ErrorResponse ErrorResponses} are possible:
-     * <ul>
-     *     <li>{@link ErrorResponse#MISSING_ACCESS MISSING_ACCESS}
-     *     <br>The request was attempted after the account lost access to the {@link Guild Guild}
-     *         typically due to being kicked or removed, or after {@link Permission#MESSAGE_READ Permission.MESSAGE_READ}
-     *         was revoked in the {@link TextChannel TextChannel}
-     *     <br>Also can happen if the account lost the {@link Permission#MESSAGE_HISTORY Permission.MESSAGE_HISTORY}</li>
-     *
-     *
-     *     <li>{@link ErrorResponse#MISSING_PERMISSIONS MISSING_PERMISSIONS}
-     *     <br>The request was attempted after the account lost
-     *         {@link Permission#MESSAGE_ADD_REACTION Permission.MESSAGE_ADD_REACTION} in the
-     *         {@link TextChannel TextChannel}.</li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_EMOJI}
-     *     <br>The request was attempted after the provided {@link Emote Emote}
-     *         was deleted.</li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_MESSAGE UNKNOWN_MESSAGE}
-     *     <br>The provided {@code messageId} is unknown in this MessageChannel, either due to the id being invalid, or
-     *         the message it referred to has already been deleted.</li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_CHANNEL UNKNOWN_CHANNEL}
-     *     <br>The request was attempted after the channel was deleted.</li>
-     * </ul>
-     *
-     * @param  messageId
-     *         The messageId to attach the reaction to
-     * @param  emote
-     *         The not-null {@link Emote} to react with
-     *
-     * @throws java.lang.IllegalArgumentException
-     *         <ul>
-     *             <li>If provided {@code messageId} is not positive.</li>
-     *             <li>If provided {@code emote} is {@code null}</li>
-     *         </ul>
-     * @throws InsufficientPermissionException
-     *         If the MessageChannel this message was sent in was a {@link TextChannel TextChannel}
-     *         and the logged in account does not have
-     *         <ul>
-     *             <li>{@link Permission#MESSAGE_ADD_REACTION Permission.MESSAGE_ADD_REACTION}</li>
-     *             <li>{@link Permission#MESSAGE_HISTORY Permission.MESSAGE_HISTORY}</li>
-     *         </ul>
-     *
-     * @return {@link RestAction}
-     */
+
     @Nonnull
     @CheckReturnValue
     default RestAction<Void> addReactionById(long messageId, @Nonnull Emote emote)
@@ -1963,59 +408,7 @@ public interface MessageChannel extends ISnowflake, Formattable
         return addReactionById(Long.toUnsignedString(messageId), emote);
     }
 
-    /**
-     * Attempts to remove the reaction from a message represented by the specified {@code messageId}
-     * in this MessageChannel.
-     *
-     * <p>The unicode provided has to be a unicode representation of the emoji
-     * that is supposed to be represented by the Reaction.
-     * <br>To retrieve the characters needed you can use an api or
-     * the official discord client by escaping the emoji (\:emoji-name:)
-     * and copying the resulting emoji from the sent message.
-     *
-     * <p>This method encodes the provided unicode for you.
-     * <b>Do not encode the emoji before providing the unicode.</b>
-     *
-     * <p>The following {@link ErrorResponse ErrorResponses} are possible:
-     * <ul>
-     *     <li>{@link ErrorResponse#MISSING_ACCESS MISSING_ACCESS}
-     *     <br>The request was attempted after the account lost access to the {@link Guild Guild}
-     *         typically due to being kicked or removed, or after {@link Permission#MESSAGE_READ Permission.MESSAGE_READ}
-     *         was revoked in the {@link TextChannel TextChannel}
-     *     <br>Also can happen if the account lost the {@link Permission#MESSAGE_HISTORY Permission.MESSAGE_HISTORY}</li>
-     *
-     *
-     *     <li>{@link ErrorResponse#MISSING_PERMISSIONS MISSING_PERMISSIONS}
-     *     <br>The request was attempted after the account lost
-     *         {@link Permission#MESSAGE_ADD_REACTION Permission.MESSAGE_ADD_REACTION} in the
-     *         {@link TextChannel TextChannel}.</li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_EMOJI}
-     *     <br>The provided unicode character does not refer to a known emoji unicode character.
-     *     <br>Proper unicode characters for emojis can be found at
-     *         <a href="http://unicode.org/emoji/charts/full-emoji-list.html" target="_blank">http://unicode.org/emoji/charts/full-emoji-list.html</a></li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_MESSAGE UNKNOWN_MESSAGE}
-     *     <br>The provided {@code messageId} is unknown in this MessageChannel, either due to the id being invalid, or
-     *         the message it referred to has already been deleted.</li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_CHANNEL UNKNOWN_CHANNEL}
-     *     <br>The request was attempted after the channel was deleted.</li>
-     * </ul>
-     *
-     * @param  messageId
-     *         The messageId to remove the reaction from
-     * @param  unicode
-     *         The unicode characters of the emoji
-     *
-     * @throws java.lang.IllegalArgumentException
-     *         <ul>
-     *             <li>If provided {@code messageId} is {@code null} or empty.</li>
-     *             <li>If provided {@code unicode} is {@code null} or empty.</li>
-     *         </ul>
-     *
-     * @return {@link RestAction}
-     */
+
     @Nonnull
     @CheckReturnValue
     default RestAction<Void> removeReactionById(@Nonnull String messageId, @Nonnull String unicode)
@@ -2031,59 +424,7 @@ public interface MessageChannel extends ISnowflake, Formattable
         return new RestActionImpl<>(getJDA(), route);
     }
 
-    /**
-     * Attempts to remove the reaction from a message represented by the specified {@code messageId}
-     * in this MessageChannel.
-     *
-     * <p>The unicode provided has to be a unicode representation of the emoji
-     * that is supposed to be represented by the Reaction.
-     * <br>To retrieve the characters needed you can use an api or
-     * the official discord client by escaping the emoji (\:emoji-name:)
-     * and copying the resulting emoji from the sent message.
-     *
-     * <p>This method encodes the provided unicode for you.
-     * <b>Do not encode the emoji before providing the unicode.</b>
-     *
-     * <p>The following {@link ErrorResponse ErrorResponses} are possible:
-     * <ul>
-     *     <li>{@link ErrorResponse#MISSING_ACCESS MISSING_ACCESS}
-     *     <br>The request was attempted after the account lost access to the {@link Guild Guild}
-     *         typically due to being kicked or removed, or after {@link Permission#MESSAGE_READ Permission.MESSAGE_READ}
-     *         was revoked in the {@link TextChannel TextChannel}
-     *     <br>Also can happen if the account lost the {@link Permission#MESSAGE_HISTORY Permission.MESSAGE_HISTORY}</li>
-     *
-     *
-     *     <li>{@link ErrorResponse#MISSING_PERMISSIONS MISSING_PERMISSIONS}
-     *     <br>The request was attempted after the account lost
-     *         {@link Permission#MESSAGE_ADD_REACTION Permission.MESSAGE_ADD_REACTION} in the
-     *         {@link TextChannel TextChannel}.</li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_EMOJI}
-     *     <br>The provided unicode character does not refer to a known emoji unicode character.
-     *     <br>Proper unicode characters for emojis can be found at
-     *         <a href="http://unicode.org/emoji/charts/full-emoji-list.html" target="_blank">http://unicode.org/emoji/charts/full-emoji-list.html</a></li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_MESSAGE UNKNOWN_MESSAGE}
-     *     <br>The provided {@code messageId} is unknown in this MessageChannel, either due to the id being invalid, or
-     *         the message it referred to has already been deleted.</li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_CHANNEL UNKNOWN_CHANNEL}
-     *     <br>The request was attempted after the channel was deleted.</li>
-     * </ul>
-     *
-     * @param  messageId
-     *         The messageId to remove the reaction from
-     * @param  unicode
-     *         The unicode characters of the emoji
-     *
-     * @throws java.lang.IllegalArgumentException
-     *         <ul>
-     *             <li>If provided {@code messageId} is {@code null} or empty.</li>
-     *             <li>If provided {@code unicode} is {@code null} or empty.</li>
-     *         </ul>
-     *
-     * @return {@link RestAction}
-     */
+
     @Nonnull
     @CheckReturnValue
     default RestAction<Void> removeReactionById(long messageId, @Nonnull String unicode)
@@ -2091,53 +432,7 @@ public interface MessageChannel extends ISnowflake, Formattable
         return removeReactionById(Long.toUnsignedString(messageId), unicode);
     }
 
-    /**
-     * Attempts to remove the reaction from a message represented by the specified {@code messageId}
-     * in this MessageChannel.
-     *
-     * <p><b>An Emote is not the same as an emoji!</b>
-     * <br>Emotes are custom guild-specific images unlike global unicode emojis!
-     *
-     * <p>The following {@link ErrorResponse ErrorResponses} are possible:
-     * <ul>
-     *     <li>{@link ErrorResponse#MISSING_ACCESS MISSING_ACCESS}
-     *     <br>The request was attempted after the account lost access to the {@link Guild Guild}
-     *         typically due to being kicked or removed, or after {@link Permission#MESSAGE_READ Permission.MESSAGE_READ}
-     *         was revoked in the {@link TextChannel TextChannel}
-     *     <br>Also can happen if the account lost the {@link Permission#MESSAGE_HISTORY Permission.MESSAGE_HISTORY}</li>
-     *
-     *
-     *     <li>{@link ErrorResponse#MISSING_PERMISSIONS MISSING_PERMISSIONS}
-     *     <br>The request was attempted after the account lost
-     *         {@link Permission#MESSAGE_ADD_REACTION Permission.MESSAGE_ADD_REACTION} in the
-     *         {@link TextChannel TextChannel}.</li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_EMOJI}
-     *     <br>The provided unicode character does not refer to a known emoji unicode character.
-     *     <br>Proper unicode characters for emojis can be found at
-     *         <a href="http://unicode.org/emoji/charts/full-emoji-list.html" target="_blank">http://unicode.org/emoji/charts/full-emoji-list.html</a></li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_MESSAGE UNKNOWN_MESSAGE}
-     *     <br>The provided {@code messageId} is unknown in this MessageChannel, either due to the id being invalid, or
-     *         the message it referred to has already been deleted.</li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_CHANNEL UNKNOWN_CHANNEL}
-     *     <br>The request was attempted after the channel was deleted.</li>
-     * </ul>
-     *
-     * @param  messageId
-     *         The messageId to remove the reaction from
-     * @param  emote
-     *         The emote to remove
-     *
-     * @throws java.lang.IllegalArgumentException
-     *         <ul>
-     *             <li>If provided {@code messageId} is {@code null} or empty.</li>
-     *             <li>If provided {@code emote} is {@code null}.</li>
-     *         </ul>
-     *
-     * @return {@link RestAction}
-     */
+
     @Nonnull
     @CheckReturnValue
     default RestAction<Void> removeReactionById(@Nonnull String messageId, @Nonnull Emote emote)
@@ -2146,53 +441,7 @@ public interface MessageChannel extends ISnowflake, Formattable
         return removeReactionById(messageId, emote.getName() + ":" + emote.getId());
     }
 
-    /**
-     * Attempts to remove the reaction from a message represented by the specified {@code messageId}
-     * in this MessageChannel.
-     *
-     * <p><b>An Emote is not the same as an emoji!</b>
-     * <br>Emotes are custom guild-specific images unlike global unicode emojis!
-     *
-     * <p>The following {@link ErrorResponse ErrorResponses} are possible:
-     * <ul>
-     *     <li>{@link ErrorResponse#MISSING_ACCESS MISSING_ACCESS}
-     *     <br>The request was attempted after the account lost access to the {@link Guild Guild}
-     *         typically due to being kicked or removed, or after {@link Permission#MESSAGE_READ Permission.MESSAGE_READ}
-     *         was revoked in the {@link TextChannel TextChannel}
-     *     <br>Also can happen if the account lost the {@link Permission#MESSAGE_HISTORY Permission.MESSAGE_HISTORY}</li>
-     *
-     *
-     *     <li>{@link ErrorResponse#MISSING_PERMISSIONS MISSING_PERMISSIONS}
-     *     <br>The request was attempted after the account lost
-     *         {@link Permission#MESSAGE_ADD_REACTION Permission.MESSAGE_ADD_REACTION} in the
-     *         {@link TextChannel TextChannel}.</li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_EMOJI}
-     *     <br>The provided unicode character does not refer to a known emoji unicode character.
-     *     <br>Proper unicode characters for emojis can be found at
-     *         <a href="http://unicode.org/emoji/charts/full-emoji-list.html" target="_blank">http://unicode.org/emoji/charts/full-emoji-list.html</a></li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_MESSAGE UNKNOWN_MESSAGE}
-     *     <br>The provided {@code messageId} is unknown in this MessageChannel, either due to the id being invalid, or
-     *         the message it referred to has already been deleted.</li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_CHANNEL UNKNOWN_CHANNEL}
-     *     <br>The request was attempted after the channel was deleted.</li>
-     * </ul>
-     *
-     * @param  messageId
-     *         The messageId to remove the reaction from
-     * @param  emote
-     *         The emote to remove
-     *
-     * @throws java.lang.IllegalArgumentException
-     *         <ul>
-     *             <li>If provided {@code messageId} is {@code null} or empty.</li>
-     *             <li>If provided {@code emote} is {@code null}.</li>
-     *         </ul>
-     *
-     * @return {@link RestAction}
-     */
+
     @Nonnull
     @CheckReturnValue
     default RestAction<Void> removeReactionById(long messageId, @Nonnull Emote emote)
@@ -2200,43 +449,7 @@ public interface MessageChannel extends ISnowflake, Formattable
         return removeReactionById(Long.toUnsignedString(messageId), emote);
     }
 
-    /**
-     * Used to pin a message. Pinned messages are retrievable via {@link #retrievePinnedMessages()}.
-     *
-     * <p>The following {@link ErrorResponse ErrorResponses} are possible:
-     * <ul>
-     *     <li>{@link ErrorResponse#MISSING_ACCESS MISSING_ACCESS}
-     *     <br>The request was attempted after the account lost access to the {@link Guild Guild}
-     *         typically due to being kicked or removed, or after {@link Permission#MESSAGE_READ Permission.MESSAGE_READ}
-     *         was revoked in the {@link TextChannel TextChannel}</li>
-     *
-     *     <li>{@link ErrorResponse#MISSING_PERMISSIONS MISSING_PERMISSIONS}
-     *     <br>The request was attempted after the account lost
-     *         {@link Permission#MESSAGE_MANAGE Permission.MESSAGE_MANAGE} in the
-     *         {@link TextChannel TextChannel}.</li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_MESSAGE UNKNOWN_MESSAGE}
-     *     <br>The provided {@code messageId} is unknown in this MessageChannel, either due to the id being invalid, or
-     *         the message it referred to has already been deleted.</li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_CHANNEL UNKNOWN_CHANNEL}
-     *     <br>The request was attempted after the channel was deleted.</li>
-     * </ul>
-     *
-     * @param  messageId
-     *         The message to pin.
-     *
-     * @throws IllegalArgumentException
-     *         if the provided messageId is {@code null} or empty.
-     * @throws InsufficientPermissionException
-     *         If this is a {@link TextChannel TextChannel} and the logged in account does not have
-     *         <ul>
-     *             <li>{@link Permission#MESSAGE_READ Permission.MESSAGE_READ}</li>
-     *             <li>{@link Permission#MESSAGE_MANAGE Permission.MESSAGE_MANAGE}</li>
-     *         </ul>
-     *
-     * @return {@link RestAction RestAction}
-     */
+
     @Nonnull
     @CheckReturnValue
     default RestAction<Void> pinMessageById(@Nonnull String messageId)
@@ -2247,43 +460,7 @@ public interface MessageChannel extends ISnowflake, Formattable
         return new RestActionImpl<Void>(getJDA(), route);
     }
 
-    /**
-     * Used to pin a message. Pinned messages are retrievable via {@link #retrievePinnedMessages()}.
-     *
-     * <p>The following {@link ErrorResponse ErrorResponses} are possible:
-     * <ul>
-     *     <li>{@link ErrorResponse#MISSING_ACCESS MISSING_ACCESS}
-     *     <br>The request was attempted after the account lost access to the {@link Guild Guild}
-     *         typically due to being kicked or removed, or after {@link Permission#MESSAGE_READ Permission.MESSAGE_READ}
-     *         was revoked in the {@link TextChannel TextChannel}</li>
-     *
-     *     <li>{@link ErrorResponse#MISSING_PERMISSIONS MISSING_PERMISSIONS}
-     *     <br>The request was attempted after the account lost
-     *         {@link Permission#MESSAGE_MANAGE Permission.MESSAGE_MANAGE} in the
-     *         {@link TextChannel TextChannel}.</li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_MESSAGE UNKNOWN_MESSAGE}
-     *     <br>The provided {@code messageId} is unknown in this MessageChannel, either due to the id being invalid, or
-     *         the message it referred to has already been deleted.</li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_CHANNEL UNKNOWN_CHANNEL}
-     *     <br>The request was attempted after the channel was deleted.</li>
-     * </ul>
-     *
-     * @param  messageId
-     *         The message to pin.
-     *
-     * @throws IllegalArgumentException
-     *         if the provided messageId is not positive.
-     * @throws InsufficientPermissionException
-     *         If this is a {@link TextChannel TextChannel} and the logged in account does not have
-     *         <ul>
-     *             <li>{@link Permission#MESSAGE_READ Permission.MESSAGE_READ}</li>
-     *             <li>{@link Permission#MESSAGE_MANAGE Permission.MESSAGE_MANAGE}</li>
-     *         </ul>
-     *
-     * @return {@link RestAction RestAction}
-     */
+
     @Nonnull
     @CheckReturnValue
     default RestAction<Void> pinMessageById(long messageId)
@@ -2291,43 +468,7 @@ public interface MessageChannel extends ISnowflake, Formattable
         return pinMessageById(Long.toUnsignedString(messageId));
     }
 
-    /**
-     * Used to unpin a message. Pinned messages are retrievable via {@link #retrievePinnedMessages()}.
-     *
-     * <p>The following {@link ErrorResponse ErrorResponses} are possible:
-     * <ul>
-     *     <li>{@link ErrorResponse#MISSING_ACCESS MISSING_ACCESS}
-     *     <br>The request was attempted after the account lost access to the {@link Guild Guild}
-     *         typically due to being kicked or removed, or after {@link Permission#MESSAGE_READ Permission.MESSAGE_READ}
-     *         was revoked in the {@link TextChannel TextChannel}</li>
-     *
-     *     <li>{@link ErrorResponse#MISSING_PERMISSIONS MISSING_PERMISSIONS}
-     *     <br>The request was attempted after the account lost
-     *         {@link Permission#MESSAGE_MANAGE Permission.MESSAGE_MANAGE} in the
-     *         {@link TextChannel TextChannel}.</li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_MESSAGE UNKNOWN_MESSAGE}
-     *     <br>The provided {@code messageId} is unknown in this MessageChannel, either due to the id being invalid, or
-     *         the message it referred to has already been deleted.</li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_CHANNEL UNKNOWN_CHANNEL}
-     *     <br>The request was attempted after the channel was deleted.</li>
-     * </ul>
-     *
-     * @param  messageId
-     *         The message to unpin.
-     *
-     * @throws IllegalArgumentException
-     *         if the provided messageId is {@code null} or empty.
-     * @throws InsufficientPermissionException
-     *         If this is a {@link TextChannel TextChannel} and the logged in account does not have
-     *         <ul>
-     *             <li>{@link Permission#MESSAGE_READ Permission.MESSAGE_READ}</li>
-     *             <li>{@link Permission#MESSAGE_MANAGE Permission.MESSAGE_MANAGE}</li>
-     *         </ul>
-     *
-     * @return {@link RestAction RestAction}
-     */
+
     @Nonnull
     @CheckReturnValue
     default RestAction<Void> unpinMessageById(@Nonnull String messageId)
@@ -2338,43 +479,7 @@ public interface MessageChannel extends ISnowflake, Formattable
         return new RestActionImpl<Void>(getJDA(), route);
     }
 
-    /**
-     * Used to unpin a message. Pinned messages are retrievable via {@link #retrievePinnedMessages()}.
-     *
-     * <p>The following {@link ErrorResponse ErrorResponses} are possible:
-     * <ul>
-     *     <li>{@link ErrorResponse#MISSING_ACCESS MISSING_ACCESS}
-     *     <br>The request was attempted after the account lost access to the {@link Guild Guild}
-     *         typically due to being kicked or removed, or after {@link Permission#MESSAGE_READ Permission.MESSAGE_READ}
-     *         was revoked in the {@link TextChannel TextChannel}</li>
-     *
-     *     <li>{@link ErrorResponse#MISSING_PERMISSIONS MISSING_PERMISSIONS}
-     *     <br>The request was attempted after the account lost
-     *         {@link Permission#MESSAGE_MANAGE Permission.MESSAGE_MANAGE} in the
-     *         {@link TextChannel TextChannel}.</li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_MESSAGE UNKNOWN_MESSAGE}
-     *     <br>The provided {@code messageId} is unknown in this MessageChannel, either due to the id being invalid, or
-     *         the message it referred to has already been deleted.</li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_CHANNEL UNKNOWN_CHANNEL}
-     *     <br>The request was attempted after the channel was deleted.</li>
-     * </ul>
-     *
-     * @param  messageId
-     *         The message to unpin.
-     *
-     * @throws IllegalArgumentException
-     *         if the provided messageId is not positive.
-     * @throws InsufficientPermissionException
-     *         If this is a {@link TextChannel TextChannel} and the logged in account does not have
-     *         <ul>
-     *             <li>{@link Permission#MESSAGE_READ Permission.MESSAGE_READ}</li>
-     *             <li>{@link Permission#MESSAGE_MANAGE Permission.MESSAGE_MANAGE}</li>
-     *         </ul>
-     *
-     * @return {@link RestAction RestAction}
-     */
+
     @Nonnull
     @CheckReturnValue
     default RestAction<Void> unpinMessageById(long messageId)
@@ -2382,28 +487,7 @@ public interface MessageChannel extends ISnowflake, Formattable
         return unpinMessageById(Long.toUnsignedString(messageId));
     }
 
-    /**
-     * Retrieves a List of {@link Message Messages} that have been pinned in this channel.
-     * <br>If no messages have been pinned, this retrieves an empty List.
-     *
-     * <p>The following {@link ErrorResponse ErrorResponses} are possible:
-     * <ul>
-     *     <li>{@link ErrorResponse#MISSING_ACCESS MISSING_ACCESS}
-     *     <br>The request was attempted after the account lost access to the {@link Guild Guild}
-     *         typically due to being kicked or removed, or after {@link Permission#MESSAGE_READ Permission.MESSAGE_READ}
-     *         was revoked in the {@link TextChannel TextChannel}</li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_CHANNEL UNKNOWN_CHANNEL}
-     *     <br>The request was attempted after the channel was deleted.</li>
-     * </ul>
-     *
-     * @throws InsufficientPermissionException
-     *         If this is a TextChannel and this account does not have
-     *         {@link Permission#MESSAGE_READ Permission.MESSAGE_READ}
-     *
-     * @return {@link RestAction RestAction} - Type: List{@literal <}{@link Message}{@literal >}
-     *         <br>Retrieves an immutable list of pinned messages
-     */
+
     @Nonnull
     @CheckReturnValue
     default RestAction<List<Message>> retrievePinnedMessages()
@@ -2425,47 +509,7 @@ public interface MessageChannel extends ISnowflake, Formattable
         });
     }
 
-    /**
-     * Attempts to edit a message by its id in this MessageChannel. The string provided as {@code newContent} must
-     * have a length that is greater than 0 and less-than or equal to 2000. This is a Discord message length limitation.
-     *
-     * <p>The following {@link ErrorResponse ErrorResponses} are possible:
-     * <ul>
-     *     <li>{@link ErrorResponse#INVALID_AUTHOR_EDIT INVALID_AUTHOR_EDIT}
-     *     <br>Attempted to edit a message that was not sent by the currently logged in account.
-     *         Discord does not allow editing of other users' Messages!</li>
-     *
-     *     <li>{@link ErrorResponse#MISSING_ACCESS MISSING_ACCESS}
-     *     <br>The request was attempted after the account lost access to the {@link Guild Guild}
-     *         typically due to being kicked or removed, or after {@link Permission#MESSAGE_READ Permission.MESSAGE_READ}
-     *         was revoked in the {@link TextChannel TextChannel}</li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_MESSAGE UNKNOWN_MESSAGE}
-     *     <br>The provided {@code messageId} is unknown in this MessageChannel, either due to the id being invalid, or
-     *         the message it referred to has already been deleted.</li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_CHANNEL UNKNOWN_CHANNEL}
-     *     <br>The request was attempted after the channel was deleted.</li>
-     * </ul>
-     *
-     * @param  messageId
-     *         The id referencing the Message that should be edited
-     * @param  newContent
-     *         The new content for the edited message
-     *
-     * @throws IllegalArgumentException
-     *         <ul>
-     *             <li>If provided {@code messageId} is {@code null} or empty.</li>
-     *             <li>If provided {@code newContent} is {@code null} or empty.</li>
-     *             <li>If provided {@code newContent} length is greater than {@code 2000} characters.</li>
-     *         </ul>
-     * @throws InsufficientPermissionException
-     *         If this is a TextChannel and this account does not have
-     *         {@link Permission#MESSAGE_READ Permission.MESSAGE_READ}
-     *
-     * @return {@link MessageAction MessageAction}
-     *         <br>The modified Message after it has been sent to Discord.
-     */
+
     @Nonnull
     @CheckReturnValue
     default MessageAction editMessageById(@Nonnull String messageId, @Nonnull CharSequence newContent)
@@ -2481,47 +525,7 @@ public interface MessageChannel extends ISnowflake, Formattable
             return new MessageActionImpl(getJDA(), route, this).append(newContent);
     }
 
-    /**
-     * Attempts to edit a message by its id in this MessageChannel. The string provided as {@code newContent} must
-     * have a length that is greater than 0 and less-than or equal to 2000. This is a Discord message length limitation.
-     *
-     * <p>The following {@link ErrorResponse ErrorResponses} are possible:
-     * <ul>
-     *     <li>{@link ErrorResponse#INVALID_AUTHOR_EDIT INVALID_AUTHOR_EDIT}
-     *     <br>Attempted to edit a message that was not sent by the currently logged in account.
-     *         Discord does not allow editing of other users' Messages!</li>
-     *
-     *     <li>{@link ErrorResponse#MISSING_ACCESS MISSING_ACCESS}
-     *     <br>The request was attempted after the account lost access to the {@link Guild Guild}
-     *         typically due to being kicked or removed, or after {@link Permission#MESSAGE_READ Permission.MESSAGE_READ}
-     *         was revoked in the {@link TextChannel TextChannel}</li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_MESSAGE UNKNOWN_MESSAGE}
-     *     <br>The provided {@code messageId} is unknown in this MessageChannel, either due to the id being invalid, or
-     *         the message it referred to has already been deleted.</li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_CHANNEL UNKNOWN_CHANNEL}
-     *     <br>The request was attempted after the channel was deleted.</li>
-     * </ul>
-     *
-     * @param  messageId
-     *         The id referencing the Message that should be edited
-     * @param  newContent
-     *         The new content for the edited message
-     *
-     * @throws IllegalArgumentException
-     *         <ul>
-     *             <li>If provided {@code messageId} is {@code null} or empty.</li>
-     *             <li>If provided {@code newContent} is {@code null} or empty.</li>
-     *             <li>If provided {@code newContent} length is greater than {@code 2000} characters.</li>
-     *         </ul>
-     * @throws PermissionException
-     *         If this is a TextChannel and this account does not have
-     *         {@link Permission#MESSAGE_READ Permission.MESSAGE_READ}
-     *
-     * @return {@link MessageAction MessageAction}
-     *         <br>The modified Message after it has been sent to Discord.
-     */
+
     @Nonnull
     @CheckReturnValue
     default MessageAction editMessageById(long messageId, @Nonnull CharSequence newContent)
@@ -2529,48 +533,7 @@ public interface MessageChannel extends ISnowflake, Formattable
         return editMessageById(Long.toUnsignedString(messageId), newContent);
     }
 
-    /**
-     * Attempts to edit a message by its id in this MessageChannel.
-     *
-     * <p>The following {@link ErrorResponse ErrorResponses} are possible:
-     * <ul>
-     *     <li>{@link ErrorResponse#INVALID_AUTHOR_EDIT INVALID_AUTHOR_EDIT}
-     *     <br>Attempted to edit a message that was not sent by the currently logged in account.
-     *         Discord does not allow editing of other users' Messages!</li>
-     *
-     *     <li>{@link ErrorResponse#MISSING_ACCESS MISSING_ACCESS}
-     *     <br>The request was attempted after the account lost access to the {@link Guild Guild}
-     *         typically due to being kicked or removed, or after {@link Permission#MESSAGE_READ Permission.MESSAGE_READ}
-     *         was revoked in the {@link TextChannel TextChannel}</li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_MESSAGE UNKNOWN_MESSAGE}
-     *     <br>The provided {@code messageId} is unknown in this MessageChannel, either due to the id being invalid, or
-     *         the message it referred to has already been deleted.</li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_CHANNEL UNKNOWN_CHANNEL}
-     *     <br>The request was attempted after the channel was deleted.</li>
-     * </ul>
-     *
-     * @param  messageId
-     *         The id referencing the Message that should be edited
-     * @param  newContent
-     *         The new content for the edited message
-     *
-     * @throws IllegalArgumentException
-     *         <ul>
-     *             <li>If provided {@code messageId} is {@code null} or empty.</li>
-     *             <li>If provided {@code newContent} is {@code null}.</li>
-     *             <li>If provided {@link Message Message}
-     *                 contains a {@link MessageEmbed MessageEmbed} which
-     *                 is not {@link MessageEmbed#isSendable(AccountType) sendable}</li>
-     *         </ul>
-     * @throws InsufficientPermissionException
-     *         If this is a TextChannel and this account does not have
-     *         {@link Permission#MESSAGE_READ Permission.MESSAGE_READ}
-     *
-     * @return {@link MessageAction MessageAction}
-     *         <br>The modified Message after it has been sent to discord
-     */
+
     @Nonnull
     @CheckReturnValue
     default MessageAction editMessageById(@Nonnull String messageId, @Nonnull Message newContent)
@@ -2582,48 +545,7 @@ public interface MessageChannel extends ISnowflake, Formattable
         return new MessageActionImpl(getJDA(), route, this).apply(newContent);
     }
 
-    /**
-     * Attempts to edit a message by its id in this MessageChannel.
-     *
-     * <p>The following {@link ErrorResponse ErrorResponses} are possible:
-     * <ul>
-     *     <li>{@link ErrorResponse#INVALID_AUTHOR_EDIT INVALID_AUTHOR_EDIT}
-     *     <br>Attempted to edit a message that was not sent by the currently logged in account.
-     *         Discord does not allow editing of other users' Messages!</li>
-     *
-     *     <li>{@link ErrorResponse#MISSING_ACCESS MISSING_ACCESS}
-     *     <br>The request was attempted after the account lost access to the {@link Guild Guild}
-     *         typically due to being kicked or removed, or after {@link Permission#MESSAGE_READ Permission.MESSAGE_READ}
-     *         was revoked in the {@link TextChannel TextChannel}</li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_MESSAGE UNKNOWN_MESSAGE}
-     *     <br>The provided {@code messageId} is unknown in this MessageChannel, either due to the id being invalid, or
-     *         the message it referred to has already been deleted.</li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_CHANNEL UNKNOWN_CHANNEL}
-     *     <br>The request was attempted after the channel was deleted.</li>
-     * </ul>
-     *
-     * @param  messageId
-     *         The id referencing the Message that should be edited
-     * @param  newContent
-     *         The new content for the edited message
-     *
-     * @throws IllegalArgumentException
-     *         <ul>
-     *             <li>If provided {@code messageId} is not positive.</li>
-     *             <li>If provided {@code newContent} is {@code null}.</li>
-     *             <li>If provided {@link Message Message}
-     *                 contains a {@link MessageEmbed MessageEmbed} which
-     *                 is not {@link MessageEmbed#isSendable(AccountType) sendable}</li>
-     *         </ul>
-     * @throws InsufficientPermissionException
-     *         If this is a TextChannel and this account does not have
-     *         {@link Permission#MESSAGE_READ Permission.MESSAGE_READ}
-     *
-     * @return {@link MessageAction MessageAction}
-     *         <br>The modified Message after it has been sent to discord
-     */
+
     @Nonnull
     @CheckReturnValue
     default MessageAction editMessageById(long messageId, @Nonnull Message newContent)
@@ -2631,57 +553,7 @@ public interface MessageChannel extends ISnowflake, Formattable
         return editMessageById(Long.toUnsignedString(messageId), newContent);
     }
 
-    /**
-     * Attempts to edit a message by its id in this MessageChannel.
-     * <br>Shortcut for {@link MessageBuilder#appendFormat(String, Object...)}.
-     *
-     * <p>The following {@link ErrorResponse ErrorResponses} are possible:
-     * <ul>
-     *     <li>{@link ErrorResponse#INVALID_AUTHOR_EDIT INVALID_AUTHOR_EDIT}
-     *     <br>Attempted to edit a message that was not sent by the currently logged in account.
-     *         Discord does not allow editing of other users' Messages!</li>
-     *
-     *     <li>{@link ErrorResponse#MISSING_ACCESS MISSING_ACCESS}
-     *     <br>The request was attempted after the account lost access to the {@link Guild Guild}
-     *         typically due to being kicked or removed, or after {@link Permission#MESSAGE_READ Permission.MESSAGE_READ}
-     *         was revoked in the {@link TextChannel TextChannel}</li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_MESSAGE UNKNOWN_MESSAGE}
-     *     <br>The provided {@code messageId} is unknown in this MessageChannel, either due to the id being invalid, or
-     *         the message it referred to has already been deleted.</li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_CHANNEL UNKNOWN_CHANNEL}
-     *     <br>The request was attempted after the channel was deleted.</li>
-     * </ul>
-     *
-     * @param  messageId
-     *         The id referencing the Message that should be edited
-     * @param  format
-     *         Format String used to generate new Content
-     * @param  args
-     *         The arguments which should be used to format the given format String
-     *
-     * @throws IllegalArgumentException
-     *         <ul>
-     *             <li>If provided {@code messageId} is {@code null} or empty.</li>
-     *             <li>If provided {@code format} is {@code null} or blank.</li>
-     *         </ul>
-     * @throws IllegalStateException
-     *         If the resulting message is either empty or too long to be sent
-     * @throws InsufficientPermissionException
-     *         If this is a TextChannel and this account does not have
-     *         {@link Permission#MESSAGE_READ Permission.MESSAGE_READ}
-     * @throws java.util.IllegalFormatException
-     *         If a format string contains an illegal syntax,
-     *         a format specifier that is incompatible with the given arguments,
-     *         insufficient arguments given the format string, or other illegal conditions.
-     *         For specification of all possible formatting errors,
-     *         see the <a href="../util/Formatter.html#detail">Details</a>
-     *         section of the formatter class specification.
-     *
-     * @return {@link MessageAction MessageAction}
-     *         <br>The modified Message after it has been sent to discord
-     */
+
     @Nonnull
     @CheckReturnValue
     default MessageAction editMessageFormatById(@Nonnull String messageId, @Nonnull String format, @Nonnull Object... args)
@@ -2690,57 +562,7 @@ public interface MessageChannel extends ISnowflake, Formattable
         return editMessageById(messageId, String.format(format, args));
     }
 
-    /**
-     * Attempts to edit a message by its id in this MessageChannel.
-     * <br>Shortcut for {@link MessageBuilder#appendFormat(String, Object...)}.
-     *
-     * <p>The following {@link ErrorResponse ErrorResponses} are possible:
-     * <ul>
-     *     <li>{@link ErrorResponse#INVALID_AUTHOR_EDIT INVALID_AUTHOR_EDIT}
-     *     <br>Attempted to edit a message that was not sent by the currently logged in account.
-     *         Discord does not allow editing of other users' Messages!</li>
-     *
-     *     <li>{@link ErrorResponse#MISSING_ACCESS MISSING_ACCESS}
-     *     <br>The request was attempted after the account lost access to the {@link Guild Guild}
-     *         typically due to being kicked or removed, or after {@link Permission#MESSAGE_READ Permission.MESSAGE_READ}
-     *         was revoked in the {@link TextChannel TextChannel}</li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_MESSAGE UNKNOWN_MESSAGE}
-     *     <br>The provided {@code messageId} is unknown in this MessageChannel, either due to the id being invalid, or
-     *         the message it referred to has already been deleted.</li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_CHANNEL UNKNOWN_CHANNEL}
-     *     <br>The request was attempted after the channel was deleted.</li>
-     * </ul>
-     *
-     * @param  messageId
-     *         The id referencing the Message that should be edited
-     * @param  format
-     *         Format String used to generate new Content
-     * @param  args
-     *         The arguments which should be used to format the given format String
-     *
-     * @throws IllegalArgumentException
-     *         <ul>
-     *             <li>If provided {@code messageId} is not positive.</li>
-     *             <li>If provided {@code format} is {@code null} or blank.</li>
-     *         </ul>
-     * @throws IllegalStateException
-     *         If the resulting message is either empty or too long to be sent
-     * @throws InsufficientPermissionException
-     *         If this is a TextChannel and this account does not have
-     *         {@link Permission#MESSAGE_READ Permission.MESSAGE_READ}
-     * @throws java.util.IllegalFormatException
-     *         If a format string contains an illegal syntax,
-     *         a format specifier that is incompatible with the given arguments,
-     *         insufficient arguments given the format string, or other illegal conditions.
-     *         For specification of all possible formatting errors,
-     *         see the <a href="../util/Formatter.html#detail">Details</a>
-     *         section of the formatter class specification.
-     *
-     * @return {@link MessageAction MessageAction}
-     *         <br>The modified Message after it has been sent to discord
-     */
+
     @Nonnull
     @CheckReturnValue
     default MessageAction editMessageFormatById(long messageId, @Nonnull String format, @Nonnull Object... args)
@@ -2749,49 +571,7 @@ public interface MessageChannel extends ISnowflake, Formattable
         return editMessageById(messageId, String.format(format, args));
     }
 
-    /**
-     * Attempts to edit a message by its id in this MessageChannel.
-     *
-     * <p>The following {@link ErrorResponse ErrorResponses} are possible:
-     * <ul>
-     *     <li>{@link ErrorResponse#INVALID_AUTHOR_EDIT INVALID_AUTHOR_EDIT}
-     *     <br>Attempted to edit a message that was not sent by the currently logged in account.
-     *         Discord does not allow editing of other users' Messages!</li>
-     *
-     *     <li>{@link ErrorResponse#MISSING_ACCESS MISSING_ACCESS}
-     *     <br>The request was attempted after the account lost access to the {@link Guild Guild}
-     *         typically due to being kicked or removed, or after {@link Permission#MESSAGE_READ Permission.MESSAGE_READ}
-     *         was revoked in the {@link TextChannel TextChannel}</li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_MESSAGE UNKNOWN_MESSAGE}
-     *     <br>The provided {@code messageId} is unknown in this MessageChannel, either due to the id being invalid, or
-     *         the message it referred to has already been deleted.</li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_CHANNEL UNKNOWN_CHANNEL}
-     *     <br>The request was attempted after the channel was deleted.</li>
-     * </ul>
-     *
-     * @param  messageId
-     *         The id referencing the Message that should be edited
-     * @param  newEmbed
-     *         The new {@link MessageEmbed MessageEmbed} for the edited message
-     *
-     * @throws IllegalArgumentException
-     *         <ul>
-     *             <li>If provided {@code messageId} is {@code null} or empty.</li>
-     *             <li>If provided {@link MessageEmbed MessageEmbed}
-     *                 is not {@link MessageEmbed#isSendable(AccountType) sendable}</li>
-     *         </ul>
-     * @throws IllegalStateException
-     *         If the provided MessageEmbed is {@code null}
-     * @throws InsufficientPermissionException
-     *         If this is a TextChannel and this account does not have
-     *         {@link Permission#MESSAGE_READ Permission.MESSAGE_READ}
-     *         or {@link Permission#MESSAGE_WRITE Permission.MESSAGE_WRITE}
-     *
-     * @return {@link MessageAction MessageAction}
-     *         <br>The modified Message after it has been sent to discord
-     */
+
     @Nonnull
     @CheckReturnValue
     default MessageAction editMessageById(@Nonnull String messageId, @Nonnull MessageEmbed newEmbed)
@@ -2803,49 +583,7 @@ public interface MessageChannel extends ISnowflake, Formattable
         return new MessageActionImpl(getJDA(), route, this).embed(newEmbed);
     }
 
-    /**
-     * Attempts to edit a message by its id in this MessageChannel.
-     *
-     * <p>The following {@link ErrorResponse ErrorResponses} are possible:
-     * <ul>
-     *     <li>{@link ErrorResponse#INVALID_AUTHOR_EDIT INVALID_AUTHOR_EDIT}
-     *     <br>Attempted to edit a message that was not sent by the currently logged in account.
-     *         Discord does not allow editing of other users' Messages!</li>
-     *
-     *     <li>{@link ErrorResponse#MISSING_ACCESS MISSING_ACCESS}
-     *     <br>The request was attempted after the account lost access to the {@link Guild Guild}
-     *         typically due to being kicked or removed, or after {@link Permission#MESSAGE_READ Permission.MESSAGE_READ}
-     *         was revoked in the {@link TextChannel TextChannel}</li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_MESSAGE UNKNOWN_MESSAGE}
-     *     <br>The provided {@code messageId} is unknown in this MessageChannel, either due to the id being invalid, or
-     *         the message it referred to has already been deleted.</li>
-     *
-     *     <li>{@link ErrorResponse#UNKNOWN_CHANNEL UNKNOWN_CHANNEL}
-     *     <br>The request was attempted after the channel was deleted.</li>
-     * </ul>
-     *
-     * @param  messageId
-     *         The id referencing the Message that should be edited
-     * @param  newEmbed
-     *         The new {@link MessageEmbed MessageEmbed} for the edited message
-     *
-     * @throws IllegalArgumentException
-     *         <ul>
-     *             <li>If provided {@code messageId} is not positive.</li>
-     *             <li>If provided {@link MessageEmbed MessageEmbed}
-     *                 is not {@link MessageEmbed#isSendable(AccountType) sendable}</li>
-     *         </ul>
-     * @throws IllegalStateException
-     *         If the provided MessageEmbed is {@code null}
-     * @throws InsufficientPermissionException
-     *         If this is a TextChannel and this account does not have
-     *         {@link Permission#MESSAGE_READ Permission.MESSAGE_READ}
-     *         or {@link Permission#MESSAGE_WRITE Permission.MESSAGE_WRITE}
-     *
-     * @return {@link MessageAction MessageAction}
-     *         <br>The modified Message after it has been sent to discord
-     */
+
     @Nonnull
     @CheckReturnValue
     default MessageAction editMessageById(long messageId, @Nonnull MessageEmbed newEmbed)

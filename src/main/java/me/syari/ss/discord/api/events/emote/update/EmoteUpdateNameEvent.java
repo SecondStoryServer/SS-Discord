@@ -7,13 +7,7 @@ import me.syari.ss.discord.api.entities.Emote;
 
 import javax.annotation.Nonnull;
 
-/**
- * Indicates that the name of an {@link Emote Emote} changed.
- *
- * <p>Can be used to retrieve the old name
- *
- * <p>Identifier: {@code name}
- */
+
 public class EmoteUpdateNameEvent extends GenericEmoteUpdateEvent<String>
 {
     public static final String IDENTIFIER = "name";
@@ -23,22 +17,14 @@ public class EmoteUpdateNameEvent extends GenericEmoteUpdateEvent<String>
         super(api, responseNumber, emote, oldName, emote.getName(), IDENTIFIER);
     }
 
-    /**
-     * The old name
-     *
-     * @return The old name
-     */
+
     @Nonnull
     public String getOldName()
     {
         return getOldValue();
     }
 
-    /**
-     * The new name
-     *
-     * @return The new name
-     */
+
     @Nonnull
     public String getNewName()
     {

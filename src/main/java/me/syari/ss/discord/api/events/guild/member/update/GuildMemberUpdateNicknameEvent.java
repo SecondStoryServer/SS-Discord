@@ -10,15 +10,7 @@ import me.syari.ss.discord.api.entities.Member;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-/**
- * Indicates that a {@link Member Member} updated their {@link Guild Guild} nickname.
- * <br>This event requires {@link JDABuilder#setGuildSubscriptionsEnabled(boolean) guild subscriptions}
- * to be enabled.
- *
- * <p>Can be used to retrieve members who change their nickname, triggering guild, the old nick and the new nick.
- *
- * <p>Identifier: {@code nick}
- */
+
 public class GuildMemberUpdateNicknameEvent extends GenericGuildMemberUpdateEvent<String>
 {
     public static final String IDENTIFIER = "nick";
@@ -28,22 +20,14 @@ public class GuildMemberUpdateNicknameEvent extends GenericGuildMemberUpdateEven
         super(api, responseNumber, member, oldNick, member.getNickname(), IDENTIFIER);
     }
 
-    /**
-     * The old nickname
-     *
-     * @return The old nickname
-     */
+
     @Nullable
     public String getOldNickname()
     {
         return getOldValue();
     }
 
-    /**
-     * The new nickname
-     *
-     * @return The new nickname
-     */
+
     @Nullable
     public String getNewNickname()
     {

@@ -13,11 +13,7 @@ import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * Indicates that a {@link VoiceChannel VoiceChannel}'s permission overrides changed.
- *
- * <p>Can be used to get affected VoiceChannel, affected Guild and affected {@link Role Roles}/{@link User Users}.
- */
+
 public class VoiceChannelUpdatePermissionsEvent extends GenericVoiceChannelEvent
 {
     private final List<IPermissionHolder> changedPermHolders;
@@ -28,25 +24,14 @@ public class VoiceChannelUpdatePermissionsEvent extends GenericVoiceChannelEvent
         this.changedPermHolders = changed;
     }
 
-    /**
-     * The affected {@link IPermissionHolder IPermissionHolders}
-     *
-     * @return The affected permission holders
-     *
-     * @see    #getChangedRoles()
-     * @see    #getChangedMembers()
-     */
+
     @Nonnull
     public List<IPermissionHolder> getChangedPermissionHolders()
     {
         return changedPermHolders;
     }
 
-    /**
-     * List of affected {@link Role Roles}
-     *
-     * @return List of affected roles
-     */
+
     @Nonnull
     public List<Role> getChangedRoles()
     {
@@ -56,11 +41,7 @@ public class VoiceChannelUpdatePermissionsEvent extends GenericVoiceChannelEvent
                 .collect(Collectors.toList());
     }
 
-    /**
-     * List of affected {@link Member Members}
-     *
-     * @return List of affected members
-     */
+
     @Nonnull
     public List<Member> getChangedMembers()
     {

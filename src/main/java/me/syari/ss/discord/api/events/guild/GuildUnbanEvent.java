@@ -7,11 +7,7 @@ import me.syari.ss.discord.api.entities.User;
 
 import javax.annotation.Nonnull;
 
-/**
- * Indicates that a {@link User User} was unbanned from a {@link Guild Guild}.
- *
- * <p>Can be used to retrieve the user who was unbanned (if available) and the guild which they were unbanned from.
- */
+
 public class GuildUnbanEvent extends GenericGuildEvent
 {
     private final User user;
@@ -22,12 +18,7 @@ public class GuildUnbanEvent extends GenericGuildEvent
         this.user = user;
     }
 
-    /**
-     * The {@link User User} who was unbanned
-     * <br>Possibly fake user.
-     *
-     * @return The unbanned user
-     */
+
     @Nonnull
     public User getUser()
     {

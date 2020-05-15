@@ -8,14 +8,7 @@ import me.syari.ss.discord.api.entities.User;
 
 import javax.annotation.Nonnull;
 
-/**
- * Indicates that a {@link User User} was banned from a {@link Guild Guild}.
- *
- * <p>Can be used to retrieve the user who was banned (if available) and triggering guild.
- * <br><b>Note</b>: This does not directly indicate that a Member is removed from the Guild!
- *
- * @see GuildMemberLeaveEvent GuildMemberLeaveEvent
- */
+
 public class GuildBanEvent extends GenericGuildEvent
 {
     private final User user;
@@ -26,12 +19,7 @@ public class GuildBanEvent extends GenericGuildEvent
         this.user = user;
     }
 
-    /**
-     * The banned {@link User User}
-     * <br>Possibly fake user.
-     *
-     * @return The banned user
-     */
+    
     @Nonnull
     public User getUser()
     {

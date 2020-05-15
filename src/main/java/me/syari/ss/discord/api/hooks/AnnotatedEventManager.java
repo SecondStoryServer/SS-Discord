@@ -13,28 +13,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-/**
- * Implementation for {@link IEventManager IEventManager}
- * which checks for {@link SubscribeEvent SubscribeEvent} annotations on both
- * <b>static</b> and <b>member</b> methods.
- *
- * <p>Listeners for this manager do <u>not</u> need to implement {@link EventListener EventListener}
- * <br>Example
- * <pre><code>
- * public class Foo
- * {
- *    {@literal @SubscribeEvent}
- *     public void onMsg(MessageReceivedEvent event)
- *     {
- *         System.out.printf("%s: %s\n", event.getAuthor().getName(), event.getMessage().getContentDisplay());
- *     }
- * }
- * </code></pre>
- *
- * @see InterfacedEventManager
- * @see IEventManager
- * @see SubscribeEvent
- */
+
 public class AnnotatedEventManager implements IEventManager
 {
     private final Set<Object> listeners = ConcurrentHashMap.newKeySet();

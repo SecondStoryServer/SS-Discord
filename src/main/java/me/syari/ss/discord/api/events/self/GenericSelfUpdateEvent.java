@@ -10,12 +10,7 @@ import me.syari.ss.discord.api.events.Event;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-/**
- * Indicates that a {@link SelfUser SelfUser} changed or started an activity.
- * <br>Every SelfUserEvent is derived from this event and can be casted.
- *
- * <p>Can be used to detect any SelfUserEvent.
- */
+
 public abstract class GenericSelfUpdateEvent<T> extends Event implements UpdateEvent<SelfUser, T>
 {
     protected final T previous;
@@ -32,11 +27,7 @@ public abstract class GenericSelfUpdateEvent<T> extends Event implements UpdateE
         this.identifier = identifier;
     }
 
-    /**
-     * The {@link SelfUser SelfUser}
-     *
-     * @return The {@link SelfUser SelfUser}
-     */
+
     @Nonnull
     public SelfUser getSelfUser()
     {

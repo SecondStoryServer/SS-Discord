@@ -19,10 +19,7 @@ import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import java.util.function.BooleanSupplier;
 
-/**
- * {@link Webhook Webhook} Builder system created as an extension of {@link RestAction}
- * <br>Provides an easy way to gather and deliver information to Discord to create {@link Webhook Webhooks}.
- */
+
 public class WebhookActionImpl extends AuditableRestActionImpl<Webhook> implements WebhookAction
 {
     protected final TextChannel channel;

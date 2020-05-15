@@ -10,12 +10,7 @@ import me.syari.ss.discord.api.entities.Member;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-/**
- * Indicates that a {@link Guild Guild} member event is fired.
- * <br>Every GuildMemberUpdateEvent is an instance of this event and can be casted.
- *
- * <p>Can be used to detect any GuildMemberUpdateEvent.
- */
+
 public abstract class GenericGuildMemberUpdateEvent<T> extends GenericGuildMemberEvent implements UpdateEvent<Member, T>
 {
     protected final T previous;

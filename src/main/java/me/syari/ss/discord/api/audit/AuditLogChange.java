@@ -6,12 +6,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Objects;
 
-/**
- * Plain-Old-Java-Object (POJO) representing a single
- * change for an {@link AuditLogEntry AuditLogEntry}!
- * <br>This object holds the {@link #getOldValue() old-} and {@link #getNewValue() new value} for the
- * updated field. The field is specified by the {@link #getKey() key}.
- */
+
 public class AuditLogChange
 {
     protected final Object oldValue;
@@ -25,18 +20,7 @@ public class AuditLogChange
         this.key = key;
     }
 
-    /**
-     * The previous value for the field specified by {@link #getKey()}.
-     *
-     * @param  <T>
-     *         The expected generic type for this value.
-     *         <br>This will be used to cast the value.
-     *
-     * @throws java.lang.ClassCastException
-     *         If the type cast to the generic type fails
-     *
-     * @return The old value
-     */
+
     @SuppressWarnings("unchecked")
     @Nullable
     public <T> T getOldValue()
@@ -44,18 +28,7 @@ public class AuditLogChange
         return (T) oldValue;
     }
 
-    /**
-     * The updated value for the field specified by {@link #getKey()}.
-     *
-     * @param  <T>
-     *         The expected generic type for this value.
-     *         <br>This will be used to cast the value.
-     *
-     * @throws java.lang.ClassCastException
-     *         If the type cast to the generic type fails
-     *
-     * @return The new value
-     */
+
     @SuppressWarnings("unchecked")
     @Nullable
     public <T> T getNewValue()
@@ -63,12 +36,7 @@ public class AuditLogChange
         return (T) newValue;
     }
 
-    /**
-     * The key which defines the field that was updated
-     * by this change
-     *
-     * @return The key
-     */
+
     @Nonnull
     public String getKey()
     {

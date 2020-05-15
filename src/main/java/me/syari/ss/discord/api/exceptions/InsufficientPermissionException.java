@@ -54,60 +54,26 @@ public class InsufficientPermissionException extends PermissionException
         this.channelType = channel == null ? ChannelType.UNKNOWN : channel.getType();
     }
 
-    /**
-     * The id for the responsible {@link Guild} instance.
-     *
-     * @return The ID as a long
-     *
-     * @since  4.0.0
-     *
-     * @see    JDA#getGuildById(long)
-     */
+
     public long getGuildId()
     {
         return guildId;
     }
 
-    /**
-     * The id for the responsible {@link GuildChannel} instance.
-     *
-     * @return The ID as a long or 0
-     *
-     * @since  4.0.0
-     *
-     * @see    #getChannel(JDA)
-     */
+
     public long getChannelId()
     {
         return channelId;
     }
 
-    /**
-     * The {@link ChannelType} for the {@link #getChannelId() channel id}.
-     *
-     * @return The channel type or {@link ChannelType#UNKNOWN}.
-     *
-     * @since  4.0.0
-     */
+
     @Nonnull
     public ChannelType getChannelType()
     {
         return channelType;
     }
 
-    /**
-     * The {@link Guild} instance for the {@link #getGuildId() guild id}.
-     *
-     * @param  api
-     *         The shard to perform the lookup in
-     *
-     * @throws java.lang.IllegalArgumentException
-     *         If the provided JDA instance is null
-     *
-     * @since  4.0.0
-     *
-     * @return The Guild instance or null
-     */
+
     @Nullable
     public Guild getGuild(@Nonnull JDA api)
     {
@@ -115,19 +81,7 @@ public class InsufficientPermissionException extends PermissionException
         return api.getGuildById(guildId);
     }
 
-    /**
-     * The {@link GuildChannel} instance for the {@link #getChannelId() channel id}.
-     *
-     * @param  api
-     *         The shard to perform the lookup in
-     *
-     * @throws java.lang.IllegalArgumentException
-     *         If the provided JDA instance is null
-     *
-     * @since  4.0.0
-     *
-     * @return The GuildChannel instance or null
-     */
+
     @Nullable
     public GuildChannel getChannel(@Nonnull JDA api)
     {

@@ -25,12 +25,7 @@ public class ReactionPaginationActionImpl
 {
     protected final MessageReaction reaction;
 
-    /**
-     * Creates a new PaginationAction instance
-     *
-     * @param reaction
-     *        The target {@link MessageReaction MessageReaction}
-     */
+    
     public ReactionPaginationActionImpl(MessageReaction reaction)
     {
         super(reaction.getJDA(), Route.Messages.GET_REACTION_USERS.compile(reaction.getChannel().getId(), reaction.getMessageId(), getCode(reaction)), 1, 100, 100);

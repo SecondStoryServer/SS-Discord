@@ -7,11 +7,7 @@ import me.syari.ss.discord.api.entities.Role;
 
 import javax.annotation.Nonnull;
 
-/**
- * Indicates that a {@link Role Role} was created.
- *
- * <p>Can be used to retrieve the created Role and its Guild.
- */
+
 public class RoleCreateEvent extends GenericRoleEvent
 {
     public RoleCreateEvent(@Nonnull JDA api, long responseNumber, @Nonnull Role createdRole)

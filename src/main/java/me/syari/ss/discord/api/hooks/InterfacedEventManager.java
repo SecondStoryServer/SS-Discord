@@ -12,20 +12,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-/**
- * An {@link IEventManager IEventManager} implementation
- * that uses the {@link EventListener EventListener} interface for
- * event listeners.
- *
- * <p>This only accepts listeners that implement {@link EventListener EventListener}
- * <br>An adapter implementation is {@link ListenerAdapter ListenerAdapter} which
- * provides methods for each individual {@link Event}.
- *
- * <p><b>This is the default IEventManager used by JDA</b>
- *
- * @see AnnotatedEventManager
- * @see IEventManager
- */
+
 public class InterfacedEventManager implements IEventManager
 {
     private final CopyOnWriteArrayList<EventListener> listeners = new CopyOnWriteArrayList<>();
@@ -35,12 +22,7 @@ public class InterfacedEventManager implements IEventManager
 
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @throws IllegalArgumentException
-     *         If the provided listener does not implement {@link EventListener EventListener}
-     */
+
     @Override
     public void register(@Nonnull Object listener)
     {

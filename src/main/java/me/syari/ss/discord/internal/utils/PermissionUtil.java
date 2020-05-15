@@ -12,21 +12,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class PermissionUtil
 {
-    /**
-     * Checks if one given Member can interact with a 2nd given Member - in a permission sense (kick/ban/modify perms).
-     * This only checks the Role-Position and does not check the actual permission (kick/ban/manage_role/...)
-     *
-     * @param  issuer
-     *         The member that tries to interact with 2nd member
-     * @param  target
-     *         The member that is the target of the interaction
-     *
-     * @throws IllegalArgumentException
-     *         if any of the provided parameters is {@code null}
-     *         or the provided entities are not from the same guild
-     *
-     * @return True, if issuer can interact with target in guild
-     */
+
     public static boolean canInteract(Member issuer, Member target)
     {
         Checks.notNull(issuer, "Issuer Member");
@@ -44,21 +30,7 @@ public class PermissionUtil
         return !issuerRoles.isEmpty() && (targetRoles.isEmpty() || canInteract(issuerRoles.get(0), targetRoles.get(0)));
     }
 
-    /**
-     * Checks if a given Member can interact with a given Role - in a permission sense (kick/ban/modify perms).
-     * This only checks the Role-Position and does not check the actual permission (kick/ban/manage_role/...)
-     *
-     * @param  issuer
-     *         The member that tries to interact with the role
-     * @param  target
-     *         The role that is the target of the interaction
-     *
-     * @throws IllegalArgumentException
-     *         if any of the provided parameters is {@code null}
-     *         or the provided entities are not from the same guild
-     *
-     * @return True, if issuer can interact with target
-     */
+
     public static boolean canInteract(Member issuer, Role target)
     {
         Checks.notNull(issuer, "Issuer Member");
@@ -73,21 +45,7 @@ public class PermissionUtil
         return !issuerRoles.isEmpty() && canInteract(issuerRoles.get(0), target);
     }
 
-    /**
-     * Checks if one given Role can interact with a 2nd given Role - in a permission sense (kick/ban/modify perms).
-     * This only checks the Role-Position and does not check the actual permission (kick/ban/manage_role/...)
-     *
-     * @param  issuer
-     *         The role that tries to interact with 2nd role
-     * @param  target
-     *         The role that is the target of the interaction
-     *
-     * @throws IllegalArgumentException
-     *         if any of the provided parameters is {@code null}
-     *         or the provided entities are not from the same guild
-     *
-     * @return True, if issuer can interact with target
-     */
+
     public static boolean canInteract(Role issuer, Role target)
     {
         Checks.notNull(issuer, "Issuer Role");
@@ -98,31 +56,7 @@ public class PermissionUtil
         return target.getPosition() < issuer.getPosition();
     }
 
-    /**
-     * Check whether the provided {@link Member Member} can use the specified {@link Emote Emote}.
-     *
-     * <p>If the specified Member is not in the emote's guild or the emote provided is fake this will return false.
-     * Otherwise it will check if the emote is restricted to any roles and if that is the case if the Member has one of these.
-     *
-     * <p>In the case of an {@link Emote#isAnimated() animated} Emote, this will
-     * check if the issuer is the currently logged in account, and then check if the account has
-     * {@link SelfUser#isNitro() nitro}, and return false if it doesn't.
-     * <br>For other accounts, this method will not take into account whether the emote is animated, as there is
-     * no real way to check if the Member can interact with them.
-     *
-     * <br><b>Note</b>: This is not checking if the issuer owns the Guild or not.
-     *
-     * @param  issuer
-     *         The member that tries to interact with the Emote
-     * @param  emote
-     *         The emote that is the target interaction
-     *
-     * @throws IllegalArgumentException
-     *         if any of the provided parameters is {@code null}
-     *         or the provided entities are not from the same guild
-     *
-     * @return True, if the issuer can interact with the emote
-     */
+
     public static boolean canInteract(Member issuer, Emote emote)
     {
         Checks.notNull(issuer, "Issuer Member");
@@ -151,25 +85,7 @@ public class PermissionUtil
             || CollectionUtils.containsAny(issuer.getRoles(), emote.getRoles()));
     }
 
-    /**
-     * Checks whether the specified {@link Emote Emote} can be used by the provided
-     * {@link User User} in the {@link MessageChannel MessageChannel}.
-     *
-     * @param  issuer
-     *         The user that tries to interact with the Emote
-     * @param  emote
-     *         The emote that is the target interaction
-     * @param  channel
-     *         The MessageChannel this emote should be interacted within
-     * @param  botOverride
-     *         Whether bots can use non-managed emotes in other guilds
-     *
-     * @throws IllegalArgumentException
-     *         if any of the provided parameters is {@code null}
-     *         or the provided entities are not from the same guild
-     *
-     * @return True, if the issuer can interact with the emote within the specified MessageChannel
-     */
+
     public static boolean canInteract(User issuer, Emote emote, MessageChannel channel, boolean botOverride)
     {
         Checks.notNull(issuer,  "Issuer Member");
@@ -201,48 +117,13 @@ public class PermissionUtil
         return issuer instanceof SelfUser && ((SelfUser) issuer).isNitro();
     }
 
-    /**
-     * Checks whether the specified {@link Emote Emote} can be used by the provided
-     * {@link User User} in the {@link MessageChannel MessageChannel}.
-     *
-     * @param  issuer
-     *         The user that tries to interact with the Emote
-     * @param  emote
-     *         The emote that is the target interaction
-     * @param  channel
-     *         The MessageChannel this emote should be interacted within
-     *
-     * @throws IllegalArgumentException
-     *         if any of the provided parameters is {@code null}
-     *         or the provided entities are not from the same guild
-     *
-     * @return True, if the issuer can interact with the emote within the specified MessageChannel
-     */
+
     public static boolean canInteract(User issuer, Emote emote, MessageChannel channel)
     {
         return canInteract(issuer, emote, channel, true);
     }
 
-    /**
-     * Checks to see if the {@link Member Member} has the specified {@link Permission Permissions}
-     * in the specified {@link Guild Guild}. This method properly deals with Owner status.
-     *
-     * <p><b>Note:</b> this is based on effective permissions, not literal permissions. If a member has permissions that would
-     * enable them to do something without the literal permission to do it, this will still return true.
-     * <br>Example: If a member has the {@link Permission#ADMINISTRATOR} permission, they will be able to
-     * {@link Permission#MANAGE_SERVER} as well, even without the literal permissions.
-     *
-     * @param  member
-     *         The {@link Member Member} whose permissions are being checked.
-     * @param  permissions
-     *         The {@link Permission Permissions} being checked for.
-     *
-     * @throws IllegalArgumentException
-     *         if any of the provided parameters is null
-     *
-     * @return True -
-     *         if the {@link Member Member} effectively has the specified {@link Permission Permissions}.
-     */
+
     public static boolean checkPermission(Member member, Permission... permissions)
     {
         Checks.notNull(member, "Member");
@@ -253,30 +134,7 @@ public class PermissionUtil
                 || isApplied(effectivePerms, Permission.getRaw(permissions));
     }
 
-    /**
-     * Checks to see if the {@link Member Member} has the specified {@link Permission Permissions}
-     * in the specified {@link GuildChannel GuildChannel}. This method properly deals with
-     * {@link PermissionOverride PermissionOverrides} and Owner status.
-     *
-     * <p><b>Note:</b> this is based on effective permissions, not literal permissions. If a member has permissions that would
-     * enable them to do something without the literal permission to do it, this will still return true.
-     * <br>Example: If a member has the {@link Permission#ADMINISTRATOR} permission, they will be able to
-     * {@link Permission#MESSAGE_WRITE} in every channel.
-     *
-     * @param  member
-     *         The {@link Member Member} whose permissions are being checked.
-     * @param  channel
-     *         The {@link GuildChannel GuildChannel} being checked.
-     * @param  permissions
-     *         The {@link Permission Permissions} being checked for.
-     *
-     * @throws IllegalArgumentException
-     *         if any of the provided parameters is {@code null}
-     *         or the provided entities are not from the same guild
-     *
-     * @return True -
-     *         if the {@link Member Member} effectively has the specified {@link Permission Permissions}.
-     */
+
     public static boolean checkPermission(GuildChannel channel, Member member, Permission... permissions)
     {
         Checks.notNull(channel, "Channel");
@@ -290,24 +148,7 @@ public class PermissionUtil
         return isApplied(effectivePerms, Permission.getRaw(permissions));
     }
 
-    /**
-     * Gets the {@code long} representation of the effective permissions allowed for this {@link Member Member}
-     * in this {@link Guild Guild}. This can be used in conjunction with
-     * {@link Permission#getPermissions(long) Permission.getPermissions(int)} to easily get a list of all
-     * {@link Permission Permissions} that this member has in this {@link Guild Guild}.
-     *
-     * <p><b>This only returns the Guild-level permissions!</b>
-     *
-     * @param  member
-     *         The {@link Member Member} whose permissions are being checked.
-     *
-     * @throws IllegalArgumentException
-     *         if any of the provided parameters is {@code null}
-     *         or the provided entities are not from the same guild
-     *
-     * @return The {@code long} representation of the literal permissions that
-     *         this {@link Member Member} has in this {@link Guild Guild}.
-     */
+
     public static long getEffectivePermission(Member member)
     {
         Checks.notNull(member, "Member");
@@ -326,25 +167,7 @@ public class PermissionUtil
         return permission;
     }
 
-    /**
-     * Gets the {@code long} representation of the effective permissions allowed for this {@link Member Member}
-     * in this {@link GuildChannel GuildChannel}. This can be used in conjunction with
-     * {@link Permission#getPermissions(long) Permission.getPermissions(long)} to easily get a list of all
-     * {@link Permission Permissions} that this member can use in this {@link GuildChannel GuildChannel}.
-     * <br>This functions very similarly to how {@link Role#getPermissionsRaw() Role.getPermissionsRaw()}.
-     *
-     * @param  channel
-     *         The {@link GuildChannel GuildChannel} being checked.
-     * @param  member
-     *         The {@link Member Member} whose permissions are being checked.
-     *
-     * @throws IllegalArgumentException
-     *         if any of the provided parameters is {@code null}
-     *         or the provided entities are not from the same guild
-     *
-     * @return The {@code long} representation of the effective permissions that this {@link Member Member}
-     *         has in this {@link GuildChannel GuildChannel}.
-     */
+
     public static long getEffectivePermission(GuildChannel channel, Member member)
     {
         Checks.notNull(channel, "Channel");
@@ -390,24 +213,7 @@ public class PermissionUtil
         */
     }
 
-    /**
-     * Gets the {@code long} representation of the effective permissions allowed for this {@link Role Role}
-     * in this {@link GuildChannel GuildChannel}. This can be used in conjunction with
-     * {@link Permission#getPermissions(long) Permission.getPermissions(long)} to easily get a list of all
-     * {@link Permission Permissions} that this role can use in this {@link GuildChannel GuildChannel}.
-     *
-     * @param  channel
-     *         The {@link GuildChannel GuildChannel} in which permissions are being checked.
-     * @param  role
-     *         The {@link Role Role} whose permissions are being checked.
-     *
-     * @throws IllegalArgumentException
-     *         if any of the provided parameters is {@code null}
-     *         or the provided entities are not from the same guild
-     *
-     * @return The {@code long} representation of the effective permissions that this {@link Role Role}
-     *         has in this {@link GuildChannel GuildChannel}
-     */
+
     public static long getEffectivePermission(GuildChannel channel, Role role)
     {
         Checks.notNull(channel, "Channel");
@@ -425,25 +231,7 @@ public class PermissionUtil
         return permissions;
     }
 
-    /**
-     * Retrieves the explicit permissions of the specified {@link Member Member}
-     * in its hosting {@link Guild Guild}.
-     * <br>This method does not calculate the owner in.
-     *
-     * <p>All permissions returned are explicitly granted to this Member via its {@link Role Roles}.
-     * <br>Permissions like {@link Permission#ADMINISTRATOR Permission.ADMINISTRATOR} do not
-     * grant other permissions in this value.
-     *
-     * @param  member
-     *         The non-null {@link Member Member} for which to get implicit permissions
-     *
-     * @throws IllegalArgumentException
-     *         If the specified member is {@code null}
-     *
-     * @return Primitive (unsigned) long value with the implicit permissions of the specified member
-     *
-     * @since  3.1
-     */
+
     public static long getExplicitPermission(Member member)
     {
         Checks.notNull(member, "Member");
@@ -457,31 +245,7 @@ public class PermissionUtil
         return permission;
     }
 
-    /**
-     * Retrieves the explicit permissions of the specified {@link Member Member}
-     * in its hosting {@link Guild Guild} and specific {@link GuildChannel GuildChannel}.
-     * <br>This method does not calculate the owner in.
-     * <b>Allowed permissions override denied permissions of {@link PermissionOverride PermissionOverrides}!</b>
-     *
-     * <p>All permissions returned are explicitly granted to this Member via its {@link Role Roles}.
-     * <br>Permissions like {@link Permission#ADMINISTRATOR Permission.ADMINISTRATOR} do not
-     * grant other permissions in this value.
-     * <p>This factor in all {@link PermissionOverride PermissionOverrides} that affect this member
-     * and only grants the ones that are explicitly given.
-     *
-     * @param  channel
-     *         The target channel of which to check {@link PermissionOverride PermissionOverrides}
-     * @param  member
-     *         The non-null {@link Member Member} for which to get implicit permissions
-     *
-     * @throws IllegalArgumentException
-     *         If any of the arguments is {@code null}
-     *         or the specified entities are not from the same {@link Guild Guild}
-     *
-     * @return Primitive (unsigned) long value with the implicit permissions of the specified member in the specified channel
-     *
-     * @since  3.1
-     */
+
     public static long getExplicitPermission(GuildChannel channel, Member member)
     {
         Checks.notNull(channel, "Channel");
@@ -501,29 +265,7 @@ public class PermissionUtil
         return apply(permission, allow.get(), deny.get());
     }
 
-    /**
-     * Retrieves the explicit permissions of the specified {@link Role Role}
-     * in its hosting {@link Guild Guild} and specific {@link GuildChannel GuildChannel}.
-     * <br><b>Allowed permissions override denied permissions of {@link PermissionOverride PermissionOverrides}!</b>
-     *
-     * <p>All permissions returned are explicitly granted to this Role.
-     * <br>Permissions like {@link Permission#ADMINISTRATOR Permission.ADMINISTRATOR} do not
-     * grant other permissions in this value.
-     * <p>This factor in existing {@link PermissionOverride PermissionOverrides} if possible.
-     *
-     * @param  channel
-     *         The target channel of which to check {@link PermissionOverride PermissionOverrides}
-     * @param  role
-     *         The non-null {@link Role Role} for which to get implicit permissions
-     *
-     * @throws IllegalArgumentException
-     *         If any of the arguments is {@code null}
-     *         or the specified entities are not from the same {@link Guild Guild}
-     *
-     * @return Primitive (unsigned) long value with the implicit permissions of the specified role in the specified channel
-     *
-     * @since  3.1
-     */
+
     public static long getExplicitPermission(GuildChannel channel, Role role)
     {
         Checks.notNull(channel, "Channel");

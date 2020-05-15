@@ -10,13 +10,7 @@ import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * Indicates that one or more {@link Role Roles} were removed from a {@link Member Member}.
- * <br>This event requires {@link JDABuilder#setGuildSubscriptionsEnabled(boolean) guild subscriptions}
- * to be enabled.
- *
- * <p>Can be used to retrieve affected member and guild. Provides a list of removed roles.
- */
+
 public class GuildMemberRoleRemoveEvent extends GenericGuildMemberEvent
 {
     private final List<Role> removedRoles;
@@ -27,11 +21,7 @@ public class GuildMemberRoleRemoveEvent extends GenericGuildMemberEvent
         this.removedRoles = Collections.unmodifiableList(removedRoles);
     }
 
-    /**
-     * The removed roles
-     *
-     * @return The removed roles
-     */
+    
     public List<Role> getRoles()
     {
         return removedRoles;

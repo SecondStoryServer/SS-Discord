@@ -19,15 +19,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-/**
- * Builder system used to build {@link MessageEmbed MessageEmbeds}.
- *
- * <br>A visual breakdown of an Embed and how it relates to this class is available at
- * <a href="https://raw.githubusercontent.com/DV8FromTheWorld/JDA/assets/assets/docs/embeds/01-Overview.png" target="_blank">Embed Overview</a>.
- *
- * @since  3.0
- * @author John A. Grosh
- */
+
 public class EmbedBuilder
 {
     public final static String ZERO_WIDTH_SPACE = "\u200E";
@@ -43,10 +35,7 @@ public class EmbedBuilder
     private MessageEmbed.Footer footer;
     private MessageEmbed.ImageInfo image;
 
-    /**
-     * Creates an EmbedBuilder to be used to creates an embed to send.
-     * <br>Every part of an embed can be removed or cleared by providing {@code null} to the setter method.
-     */
+    
     public EmbedBuilder() { }
 
     public EmbedBuilder(@Nullable EmbedBuilder builder)
@@ -66,12 +55,7 @@ public class EmbedBuilder
         }
     }
     
-    /**
-     * Creates an EmbedBuilder using fields in an existing embed.
-     *
-     * @param  embed
-     *         the existing embed
-     */
+    
     public EmbedBuilder(@Nullable MessageEmbed embed)
     {
         if(embed != null)
@@ -90,15 +74,7 @@ public class EmbedBuilder
         }
     }
 
-    /**
-     * Returns a {@link MessageEmbed MessageEmbed}
-     * that has been checked as being valid for sending.
-     *
-     * @throws java.lang.IllegalStateException
-     *         If the embed is empty. Can be checked with {@link #isEmpty()}.
-     *
-     * @return the built, sendable {@link MessageEmbed}
-     */
+    
     @Nonnull
     public MessageEmbed build()
     {
@@ -114,12 +90,7 @@ public class EmbedBuilder
                 color, thumbnail, null, author, null, footer, image, new LinkedList<>(fields));
     }
 
-    /**
-     * Resets this builder to default state.
-     * <br>All parts will be either empty or null after this method has returned.
-     *
-     * @return The current EmbedBuilder with default values
-     */
+    
     @Nonnull
     public EmbedBuilder clear()
     {
@@ -136,11 +107,7 @@ public class EmbedBuilder
         return this;
     }
 
-    /**
-     * Checks if the given embed is empty. Empty embeds will throw an exception if built
-     *
-     * @return true if the embed is empty and cannot be built
-     */
+    
     public boolean isEmpty()
     {
         return title == null
@@ -154,12 +121,7 @@ public class EmbedBuilder
             && fields.isEmpty();
     }
 
-    /**
-     * The overall length of the current EmbedBuilder in displayed characters.
-     * <br>Represents the {@link MessageEmbed#getLength() MessageEmbed.getLength()} value.
-     *
-     * @return length of the current builder state
-     */
+    
     public int length()
     {
         int length = description.length();
@@ -176,22 +138,7 @@ public class EmbedBuilder
         return length;
     }
 
-    /**
-     * Checks whether the constructed {@link MessageEmbed MessageEmbed}
-     * is within the limits for the specified {@link AccountType AccountType}
-     * <ul>
-     *     <li>Bot: {@value MessageEmbed#EMBED_MAX_LENGTH_BOT}</li>
-     *     <li>Client: {@value MessageEmbed#EMBED_MAX_LENGTH_CLIENT}</li>
-     * </ul>
-     *
-     * @param  type
-     *         The {@link AccountType AccountType} to validate
-     *
-     * @throws java.lang.IllegalArgumentException
-     *         If provided with {@code null}
-     *
-     * @return True, if the {@link #length() length} is less or equal to the specific limit
-     */
+    
     public boolean isValidLength(@Nonnull AccountType type)
     {
         Checks.notNull(type, "AccountType");
@@ -206,50 +153,14 @@ public class EmbedBuilder
         }
     }
 
-    /**
-     * Sets the Title of the embed.
-     * <br>Overload for {@link #setTitle(String, String)} without URL parameter.
-     *
-     * <p><b><a href="https://raw.githubusercontent.com/DV8FromTheWorld/JDA/assets/assets/docs/embeds/04-setTitle.png">Example</a></b>
-     *
-     * @param  title
-     *         the title of the embed
-     *
-     * @throws java.lang.IllegalArgumentException
-     *         <ul>
-     *             <li>If the provided {@code title} is an empty String.</li>
-     *             <li>If the length of {@code title} is greater than {@link MessageEmbed#TITLE_MAX_LENGTH}.</li>
-     *         </ul>
-     *
-     * @return the builder after the title has been set
-     */
+    
     @Nonnull
     public EmbedBuilder setTitle(@Nullable String title)
     {
         return setTitle(title, null);
     }
     
-    /**
-     * Sets the Title of the embed.
-     * <br>You can provide {@code null} as url if no url should be used.
-     *
-     * <p><b><a href="https://raw.githubusercontent.com/DV8FromTheWorld/JDA/assets/assets/docs/embeds/04-setTitle.png">Example</a></b>
-     *
-     * @param  title
-     *         the title of the embed
-     * @param  url
-     *         Makes the title into a hyperlink pointed at this url.
-     *
-     * @throws java.lang.IllegalArgumentException
-     *         <ul>
-     *             <li>If the provided {@code title} is an empty String.</li>
-     *             <li>If the length of {@code title} is greater than {@link MessageEmbed#TITLE_MAX_LENGTH}.</li>
-     *             <li>If the length of {@code url} is longer than {@link MessageEmbed#URL_MAX_LENGTH}.</li>
-     *             <li>If the provided {@code url} is not a properly formatted http or https url.</li>
-     *         </ul>
-     *
-     * @return the builder after the title has been set
-     */
+    
     @Nonnull
     public EmbedBuilder setTitle(@Nullable String title, @Nullable String url)
     {
@@ -272,32 +183,14 @@ public class EmbedBuilder
         return this;
     }
 
-    /**
-     * The {@link java.lang.StringBuilder StringBuilder} used to
-     * build the description for the embed.
-     * <br>Note: To reset the description use {@link #setDescription(CharSequence) setDescription(null)}
-     *
-     * @return StringBuilder with current description context
-     */
+    
     @Nonnull
     public StringBuilder getDescriptionBuilder()
     {
         return description;
     }
 
-    /**
-     * Sets the Description of the embed. This is where the main chunk of text for an embed is typically placed.
-     *
-     * <p><b><a href="https://raw.githubusercontent.com/DV8FromTheWorld/JDA/assets/assets/docs/embeds/05-setDescription.png">Example</a></b>
-     *
-     * @param  description
-     *         the description of the embed, {@code null} to reset
-     *
-     * @throws java.lang.IllegalArgumentException
-     *         If the length of {@code description} is greater than {@link MessageEmbed#TEXT_MAX_LENGTH}
-     *
-     * @return the builder after the description has been set
-     */
+    
     @Nonnull
     public final EmbedBuilder setDescription(@Nullable CharSequence description)
     {
@@ -307,22 +200,7 @@ public class EmbedBuilder
         return this;
     }
 
-    /**
-     * Appends to the description of the embed. This is where the main chunk of text for an embed is typically placed.
-     *
-     * <p><b><a href="https://raw.githubusercontent.com/DV8FromTheWorld/JDA/assets/assets/docs/embeds/05-setDescription.png">Example</a></b>
-     *
-     * @param  description
-     *         the string to append to the description of the embed
-     *
-     * @throws java.lang.IllegalArgumentException
-     *         <ul>
-     *             <li>If the provided {@code description} String is null</li>
-     *             <li>If the length of {@code description} is greater than {@link MessageEmbed#TEXT_MAX_LENGTH}.</li>
-     *         </ul>
-     *
-     * @return the builder after the description has been set
-     */
+    
     @Nonnull
     public EmbedBuilder appendDescription(@Nonnull CharSequence description)
     {
@@ -333,19 +211,7 @@ public class EmbedBuilder
         return this;
     }
 
-    /**
-     * Sets the Timestamp of the embed.
-     *
-     * <p><b><a href="https://raw.githubusercontent.com/DV8FromTheWorld/JDA/assets/assets/docs/embeds/13-setTimestamp.png">Example</a></b>
-     *
-     * <p><b>Hint:</b> You can get the current time using {@link java.time.Instant#now() Instant.now()} or convert time from a
-     * millisecond representation by using {@link java.time.Instant#ofEpochMilli(long) Instant.ofEpochMilli(long)};
-     *
-     * @param  temporal
-     *         the temporal accessor of the timestamp
-     *
-     * @return the builder after the timestamp has been set
-     */
+    
     @Nonnull
     public EmbedBuilder setTimestamp(@Nullable TemporalAccessor temporal)
     {
@@ -390,19 +256,7 @@ public class EmbedBuilder
         return this; 
     }
     
-    /**
-     * Sets the Color of the embed.
-     *
-     * <a href="https://raw.githubusercontent.com/DV8FromTheWorld/JDA/assets/assets/docs/embeds/02-setColor.png" target="_blank">Example</a>
-     *
-     * @param  color
-     *         The {@link java.awt.Color Color} of the embed
-     *         or {@code null} to use no color
-     *
-     * @return the builder after the color has been set
-     *
-     * @see    #setColor(int)
-     */
+    
     @Nonnull
     public EmbedBuilder setColor(@Nullable Color color)
     {
@@ -410,18 +264,7 @@ public class EmbedBuilder
         return this;
     }
 
-    /**
-     * Sets the raw RGB color value for the embed.
-     *
-     * <a href="https://raw.githubusercontent.com/DV8FromTheWorld/JDA/assets/assets/docs/embeds/02-setColor.png" target="_blank">Example</a>
-     *
-     * @param  color
-     *         The raw rgb value, or {@link Role#DEFAULT_COLOR_RAW} to use no color
-     *
-     * @return the builder after the color has been set
-     *
-     * @see    #setColor(java.awt.Color)
-     */
+    
     @Nonnull
     public EmbedBuilder setColor(int color)
     {
@@ -429,37 +272,7 @@ public class EmbedBuilder
         return this;
     }
     
-    /**
-     * Sets the Thumbnail of the embed.
-     *
-     * <p><b><a href="https://raw.githubusercontent.com/DV8FromTheWorld/JDA/assets/assets/docs/embeds/06-setThumbnail.png">Example</a></b>
-     *
-     * <p><b>Uploading images with Embeds</b>
-     * <br>When uploading an <u>image</u>
-     * (using {@link MessageChannel#sendFile(java.io.File, AttachmentOption...) MessageChannel.sendFile(...)})
-     * you can reference said image using the specified filename as URI {@code attachment://filename.ext}.
-     *
-     * <p><u>Example</u>
-     * <pre><code>
-     * MessageChannel channel; // = reference of a MessageChannel
-     * EmbedBuilder embed = new EmbedBuilder();
-     * InputStream file = new URL("https://http.cat/500").openStream();
-     * embed.setThumbnail("attachment://cat.png") // we specify this in sendFile as "cat.png"
-     *      .setDescription("This is a cute cat :3");
-     * channel.sendFile(file, "cat.png").embed(embed.build()).queue();
-     * </code></pre>
-     *
-     * @param  url
-     *         the url of the thumbnail of the embed
-     *
-     * @throws java.lang.IllegalArgumentException
-     *         <ul>
-     *             <li>If the length of {@code url} is longer than {@link MessageEmbed#URL_MAX_LENGTH}.</li>
-     *             <li>If the provided {@code url} is not a properly formatted http or https url.</li>
-     *         </ul>
-     *
-     * @return the builder after the thumbnail has been set
-     */
+    
     @Nonnull
     public EmbedBuilder setThumbnail(@Nullable String url)
     {
@@ -475,39 +288,7 @@ public class EmbedBuilder
         return this;
     }
 
-    /**
-     * Sets the Image of the embed.
-     *
-     * <p><b><a href="https://raw.githubusercontent.com/DV8FromTheWorld/JDA/assets/assets/docs/embeds/11-setImage.png">Example</a></b>
-     *
-     * <p><b>Uploading images with Embeds</b>
-     * <br>When uploading an <u>image</u>
-     * (using {@link MessageChannel#sendFile(java.io.File, AttachmentOption...) MessageChannel.sendFile(...)})
-     * you can reference said image using the specified filename as URI {@code attachment://filename.ext}.
-     *
-     * <p><u>Example</u>
-     * <pre><code>
-     * MessageChannel channel; // = reference of a MessageChannel
-     * EmbedBuilder embed = new EmbedBuilder();
-     * InputStream file = new URL("https://http.cat/500").openStream();
-     * embed.setImage("attachment://cat.png") // we specify this in sendFile as "cat.png"
-     *      .setDescription("This is a cute cat :3");
-     * channel.sendFile(file, "cat.png").embed(embed.build()).queue();
-     * </code></pre>
-     *
-     * @param  url
-     *         the url of the image of the embed
-     *
-     * @throws java.lang.IllegalArgumentException
-     *         <ul>
-     *             <li>If the length of {@code url} is longer than {@link MessageEmbed#URL_MAX_LENGTH}.</li>
-     *             <li>If the provided {@code url} is not a properly formatted http or https url.</li>
-     *         </ul>
-     *
-     * @return the builder after the image has been set
-     *
-     * @see    MessageChannel#sendFile(java.io.File, String, AttachmentOption...) MessageChannel.sendFile(...)
-     */
+    
     @Nonnull
     public EmbedBuilder setImage(@Nullable String url)
     {
@@ -523,88 +304,21 @@ public class EmbedBuilder
         return this;
     }
     
-    /**
-     * Sets the Author of the embed. The author appears in the top left of the embed and can have a small
-     * image beside it along with the author's name being made clickable by way of providing a url.
-     * This convenience method just sets the name.
-     *
-     * <p><b><a href="https://raw.githubusercontent.com/DV8FromTheWorld/JDA/assets/assets/docs/embeds/03-setAuthor.png">Example</a></b>
-     *
-     * @param  name
-     *         the name of the author of the embed. If this is not set, the author will not appear in the embed
-     *
-     * @return the builder after the author has been set
-     */
+    
     @Nonnull
     public EmbedBuilder setAuthor(@Nullable String name)
     {
         return setAuthor(name, null, null);
     }
 
-    /**
-     * Sets the Author of the embed. The author appears in the top left of the embed and can have a small
-     * image beside it along with the author's name being made clickable by way of providing a url.
-     * This convenience method just sets the name and the url.
-     *
-     * <p><b><a href="https://raw.githubusercontent.com/DV8FromTheWorld/JDA/assets/assets/docs/embeds/03-setAuthor.png">Example</a></b>
-     *
-     * @param  name
-     *         the name of the author of the embed. If this is not set, the author will not appear in the embed
-     * @param  url
-     *         the url of the author of the embed
-     *
-     * @throws java.lang.IllegalArgumentException
-     *         <ul>
-     *             <li>If the length of {@code url} is longer than {@link MessageEmbed#URL_MAX_LENGTH}.</li>
-     *             <li>If the provided {@code url} is not a properly formatted http or https url.</li>
-     *         </ul>
-     *
-     * @return the builder after the author has been set
-     */
+    
     @Nonnull
     public EmbedBuilder setAuthor(@Nullable String name, @Nullable String url)
     {
         return setAuthor(name, url, null);
     }
 
-    /**
-     * Sets the Author of the embed. The author appears in the top left of the embed and can have a small
-     * image beside it along with the author's name being made clickable by way of providing a url.
-     *
-     * <p><b><a href="https://raw.githubusercontent.com/DV8FromTheWorld/JDA/assets/assets/docs/embeds/03-setAuthor.png">Example</a></b>
-     *
-     * <p><b>Uploading images with Embeds</b>
-     * <br>When uploading an <u>image</u>
-     * (using {@link MessageChannel#sendFile(java.io.File, AttachmentOption...) MessageChannel.sendFile(...)})
-     * you can reference said image using the specified filename as URI {@code attachment://filename.ext}.
-     *
-     * <p><u>Example</u>
-     * <pre><code>
-     * MessageChannel channel; // = reference of a MessageChannel
-     * EmbedBuilder embed = new EmbedBuilder();
-     * InputStream file = new URL("https://http.cat/500").openStream();
-     * embed.setAuthor("Minn", null, "attachment://cat.png") // we specify this in sendFile as "cat.png"
-     *      .setDescription("This is a cute cat :3");
-     * channel.sendFile(file, "cat.png").embed(embed.build()).queue();
-     * </code></pre>
-     *
-     * @param  name
-     *         the name of the author of the embed. If this is not set, the author will not appear in the embed
-     * @param  url
-     *         the url of the author of the embed
-     * @param  iconUrl
-     *         the url of the icon for the author
-     *
-     * @throws java.lang.IllegalArgumentException
-     *         <ul>
-     *             <li>If the length of {@code url} is longer than {@link MessageEmbed#URL_MAX_LENGTH}.</li>
-     *             <li>If the provided {@code url} is not a properly formatted http or https url.</li>
-     *             <li>If the length of {@code iconUrl} is longer than {@link MessageEmbed#URL_MAX_LENGTH}.</li>
-     *             <li>If the provided {@code iconUrl} is not a properly formatted http or https url.</li>
-     *         </ul>
-     *
-     * @return the builder after the author has been set
-     */
+    
     @Nonnull
     public EmbedBuilder setAuthor(@Nullable String name, @Nullable String url, @Nullable String iconUrl)
     {
@@ -623,59 +337,14 @@ public class EmbedBuilder
         return this;
     }
 
-    /**
-     * Sets the Footer of the embed without icon.
-     *
-     * <p><b><a href="https://raw.githubusercontent.com/DV8FromTheWorld/JDA/assets/assets/docs/embeds/12-setFooter.png">Example</a></b>
-     *
-     * @param  text
-     *         the text of the footer of the embed. If this is not set or set to null, the footer will not appear in the embed.
-     *
-     * @throws java.lang.IllegalArgumentException
-     *         If the length of {@code text} is longer than {@link MessageEmbed#TEXT_MAX_LENGTH}.
-     *
-     * @return the builder after the footer has been set
-     */
+    
     @Nonnull
     public EmbedBuilder setFooter(@Nullable String text)
     {
         return setFooter(text, null);
     }
 
-    /**
-     * Sets the Footer of the embed.
-     *
-     * <p><b><a href="https://raw.githubusercontent.com/DV8FromTheWorld/JDA/assets/assets/docs/embeds/12-setFooter.png">Example</a></b>
-     *
-     * <p><b>Uploading images with Embeds</b>
-     * <br>When uploading an <u>image</u>
-     * (using {@link MessageChannel#sendFile(java.io.File, AttachmentOption...) MessageChannel.sendFile(...)})
-     * you can reference said image using the specified filename as URI {@code attachment://filename.ext}.
-     *
-     * <p><u>Example</u>
-     * <pre><code>
-     * MessageChannel channel; // = reference of a MessageChannel
-     * EmbedBuilder embed = new EmbedBuilder();
-     * InputStream file = new URL("https://http.cat/500").openStream();
-     * embed.setFooter("Cool footer!", "attachment://cat.png") // we specify this in sendFile as "cat.png"
-     *      .setDescription("This is a cute cat :3");
-     * channel.sendFile(file, "cat.png").embed(embed.build()).queue();
-     * </code></pre>
-     *
-     * @param  text
-     *         the text of the footer of the embed. If this is not set, the footer will not appear in the embed.
-     * @param  iconUrl
-     *         the url of the icon for the footer
-     *
-     * @throws java.lang.IllegalArgumentException
-     *         <ul>
-     *             <li>If the length of {@code text} is longer than {@link MessageEmbed#TEXT_MAX_LENGTH}.</li>
-     *             <li>If the length of {@code iconUrl} is longer than {@link MessageEmbed#URL_MAX_LENGTH}.</li>
-     *             <li>If the provided {@code iconUrl} is not a properly formatted http or https url.</li>
-     *         </ul>
-     *
-     * @return the builder after the footer has been set
-     */
+    
     @Nonnull
     public EmbedBuilder setFooter(@Nullable String text, @Nullable String iconUrl)
     {
@@ -694,46 +363,14 @@ public class EmbedBuilder
         return this;
     }
 
-    /**
-     * Copies the provided Field into a new Field for this builder.
-     * <br>For additional documentation, see {@link #addField(String, String, boolean)}
-     * 
-     * @param  field
-     *         the field object to add
-     *
-     * @return the builder after the field has been added
-     */
+    
     @Nonnull
     public EmbedBuilder addField(@Nullable MessageEmbed.Field field)
     {
         return field == null ? this : addField(field.getName(), field.getValue(), field.isInline());
     }
     
-    /**
-     * Adds a Field to the embed.
-     *
-     * <p>Note: If a blank string is provided to either {@code name} or {@code value}, the blank string is replaced
-     * with {@link EmbedBuilder#ZERO_WIDTH_SPACE}.
-     *
-     * <p><b><a href="https://raw.githubusercontent.com/DV8FromTheWorld/JDA/assets/assets/docs/embeds/07-addField.png">Example of Inline</a></b>
-     * <p><b><a href="https://raw.githubusercontent.com/DV8FromTheWorld/JDA/assets/assets/docs/embeds/08-addField.png">Example if Non-inline</a></b>
-     *
-     * @param  name
-     *         the name of the Field, displayed in bold above the {@code value}.
-     * @param  value
-     *         the contents of the field.
-     * @param  inline
-     *         whether or not this field should display inline.
-     *
-     * @throws java.lang.IllegalArgumentException
-     *         <ul>
-     *             <li>If only {@code name} or {@code value} is set. Both must be set.</li>
-     *             <li>If the length of {@code name} is greater than {@link MessageEmbed#TITLE_MAX_LENGTH}.</li>
-     *             <li>If the length of {@code value} is greater than {@link MessageEmbed#VALUE_MAX_LENGTH}.</li>
-     *         </ul>
-     *
-     * @return the builder after the field has been added
-     */
+    
     @Nonnull
     public EmbedBuilder addField(@Nullable String name, @Nullable String value, boolean inline)
     {
@@ -743,17 +380,7 @@ public class EmbedBuilder
         return this;
     }
     
-    /**
-     * Adds a blank (empty) Field to the embed.
-     *
-     * <p><b><a href="https://raw.githubusercontent.com/DV8FromTheWorld/JDA/assets/assets/docs/embeds/07-addField.png">Example of Inline</a></b>
-     * <p><b><a href="https://raw.githubusercontent.com/DV8FromTheWorld/JDA/assets/assets/docs/embeds/08-addField.png">Example if Non-inline</a></b>
-     *
-     * @param  inline
-     *         whether or not this field should display inline
-     *
-     * @return the builder after the field has been added
-     */
+    
     @Nonnull
     public EmbedBuilder addBlankField(boolean inline)
     {
@@ -761,14 +388,7 @@ public class EmbedBuilder
         return this;
     }
 
-    /**
-     * Clears all fields from the embed, such as those created with the
-     * {@link EmbedBuilder#EmbedBuilder(MessageEmbed) EmbedBuilder(MessageEmbed)}
-     * constructor or via the
-     * {@link EmbedBuilder#addField(MessageEmbed.Field) addField} methods.
-     *
-     * @return the builder after the field has been added
-     */
+    
     @Nonnull
     public EmbedBuilder clearFields()
     {
@@ -776,14 +396,7 @@ public class EmbedBuilder
         return this;
     }
     
-    /**
-     * <b>Modifiable</b> list of {@link MessageEmbed MessageEmbed} Fields that the builder will
-     * use for {@link #build()}.
-     * <br>You can add/remove Fields and restructure this {@link java.util.List List} and it will then be applied in the
-     * built MessageEmbed. These fields will be available again through {@link MessageEmbed#getFields() MessageEmbed.getFields()}.
-     *
-     * @return Mutable List of {@link MessageEmbed.Field Fields}
-     */
+    
     @Nonnull
     public List<MessageEmbed.Field> getFields()
     {

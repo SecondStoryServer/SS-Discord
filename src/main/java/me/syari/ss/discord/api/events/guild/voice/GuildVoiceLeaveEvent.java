@@ -8,15 +8,7 @@ import me.syari.ss.discord.api.entities.VoiceChannel;
 
 import javax.annotation.Nonnull;
 
-/**
- * Indicates that a {@link Member Member} disconnected from a {@link VoiceChannel VoiceChannel}.
- *
- * <p><b>When the {@link Member Member} is moved a {@link GuildVoiceMoveEvent GuildVoiceMoveEvent} is fired instead</b>
- *
- * <p>Can be used to detect when a member leaves a voice channel completely.
- *
- * @see GuildVoiceUpdateEvent GuildVoiceUpdateEvent
- */
+
 public class GuildVoiceLeaveEvent extends GenericGuildVoiceUpdateEvent
 {
     public GuildVoiceLeaveEvent(@Nonnull JDA api, long responseNumber, @Nonnull Member member, @Nonnull VoiceChannel channelLeft)

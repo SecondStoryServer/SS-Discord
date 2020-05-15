@@ -12,15 +12,7 @@ import me.syari.ss.discord.internal.JDAImpl;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-/**
- * Indicates that the {@link Activity Activity} order of a {@link User User} changes.
- * <br>As with any presence updates this happened for a {@link Member Member} in a Guild!
- * <br>This event requires {@link JDABuilder#setGuildSubscriptionsEnabled(boolean) guild subscriptions} to be enabled.
- *
- * <p>Can be used to retrieve the User who changed their Activities and their previous Activities.
- *
- * <p>Identifier: {@code activity_order}
- */
+
 public class UserUpdateActivityOrderEvent extends GenericUserUpdateEvent<List<Activity>> implements GenericUserPresenceEvent
 {
     public static final String IDENTIFIER = "activity_order";

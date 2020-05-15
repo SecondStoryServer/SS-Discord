@@ -13,9 +13,7 @@ import java.util.Collection;
 import java.util.EnumSet;
 import java.util.stream.Collectors;
 
-/**
- * Represents the bit offsets used by Discord for Permissions.
- */
+
 public enum Permission
 {
     CREATE_INSTANT_INVITE(0, true, true, "Create Instant Invite"),
@@ -61,40 +59,28 @@ public enum Permission
 
     UNKNOWN(-1, false, false, "Unknown");
 
-    /**
-     * Empty array of Permission enum, useful for optimized use in {@link java.util.Collection#toArray(Object[])}.
-     */
+
     // This is an optimization suggested by Effective Java 3rd Edition - Item 54
     public static final Permission[] EMPTY_PERMISSIONS = new Permission[0];
 
-    /**
-     * Represents a raw set of all permissions
-     */
+
     public static final long ALL_PERMISSIONS = Permission.getRaw(Permission.values());
 
-    /**
-     * All permissions that apply to a channel
-     */
+
     public static final long ALL_CHANNEL_PERMISSIONS = Permission.getRaw(Arrays.stream(values())
             .filter(Permission::isChannel).collect(Collectors.toSet()));
 
-    /**
-     * All Guild specific permissions which are only available to roles
-     */
+
     public static final long ALL_GUILD_PERMISSIONS = Permission.getRaw(Arrays.stream(values())
             .filter(Permission::isGuild).collect(Collectors.toSet()));
 
-    /**
-     * All text channel specific permissions which are only available in text channel permission overrides
-     */
+
     public static final long ALL_TEXT_PERMISSIONS
             = Permission.getRaw(MESSAGE_ADD_REACTION, MESSAGE_WRITE, MESSAGE_TTS,
                                 MESSAGE_MANAGE, MESSAGE_EMBED_LINKS, MESSAGE_ATTACH_FILES,
                                 MESSAGE_HISTORY, MESSAGE_MENTION_EVERYONE);
 
-    /**
-     * All voice channel specific permissions which are only available in voice channel permission overrides
-     */
+
     public static final long ALL_VOICE_PERMISSIONS
             = Permission.getRaw(VOICE_STREAM, VOICE_CONNECT, VOICE_SPEAK, VOICE_MUTE_OTHERS,
                                 VOICE_DEAF_OTHERS, VOICE_MOVE_OTHERS, VOICE_USE_VAD);
@@ -113,92 +99,50 @@ public enum Permission
         this.name = name;
     }
 
-    /**
-     * The readable name as used in the Discord client.
-     *
-     * @return The readable name of this {@link Permission Permission}.
-     */
+
     @Nonnull
     public String getName()
     {
         return this.name;
     }
 
-    /**
-     * The binary offset of the permission.
-     * <br>For more information about Discord's offset system refer to
-     * <a href="https://discordapi.readthedocs.org/en/latest/reference/channels/permissions.html#permissions-number">Discord Permission Numbers</a>.
-     *
-     * @return The offset that represents this {@link Permission Permission}.
-     */
+
     public int getOffset()
     {
         return offset;
     }
 
-    /**
-     * The value of this permission when viewed as a raw value.
-     * <br>This is equivalent to: <code>1 {@literal <<} {@link #getOffset()}</code>
-     *
-     * @return The raw value of this specific permission.
-     */
+
     public long getRawValue()
     {
         return raw;
     }
 
-    /**
-     * Returns whether or not this Permission is present at the Guild level
-     * (configurable via {@link Role Roles})
-     *
-     * @return True if this permission is present at the Guild level.
-     */
+
     public boolean isGuild()
     {
         return isGuild;
     }
 
-    /**
-     * Returns whether or not this Permission is present Channel level
-     * (configurable via {@link PermissionOverride PermissionsOverrides})
-     *
-     * @return True if this permission is present at the Channel level.
-     */
+
     public boolean isChannel()
     {
         return isChannel;
     }
 
-    /**
-     * Whether this permission is specifically for {@link TextChannel TextChannels}
-     *
-     * @return True, if and only if this permission can only be applied to text channels
-     */
+
     public boolean isText()
     {
         return (raw & ALL_TEXT_PERMISSIONS) == raw;
     }
 
-    /**
-     * Whether this permission is specifically for {@link VoiceChannel VoiceChannels}
-     *
-     * @return True, if and only if this permission can only be applied to voice channels
-     */
+
     public boolean isVoice()
     {
         return (raw & ALL_VOICE_PERMISSIONS) == raw;
     }
 
-    /**
-     * Gets the first {@link Permission Permission} relating to the provided offset.
-     * <br>If there is no {@link Permission Permssions} that matches the provided
-     * offset, {@link Permission#UNKNOWN Permission.UNKNOWN} is returned.
-     *
-     * @param  offset
-     *         The offset to match a {@link Permission Permission} to.
-     *
-     * @return {@link Permission Permission} relating to the provided offset.
-     */
+
     @Nonnull
     public static Permission getFromOffset(int offset)
     {
@@ -210,19 +154,7 @@ public enum Permission
         return UNKNOWN;
     }
 
-    /**
-     * A set of all {@link Permission Permissions} that are specified by this raw long representation of
-     * permissions. The is best used with the getRaw methods in {@link Role Role} or
-     * {@link PermissionOverride PermissionOverride}.
-     *
-     * <p>Example: {@link Role#getPermissionsRaw() Role.getPermissionsRaw()}
-     *
-     * @param  permissions
-     *         The raw {@code long} representation of permissions.
-     *
-     * @return Possibly-empty EnumSet of {@link Permission Permissions}.
-     *
-     */
+
     @Nonnull
     public static EnumSet<Permission> getPermissions(long permissions)
     {
@@ -237,15 +169,7 @@ public enum Permission
         return perms;
     }
 
-    /**
-     * This is effectively the opposite of {@link #getPermissions(long)}, this takes 1 or more {@link Permission Permissions}
-     * and returns the raw offset {@code long} representation of the permissions.
-     *
-     * @param  permissions
-     *         The array of permissions of which to form into the raw long representation.
-     *
-     * @return Unsigned long representing the provided permissions.
-     */
+
     public static long getRaw(@Nonnull Permission... permissions)
     {
         long raw = 0;
@@ -258,18 +182,7 @@ public enum Permission
         return raw;
     }
 
-    /**
-     * This is effectively the opposite of {@link #getPermissions(long)}, this takes a Collection of {@link Permission Permissions}
-     * and returns the raw offset {@code long} representation of the permissions.
-     * <br>Example: {@code getRaw(EnumSet.of(Permission.MESSAGE_READ, Permission.MESSAGE_WRITE))}
-     *
-     * @param  permissions
-     *         The Collection of permissions of which to form into the raw long representation.
-     *
-     * @return Unsigned long representing the provided permissions.
-     *
-     * @see    java.util.EnumSet EnumSet
-     */
+
     public static long getRaw(@Nonnull Collection<Permission> permissions)
     {
         Checks.notNull(permissions, "Permission Collection");

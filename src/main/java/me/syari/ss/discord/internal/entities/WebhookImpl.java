@@ -19,11 +19,7 @@ import me.syari.ss.discord.internal.requests.restaction.AuditableRestActionImpl;
 import javax.annotation.Nonnull;
 import java.util.concurrent.locks.ReentrantLock;
 
-/**
- * The implementation for {@link Webhook Webhook}
- *
- * @since  3.0
- */
+
 public class WebhookImpl implements Webhook
 {
     protected volatile WebhookManager manager = null;

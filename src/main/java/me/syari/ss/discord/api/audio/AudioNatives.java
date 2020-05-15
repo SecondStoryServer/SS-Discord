@@ -8,12 +8,7 @@ import org.slf4j.Logger;
 
 import java.io.IOException;
 
-/**
- * Controller used by JDA to ensure the native
- * binaries for opus en-/decoding are available.
- *
- * @see <a href="https://github.com/discord-java/opus-java" target="_blank">opus-java source</a>
- */
+
 public final class AudioNatives
 {
     private static final Logger LOG = JDALogger.getLog(AudioNatives.class);
@@ -22,35 +17,19 @@ public final class AudioNatives
 
     private AudioNatives() {}
 
-    /**
-     * Whether the opus library is loaded or not.
-     * <br>This is initialized by the first call to {@link #ensureOpus()}.
-     *
-     * @return True, opus library is loaded.
-     */
+
     public static boolean isAudioSupported()
     {
         return audioSupported;
     }
 
-    /**
-     * Whether this class was already initialized or not.
-     *
-     * @return True, if this class was already initialized.
-     *
-     * @see    #ensureOpus()
-     */
+
     public static boolean isInitialized()
     {
         return initialized;
     }
 
-    /**
-     * Checks whether the opus binary was loaded, if not it will be initialized here.
-     * <br>This is used by JDA to check at runtime whether the opus library is available or not.
-     *
-     * @return True, if the library could be loaded.
-     */
+
     public static synchronized boolean ensureOpus()
     {
         if (initialized)

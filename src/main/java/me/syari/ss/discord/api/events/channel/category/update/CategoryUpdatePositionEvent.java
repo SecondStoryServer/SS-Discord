@@ -7,13 +7,7 @@ import me.syari.ss.discord.api.entities.Category;
 
 import javax.annotation.Nonnull;
 
-/**
- * Indicates that the position of a {@link Category Category} was updated.
- *
- * <p>Can be used to retrieve the old position
- *
- * <p>Identifier: {@code position}
- */
+
 public class CategoryUpdatePositionEvent extends GenericCategoryUpdateEvent<Integer>
 {
     public static final String IDENTIFIER = "position";
@@ -23,21 +17,13 @@ public class CategoryUpdatePositionEvent extends GenericCategoryUpdateEvent<Inte
         super(api, responseNumber, category, oldPosition, category.getPositionRaw(), IDENTIFIER);
     }
 
-    /**
-     * The previous position of this {@link Category Category}
-     *
-     * @return The previous position
-     */
+
     public int getOldPosition()
     {
         return getOldValue();
     }
 
-    /**
-     * The new position of this {@link Category Category}
-     *
-     * @return The new position
-     */
+
     public int getNewPosition()
     {
         return getNewValue();

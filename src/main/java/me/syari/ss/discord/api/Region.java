@@ -6,11 +6,7 @@ import me.syari.ss.discord.api.entities.Guild;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-/**
- * Represents the Regions used for Audio connections.
- * <br>This is used by {@link Guild Guild} to where the server that hosts the
- * {@link Guild Guild} is located.
- */
+
 public enum Region
 {
     AMSTERDAM("amsterdam", "Amsterdam", "\uD83C\uDDF3\uD83C\uDDF1", false),
@@ -62,60 +58,34 @@ public enum Region
         this.vip = vip;
     }
 
-    /**
-     * The human readable region name.
-     *
-     * @return The name of this region
-     */
+    
     @Nonnull
     public String getName()
     {
         return name;
     }
 
-    /**
-     * The Region key as defined by Discord.
-     *
-     * @return The key (internal name) of this region
-     */
+    
     @Nonnull
     public String getKey()
     {
         return key;
     }
     
-    /**
-     * The unicode flag representative of this Region.
-     * 
-     * @return Possibly-null unicode for the region's flag
-     */
+    
     @Nonnull
     public String getEmoji()
     {
         return emoji;
     }
 
-    /**
-     * Whether or not this Region is a VIP region.
-     * <br>VIP regions have special perks like higher bitrate in VoiceChannels and priority during times
-     * of high Discord usage.
-     *
-     * @return True if this region is a VIP audio region.
-     */
+    
     public boolean isVip()
     {
         return vip;
     }
 
-    /**
-     * Retrieves the {@link Region Region} based on the provided key.
-     *
-     * @param  key
-     *         The key relating to the {@link Region Region} we wish to retrieve.
-     *
-     * @return The {@link Region Region} matching the key. If there is no match,
-     *         returns {@link Region#UNKNOWN UNKNOWN}.
-     */
+    
     @Nonnull
     public static Region fromKey(@Nullable String key)
     {

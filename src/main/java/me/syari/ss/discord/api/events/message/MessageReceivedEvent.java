@@ -8,12 +8,7 @@ import me.syari.ss.discord.api.entities.User;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-/**
- * Indicates that a Message was received in a {@link MessageChannel MessageChannel}.
- * <br>This includes {@link TextChannel TextChannel} and {@link PrivateChannel PrivateChannel}!
- * 
- * <p>Can be used to detect that a Message is received in either a guild- or private channel. Providing a MessageChannel and Message.
- */
+
 public class MessageReceivedEvent extends GenericMessageEvent
 {
     private final Message message;
@@ -24,54 +19,28 @@ public class MessageReceivedEvent extends GenericMessageEvent
         this.message = message;
     }
 
-    /**
-     * The received {@link Message Message} object.
-     *
-     * @return The received {@link Message Message} object.
-     */
+
     @Nonnull
     public Message getMessage()
     {
         return message;
     }
 
-    /**
-     * The Author of the Message received as {@link User User} object.
-     * <br>This will be never-null but might be a fake user if Message was sent via Webhook (Guild only).
-     *
-     * @return The Author of the Message.
-     *
-     * @see #isWebhookMessage()
-     * @see User#isFake()
-     */
+
     @Nonnull
     public User getAuthor()
     {
         return message.getAuthor();
     }
 
-    /**
-     * The Author of the Message received as {@link Member Member} object.
-     * <br>This will be {@code null} in case of Message being received in
-     * a {@link PrivateChannel PrivateChannel}
-     * or {@link #isWebhookMessage() isWebhookMessage()} returning {@code true}.
-     *
-     * @return The Author of the Message as null-able Member object.
-     *
-     * @see    #isWebhookMessage()
-     */
+
     @Nullable
     public Member getMember()
     {
         return message.getMember();
     }
 
-    /**
-     * Whether or not the Message received was sent via a Webhook.
-     * <br>This is a shortcut for {@code getMessage().isWebhookMessage()}.
-     *
-     * @return True, if the Message was sent via Webhook
-     */
+
     public boolean isWebhookMessage()
     {
         return getMessage().isWebhookMessage();

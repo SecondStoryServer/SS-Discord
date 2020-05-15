@@ -80,31 +80,7 @@ import me.syari.ss.discord.api.events.user.update.*;
 
 import javax.annotation.Nonnull;
 
-/**
- * An abstract implementation of {@link EventListener EventListener} which divides {@link Event Events}
- * for you. You should <b><u>override</u></b> the methods provided by this class for your event listener implementation.
- *
- * <h2>Example:</h2>
- * <pre><code>
- * public class MyReadyListener extends ListenerAdapter
- * {
- *    {@literal @Override}
- *     public void onReady(ReadyEvent event)
- *     {
- *         System.out.println("I am ready to go!");
- *     }
- *
- *    {@literal @Override}
- *     public void onMessageReceived(MessageReceivedEvent event)
- *     {
- *         System.out.printf("[%s]: %s\n", event.getAuthor().getName(), event.getMessage().getContentDisplay());
- *     }
- * }
- * </code></pre>
- *
- * @see EventListener EventListener
- * @see InterfacedEventManager InterfacedEventManager
- */
+
 public abstract class ListenerAdapter implements EventListener
 {
     public void onGenericEvent(@Nonnull GenericEvent event) {}

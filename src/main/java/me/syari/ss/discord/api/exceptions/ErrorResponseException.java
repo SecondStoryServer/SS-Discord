@@ -15,10 +15,7 @@ import java.util.EnumSet;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-/**
- * Indicates an unhandled error that is returned by Discord API Request using {@link RestAction RestAction}
- * <br>It holds an {@link ErrorResponse ErrorResponse}
- */
+
 public class ErrorResponseException extends RuntimeException
 {
     private final ErrorResponse errorResponse;
@@ -26,15 +23,7 @@ public class ErrorResponseException extends RuntimeException
     private final String meaning;
     private final int code;
 
-    /**
-     * Creates a new ErrorResponseException instance
-     *
-     * @param errorResponse
-     *        The {@link ErrorResponse ErrorResponse} corresponding
-     *        for the received error response from Discord
-     * @param response
-     *        The Discord Response causing the ErrorResponse
-     */
+
     private ErrorResponseException(ErrorResponse errorResponse, Response response, int code, String meaning)
     {
         super(code + ": " + meaning);
@@ -47,56 +36,31 @@ public class ErrorResponseException extends RuntimeException
         this.meaning = meaning;
     }
 
-    /**
-     * Whether this is an internal server error from discord (status 500)
-     *
-     * @return True, if this is an internal server error
-     *         {@link ErrorResponse#SERVER_ERROR ErrorResponse.SERVER_ERROR}
-     */
+
     public boolean isServerError()
     {
         return errorResponse == ErrorResponse.SERVER_ERROR;
     }
 
-    /**
-     * The meaning for this error.
-     * <br>It is possible that the value from this method is different for {@link #isServerError() server errors}
-     *
-     * @return Never-null meaning of this error.
-     */
+
     public String getMeaning()
     {
         return meaning;
     }
 
-    /**
-     * The discord error code for this error response.
-     *
-     * @return The discord error code.
-     *
-     * @see <a href="https://discordapp.com/developers/docs/topics/response-codes#json-error-response" target="_blank">Discord Error Codes</a>
-     */
+
     public int getErrorCode()
     {
         return code;
     }
 
-    /**
-     * The {@link ErrorResponse ErrorResponse} corresponding
-     * for the received error response from Discord
-     *
-     * @return {@link ErrorResponse ErrorResponse}
-     */
+
     public ErrorResponse getErrorResponse()
     {
         return errorResponse;
     }
 
-    /**
-     * The Discord Response causing the ErrorResponse
-     *
-     * @return {@link Response Response}
-     */
+
     public Response getResponse()
     {
         return response;
@@ -143,120 +107,28 @@ public class ErrorResponseException extends RuntimeException
         return new ErrorResponseException(errorResponse, response, code, meaning);
     }
 
-    /**
-     * Ignore the specified set of error responses.
-     *
-     * <h2>Example</h2>
-     * <pre>{@code
-     * // Creates a message with the provided content and deletes it 30 seconds later
-     * public static void selfDestruct(MessageChannel channel, String content) {
-     *     channel.sendMessage(content).queue((message) ->
-     *         message.delete().queueAfter(30, SECONDS, null, ignore(EnumSet.of(UNKNOWN_MESSAGE)))
-     *     );
-     * }
-     * }</pre>
-     *
-     * @param  set
-     *         Set of ignored error responses
-     *
-     * @throws IllegalArgumentException
-     *         If provided with null or an empty collection
-     *
-     * @return {@link Consumer} decorator for {@link RestAction#getDefaultFailure()}
-     *         which ignores the specified {@link ErrorResponse ErrorResponses}
-     */
+
     @Nonnull
     public static Consumer<Throwable> ignore(@Nonnull Collection<ErrorResponse> set)
     {
         return ignore(RestAction.getDefaultFailure(), set);
     }
 
-    /**
-     * Ignore the specified set of error responses.
-     *
-     * <h2>Example</h2>
-     * <pre>{@code
-     * // Creates a message with the provided content and deletes it 30 seconds later
-     * public static void selfDestruct(MessageChannel channel, String content) {
-     *     channel.sendMessage(content).queue((message) ->
-     *         message.delete().queueAfter(30, SECONDS, null, ignore(UNKNOWN_MESSAGE))
-     *     );
-     * }
-     * }</pre>
-     *
-     * @param  ignored
-     *         Ignored error response
-     * @param  errorResponses
-     *         Additional error responses to ignore
-     *
-     * @throws IllegalArgumentException
-     *         If provided with null
-     *
-     * @return {@link Consumer} decorator for {@link RestAction#getDefaultFailure()}
-     *         which ignores the specified {@link ErrorResponse ErrorResponses}
-     */
+
     @Nonnull
     public static Consumer<Throwable> ignore(@Nonnull ErrorResponse ignored, @Nonnull ErrorResponse... errorResponses)
     {
         return ignore(RestAction.getDefaultFailure(), ignored, errorResponses);
     }
 
-    /**
-     * Ignore the specified set of error responses.
-     *
-     * <h2>Example</h2>
-     * <pre>{@code
-     * // Creates a message with the provided content and deletes it 30 seconds later
-     * public static void selfDestruct(MessageChannel channel, String content) {
-     *     channel.sendMessage(content).queue((message) ->
-     *         message.delete().queueAfter(30, SECONDS, null, ignore(Throwable::printStackTrace, UNKNOWN_MESSAGE))
-     *     );
-     * }
-     * }</pre>
-     *
-     * @param  orElse
-     *         Behavior to default to if the error response is not ignored
-     * @param  ignored
-     *         Ignored error response
-     * @param  errorResponses
-     *         Additional error responses to ignore
-     *
-     * @throws IllegalArgumentException
-     *         If provided with null
-     *
-     * @return {@link Consumer} decorator for the provided callback
-     *         which ignores the specified {@link ErrorResponse ErrorResponses}
-     */
+
     @Nonnull
     public static Consumer<Throwable> ignore(@Nonnull Consumer<? super Throwable> orElse, @Nonnull ErrorResponse ignored, @Nonnull ErrorResponse... errorResponses)
     {
         return ignore(orElse, EnumSet.of(ignored, errorResponses));
     }
 
-    /**
-     * Ignore the specified set of error responses.
-     *
-     * <h2>Example</h2>
-     * <pre>{@code
-     * // Creates a message with the provided content and deletes it 30 seconds later
-     * public static void selfDestruct(MessageChannel channel, String content) {
-     *     channel.sendMessage(content).queue((message) ->
-     *         message.delete().queueAfter(30, SECONDS, null, ignore(Throwable::printStackTrace, EnumSet.of(UNKNOWN_MESSAGE)))
-     *     );
-     * }
-     * }</pre>
-     *
-     * @param  orElse
-     *         Behavior to default to if the error response is not ignored
-     * @param  set
-     *         Set of ignored error responses
-     *
-     * @throws IllegalArgumentException
-     *         If provided with null or an empty collection
-     *
-     * @return {@link Consumer} decorator for the provided callback
-     *         which ignores the specified {@link ErrorResponse ErrorResponses}
-     */
+
     @Nonnull
     public static Consumer<Throwable> ignore(@Nonnull Consumer<? super Throwable> orElse, @Nonnull Collection<ErrorResponse> set)
     {

@@ -17,11 +17,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Set;
 
-/**
- * Indicates that a {@link RestAction RestAction} has been executed.
- * 
- * <p>Depending on the request and its result not all values have to be populated.
- */
+
 public class HttpRequestEvent extends Event
 {
     private final Request<?> request;

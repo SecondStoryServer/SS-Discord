@@ -10,12 +10,7 @@ import me.syari.ss.discord.api.entities.Role;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-/**
- * Indicates that a {@link Role Role} was updated.
- * <br>Every RoleUpdateEvent is derived from this event and can be casted.
- *
- * <p>Can be used to detect any RoleUpdateEvent.
- */
+
 public abstract class GenericRoleUpdateEvent<T> extends GenericRoleEvent implements UpdateEvent<Role, T>
 {
     protected final T previous;

@@ -17,15 +17,7 @@ public class CategoryOrderActionImpl
 {
     protected final Category category;
 
-    /**
-     * Creates a new CategoryOrderAction for the specified {@link Category Category}
-     *
-     * @param  category
-     *         The target {@link Category Category}
-     *         which the new CategoryOrderAction will order channels from.
-     * @param  bucket
-     *         The sorting bucket
-     */
+    
     public CategoryOrderActionImpl(Category category, int bucket)
     {
         super(category.getGuild(), bucket, getChannelsOfType(category, bucket));

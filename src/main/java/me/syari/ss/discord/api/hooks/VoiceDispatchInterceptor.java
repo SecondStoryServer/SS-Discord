@@ -14,108 +14,55 @@ import me.syari.ss.discord.api.utils.data.SerializableData;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-/**
- * Interceptor used to handle critical voice dispatches.
- * <br>This will make it impossible to connect to voice channels with
- * the built-in {@link AudioManager AudioManager}.
- * It is expected that the user has some other means of establishing voice connections when this is used.
- *
- * @since  4.0.0
- */
+
 public interface VoiceDispatchInterceptor
 {
-    /**
-     * Handles the <b>VOICE_SERVER_UPDATE</b>.
-     *
-     * @param update
-     *        The {@link VoiceServerUpdate} to handle
-     */
+
     void onVoiceServerUpdate(@Nonnull VoiceServerUpdate update);
 
-    /**
-     * Handles the <b>VOICE_STATE_UPDATE</b>.
-     * <br>This indicates the user might have moved to a new voice channel.
-     *
-     * @param  update
-     *         The {@link VoiceStateUpdate} to handle
-     *
-     * @return True, if a connection was previously established
-     */
+
     boolean onVoiceStateUpdate(@Nonnull VoiceStateUpdate update);
 
-    /**
-     * Abstraction for all relevant voice updates
-     *
-     * @see VoiceServerUpdate
-     * @see VoiceStateUpdate
-     */
+
     interface VoiceUpdate extends SerializableData
     {
-        /**
-         * The {@link Guild} for this update
-         *
-         * @return The guild
-         */
+
         @Nonnull
         Guild getGuild();
 
-        /**
-         * The raw JSON object that was parsed from this update
-         *
-         * @return The raw JSON object
-         */
+
         @Nonnull
         @Override
         DataObject toData();
 
-        /**
-         * Shortcut to access the audio controller of this JDA instance
-         *
-         * @return The {@link DirectAudioController} for this JDA instance
-         */
+
         @Nonnull
         default DirectAudioController getAudioController()
         {
             return getJDA().getDirectAudioController();
         }
 
-        /**
-         * Shortcut to access the guild id
-         *
-         * @return The guild id
-         */
+
         default long getGuildIdLong()
         {
             return getGuild().getIdLong();
         }
 
-        /**
-         * Shortcut to access the guild id
-         *
-         * @return The guild id
-         */
+
         @Nonnull
         default String getGuildId()
         {
             return Long.toUnsignedString(getGuildIdLong());
         }
 
-        /**
-         * Shortcut to access the JDA instance
-         *
-         * @return The JDA instance
-         */
+
         @Nonnull
         default JDA getJDA()
         {
             return getGuild().getJDA();
         }
 
-        /**
-         * Shortcut to access the shard info for this JDA instance
-         *
-         * @return The shard information, or null if this was not for a sharded client
-         */
+
         @Nullable
         default JDA.ShardInfo getShardInfo()
         {
@@ -123,9 +70,7 @@ public interface VoiceDispatchInterceptor
         }
     }
 
-    /**
-     * Wrapper for a <a href="https://discordapp.com/developers/docs/topics/gateway#voice-server-update" target="_blank">Voice Server Update</a>
-     */
+
     class VoiceServerUpdate implements VoiceUpdate
     {
         private final Guild guild;
@@ -157,33 +102,21 @@ public interface VoiceDispatchInterceptor
             return json;
         }
 
-        /**
-         * The voice server endpoint
-         *
-         * @return The endpoint
-         */
+
         @Nonnull
         public String getEndpoint()
         {
             return endpoint;
         }
 
-        /**
-         * The access token for the voice server connection
-         *
-         * @return The access token
-         */
+
         @Nonnull
         public String getToken()
         {
             return token;
         }
 
-        /**
-         * The session id for the voice server session
-         *
-         * @return The session id
-         */
+
         @Nonnull
         public String getSessionId()
         {
@@ -191,9 +124,7 @@ public interface VoiceDispatchInterceptor
         }
     }
 
-    /**
-     * Wrapper for a <a href="https://discordapp.com/developers/docs/topics/gateway#voice-state-update" target="_blank">Voice State Update</a>
-     */
+
     class VoiceStateUpdate implements VoiceUpdate
     {
         private final VoiceChannel channel;
@@ -221,22 +152,14 @@ public interface VoiceDispatchInterceptor
             return json;
         }
 
-        /**
-         * The update voice channel
-         *
-         * @return The updated voice channel, or null to signal disconnect
-         */
+
         @Nullable
         public VoiceChannel getChannel()
         {
             return channel;
         }
 
-        /**
-         * The voice state for the guild
-         *
-         * @return The voice state
-         */
+
         @Nonnull
         public GuildVoiceState getVoiceState()
         {

@@ -9,11 +9,7 @@ import me.syari.ss.discord.api.entities.User;
 
 import javax.annotation.Nonnull;
 
-/**
- * Indicates that a {@link MessageReaction MessageReaction} was added to a Message in a Guild
- *
- * <p>Can be used to detect when a reaction is added in a guild
- */
+
 public class GuildMessageReactionAddEvent extends GenericGuildMessageReactionEvent
 {
     public GuildMessageReactionAddEvent(@Nonnull JDA api, long responseNumber, @Nonnull Member member, @Nonnull MessageReaction reaction)

@@ -10,12 +10,7 @@ import me.syari.ss.discord.api.entities.VoiceChannel;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-/**
- * Indicates that a {@link VoiceChannel VoiceChannel} updated.
- * <br>Every VoiceChannelUpdateEvent is derived from this event and can be casted.
- *
- * <p>Can be used to detect any VoiceChannelUpdateEvent.
- */
+
 public abstract class GenericVoiceChannelUpdateEvent<T> extends GenericVoiceChannelEvent implements UpdateEvent<VoiceChannel, T>
 {
     private final String identifier;

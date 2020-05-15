@@ -36,13 +36,7 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.IntFunction;
 
-/**
- * JDA's default {@link ShardManager ShardManager} implementation.
- * To create new instances use the {@link DefaultShardManagerBuilder DefaultShardManagerBuilder}.
- *
- * @since  3.4
- * @author Aljoscha Grebe
- */
+
 public class DefaultShardManager implements ShardManager
 {
     public static final Logger LOG = JDALogger.getLog(ShardManager.class);
@@ -53,79 +47,49 @@ public class DefaultShardManager implements ShardManager
         return t;
     };
 
-    /**
-     * The executor that is used by the ShardManager internally to create new JDA instances.
-     */
+
     protected final ScheduledExecutorService executor;
 
-    /**
-     * The queue of shards waiting for creation.
-     */
+
     protected final Queue<Integer> queue = new ConcurrentLinkedQueue<>();
 
-    /**
-     * The {@link ShardCacheView ShardCacheView} that holds all shards.
-     */
+
     protected ShardCacheViewImpl shards;
 
-    /**
-     * This can be used to check if the ShardManager is shutting down.
-     */
+
     protected final AtomicBoolean shutdown = new AtomicBoolean(false);
 
-    /**
-     * The shutdown hook used by this ShardManager. If this is null the shutdown hook is disabled.
-     */
+
     protected final Thread shutdownHook;
 
-    /**
-     * The token of the account associated with this ShardManager.
-     */
+
     protected final String token;
 
-    /**
-     * The worker running on the {@link #executor ScheduledExecutorService} that spawns new shards.
-     */
+
     protected Future<?> worker;
 
-    /**
-     * The gateway url for JDA to use. Will be {@code nul} until the first shard is created.
-     */
+
     protected String gatewayURL;
 
-    /**
-     * {@link PresenceProviderConfig} containing providers for activity and other presence information.
-     */
+
     protected final PresenceProviderConfig presenceConfig;
 
-    /**
-     * {@link EventConfig} containing listeners and possibly a custom event manager.
-     */
+
     protected final EventConfig eventConfig;
 
-    /**
-     * {@link ShardingConfig} containing information on shard specific meta information.
-     */
+
     protected final ShardingConfig shardingConfig;
 
-    /**
-     * {@link ThreadingProviderConfig} containing a series of {@link ThreadPoolProvider} instances for shard specific configuration.
-     */
+
     protected final ThreadingProviderConfig threadingConfig;
 
-    /**
-     * {@link ShardingSessionConfig} containing general configurations for sessions of shards like the http client.
-     */
+
     protected final ShardingSessionConfig sessionConfig;
 
-    /**
-     * {@link ShardingMetaConfig} containing details on logging configuration, compression mode and shutdown behavior of the manager.
-     */
+
     protected final ShardingMetaConfig metaConfig;
 
-    /**
-     * {@link ChunkingFilter} used to determine whether a guild should be lazy loaded or chunk members by default.
-     */
+
     protected final ChunkingFilter chunkingFilter;
 
     public DefaultShardManager(@Nonnull String token)
@@ -573,12 +537,7 @@ public class DefaultShardManager implements ShardManager
         presenceConfig.setStatusProvider(statusProvider);
     }
 
-    /**
-     * This method creates the internal {@link java.util.concurrent.ScheduledExecutorService ScheduledExecutorService}.
-     * It is intended as a hook for custom implementations to create their own executor.
-     *
-     * @return A new ScheduledExecutorService
-     */
+
     protected ScheduledExecutorService createExecutor(ThreadFactory threadFactory)
     {
         ThreadFactory factory = threadFactory == null

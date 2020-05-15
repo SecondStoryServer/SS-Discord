@@ -28,12 +28,7 @@ public class RoleActionImpl extends AuditableRestActionImpl<Role> implements Rol
     protected Boolean hoisted = null;
     protected Boolean mentionable = null;
 
-    /**
-     * Creates a new RoleAction instance
-     *
-     * @param  guild
-     *         The {@link Guild Guild} for which the Role should be created.
-     */
+
     public RoleActionImpl(Guild guild)
     {
         super(guild.getJDA(), Route.Roles.CREATE_ROLE.compile(guild.getId()));

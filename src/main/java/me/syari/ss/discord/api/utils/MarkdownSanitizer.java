@@ -10,13 +10,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.regex.Pattern;
 
-/**
- * Implements and algorithm that can strip or replace markdown in any supplied string.
- *
- * @see #sanitize(String, MarkdownSanitizer.SanitizationStrategy)
- *
- * @since  4.0.0
- */
+
 public class MarkdownSanitizer
 {
 
@@ -93,37 +87,14 @@ public class MarkdownSanitizer
         this.strategy = strategy == null ? SanitizationStrategy.REMOVE : strategy;
     }
 
-    /**
-     * Sanitize string with default settings.
-     * <br>Same as {@code sanitize(sequence, SanitizationStrategy.REMOVE)}
-     *
-     * @param  sequence
-     *         The string to sanitize
-     *
-     * @return The sanitized string
-     */
+
     @Nonnull
     public static String sanitize(@Nonnull String sequence)
     {
         return sanitize(sequence, SanitizationStrategy.REMOVE);
     }
 
-    /**
-     * Sanitize string without ignoring anything.
-     *
-     * @param  sequence
-     *         The string to sanitize
-     * @param  strategy
-     *         The {@link MarkdownSanitizer.SanitizationStrategy} to apply
-     *
-     * @throws java.lang.IllegalArgumentException
-     *         If provided with null
-     *
-     * @return The sanitized string
-     *
-     * @see    MarkdownSanitizer#MarkdownSanitizer()
-     * @see    #withIgnored(int)
-     */
+
     @Nonnull
     public static String sanitize(@Nonnull String sequence, @Nonnull SanitizationStrategy strategy)
     {
@@ -132,39 +103,14 @@ public class MarkdownSanitizer
         return new MarkdownSanitizer().withStrategy(strategy).compute(sequence);
     }
 
-    /**
-     * Escapes every markdown formatting found in the provided string.
-     *
-     * @param  sequence
-     *         The string to sanitize
-     *
-     * @throws java.lang.IllegalArgumentException
-     *         If provided with null
-     *
-     * @return The string with escaped markdown
-     *
-     * @see    #escape(String, int)
-     */
+
     @Nonnull
     public static String escape(@Nonnull String sequence)
     {
         return escape(sequence, NORMAL);
     }
 
-    /**
-     * Escapes every markdown formatting found in the provided string.
-     * <br>Example: {@code escape("**Hello** ~~World~~!", MarkdownSanitizer.BOLD | MarkdownSanitizer.STRIKE)}
-     *
-     * @param  sequence
-     *         The string to sanitize
-     * @param  ignored
-     *         Formats to ignore
-     *
-     * @throws java.lang.IllegalArgumentException
-     *         If provided with null
-     *
-     * @return The string with escaped markdown
-     */
+
     @Nonnull
     public static String escape(@Nonnull String sequence, int ignored)
     {
@@ -174,17 +120,7 @@ public class MarkdownSanitizer
                 .compute(sequence);
     }
 
-    /**
-     * Switches the used {@link MarkdownSanitizer.SanitizationStrategy}.
-     *
-     * @param  strategy
-     *         The new strategy
-     *
-     * @throws java.lang.IllegalArgumentException
-     *         If provided with null
-     *
-     * @return The current sanitizer instance with the new strategy
-     */
+
     @Nonnull
     public MarkdownSanitizer withStrategy(@Nonnull SanitizationStrategy strategy)
     {
@@ -193,15 +129,7 @@ public class MarkdownSanitizer
         return this;
     }
 
-    /**
-     * Specific regions to ignore.
-     * <br>Example: {@code new MarkdownSanitizer().withIgnored(MarkdownSanitizer.BOLD | MarkdownSanitizer.UNDERLINE).compute("Hello __world__!")}
-     *
-     * @param  ignored
-     *         The regions to ignore
-     *
-     * @return The current sanitizer instance with the new ignored regions
-     */
+
     @Nonnull
     public MarkdownSanitizer withIgnored(int ignored)
     {
@@ -433,19 +361,7 @@ public class MarkdownSanitizer
         return (nextRegion & ignored) == nextRegion;
     }
 
-    /**
-     * Computes the provided input.
-     * <br>Uses the specified {@link MarkdownSanitizer.SanitizationStrategy} and
-     * ignores any regions specified with {@link #withIgnored(int)}.
-     *
-     * @param  sequence
-     *         The string to compute
-     *
-     * @throws java.lang.IllegalArgumentException
-     *         If the provided string is null
-     *
-     * @return The resulting string after applying the computation
-     */
+
     @Nonnull
     public String compute(@Nonnull String sequence)
     {
@@ -514,16 +430,10 @@ public class MarkdownSanitizer
 
     public enum SanitizationStrategy
     {
-        /**
-         * Remove any format tokens that are not escaped or within a special region.
-         * <br>{@code "**Hello** World!" -> "Hello World!"}
-         */
+
         REMOVE,
 
-        /**
-         * Escape any format tokens that are not escaped or within a special region.
-         * <br>{@code "**Hello** World!" -> "\**Hello\** World!"}
-         */
+
         ESCAPE,
     }
 }

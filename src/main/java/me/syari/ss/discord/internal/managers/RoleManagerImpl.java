@@ -31,12 +31,7 @@ public class RoleManagerImpl extends ManagerBase<RoleManager> implements RoleMan
     protected boolean hoist;
     protected boolean mentionable;
 
-    /**
-     * Creates a new RoleManager instance
-     *
-     * @param role
-     *        {@link Role Role} that should be modified
-     */
+
     public RoleManagerImpl(Role role)
     {
         super(role.getJDA(), Route.Roles.MODIFY_ROLE.compile(role.getGuild().getId(), role.getId()));

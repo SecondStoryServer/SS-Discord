@@ -28,15 +28,7 @@ public class EmoteManagerImpl extends ManagerBase<EmoteManager> implements Emote
     protected final List<String> roles = new ArrayList<>();
     protected String name;
 
-    /**
-     * Creates a new EmoteManager instance
-     *
-     * @param  emote
-     *         The target {@link EmoteImpl EmoteImpl} to modify
-     *
-     * @throws java.lang.IllegalStateException
-     *         If the specified Emote is {@link Emote#isFake() fake} or {@link Emote#isManaged() managed}.
-     */
+
     public EmoteManagerImpl(EmoteImpl emote)
     {
         super(emote.getJDA(), Route.Emotes.MODIFY_EMOTE.compile(notNullGuild(emote).getId(), emote.getId()));

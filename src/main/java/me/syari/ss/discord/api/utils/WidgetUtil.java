@@ -27,31 +27,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * The WidgetUtil is a class for interacting with various facets of Discord's
- * guild widgets
- *
- * @since  3.0
- * @author John A. Grosh
- */
+
 public class WidgetUtil 
 {
     public static final String WIDGET_PNG = Requester.DISCORD_API_PREFIX + "guilds/%s/widget.png?style=%s";
     public static final String WIDGET_URL = Requester.DISCORD_API_PREFIX + "guilds/%s/widget.json";
     public static final String WIDGET_HTML = "<iframe src=\"https://discordapp.com/widget?id=%s&theme=%s\" width=\"%d\" height=\"%d\" allowtransparency=\"true\" frameborder=\"0\"></iframe>";
     
-    /**
-     * Gets the banner image for the specified guild of the specified type.
-     * <br>This banner will only be available if the guild in question has the
-     * Widget enabled.
-     * 
-     * @param  guild
-     *         The guild
-     * @param  type
-     *         The type (visual style) of the banner
-     *
-     * @return A String containing the URL of the banner image
-     */
+
     @Nonnull
     public static String getWidgetBanner(@Nonnull Guild guild, @Nonnull BannerType type)
     {
@@ -59,19 +42,7 @@ public class WidgetUtil
         return getWidgetBanner(guild.getId(), type);
     }
     
-    /**
-     * Gets the banner image for the specified guild of the specified type.
-     * <br>This banner will only be available if the guild in question has the
-     * Widget enabled. Additionally, this method can be used independently of
-     * being on the guild in question.
-     * 
-     * @param  guildId
-     *         the guild ID
-     * @param  type
-     *         The type (visual style) of the banner
-     *
-     * @return A String containing the URL of the banner image
-     */
+
     @Nonnull
     public static String getWidgetBanner(@Nonnull String guildId, @Nonnull BannerType type)
     {
@@ -80,22 +51,7 @@ public class WidgetUtil
         return String.format(WIDGET_PNG, guildId, type.name().toLowerCase());
     }
     
-    /**
-     * Gets the pre-made HTML Widget for the specified guild using the specified
-     * settings. The widget will only display correctly if the guild in question
-     * has the Widget enabled.
-     * 
-     * @param  guild
-     *         the guild
-     * @param  theme
-     *         the theme, light or dark
-     * @param  width
-     *         the width of the widget
-     * @param  height
-     *         the height of the widget
-     *
-     * @return a String containing the pre-made widget with the supplied settings
-     */
+
     @Nonnull
     public static String getPremadeWidgetHtml(@Nonnull Guild guild, @Nonnull WidgetTheme theme, int width, int height)
     {
@@ -103,23 +59,7 @@ public class WidgetUtil
         return getPremadeWidgetHtml(guild.getId(), theme, width, height);
     }
     
-    /**
-     * Gets the pre-made HTML Widget for the specified guild using the specified
-     * settings. The widget will only display correctly if the guild in question
-     * has the Widget enabled. Additionally, this method can be used independently
-     * of being on the guild in question.
-     * 
-     * @param  guildId
-     *         the guild ID
-     * @param  theme
-     *         the theme, light or dark
-     * @param  width
-     *         the width of the widget
-     * @param  height
-     *         the height of the widget
-     *
-     * @return a String containing the pre-made widget with the supplied settings
-     */
+
     @Nonnull
     public static String getPremadeWidgetHtml(@Nonnull String guildId, @Nonnull WidgetTheme theme, int width, int height)
     {
@@ -130,62 +70,14 @@ public class WidgetUtil
         return String.format(WIDGET_HTML, guildId, theme.name().toLowerCase(), width, height);
     }
     
-    /**
-     * Makes a GET request to get the information for a Guild's widget. This
-     * widget (if available) contains information about the guild, including the
-     * Guild's name, an invite code (if set), a list of voice channels, and a
-     * list of online members (plus the voice states of any members in voice
-     * channels).
-     *
-     * <p>This Widget can be obtained from any valid guild ID that has
-     * it enabled; no accounts need to be on the server to access this information.
-     * 
-     * @param  guildId
-     *         The id of the Guild
-     *
-     * @throws RateLimitedException
-     *         If the request was rate limited, <b>respect the timeout</b>!
-     * @throws java.lang.NumberFormatException
-     *         If the provided {@code guildId} cannot be parsed by {@link Long#parseLong(String)}
-     *
-     * @return {@code null} if the provided guild ID is not a valid Discord guild ID
-     *         <br>a Widget object with null fields and isAvailable() returning
-     *         false if the guild ID is valid but the guild in question does not
-     *         have the widget enabled
-     *         <br>a filled-in Widget object if the guild ID is valid and the guild
-     *         in question has the widget enabled.
-     */
+
     @Nullable
     public static Widget getWidget(@Nonnull String guildId) throws RateLimitedException
     {
         return getWidget(MiscUtil.parseSnowflake(guildId));
     }
 
-    /**
-     * Makes a GET request to get the information for a Guild's widget. This
-     * widget (if available) contains information about the guild, including the
-     * Guild's name, an invite code (if set), a list of voice channels, and a
-     * list of online members (plus the voice states of any members in voice
-     * channels).
-     *
-     * <p>This Widget can be obtained from any valid guild ID that has
-     * it enabled; no accounts need to be on the server to access this information.
-     *
-     * @param  guildId
-     *         The id of the Guild
-     *
-     * @throws java.io.UncheckedIOException
-     *         If an I/O error occurs
-     * @throws RateLimitedException
-     *         If the request was rate limited, <b>respect the timeout</b>!
-     *
-     * @return {@code null} if the provided guild ID is not a valid Discord guild ID
-     *         <br>a Widget object with null fields and isAvailable() returning
-     *         false if the guild ID is valid but the guild in question does not
-     *         have the widget enabled
-     *         <br>a filled-in Widget object if the guild ID is valid and the guild
-     *         in question has the widget enabled.
-     */
+
     @Nullable
     public static Widget getWidget(long guildId) throws RateLimitedException
     {
@@ -246,26 +138,13 @@ public class WidgetUtil
         }
     }
     
-    /**
-     * Represents the available banner types
-     * <br>Each of these has a different appearance:
-     *
-     * <p>
-     * <br><b>Shield</b> - tiny, only contains Discord logo and online count
-     * <br><b>Banner1</b> - medium, contains server name, icon, and online count, and a "Powered by Discord" bar on the bottom
-     * <br><b>Banner2</b> - small, contains server name, icon, and online count, and a Discord logo on the side
-     * <br><b>Banner3</b> - medium, contains server name, icon, and online count, and a Discord logo with a "Chat Now" bar on the bottom
-     * <br><b>Banner4</b> - large, contains a very big Discord logo, server name, icon, and online count, and a big "Join My Server" button
-     */
+
     public enum BannerType
     {
         SHIELD, BANNER1, BANNER2, BANNER3, BANNER4
     }
     
-    /**
-     * Represents the color scheme of the widget
-     * <br>These color themes match Discord's dark and light themes
-     */
+
     public enum WidgetTheme
     {
         LIGHT, DARK
@@ -280,9 +159,7 @@ public class WidgetUtil
         private final TLongObjectMap<VoiceChannel> channels;
         private final TLongObjectMap<Member> members;
         
-        /**
-         * Constructs an unavailable Widget
-         */
+
         private Widget(long guildId)
         {
             isAvailable = false;
@@ -293,12 +170,7 @@ public class WidgetUtil
             members = new TLongObjectHashMap<>();
         }
         
-        /**
-         * Constructs an available Widget
-         *
-         * @param json
-         *        The {@link DataObject DataObject} to construct the Widget from
-         */
+
         private Widget(@Nonnull DataObject json)
         {
             String inviteCode = json.getString("instant_invite", null);
@@ -341,12 +213,7 @@ public class WidgetUtil
             }
         }
         
-        /**
-         * Shows whether or not the widget for a guild is available. If this
-         * method returns false, all other values will be null
-         * 
-         * @return True, if the widget is available, false otherwise
-         */
+
         public boolean isAvailable()
         {
             return isAvailable;
@@ -358,14 +225,7 @@ public class WidgetUtil
             return id;
         }
         
-        /**
-         * Gets the name of the guild
-         *
-         * @throws IllegalStateException
-         *         If the widget is not {@link #isAvailable() available}
-         *
-         * @return the name of the guild
-         */
+
         @Nonnull
         public String getName()
         {
@@ -374,15 +234,7 @@ public class WidgetUtil
             return name;
         }
         
-        /**
-         * Gets an invite code for the guild, or null if no invite channel is
-         * enabled in the widget
-         *
-         * @throws IllegalStateException
-         *         If the widget is not {@link #isAvailable() available}
-         *
-         * @return an invite code for the guild, if widget invites are enabled
-         */
+
         @Nullable
         public String getInviteCode()
         {
@@ -391,14 +243,7 @@ public class WidgetUtil
             return invite;
         }
         
-        /**
-         * Gets the list of voice channels in the guild
-         *
-         * @throws IllegalStateException
-         *         If the widget is not {@link #isAvailable() available}
-         *
-         * @return the list of voice channels in the guild
-         */
+
         @Nonnull
         public List<VoiceChannel> getVoiceChannels()
         {
@@ -407,19 +252,7 @@ public class WidgetUtil
             return Collections.unmodifiableList(new ArrayList<>(channels.valueCollection()));
         }
         
-        /**
-         * Gets a voice channel with the given ID, or null if the voice channel is not found
-         * 
-         * @param  id
-         *         the ID of the voice channel
-         *
-         * @throws IllegalStateException
-         *         If the widget is not {@link #isAvailable() available}
-         * @throws NumberFormatException
-         *         If the provided {@code id} cannot be parsed by {@link Long#parseLong(String)}
-         *
-         * @return possibly-null VoiceChannel with the given ID. 
-         */
+
         @Nullable
         public VoiceChannel getVoiceChannelById(String id)
         {
@@ -428,17 +261,7 @@ public class WidgetUtil
             return channels.get(MiscUtil.parseSnowflake(id));
         }
 
-        /**
-         * Gets a voice channel with the given ID, or {@code null} if the voice channel is not found
-         *
-         * @param  id
-         *         the ID of the voice channel
-         *
-         * @throws IllegalStateException
-         *         If the widget is not {@link #isAvailable() available}
-         *
-         * @return possibly-null VoiceChannel with the given ID.
-         */
+
         @Nullable
         public VoiceChannel getVoiceChannelById(long id)
         {
@@ -447,14 +270,7 @@ public class WidgetUtil
             return channels.get(id);
         }
         
-        /**
-         * Gets a list of online members in the guild
-         *
-         * @throws IllegalStateException
-         *         If the widget is not {@link #isAvailable() available}
-         *
-         * @return the list of members
-         */
+
         @Nonnull
         public List<Member> getMembers()
         {
@@ -463,19 +279,7 @@ public class WidgetUtil
             return Collections.unmodifiableList(new ArrayList<>(members.valueCollection()));
         }
         
-        /**
-         * Gets a member with the given ID, or null if the member is not found
-         * 
-         * @param  id
-         *         the ID of the member
-         *
-         * @throws NumberFormatException
-         *         If the provided {@code id} cannot be parsed by {@link Long#parseLong(String)}
-         * @throws IllegalStateException
-         *         If the widget is not {@link #isAvailable() available}
-         *
-         * @return possibly-null Member with the given ID. 
-         */
+
         @Nullable
         public Member getMemberById(String id)
         {
@@ -484,17 +288,7 @@ public class WidgetUtil
             return members.get(MiscUtil.parseSnowflake(id));
         }
 
-        /**
-         * Gets a member with the given ID, or {@code null} if the member is not found
-         *
-         * @param  id
-         *         the ID of the member
-         *
-         * @throws IllegalStateException
-         *         If the widget is not {@link #isAvailable() available}
-         *
-         * @return possibly-null Member with the given ID.
-         */
+
         @Nullable
         public Member getMemberById(long id)
         {
@@ -559,21 +353,13 @@ public class WidgetUtil
                 state = voiceState;
             }
             
-            /**
-             * Returns whether or not the given member is a bot account
-             * 
-             * @return true if the member is a bot, false otherwise
-             */
+
             public boolean isBot()
             {
                 return bot;
             }
             
-            /**
-             * Returns the username of the member
-             * 
-             * @return the username of the member
-             */
+
             @Nonnull
             public String getName()
             {
@@ -593,37 +379,21 @@ public class WidgetUtil
                 return "<@" + getId() + ">";
             }
             
-            /**
-             * Gets the discriminator of the member
-             * 
-             * @return the never-null discriminator of the member
-             */
+
             @Nonnull
             public String getDiscriminator()
             {
                 return discriminator;
             }
             
-            /**
-             * Gets the avatar hash of the member, or null if they do not have
-             * an avatar set.
-             * 
-             * @return possibly-null String containing the avatar hash of the
-             *         member
-             */
+
             @Nullable
             public String getAvatarId()
             {
                 return avatar;
             }
             
-            /**
-             * Gets the avatar url of the member, or null if they do not have
-             * an avatar set.
-             * 
-             * @return possibly-null String containing the avatar url of the
-             *         member
-             */
+
             @Nullable
             public String getAvatarUrl()
             {
@@ -631,37 +401,21 @@ public class WidgetUtil
                 return avatarId == null ? null : String.format(User.AVATAR_URL, getId(), avatarId, avatarId.startsWith("a_") ? ".gif" : ".png");
             }
 
-            /**
-             * Gets the asset id of the member's default avatar
-             * 
-             * @return never-null String containing the asset id of the member's
-             *         default avatar
-             */
+
             @Nonnull
             public String getDefaultAvatarId()
             {
                 return String.valueOf(Integer.parseInt(getDiscriminator()) % 5);
             }
 
-            /**
-             * Gets the url of the member's default avatar
-             * 
-             * @return never-null String containing the url of the member's
-             *         default avatar
-             */
+
             @Nonnull
             public String getDefaultAvatarUrl()
             {
                 return String.format(User.DEFAULT_AVATAR_URL, getDefaultAvatarId());
             }
 
-            /**
-            * The URL for the user's avatar image
-            * <br>If they do not have an avatar set, this will return the URL of their
-            * default avatar
-            * 
-            * @return Never-null String containing the member's effective avatar url.
-            */
+
             @Nonnull
             public String getEffectiveAvatarUrl()
             {
@@ -669,73 +423,42 @@ public class WidgetUtil
                 return avatarUrl == null ? getDefaultAvatarUrl() : avatarUrl;
             }
             
-            /**
-             * Gets the nickname of the member. If they do not have a nickname on
-             * the guild, this will return null;
-             * 
-             * @return possibly-null String containing the nickname of the member
-             */
+
             @Nullable
             public String getNickname()
             {
                 return nickname;
             }
             
-            /**
-             * Gets the visible name of the member. If they have a nickname set,
-             * this will be their nickname. Otherwise, it will be their username.
-             * 
-             * @return never-null String containing the member's effective (visible) name
-             */
+
             @Nonnull
             public String getEffectiveName()
             {
                 return nickname == null ? username : nickname;
             }
             
-            /**
-             * Gets the online status of the member. The widget does not show
-             * offline members, so this status should never be offline
-             * 
-             * @return the {@link OnlineStatus OnlineStatus} of the member
-             */
+
             @Nonnull
             public OnlineStatus getOnlineStatus()
             {
                 return status;
             }
             
-            /**
-            * The game that the member is currently playing.
-            * <br>This game cannot be a stream.
-            * If the user is not currently playing a game, this will return null.
-            *
-            * @return Possibly-null {@link Activity Activity} containing the game
-            *         that the member is currently playing.
-            */
+
             @Nullable
             public Activity getActivity()
             {
                 return game;
             }
             
-            /**
-             * The current voice state of the member.
-             * <br>If the user is not in voice, this will return a VoiceState with a null channel.
-             * 
-             * @return never-null VoiceState of the member
-             */
+
             @Nonnull
             public VoiceState getVoiceState()
             {
                 return state == null ? new VoiceState(this, widget) : state;
             }
 
-            /**
-             * Gets the widget that to which this member belongs
-             * 
-             * @return the Widget that holds this member
-             */
+
             @Nonnull
             public Widget getWidget()
             {
@@ -784,11 +507,7 @@ public class WidgetUtil
                 members.add(member);
             }
             
-            /**
-             * Gets the integer position of the channel
-             * 
-             * @return integer position of the channel
-             */
+
             public int getPosition()
             {
                 return position;
@@ -800,33 +519,21 @@ public class WidgetUtil
                 return id;
             }
             
-            /**
-             * Gets the name of the channel
-             * 
-             * @return name of the channel
-             */
+
             @Nonnull
             public String getName()
             {
                 return name;
             }
             
-            /**
-             * Gets a list of all members in the channel
-             * 
-             * @return never-null, possibly-empty list of members in the channel
-             */
+
             @Nonnull
             public List<Member> getMembers()
             {
                 return members;
             }
 
-            /**
-             * Gets the Widget to which this voice channel belongs
-             * 
-             * @return the Widget object that holds this voice channel
-             */
+
             @Nonnull
             public Widget getWidget()
             {
@@ -881,93 +588,56 @@ public class WidgetUtil
                 this.widget = widget;
             }
             
-            /**
-             * Gets the channel the member is in
-             * 
-             * @return never-null VoiceChannel
-             */
+
             @Nullable
             public VoiceChannel getChannel()
             {
                 return channel;
             }
             
-            /**
-             * Used to determine if the member is currently in a voice channel.
-             * <br>If this is false, getChannel() will return null
-             * 
-             * @return True, if the member is in a voice channel
-             */
+
             public boolean inVoiceChannel()
             {
                 return channel != null;
             }
             
-            /**
-             * Whether the member is muted by an admin
-             * 
-             * @return True, if the member is muted
-             */
+
             public boolean isGuildMuted()
             {
                 return muted;
             }
             
-            /**
-             * Whether the member is deafened by an admin
-             * 
-             * @return True, if the member is deafened
-             */
+
             public boolean isGuildDeafened()
             {
                 return deafened;
             }
             
-            /**
-             * Whether the member is suppressed
-             * 
-             * @return True, if the member is suppressed
-             */
+
             public boolean isSuppressed()
             {
                 return suppress;
             }
             
-            /**
-             * Whether the member is self-muted
-             * 
-             * @return True, if the member is self-muted
-             */
+
             public boolean isSelfMuted()
             {
                 return selfMute;
             }
             
-            /**
-             * Whether the member is self-deafened
-             * 
-             * @return True, if the member is self-deafened
-             */
+
             public boolean isSelfDeafened()
             {
                 return selfDeaf;
             }
             
-            /**
-             * Whether the member is muted, either by an admin or self-muted
-             * 
-             * @return True, if the member is self-muted or guild-muted
-             */
+
             public boolean isMuted()
             {
                 return selfMute || muted;
             }
             
-            /**
-             * Whether the member is deafened, either by an admin or self-deafened
-             * 
-             * @return True, if the member is self-deafened or guild-deafened
-             */
+
             public boolean isDeafened()
             {
                 return selfDeaf || deafened;

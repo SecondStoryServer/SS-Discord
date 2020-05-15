@@ -6,13 +6,7 @@ import me.syari.ss.discord.api.JDA;
 
 import javax.annotation.Nonnull;
 
-/**
- * Indicates that the current user subscribed to nitro or the active nitro subscription ran out. (client-only)
- *
- * <p>Can be used to track the state of the nitro subscription.
- *
- * <p>Identifier: {@code nitro}
- */
+
 public class SelfUpdateNitroEvent extends GenericSelfUpdateEvent<Boolean>
 {
     public static final String IDENTIFIER = "nitro";
@@ -22,11 +16,7 @@ public class SelfUpdateNitroEvent extends GenericSelfUpdateEvent<Boolean>
         super(api, responseNumber, wasNitro, !wasNitro, IDENTIFIER);
     }
 
-    /**
-     * Whether or not a nitro subscription used to be active before.
-     *
-     * @return The old nitro subscription status.
-     */
+
     public boolean wasNitro()
     {
         return getOldValue();

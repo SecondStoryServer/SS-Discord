@@ -2,11 +2,7 @@
 
 package me.syari.ss.discord.internal.requests;
 
-/**
- * WebSocket OP Codes for discord
- * <br>Used in {@link WebSocketClient WebSocketClient} to handle discord payloads
- * and send payloads with central readable OP Codes
- */
+
 public final class WebSocketCode
 {
     public static final int DISPATCH = 0;

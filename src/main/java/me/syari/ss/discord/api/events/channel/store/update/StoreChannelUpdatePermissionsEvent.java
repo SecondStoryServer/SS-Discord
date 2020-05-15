@@ -13,11 +13,7 @@ import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * Indicates that a {@link StoreChannel StoreChannel}'s permission overrides changed.
- *
- * <p>Can be use to detect when a StoreChannel's permission overrides change and get affected {@link Role Roles}/{@link Member Members}.
- */
+
 public class StoreChannelUpdatePermissionsEvent extends GenericStoreChannelEvent
 {
     private final List<IPermissionHolder> changed;
@@ -28,25 +24,14 @@ public class StoreChannelUpdatePermissionsEvent extends GenericStoreChannelEvent
         this.changed = permHolders;
     }
 
-    /**
-     * The affected {@link IPermissionHolder IPermissionHolders}
-     *
-     * @return The affected permission holders
-     *
-     * @see    #getChangedRoles()
-     * @see    #getChangedMembers()
-     */
+
     @Nonnull
     public List<IPermissionHolder> getChangedPermissionHolders()
     {
         return changed;
     }
 
-    /**
-     * List of affected {@link Role Roles}
-     *
-     * @return List of affected roles
-     */
+
     @Nonnull
     public List<Role> getChangedRoles()
     {
@@ -56,11 +41,7 @@ public class StoreChannelUpdatePermissionsEvent extends GenericStoreChannelEvent
             .collect(Collectors.toList());
     }
 
-    /**
-     * List of affected {@link Member Members}
-     *
-     * @return List of affected members
-     */
+
     @Nonnull
     public List<Member> getChangedMembers()
     {

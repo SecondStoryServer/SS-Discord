@@ -20,16 +20,7 @@ import java.util.List;
 import java.util.Queue;
 import java.util.regex.Matcher;
 
-/**
- * Builder system used to build {@link Message Messages}.
- * <br>Internally the builder uses a {@link java.lang.StringBuilder} to take advantage of the efficiencies offered by the
- * StringBuilder, and the methods provided by this class are a combination of those offered by the StringBuilder and
- * {@link String#format(String, Object...)}.
- *
- * @since  1.0
- * @author Michael Ritter
- * @author Aljoscha Grebe
- */
+
 public class MessageBuilder implements Appendable
 {
     protected final StringBuilder builder = new StringBuilder();
@@ -80,16 +71,7 @@ public class MessageBuilder implements Appendable
         this.embed = embed;
     }
 
-    /**
-     * Makes the created Message a TTS message.
-     * <br>TTS stands for Text-To-Speech. When a TTS method is received by the Discord client,
-     * it is vocalized so long as the user has not disabled TTS.
-     *
-     * @param  tts
-     *         whether the created Message should be a tts message
-     *
-     * @return The MessageBuilder instance. Useful for chaining.
-     */
+
     @Nonnull
     public MessageBuilder setTTS(boolean tts)
     {
@@ -97,15 +79,7 @@ public class MessageBuilder implements Appendable
         return this;
     }
     
-    /**
-     * Adds a {@link MessageEmbed} to the Message. Embeds can be built using
-     * the {@link EmbedBuilder} and offer specialized formatting.
-     *
-     * @param  embed
-     *         the embed to add, or null to remove
-     *
-     * @return The MessageBuilder instance. Useful for chaining.
-     */
+
     @Nonnull
     public MessageBuilder setEmbed(@Nullable MessageEmbed embed)
     {
@@ -113,21 +87,7 @@ public class MessageBuilder implements Appendable
         return this;
     }
 
-    /**
-     * Sets the <a href="https://en.wikipedia.org/wiki/Cryptographic_nonce" target="_blank">nonce</a>
-     * of the built message(s). It is recommended to have only 100% unique strings to validate messages via this nonce.
-     * <br>The nonce will be available from the resulting message via {@link Message#getNonce() Message.getNonce()}
-     * in message received by events and RestAction responses.
-     * <br>When {@code null} is provided no nonce will be used.
-     *
-     * @param  nonce
-     *         Validation nonce string
-     *
-     * @return The MessageBuilder instance. Useful for chaining.
-     *
-     * @see    Message#getNonce()
-     * @see    <a href="https://en.wikipedia.org/wiki/Cryptographic_nonce" target="_blank">Cryptographic Nonce - Wikipedia</a>
-     */
+
     @Nonnull
     public MessageBuilder setNonce(@Nullable String nonce)
     {
@@ -135,17 +95,7 @@ public class MessageBuilder implements Appendable
         return this;
     }
 
-    /**
-     * Sets the content of the resulting Message
-     * <br>This will replace already added content.
-     *
-     * @param  content
-     *         The content to use, or {@code null} to reset the content
-     *
-     * @return The MessageBuilder instance. Useful for chaining.
-     *
-     * @see    Message#getContentRaw()
-     */
+
     @Nonnull
     public MessageBuilder setContent(@Nullable String content)
     {
@@ -185,34 +135,14 @@ public class MessageBuilder implements Appendable
         return this;
     }
 
-    /**
-     * Appends the string representation of an object to the Message.
-     * <br>This is the same as {@link #append(CharSequence) append(String.valueOf(object))}
-     * 
-     * @param  object
-     *         the object to append
-     *
-     * @return The MessageBuilder instance. Useful for chaining.
-     */
+
     @Nonnull
     public MessageBuilder append(@Nullable Object object)
     {
         return append(String.valueOf(object));
     }
 
-    /**
-     * Appends a mention to the Message.
-     * <br>Typical usage would be providing an {@link IMentionable IMentionable} like
-     * {@link User User} or {@link TextChannel TextChannel}.
-     *
-     * @param  mention
-     *         the mention to append
-     *
-     * @throws java.lang.IllegalArgumentException
-     *         If provided with null
-     *
-     * @return The MessageBuilder instance. Useful for chaining.
-     */
+
     @Nonnull
     public MessageBuilder append(@Nonnull IMentionable mention)
     {
@@ -221,16 +151,7 @@ public class MessageBuilder implements Appendable
         return this;
     }
 
-    /**
-     * Appends a String using the specified chat {@link MessageBuilder.Formatting Formatting(s)}.
-     *
-     * @param  text
-     *         the text to append.
-     * @param  format
-     *         the format(s) to apply to the text.
-     *
-     * @return The MessageBuilder instance. Useful for chaining.
-     */
+
     @Nonnull
     public MessageBuilder append(@Nullable CharSequence text, @Nonnull Formatting... format)
     {
@@ -259,57 +180,7 @@ public class MessageBuilder implements Appendable
         return this;
     }
 
-    /**
-     * This method is an extended form of {@link String#format(String, Object...)}. It allows for all of
-     * the token replacement functionality that String.format(String, Object...) supports.
-     * <br>A lot of JDA entities implement {@link java.util.Formattable Formattable} and will provide
-     * specific format outputs for their specific type.
-     * <ul>
-     *     <li>{@link IMentionable IMentionable}
-     *     <br>These will output their {@link IMentionable#getAsMention() getAsMention} by default,
-     *         some implementations have alternatives such as {@link User User} and {@link TextChannel TextChannel}.</li>
-     *     <li>{@link MessageChannel MessageChannel}
-     *     <br>All message channels format to {@code "#" + getName()} by default, TextChannel has special handling
-     *         and uses the getAsMention output by default and the MessageChannel output as alternative ({@code #} flag).</li>
-     *     <li>{@link Message Message}
-     *     <br>Messages by default output their {@link Message#getContentDisplay() getContentDisplay()} value and
-     *         as alternative use the {@link Message#getContentRaw() getContentRaw()} value</li>
-     * </ul>
-     *
-     * <p>Example:
-     * <br>If you placed the following code in an method handling a
-     * {@link MessageReceivedEvent MessageReceivedEvent}
-     * <br><pre>{@code
-     * User user = event.getAuthor();
-     * MessageBuilder builder = new MessageBuilder();
-     * builder.appendFormat("%#s is really cool!", user);
-     * builder.build();
-     * }</pre>
-     *
-     * It would build a message that mentions the author and says that he is really cool!. If the user's
-     * name was "Minn" and his discriminator "6688", it would say:
-     * <br><pre>  "Minn#6688 is really cool!"</pre>
-     * <br>Note that this uses the {@code #} flag to utilize the alternative format for {@link User User}.
-     * <br>By default it would fallback to {@link IMentionable#getAsMention()}
-     *
-     * @param  format
-     *         a format string.
-     * @param  args
-     *         an array objects that will be used to replace the tokens, they must be
-     *         provided in the order that the tokens appear in the provided format string.
-     *
-     * @throws java.lang.IllegalArgumentException
-     *         If the provided format string is {@code null} or empty
-     * @throws java.util.IllegalFormatException
-     *         If a format string contains an illegal syntax,
-     *         a format specifier that is incompatible with the given arguments,
-     *         insufficient arguments given the format string, or other illegal conditions.
-     *         For specification of all possible formatting errors,
-     *         see the <a href="../util/Formatter.html#detail">Details</a>
-     *         section of the formatter class specification.
-     *
-     * @return The MessageBuilder instance. Useful for chaining.
-     */
+
     @Nonnull
     public MessageBuilder appendFormat(@Nonnull String format, @Nonnull Object... args)
     {
@@ -318,15 +189,7 @@ public class MessageBuilder implements Appendable
         return this;
     }
     
-    /**
-     * Appends a code-line to the Message.
-     * Code Lines are similar to code-blocks, however they are displayed in-line and do not support language specific highlighting.
-     *
-     * @param  text
-     *         the code to append
-     *
-     * @return The MessageBuilder instance. Useful for chaining.
-     */
+
     @Nonnull
     public MessageBuilder appendCodeLine(@Nullable CharSequence text)
     {
@@ -334,18 +197,7 @@ public class MessageBuilder implements Appendable
         return this;
     }
 
-    /**
-     * Appends a code-block to the Message.
-     * <br>Discord uses <a href="https://highlightjs.org/">Highlight.js</a> for its language highlighting support. You can find out what
-     * specific languages are supported <a href="https://github.com/isagalaev/highlight.js/tree/master/src/languages">here</a>.
-     *
-     * @param  text
-     *         the code to append
-     * @param  language
-     *         the language of the code. If unknown use an empty string
-     *
-     * @return The MessageBuilder instance. Useful for chaining.
-     */
+
     @Nonnull
     public MessageBuilder appendCodeBlock(@Nullable CharSequence text, @Nullable CharSequence language)
     {
@@ -353,44 +205,18 @@ public class MessageBuilder implements Appendable
         return this;
     }
 
-    /**
-     * Returns the current length of the content that will be built into a {@link Message Message}
-     * when {@link #build()} is called.
-     * <br>If this value is {@code 0} (and there is no embed) or greater than {@code 2000} when {@link #build()} is called, an exception
-     * will be raised as you cannot send an empty message to Discord and Discord has a hard limit of 2000 characters per message.
-     *
-     * <p><b>Hint:</b> You can use {@link #build(int, int)} or
-     * {@link #buildAll(MessageBuilder.SplitPolicy...) buildAll(SplitPolicy...)} as possible ways to
-     * deal with the 2000 character cap.
-     *
-     * @return the current length of the content that will be built into a Message.
-     */
+
     public int length()
     {
         return builder.length();
     }
 
-    /**
-     * Checks if the message contains any contend. This includes text as well as embeds.
-     * 
-     * @return weather the message contains content
-     */
+
     public boolean isEmpty() {
         return builder.length() == 0 && embed == null;
     }
 
-    /**
-     * Replaces each substring that matches the target string with the specified replacement string.
-     * The replacement proceeds from the beginning of the string to the end, for example, replacing
-     * "aa" with "b" in the message "aaa" will result in "ba" rather than "ab".
-     *
-     * @param  target
-     *         the sequence of char values to be replaced
-     * @param  replacement
-     *         the replacement sequence of char values
-     *
-     * @return The MessageBuilder instance. Useful for chaining.
-     */
+
     @Nonnull
     public MessageBuilder replace(@Nonnull String target, @Nonnull String replacement)
     {
@@ -403,16 +229,7 @@ public class MessageBuilder implements Appendable
         return this;
     }
 
-    /**
-     * Replaces the first substring that matches the target string with the specified replacement string.
-     *
-     * @param  target
-     *         the sequence of char values to be replaced
-     * @param  replacement
-     *         the replacement sequence of char values
-     *
-     * @return The MessageBuilder instance. Useful for chaining.
-     */
+
     @Nonnull
     public MessageBuilder replaceFirst(@Nonnull String target, @Nonnull String replacement)
     {
@@ -424,16 +241,7 @@ public class MessageBuilder implements Appendable
         return this;
     }
 
-    /**
-     * Replaces the last substring that matches the target string with the specified replacement string.
-     *
-     * @param  target
-     *         the sequence of char values to be replaced
-     * @param  replacement
-     *         the replacement sequence of char values
-     *
-     * @return The MessageBuilder instance. Useful for chaining.
-     */
+
     @Nonnull
     public MessageBuilder replaceLast(@Nonnull String target, @Nonnull String replacement)
     {
@@ -445,17 +253,7 @@ public class MessageBuilder implements Appendable
         return this;
     }
 
-    /**
-     * Removes all mentions and replaces them with the closest looking textual representation.
-     *
-     * <p>Use this over {@link #stripMentions(Guild)} if {@link User User} mentions
-     * should be replaced with their {@link User#getName()} instead of their Nicknames.
-     *
-     * @param jda
-     *        The JDA instance used to resolve the mentions.
-     *
-     * @return The MessageBuilder instance. Useful for chaining.
-     */
+
     @Nonnull
     public MessageBuilder stripMentions(@Nonnull JDA jda)
     {
@@ -464,18 +262,7 @@ public class MessageBuilder implements Appendable
         return this.stripMentions(jda, null, Message.MentionType.values());
     }
 
-    /**
-     * Removes all mentions and replaces them with the closest looking textual representation.
-     *
-     * <p>Use this over {@link #stripMentions(JDA)} if {@link User User} mentions should
-     * be replaced with their nicknames in a specific guild based.
-     * <br>Uses {@link Member#getEffectiveName()}
-     *
-     * @param  guild
-     *         the guild for {@link User User} mentions
-     *
-     * @return The MessageBuilder instance. Useful for chaining.
-     */
+
     @Nonnull
     public MessageBuilder stripMentions(@Nonnull Guild guild)
     {
@@ -484,39 +271,14 @@ public class MessageBuilder implements Appendable
         return this.stripMentions(guild.getJDA(), guild, Message.MentionType.values());
     }
 
-    /**
-     * Removes all mentions of the specified types and replaces them with the closest looking textual representation.
-     *
-     * <p>Use this over {@link #stripMentions(JDA, Message.MentionType...)} if {@link User User} mentions should
-     * be replaced with their nicknames in a specific guild based.
-     * <br>Uses {@link Member#getEffectiveName()}
-     *
-     * @param  guild
-     *         the guild for {@link User User} mentions
-     * @param  types
-     *         the {@link Message.MentionType MentionTypes} that should be stripped
-     *
-     * @return The MessageBuilder instance. Useful for chaining.
-     */
+
     @Nonnull
     public MessageBuilder stripMentions(@Nonnull Guild guild, @Nonnull Message.MentionType... types)
     {
         return this.stripMentions(guild.getJDA(), guild, types);
     }
 
-    /**
-     * Removes all mentions of the specified types and replaces them with the closest looking textual representation.
-     *
-     * <p>Use this over {@link #stripMentions(Guild, Message.MentionType...)} if {@link User User}
-     * mentions should be replaced with their {@link User#getName()}.
-     *
-     * @param  jda
-     *         The JDA instance used to resolve the mentions.
-     * @param  types
-     *         the {@link Message.MentionType MentionTypes} that should be stripped
-     *
-     * @return The MessageBuilder instance. Useful for chaining.
-     */
+
     @Nonnull
     public MessageBuilder stripMentions(@Nonnull JDA jda, @Nonnull Message.MentionType... types)
     {
@@ -617,22 +379,14 @@ public class MessageBuilder implements Appendable
         return this;
     }
 
-    /**
-     * Returns the underlying {@link StringBuilder}.
-     *
-     * @return The {@link StringBuilder} used by this {@link MessageBuilder}
-     */
+
     @Nonnull
     public StringBuilder getStringBuilder()
     {
         return this.builder;
     }
 
-    /**
-     * Clears the current builder. Useful for mass message creation.
-     *
-     * @return The MessageBuilder instance. Useful for chaining.
-     */
+
     @Nonnull
     public MessageBuilder clear() {
         this.builder.setLength(0);
@@ -641,29 +395,7 @@ public class MessageBuilder implements Appendable
         return this;
     }
 
-    /**
-     * Returns the index within this string of the first occurrence of the
-     * specified substring between the specified indices.
-     *
-     * <p>If no such value of {@code target} exists, then {@code -1} is returned.
-     *
-     * @param  target
-     *         the substring to search for.
-     * @param  fromIndex
-     *         the index from which to start the search.
-     * @param  endIndex
-     *         the index at which to end the search.
-     *
-     * @throws java.lang.IndexOutOfBoundsException
-     *         <ul>
-     *             <li>If the {@code fromIndex} is outside of the range of {@code 0} to {@link #length()}</li>
-     *             <li>If the {@code endIndex} is outside of the range of {@code 0} to {@link #length()}</li>
-     *             <li>If the {@code fromIndex} is greater than {@code endIndex}</li>
-     *         </ul>
-     *
-     * @return the index of the first occurrence of the specified substring between
-     *         the specified indices or {@code -1} if there is no such occurrence.
-     */
+
     public int indexOf(@Nonnull CharSequence target, int fromIndex, int endIndex)
     {
         if (fromIndex < 0)
@@ -707,29 +439,7 @@ public class MessageBuilder implements Appendable
         return -1;
     }
 
-    /**
-     * Returns the index within this string of the last occurrence of the
-     * specified substring between the specified indices.
-     *
-     * If no such value of {@code target} exists, then {@code -1} is returned.
-     *
-     * @param  target
-     *         the substring to search for.
-     * @param  fromIndex
-     *         the index from which to start the search.
-     * @param  endIndex
-     *         the index at which to end the search.
-     *
-     * @throws java.lang.IndexOutOfBoundsException
-     *         <ul>
-     *             <li>If the {@code fromIndex} is outside of the range of {@code 0} to {@link #length()}</li>
-     *             <li>If the {@code endIndex} is outside of the range of {@code 0} to {@link #length()}</li>
-     *             <li>If the {@code fromIndex} is greater than {@code endIndex}</li>
-     *         </ul>
-     *
-     * @return the index of the last occurrence of the specified substring between
-     *         the specified indices or {@code -1} if there is no such occurrence.
-     */
+
     public int lastIndexOf(@Nonnull CharSequence target, int fromIndex, int endIndex)
     {
         if (fromIndex < 0)
@@ -782,22 +492,7 @@ public class MessageBuilder implements Appendable
         return -1;
     }
 
-    /**
-     * Creates a {@link MessageAction MessageAction}
-     * with the current settings without building a {@link Message Message} instance first.
-     *
-     * @param  channel
-     *         The not-null target {@link MessageChannel MessageChannel}
-     *
-     * @throws java.lang.IllegalArgumentException
-     *         If the provided channel is {@code null}
-     * @throws PermissionException
-     *         If the currently logged in account does not have permission to send or read messages in this channel.
-     * @throws java.lang.UnsupportedOperationException
-     *         If this is a PrivateChannel and both users (sender and receiver) are bots
-     *
-     * @return {@link MessageAction MessageAction}
-     */
+
     @Nonnull
     @CheckReturnValue
     public MessageAction sendTo(@Nonnull MessageChannel channel)
@@ -823,22 +518,7 @@ public class MessageBuilder implements Appendable
         return action.tts(isTTS).embed(embed).nonce(nonce);
     }
 
-    /**
-     * Creates a {@link Message Message} object from this MessageBuilder
-     *
-     * <p><b>Hint:</b> You can use {@link #build(int, int)} or
-     * {@link #buildAll(MessageBuilder.SplitPolicy...) buildAll(SplitPolicy...)} as possible ways to
-     * deal with the 2000 character cap.
-     *
-     * @throws java.lang.IllegalStateException
-     *         <ul>
-     *             <li>If you attempt to build() an empty Message ({@link #length()} is {@code 0} and no
-     *             {@link MessageEmbed} was provided to {@link #setEmbed(MessageEmbed)})</li>
-     *             <li>If you attempt to build() a Message with more than 2000 characters of content.</li>
-     *         </ul>
-     *
-     * @return the created {@link Message Message}
-     */
+
     @Nonnull
     public Message build()
     {
@@ -851,22 +531,7 @@ public class MessageBuilder implements Appendable
         return new DataMessage(isTTS, message, nonce, embed);
     }
 
-    /**
-     * Creates a {@link java.util.Queue Queue} of {@link Message Message} objects from this MessageBuilder.
-     *
-     * <p>This method splits the content if it exceeds 2000 chars. The splitting behaviour can be customized using {@link SplitPolicy SplitPolicies}.
-     * The method will try the policies in the order they are passed to it.
-     * <br>If no SplitPolicy is provided each message will be split after exactly 2000 chars.
-     *
-     * <p><b>This is not Markdown safe.</b> An easy workaround is to include <a href="https://en.wikipedia.org/wiki/Zero-width_space">Zero Width Spaces</a>
-     * as predetermined breaking points to the message and only split on them.
-     *
-     * @param  policy
-     *         The {@link MessageBuilder.SplitPolicy} defining how to split the text in the
-     *         MessageBuilder into different, individual messages.
-     *
-     * @return the created {@link Message Messages}
-     */
+
     @Nonnull
     public Queue<Message> buildAll(@Nullable SplitPolicy... policy)
     {
@@ -922,46 +587,26 @@ public class MessageBuilder implements Appendable
         return new DataMessage(isTTS, builder.substring(beginIndex, endIndex), null, null);
     }
 
-    /**
-     * Interface to allow custom implementation of Splitting rules for
-     * {@link #buildAll(MessageBuilder.SplitPolicy...) MessageBuilder.buildAll(SplitPolicy...)}.
-     */
+
     public interface SplitPolicy
     {
-        /**
-         * Splits on newline chars {@code `\n`}.
-         */
+
         SplitPolicy NEWLINE = new CharSequenceSplitPolicy("\n", true);
 
-        /**
-         * Splits on space chars {@code `\u0020`}.
-         */
+
         SplitPolicy SPACE = new CharSequenceSplitPolicy(" ", true);
 
-        /**
-         * Splits exactly after 2000 chars.
-         */
+
         SplitPolicy ANYWHERE = (i, b) -> Math.min(i + 2000, b.length());
 
-        /**
-         * Creates a new {@link SplitPolicy} splitting on the specified chars.
-         *
-         * @param  chars
-         *         the chars to split on
-         * @param  remove
-         *         weather to remove the chars when splitting on them
-         *
-         * @return a new {@link SplitPolicy}
-         */
+
         @Nonnull
         static SplitPolicy onChars(@Nonnull CharSequence chars, boolean remove)
         {
             return new CharSequenceSplitPolicy(chars, remove);
         }
 
-        /**
-         * Default {@link SplitPolicy} implementation. Splits on a specified {@link CharSequence}.
-         */
+
         class CharSequenceSplitPolicy implements SplitPolicy
         {
             private final boolean remove;
@@ -988,25 +633,11 @@ public class MessageBuilder implements Appendable
             }
         }
 
-        /**
-         * Calculates the endIndex for the next {@link Message Message}.
-         * 
-         * @param  currentBeginIndex
-         *         the index the next {@link Message Message} should start from
-         * @param  builder
-         *         the {@link MessageBuilder MessageBuilder}
-         *
-         * @return the end Index of the next {@link Message Message}
-         * 
-         * @throws java.lang.IllegalStateException when splitting fails
-         * 
-         */
+
         int nextMessage(int currentBeginIndex, MessageBuilder builder);
     }
 
-    /**
-     * Holds the available formatting used in {@link MessageBuilder#append(java.lang.CharSequence, MessageBuilder.Formatting...)}
-     */
+
     public enum Formatting
     {
         ITALICS("*"),

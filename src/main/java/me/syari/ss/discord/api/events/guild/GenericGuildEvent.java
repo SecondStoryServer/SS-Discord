@@ -7,12 +7,7 @@ import me.syari.ss.discord.api.events.Event;
 
 import javax.annotation.Nonnull;
 
-/**
- * Indicates that a {@link Guild Guild} event is fired.
- * <br>Every GuildEvent is an instance of this event and can be casted.
- *
- * <p>Can be used to detect any GuildEvent.
- */
+
 public abstract class GenericGuildEvent extends Event
 {
     protected final Guild guild;
@@ -23,11 +18,7 @@ public abstract class GenericGuildEvent extends Event
         this.guild = guild;
     }
 
-    /**
-     * The {@link Guild Guild}
-     *
-     * @return The Guild
-     */
+
     @Nonnull
     public Guild getGuild()
     {

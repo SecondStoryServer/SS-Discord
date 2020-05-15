@@ -24,12 +24,7 @@ public class PermOverrideManagerImpl extends ManagerBase<PermOverrideManager> im
     protected long allowed;
     protected long denied;
 
-    /**
-     * Creates a new PermOverrideManager instance
-     *
-     * @param override
-     *        The {@link PermissionOverride PermissionOverride} to manage
-     */
+
     public PermOverrideManagerImpl(PermissionOverride override)
     {
         super(override.getJDA(),

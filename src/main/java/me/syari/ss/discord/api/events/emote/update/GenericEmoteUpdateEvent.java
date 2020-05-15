@@ -10,9 +10,7 @@ import me.syari.ss.discord.api.entities.Emote;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-/**
- * Indicates that an {@link Emote Emote} was updated.
- */
+
 public abstract class GenericEmoteUpdateEvent<T> extends GenericEmoteEvent implements UpdateEvent<Emote, T>
 {
     protected final T previous;

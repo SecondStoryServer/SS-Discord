@@ -6,11 +6,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Objects;
 
-/**
- * This class has major inspiration from <a href="https://commons.apache.org/proper/commons-lang/" target="_blank">Lang 3</a>
- *
- * <p>Specifically StringUtils.java and ExceptionUtils.java
- */
+
 public final class Helpers
 {
 

@@ -7,9 +7,7 @@ import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.EnumSet;
 
-/**
- * Flags representing the speaking modes used by discord users.
- */
+
 public enum SpeakingMode
 {
     VOICE(1), SOUNDSHARE(2), PRIORITY(4);
@@ -21,24 +19,13 @@ public enum SpeakingMode
         this.raw = raw;
     }
 
-    /**
-     * The raw bitmask for this mode
-     *
-     * @return bitmask
-     */
+
     public int getRaw()
     {
         return raw;
     }
 
-    /**
-     * Parses the active modes represented by the provided bitmask
-     *
-     * @param  mask
-     *         The bitmask containing the active speaking modes
-     *
-     * @return {@link EnumSet EnumSet} containing the speaking modes
-     */
+
     @Nonnull
     public static EnumSet<SpeakingMode> getModes(int mask)
     {
@@ -54,15 +41,7 @@ public enum SpeakingMode
         return modes;
     }
 
-    /**
-     * Converts the given speaking modes into raw its bitmask.
-     * This is only useful for sending speaking updates.
-     *
-     * @param  modes
-     *         The modes
-     *
-     * @return The bitmask for the provided speaking modes
-     */
+
     public static int getRaw(@Nullable SpeakingMode... modes)
     {
         if (modes == null || modes.length == 0)
@@ -73,15 +52,7 @@ public enum SpeakingMode
         return mask;
     }
 
-    /**
-     * Converts the given speaking modes into raw its bitmask.
-     * This is only useful for sending speaking updates.
-     *
-     * @param  modes
-     *         The modes
-     *
-     * @return The bitmask for the provided speaking modes
-     */
+
     public static int getRaw(@Nullable Collection<SpeakingMode> modes)
     {
         if (modes == null)

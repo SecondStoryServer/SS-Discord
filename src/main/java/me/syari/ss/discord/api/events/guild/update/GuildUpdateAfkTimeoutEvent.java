@@ -7,13 +7,7 @@ import me.syari.ss.discord.api.entities.Guild;
 
 import javax.annotation.Nonnull;
 
-/**
- * Indicates that the {@link Guild.Timeout AFK-Timeout} of a {@link Guild Guild} changed.
- *
- * <p>Can be used to detect when an afk timeout changes and retrieve the old one
- *
- * <p>Identifier: {@code afk_timeout}
- */
+
 public class GuildUpdateAfkTimeoutEvent extends GenericGuildUpdateEvent<Guild.Timeout>
 {
     public static final String IDENTIFIER = "afk_timeout";
@@ -23,22 +17,14 @@ public class GuildUpdateAfkTimeoutEvent extends GenericGuildUpdateEvent<Guild.Ti
         super(api, responseNumber, guild, oldAfkTimeout, guild.getAfkTimeout(), IDENTIFIER);
     }
 
-    /**
-     * The old {@link Guild.Timeout AFK-Timeout}
-     *
-     * @return The old AFK-Timeout
-     */
+
     @Nonnull
     public Guild.Timeout getOldAfkTimeout()
     {
         return getOldValue();
     }
 
-    /**
-     * The new {@link Guild.Timeout AFK-Timeout}
-     *
-     * @return The new AFK-Timeout
-     */
+
     @Nonnull
     public Guild.Timeout getNewAfkTimeout()
     {

@@ -8,9 +8,7 @@ import me.syari.ss.discord.api.entities.Emote;
 
 import javax.annotation.Nonnull;
 
-/**
- * Indicates that a new {@link Emote Emote} was added to a {@link Guild Guild}.
- */
+
 public class EmoteAddedEvent extends GenericEmoteEvent
 {
     public EmoteAddedEvent(@Nonnull JDA api, long responseNumber, @Nonnull Emote emote)

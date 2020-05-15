@@ -9,12 +9,7 @@ import me.syari.ss.discord.api.entities.TextChannel;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-/**
- * Indicates that a {@link TextChannel TextChannel} was updated.
- * <br>Every TextChannelUpdateEvent is derived from this event and can be casted.
- *
- * <p>Can be used to detect any TextChannelUpdateEvent.
- */
+
 public abstract class GenericTextChannelUpdateEvent<T> extends GenericTextChannelEvent implements UpdateEvent<TextChannel, T>
 {
     protected final T previous;

@@ -13,12 +13,7 @@ import me.syari.ss.discord.internal.requests.WebSocketCode;
 
 import javax.annotation.Nonnull;
 
-/**
- * The Presence associated with the provided JDA instance
- * <br><b>Note that this does not automatically handle the 5/60 second rate limit!</b>
- *
- * @since  3.0
- */
+
 public class PresenceImpl implements Presence
 {
     private final JDAImpl api;
@@ -26,12 +21,7 @@ public class PresenceImpl implements Presence
     private Activity activity = null;
     private OnlineStatus status = OnlineStatus.ONLINE;
 
-    /**
-     * Creates a new Presence representation for the provided JDAImpl instance
-     *
-     * @param jda
-     *        The not-null JDAImpl instance to use
-     */
+
     public PresenceImpl(JDAImpl jda)
     {
         this.api = jda;

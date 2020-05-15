@@ -6,13 +6,7 @@ import me.syari.ss.discord.api.JDA;
 
 import javax.annotation.Nonnull;
 
-/**
- * Indicates that the email of the current user changed. (client-only)
- *
- * <p>Can be used to retrieve the old email.
- *
- * <p>Identifier: {@code email}
- */
+
 public class SelfUpdateEmailEvent extends GenericSelfUpdateEvent<String>
 {
     public static final String IDENTIFIER = "email";
@@ -22,22 +16,14 @@ public class SelfUpdateEmailEvent extends GenericSelfUpdateEvent<String>
         super(api, responseNumber, oldEmail, api.getSelfUser().getEmail(), IDENTIFIER);
     }
 
-    /**
-     * The old email
-     *
-     * @return The old email
-     */
+
     @Nonnull
     public String getOldEmail()
     {
         return getOldValue();
     }
 
-    /**
-     * The new email
-     *
-     * @return The new email
-     */
+
     @Nonnull
     public String getNewEmail()
     {

@@ -11,15 +11,7 @@ import me.syari.ss.discord.api.entities.User;
 
 import javax.annotation.Nonnull;
 
-/**
- * Indicates that the {@link OnlineStatus OnlineStatus} of a {@link User User} changed.
- * <br>As with any presence updates this happened for a {@link Member Member} in a Guild!
- * <br>This event requires {@link JDABuilder#setGuildSubscriptionsEnabled(boolean) guild subscriptions} to be enabled.
- *
- * <p>Can be used to retrieve the User who changed their status and their previous status.
- *
- * <p>Identifier: {@code status}
- */
+
 public class UserUpdateOnlineStatusEvent extends GenericUserUpdateEvent<OnlineStatus> implements GenericUserPresenceEvent
 {
     public static final String IDENTIFIER = "status";
@@ -48,22 +40,14 @@ public class UserUpdateOnlineStatusEvent extends GenericUserUpdateEvent<OnlineSt
         return member;
     }
 
-    /**
-     * The old status
-     *
-     * @return The old status
-     */
+    
     @Nonnull
     public OnlineStatus getOldOnlineStatus()
     {
         return getOldValue();
     }
 
-    /**
-     * The new status
-     *
-     * @return The new status
-     */
+    
     @Nonnull
     public OnlineStatus getNewOnlineStatus()
     {

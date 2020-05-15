@@ -142,23 +142,13 @@ public class SessionControllerAdapter implements SessionController
             this(IDENTIFY_DELAY);
         }
 
-        /**
-         * Creates a QueueWorker
-         *
-         * @param delay
-         *        delay (in seconds) to wait between starting sessions
-         */
+
         public QueueWorker(int delay)
         {
             this(TimeUnit.SECONDS.toMillis(delay));
         }
 
-        /**
-         * Creates a QueueWorker
-         *
-         * @param delay
-         *        delay (in milliseconds) to wait between starting sessions
-         */
+
         public QueueWorker(long delay)
         {
             super("SessionControllerAdapter-Worker");

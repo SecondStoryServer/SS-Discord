@@ -23,12 +23,7 @@ public class WebhookManagerImpl extends ManagerBase<WebhookManager> implements W
     protected String channel;
     protected Icon avatar;
 
-    /**
-     * Creates a new WebhookManager instance
-     *
-     * @param webhook
-     *        The target {@link Webhook Webhook} to modify
-     */
+    
     public WebhookManagerImpl(Webhook webhook)
     {
         super(webhook.getJDA(), Route.Webhooks.MODIFY_WEBHOOK.compile(webhook.getId()));

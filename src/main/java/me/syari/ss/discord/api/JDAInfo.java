@@ -1,9 +1,7 @@
 
 package me.syari.ss.discord.api;
 
-/**
- * Contains information to this specific build of JDA.
- */
+
 public class JDAInfo
 {
     public static final int DISCORD_REST_VERSION = 6;

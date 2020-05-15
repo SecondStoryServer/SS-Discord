@@ -5,10 +5,7 @@ package me.syari.ss.discord.api.requests;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-/**
- * Constants representing main gateway close codes with association to an explaining message.
- * <br>This was inspired from the <a target="_blank" href="https://discordapp.com/developers/docs/topics/gateway#disconnections">official documentation</a>
- */
+
 public enum CloseCode
 {
     GRACEFUL_CLOSE(       1000, "The connection was closed gracefully or your heartbeats timed out."),
@@ -42,34 +39,20 @@ public enum CloseCode
         this.isReconnect = isReconnect;
     }
 
-    /**
-     * The integer code in the form of {@code 4xxx}/{@code 1xxx}
-     *
-     * @return The integer representation for this CloseCode
-     */
+
     public int getCode()
     {
         return code;
     }
 
-    /**
-     * The message which further explains the reason
-     * for this close code's occurrence
-     *
-     * @return The reason for this close
-     */
+
     @Nonnull
     public String getMeaning()
     {
         return meaning;
     }
 
-    /**
-     * Whether the gateway client
-     * will attempt to reconnect when this close code appears
-     *
-     * @return Whether the WebSocketClient will attempt to reconnect
-     */
+
     public boolean isReconnect()
     {
         return isReconnect;
@@ -81,16 +64,7 @@ public enum CloseCode
         return "CloseCode(" + code + " / " + meaning + ")";
     }
 
-    /**
-     * Retrieves the CloseCode representation
-     * for the specified integer close code
-     *
-     * @param  code
-     *         The close code to match
-     *
-     * @return The CloseCode field matching the specified integer
-     *         or {@code null} if no match was found
-     */
+
     @Nullable
     public static CloseCode from(int code)
     {

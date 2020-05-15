@@ -5,9 +5,7 @@ package me.syari.ss.discord.api.entities;
 import javax.annotation.Nonnull;
 import java.util.EnumSet;
 
-/**
- * Enum representing the flags in a {@link RichPresence RichPresence}
- */
+
 public enum ActivityFlag
 {
     INSTANCE(0),
@@ -26,37 +24,19 @@ public enum ActivityFlag
         this.raw = 1 << offset;
     }
 
-    /**
-     * The offset for this flag: {@code 1 << offset}
-     *
-     * @return The offset
-     */
+
     public int getOffset()
     {
         return offset;
     }
 
-    /**
-     * The raw bitmask for this flag
-     *
-     * @return The raw bitmask
-     */
+
     public int getRaw()
     {
         return raw;
     }
 
-    /**
-     * Maps the ActivityFlags based on the provided bitmask.
-     *
-     * @param  raw
-     *         The bitmask
-     *
-     * @return EnumSet containing the set activity flags
-     *
-     * @see    RichPresence#getFlags()
-     * @see    EnumSet EnumSet
-     */
+
     @Nonnull
     public static EnumSet<ActivityFlag> getFlags(int raw)
     {
