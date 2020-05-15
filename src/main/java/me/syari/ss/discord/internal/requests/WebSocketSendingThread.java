@@ -5,11 +5,10 @@ package me.syari.ss.discord.internal.requests;
 import gnu.trove.map.TLongObjectMap;
 import me.syari.ss.discord.api.entities.Guild;
 import me.syari.ss.discord.api.entities.GuildVoiceState;
-import me.syari.ss.discord.api.managers.AudioManager;
 import me.syari.ss.discord.api.utils.data.DataObject;
 import me.syari.ss.discord.internal.JDAImpl;
-import me.syari.ss.discord.internal.audio.ConnectionRequest;
-import me.syari.ss.discord.internal.audio.ConnectionStage;
+
+
 import org.slf4j.Logger;
 
 import java.util.Queue;
@@ -28,7 +27,6 @@ class WebSocketSendingThread implements Runnable
     private final ReentrantLock queueLock;
     private final Queue<String> chunkSyncQueue;
     private final Queue<String> ratelimitQueue;
-    private final TLongObjectMap<ConnectionRequest> queuedAudioConnections;
     private final ScheduledExecutorService executor;
     private Future<?> handle;
 
@@ -43,7 +41,6 @@ class WebSocketSendingThread implements Runnable
         this.queueLock = client.queueLock;
         this.chunkSyncQueue = client.chunkSyncQueue;
         this.ratelimitQueue = client.ratelimitQueue;
-        this.queuedAudioConnections = client.queuedAudioConnections;
         this.executor = client.executor;
     }
 
@@ -98,12 +95,9 @@ class WebSocketSendingThread implements Runnable
             needRateLimit = false;
             queueLock.lockInterruptibly();
 
-            ConnectionRequest audioRequest = client.getNextAudioConnectRequest();
             String chunkOrSyncRequest = chunkSyncQueue.peek();
             if (chunkOrSyncRequest != null)
                 handleChunkSync(chunkOrSyncRequest);
-            else if (audioRequest != null)
-                handleAudioRequest(audioRequest);
             else
                 handleNormalRequest();
 
@@ -132,46 +126,6 @@ class WebSocketSendingThread implements Runnable
             chunkSyncQueue.remove();
     }
 
-    private void handleAudioRequest(ConnectionRequest audioRequest)
-    {
-        long channelId = audioRequest.getChannelId();
-        long guildId = audioRequest.getGuildIdLong();
-        Guild guild = api.getGuildById(guildId);
-        if (guild == null)
-        {
-            LOG.debug("Discarding voice request due to null guild {}", guildId);
-            // race condition on guild delete, avoid NPE on DISCONNECT requests
-            queuedAudioConnections.remove(guildId);
-            return;
-        }
-        ConnectionStage stage = audioRequest.getStage();
-        AudioManager audioManager = guild.getAudioManager();
-        DataObject packet;
-        switch (stage)
-        {
-            case RECONNECT:
-            case DISCONNECT:
-                packet = newVoiceClose(guildId);
-                break;
-            default:
-            case CONNECT:
-                packet = newVoiceOpen(audioManager, channelId, guild.getIdLong());
-        }
-        LOG.debug("Sending voice request {}", packet);
-        if (send(packet.toString()))
-        {
-            //If we didn't get RateLimited, Next request attempt will be 2 seconds from now
-            // we remove it in VoiceStateUpdateHandler once we hear that it has updated our status
-            // in 2 seconds we will attempt again in case we did not receive an update
-            audioRequest.setNextAttemptEpoch(System.currentTimeMillis() + 2000);
-            //If we are already in the correct state according to voice state
-            // we will not receive a VOICE_STATE_UPDATE that would remove it
-            // thus we update it here
-            final GuildVoiceState voiceState = guild.getSelfMember().getVoiceState();
-            client.updateAudioConnection0(guild.getIdLong(), voiceState.getChannel());
-        }
-    }
-
     private void handleNormalRequest()
     {
         String message = ratelimitQueue.peek();
@@ -189,27 +143,5 @@ class WebSocketSendingThread implements Runnable
         needRateLimit = !client.send(request, false);
         attemptedToSend = true;
         return !needRateLimit;
-    }
-
-    protected DataObject newVoiceClose(long guildId)
-    {
-        return DataObject.empty()
-            .put("op", WebSocketCode.VOICE_STATE)
-            .put("d", DataObject.empty()
-                .put("guild_id", Long.toUnsignedString(guildId))
-                .putNull("channel_id")
-                .put("self_mute", false)
-                .put("self_deaf", false));
-    }
-
-    protected DataObject newVoiceOpen(AudioManager manager, long channel, long guild)
-    {
-        return DataObject.empty()
-            .put("op", WebSocketCode.VOICE_STATE)
-            .put("d", DataObject.empty()
-                .put("guild_id", guild)
-                .put("channel_id", channel)
-                .put("self_mute", manager.isSelfMuted())
-                .put("self_deaf", manager.isSelfDeafened()));
     }
 }

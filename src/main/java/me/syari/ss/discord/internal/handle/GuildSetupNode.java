@@ -8,19 +8,17 @@ import gnu.trove.map.TLongObjectMap;
 import gnu.trove.map.hash.TLongObjectHashMap;
 import gnu.trove.set.TLongSet;
 import gnu.trove.set.hash.TLongHashSet;
-import me.syari.ss.discord.api.audio.hooks.ConnectionListener;
-import me.syari.ss.discord.api.audio.hooks.ConnectionStatus;
+
+
 import me.syari.ss.discord.api.entities.VoiceChannel;
 import me.syari.ss.discord.api.events.guild.GuildAvailableEvent;
 import me.syari.ss.discord.api.events.guild.GuildJoinEvent;
 import me.syari.ss.discord.api.events.guild.GuildReadyEvent;
 import me.syari.ss.discord.api.events.guild.UnavailableGuildJoinedEvent;
-import me.syari.ss.discord.api.managers.AudioManager;
 import me.syari.ss.discord.api.utils.data.DataArray;
 import me.syari.ss.discord.api.utils.data.DataObject;
 import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.entities.GuildImpl;
-import me.syari.ss.discord.internal.managers.AudioManagerImpl;
 import me.syari.ss.discord.internal.utils.UnlockHook;
 import me.syari.ss.discord.internal.utils.cache.AbstractCacheView;
 
@@ -70,12 +68,6 @@ public class GuildSetupNode
         return status;
     }
 
-    @Nullable
-    public DataObject getGuildPayload()
-    {
-        return partialGuild;
-    }
-
     public int getExpectedMemberCount()
     {
         return expectedMemberCount;
@@ -96,21 +88,6 @@ public class GuildSetupNode
     public boolean isJoin()
     {
         return type == Type.JOIN;
-    }
-
-    public boolean isMarkedUnavailable()
-    {
-        return markedUnavailable;
-    }
-
-    public boolean requestedChunks()
-    {
-        return requestedChunk;
-    }
-
-    public boolean requestedSync()
-    {
-        return requestedSync;
     }
 
     public boolean containsMember(long userId)
@@ -377,7 +354,6 @@ public class GuildSetupNode
             members.remove(it.next());
         removedMembers.clear();
         GuildImpl guild = api.getEntityBuilder().createGuild(id, partialGuild, members, expectedMemberCount);
-        updateAudioManagerReference(guild);
         switch (type)
         {
         case AVAILABLE:
@@ -433,52 +409,6 @@ public class GuildSetupNode
             updateStatus(GuildSetupController.Status.CHUNKING);
             getController().addGuildForChunking(id, isJoin());
             requestedChunk = true;
-        }
-    }
-
-    private void updateAudioManagerReference(GuildImpl guild)
-    {
-        JDAImpl api = getController().getJDA();
-        AbstractCacheView<AudioManager> managerView = api.getAudioManagersView();
-        try (UnlockHook hook = managerView.writeLock())
-        {
-            TLongObjectMap<AudioManager> audioManagerMap = managerView.getMap();
-            AudioManagerImpl mng = (AudioManagerImpl) audioManagerMap.get(id);
-            if (mng == null)
-                return;
-            ConnectionListener listener = mng.getConnectionListener();
-            final AudioManagerImpl newMng = new AudioManagerImpl(guild);
-            newMng.setSelfMuted(mng.isSelfMuted());
-            newMng.setSelfDeafened(mng.isSelfDeafened());
-            newMng.setQueueTimeout(mng.getConnectTimeout());
-            newMng.setSendingHandler(mng.getSendingHandler());
-            newMng.setReceivingHandler(mng.getReceivingHandler());
-            newMng.setConnectionListener(listener);
-            newMng.setAutoReconnect(mng.isAutoReconnect());
-
-            if (mng.isConnected() || mng.isAttemptingToConnect())
-            {
-                final long channelId = mng.isConnected()
-                                       ? mng.getConnectedChannel().getIdLong()
-                                       : mng.getQueuedAudioConnection().getIdLong();
-
-                final VoiceChannel channel = api.getVoiceChannelById(channelId);
-                if (channel != null)
-                {
-                    if (mng.isConnected())
-                        mng.closeAudioConnection(ConnectionStatus.ERROR_CANNOT_RESUME);
-                    //closing old connection in order to reconnect later
-                    newMng.setQueuedAudioConnection(channel);
-                }
-                else
-                {
-                    //The voice channel is not cached. It was probably deleted.
-                    api.getClient().removeAudioConnection(id);
-                    if (listener != null)
-                        listener.onStatusChange(ConnectionStatus.DISCONNECTED_CHANNEL_DELETED);
-                }
-            }
-            audioManagerMap.put(id, newMng);
         }
     }
 

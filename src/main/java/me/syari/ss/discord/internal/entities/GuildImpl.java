@@ -12,7 +12,6 @@ import me.syari.ss.discord.api.entities.*;
 import me.syari.ss.discord.api.exceptions.HierarchyException;
 import me.syari.ss.discord.api.exceptions.InsufficientPermissionException;
 import me.syari.ss.discord.api.exceptions.PermissionException;
-import me.syari.ss.discord.api.managers.AudioManager;
 import me.syari.ss.discord.api.managers.GuildManager;
 import me.syari.ss.discord.api.requests.RestAction;
 import me.syari.ss.discord.api.requests.restaction.AuditableRestAction;
@@ -30,7 +29,6 @@ import me.syari.ss.discord.api.utils.cache.SortedSnowflakeCacheView;
 import me.syari.ss.discord.api.utils.data.DataArray;
 import me.syari.ss.discord.api.utils.data.DataObject;
 import me.syari.ss.discord.internal.JDAImpl;
-import me.syari.ss.discord.internal.managers.AudioManagerImpl;
 import me.syari.ss.discord.internal.managers.GuildManagerImpl;
 import me.syari.ss.discord.internal.requests.*;
 import me.syari.ss.discord.internal.requests.restaction.AuditableRestActionImpl;
@@ -643,31 +641,6 @@ public class GuildImpl implements Guild
 
         Route.CompiledRoute route = Route.Guilds.DELETE_GUILD.compile(getId());
         return new RestActionImpl<>(getJDA(), route, mfaBody);
-    }
-
-    @Nonnull
-    @Override
-    public AudioManager getAudioManager()
-    {
-        final AbstractCacheView<AudioManager> managerMap = getJDA().getAudioManagersView();
-        AudioManager mng = managerMap.get(id);
-        if (mng == null)
-        {
-            // No previous manager found -> create one
-            try (UnlockHook hook = managerMap.writeLock())
-            {
-                GuildImpl cachedGuild = (GuildImpl) getJDA().getGuildById(id);
-                if (cachedGuild == null)
-                    throw new IllegalStateException("Cannot get an AudioManager instance on an uncached Guild");
-                mng = managerMap.get(id);
-                if (mng == null)
-                {
-                    mng = new AudioManagerImpl(cachedGuild);
-                    managerMap.getMap().put(id, mng);
-                }
-            }
-        }
-        return mng;
     }
 
     @Nonnull

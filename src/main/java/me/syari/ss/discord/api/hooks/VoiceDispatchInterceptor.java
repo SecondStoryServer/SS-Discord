@@ -17,8 +17,6 @@ import javax.annotation.Nullable;
 public interface VoiceDispatchInterceptor
 {
 
-    void onVoiceServerUpdate(@Nonnull VoiceServerUpdate update);
-
 
     boolean onVoiceStateUpdate(@Nonnull VoiceStateUpdate update);
 
@@ -33,14 +31,6 @@ public interface VoiceDispatchInterceptor
         @Nonnull
         @Override
         DataObject toData();
-
-
-        @Nonnull
-        default DirectAudioController getAudioController()
-        {
-            return getJDA().getDirectAudioController();
-        }
-
 
         default long getGuildIdLong()
         {

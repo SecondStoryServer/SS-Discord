@@ -8,9 +8,9 @@ import gnu.trove.set.TLongSet;
 import me.syari.ss.discord.api.AccountType;
 import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.Permission;
-import me.syari.ss.discord.api.audio.factory.DefaultSendFactory;
-import me.syari.ss.discord.api.audio.factory.IAudioSendFactory;
-import me.syari.ss.discord.api.audio.hooks.ConnectionStatus;
+
+
+
 import me.syari.ss.discord.api.entities.*;
 import me.syari.ss.discord.api.events.GatewayPingEvent;
 import me.syari.ss.discord.api.events.GenericEvent;
@@ -20,7 +20,6 @@ import me.syari.ss.discord.api.exceptions.RateLimitedException;
 import me.syari.ss.discord.api.hooks.IEventManager;
 import me.syari.ss.discord.api.hooks.InterfacedEventManager;
 import me.syari.ss.discord.api.hooks.VoiceDispatchInterceptor;
-import me.syari.ss.discord.api.managers.AudioManager;
 import me.syari.ss.discord.api.managers.Presence;
 import me.syari.ss.discord.api.requests.Request;
 import me.syari.ss.discord.api.requests.Response;
@@ -38,15 +37,11 @@ import me.syari.ss.discord.internal.entities.EntityBuilder;
 import me.syari.ss.discord.internal.handle.EventCache;
 import me.syari.ss.discord.internal.handle.GuildSetupController;
 import me.syari.ss.discord.internal.hooks.EventManagerProxy;
-import me.syari.ss.discord.internal.managers.AudioManagerImpl;
-import me.syari.ss.discord.internal.managers.DirectAudioControllerImpl;
 import me.syari.ss.discord.internal.managers.PresenceImpl;
 import me.syari.ss.discord.internal.requests.*;
 import me.syari.ss.discord.internal.requests.restaction.GuildActionImpl;
 import me.syari.ss.discord.internal.utils.Checks;
 import me.syari.ss.discord.internal.utils.JDALogger;
-import me.syari.ss.discord.internal.utils.UnlockHook;
-import me.syari.ss.discord.internal.utils.cache.AbstractCacheView;
 import me.syari.ss.discord.internal.utils.cache.SnowflakeCacheViewImpl;
 import me.syari.ss.discord.internal.utils.config.AuthorizationConfig;
 import me.syari.ss.discord.internal.utils.config.MetaConfig;
@@ -80,8 +75,6 @@ public class JDAImpl implements JDA
     protected final TLongObjectMap<User> fakeUsers = MiscUtil.newLongMap();
     protected final TLongObjectMap<PrivateChannel> fakePrivateChannels = MiscUtil.newLongMap();
 
-    protected final AbstractCacheView<AudioManager> audioManagers = new CacheView.SimpleCacheView<>(AudioManager.class, m -> m.getGuild().getName());
-
     protected final PresenceImpl presence;
     protected final Thread shutdownHook;
     protected final EntityBuilder entityBuilder = new EntityBuilder(this);
@@ -89,7 +82,6 @@ public class JDAImpl implements JDA
     protected final EventManagerProxy eventManager = new EventManagerProxy(new InterfacedEventManager());
 
     protected final GuildSetupController guildSetupController;
-    protected final DirectAudioControllerImpl audioController;
 
     protected final AuthorizationConfig authConfig;
     protected final ThreadingConfig threadConfig;
@@ -98,7 +90,6 @@ public class JDAImpl implements JDA
 
     protected WebSocketClient client;
     protected Requester requester;
-    protected IAudioSendFactory audioSendFactory = new DefaultSendFactory();
     protected Status status = Status.INITIALIZING;
     protected SelfUser selfUser;
     protected ShardInfo shardInfo;
@@ -128,7 +119,6 @@ public class JDAImpl implements JDA
         this.requester = new Requester(this);
         this.requester.setRetryOnTimeout(this.sessionConfig.isRetryOnTimeout());
         this.guildSetupController = new GuildSetupController(this);
-        this.audioController = new DirectAudioControllerImpl(this);
         this.eventCache = new EventCache(isGuildSubscriptions());
     }
 
@@ -502,13 +492,6 @@ public class JDAImpl implements JDA
 
     @Nonnull
     @Override
-    public DirectAudioControllerImpl getDirectAudioController()
-    {
-        return this.audioController;
-    }
-
-    @Nonnull
-    @Override
     public List<Guild> getMutualGuilds(@Nonnull User... users)
     {
         Checks.notNull(users, "users");
@@ -544,13 +527,6 @@ public class JDAImpl implements JDA
             return new RestActionImpl<>(this, route,
                     (response, request) -> getEntityBuilder().createFakeUser(response.getObject(), false));
         });
-    }
-
-    @Nonnull
-    @Override
-    public CacheView<AudioManager> getAudioManagerCache()
-    {
-        return audioManagers;
     }
 
     @Nonnull
@@ -673,7 +649,6 @@ public class JDAImpl implements JDA
         if (status == Status.SHUTDOWN)
             return;
         //so we can shutdown from WebSocketClient properly
-        closeAudioConnections();
         guildSetupController.close();
 
         getRequester().shutdown();
@@ -691,19 +666,6 @@ public class JDAImpl implements JDA
         }
 
         setStatus(Status.SHUTDOWN);
-    }
-
-    private void closeAudioConnections()
-    {
-        AbstractCacheView<AudioManager> view = getAudioManagersView();
-        try (UnlockHook hook = view.writeLock())
-        {
-            TLongObjectMap<AudioManager> map = view.getMap();
-            map.valueCollection().stream()
-               .map(AudioManagerImpl.class::cast)
-               .forEach(m -> m.closeAudioConnection(ConnectionStatus.SHUTTING_DOWN));
-            map.clear();
-        }
     }
 
     @Override
@@ -869,17 +831,6 @@ public class JDAImpl implements JDA
         return entityBuilder;
     }
 
-    public IAudioSendFactory getAudioSendFactory()
-    {
-        return audioSendFactory;
-    }
-
-    public void setAudioSendFactory(IAudioSendFactory factory)
-    {
-        Checks.notNull(factory, "Provided IAudioSendFactory");
-        this.audioSendFactory = factory;
-    }
-
     public void setGatewayPing(long ping)
     {
         long oldPing = this.gatewayPing;
@@ -935,11 +886,6 @@ public class JDAImpl implements JDA
     public SnowflakeCacheViewImpl<PrivateChannel> getPrivateChannelsView()
     {
         return privateChannelCache;
-    }
-
-    public AbstractCacheView<AudioManager> getAudioManagersView()
-    {
-        return audioManagers;
     }
 
     public TLongObjectMap<User> getFakeUserMap()

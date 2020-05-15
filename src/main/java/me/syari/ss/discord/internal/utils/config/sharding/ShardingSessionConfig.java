@@ -3,7 +3,7 @@
 package me.syari.ss.discord.internal.utils.config.sharding;
 
 import com.neovisionaries.ws.client.WebSocketFactory;
-import me.syari.ss.discord.api.audio.factory.IAudioSendFactory;
+
 import me.syari.ss.discord.api.hooks.VoiceDispatchInterceptor;
 import me.syari.ss.discord.api.utils.SessionController;
 import me.syari.ss.discord.internal.utils.config.SessionConfig;
@@ -18,13 +18,12 @@ import java.util.EnumSet;
 public class ShardingSessionConfig extends SessionConfig
 {
     private final OkHttpClient.Builder builder;
-    private final IAudioSendFactory audioSendFactory;
     private final EnumSet<ShardingConfigFlag> shardingFlags;
 
     public ShardingSessionConfig(
             @Nullable SessionController sessionController, @Nullable VoiceDispatchInterceptor interceptor,
             @Nullable OkHttpClient httpClient, @Nullable OkHttpClient.Builder httpClientBuilder,
-            @Nullable WebSocketFactory webSocketFactory, @Nullable IAudioSendFactory audioSendFactory,
+            @Nullable WebSocketFactory webSocketFactory,
             EnumSet<ConfigFlag> flags, EnumSet<ShardingConfigFlag> shardingFlags,
             int maxReconnectDelay, int largeThreshold)
     {
@@ -33,7 +32,6 @@ public class ShardingSessionConfig extends SessionConfig
             this.builder = httpClientBuilder == null ? new OkHttpClient.Builder() : httpClientBuilder;
         else
             this.builder = null;
-        this.audioSendFactory = audioSendFactory;
         this.shardingFlags = shardingFlags;
     }
 
@@ -53,15 +51,9 @@ public class ShardingSessionConfig extends SessionConfig
         return builder;
     }
 
-    @Nullable
-    public IAudioSendFactory getAudioSendFactory()
-    {
-        return audioSendFactory;
-    }
-
     @Nonnull
     public static ShardingSessionConfig getDefault()
     {
-        return new ShardingSessionConfig(null, null, new OkHttpClient(), null, null, null, ConfigFlag.getDefault(), ShardingConfigFlag.getDefault(), 900, 250);
+        return new ShardingSessionConfig(null, null, new OkHttpClient(), null, null, ConfigFlag.getDefault(), ShardingConfigFlag.getDefault(), 900, 250);
     }
 }

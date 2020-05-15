@@ -5,7 +5,7 @@ import com.neovisionaries.ws.client.WebSocketFactory;
 import me.syari.ss.discord.annotations.DeprecatedSince;
 import me.syari.ss.discord.annotations.ReplaceWith;
 import me.syari.ss.discord.api.OnlineStatus;
-import me.syari.ss.discord.api.audio.factory.IAudioSendFactory;
+
 import me.syari.ss.discord.api.entities.Activity;
 import me.syari.ss.discord.api.hooks.IEventManager;
 import me.syari.ss.discord.api.hooks.VoiceDispatchInterceptor;
@@ -58,14 +58,13 @@ public class  DefaultShardManagerBuilder
     protected OkHttpClient.Builder httpClientBuilder = null;
     protected OkHttpClient httpClient = null;
     protected WebSocketFactory wsFactory = null;
-    protected IAudioSendFactory audioSendFactory = null;
     protected ThreadFactory threadFactory = null;
     protected ChunkingFilter chunkingFilter;
 
-    
+
     public DefaultShardManagerBuilder() {}
 
-    
+
     public DefaultShardManagerBuilder(@Nonnull String token)
     {
         this.setToken(token);
@@ -207,14 +206,6 @@ public class  DefaultShardManagerBuilder
         Checks.noneNull(listenerProviders, "listener providers");
 
         this.listenerProviders.removeAll(listenerProviders);
-        return this;
-    }
-
-    
-    @Nonnull
-    public DefaultShardManagerBuilder setAudioSendFactory(@Nullable final IAudioSendFactory factory)
-    {
-        this.audioSendFactory = factory;
         return this;
     }
 
@@ -545,7 +536,7 @@ public class  DefaultShardManagerBuilder
         presenceConfig.setStatusProvider(statusProvider);
         presenceConfig.setIdleProvider(idleProvider);
         final ThreadingProviderConfig threadingConfig = new ThreadingProviderConfig(rateLimitPoolProvider, gatewayPoolProvider, callbackPoolProvider, threadFactory);
-        final ShardingSessionConfig sessionConfig = new ShardingSessionConfig(sessionController, voiceDispatchInterceptor, httpClient, httpClientBuilder, wsFactory, audioSendFactory, flags, shardingFlags, maxReconnectDelay, largeThreshold);
+        final ShardingSessionConfig sessionConfig = new ShardingSessionConfig(sessionController, voiceDispatchInterceptor, httpClient, httpClientBuilder, wsFactory, flags, shardingFlags, maxReconnectDelay, largeThreshold);
         final ShardingMetaConfig metaConfig = new ShardingMetaConfig(maxBufferSize, contextProvider, cacheFlags, flags, compression);
         final DefaultShardManager manager = new DefaultShardManager(this.token, this.shards, shardingConfig, eventConfig, presenceConfig, threadingConfig, sessionConfig, metaConfig, chunkingFilter);
 

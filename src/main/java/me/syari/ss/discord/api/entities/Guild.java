@@ -9,7 +9,6 @@ import me.syari.ss.discord.api.Permission;
 import me.syari.ss.discord.api.Region;
 import me.syari.ss.discord.api.exceptions.HierarchyException;
 import me.syari.ss.discord.api.exceptions.InsufficientPermissionException;
-import me.syari.ss.discord.api.managers.AudioManager;
 import me.syari.ss.discord.api.managers.GuildManager;
 import me.syari.ss.discord.api.requests.RestAction;
 import me.syari.ss.discord.api.requests.restaction.AuditableRestAction;
@@ -662,10 +661,6 @@ public interface Guild extends ISnowflake
     @Nonnull
     @CheckReturnValue
     RestAction<Void> delete(@Nullable String mfaCode);
-
-
-    @Nonnull
-    AudioManager getAudioManager();
 
 
     @Nonnull

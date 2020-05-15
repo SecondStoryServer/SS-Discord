@@ -3,17 +3,15 @@
 package me.syari.ss.discord.internal.handle;
 
 import gnu.trove.set.TLongSet;
-import me.syari.ss.discord.api.audio.hooks.ConnectionStatus;
+
 import me.syari.ss.discord.api.entities.*;
 import me.syari.ss.discord.api.events.guild.GuildLeaveEvent;
 import me.syari.ss.discord.api.events.guild.GuildUnavailableEvent;
-import me.syari.ss.discord.api.managers.AudioManager;
 import me.syari.ss.discord.api.utils.data.DataObject;
 import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.entities.GuildImpl;
 import me.syari.ss.discord.internal.entities.PrivateChannelImpl;
 import me.syari.ss.discord.internal.entities.UserImpl;
-import me.syari.ss.discord.internal.managers.AudioManagerImpl;
 import me.syari.ss.discord.internal.requests.WebSocketClient;
 import me.syari.ss.discord.internal.utils.UnlockHook;
 import me.syari.ss.discord.internal.utils.cache.AbstractCacheView;
@@ -77,14 +75,6 @@ public class GuildDeleteHandler extends SocketHandler
             guild.getCategoryCache()
                  .forEachUnordered(chan -> categoryView.getMap().remove(chan.getIdLong()));
         }
-
-        // Clear audio connection
-        getJDA().getClient().removeAudioConnection(id);
-        final AbstractCacheView<AudioManager> audioManagerView = getJDA().getAudioManagersView();
-        final AudioManagerImpl manager = (AudioManagerImpl) audioManagerView.get(id); //read-lock access/release
-        if (manager != null)
-            manager.closeAudioConnection(ConnectionStatus.DISCONNECTED_REMOVED_FROM_GUILD); //connection-lock access/release
-        audioManagerView.remove(id); //write-lock access/release
 
         //cleaning up all users that we do not share a guild with anymore
         // Anything left in memberIds will be removed from the main userMap

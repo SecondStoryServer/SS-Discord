@@ -3,7 +3,7 @@ package me.syari.ss.discord.api;
 
 import com.neovisionaries.ws.client.WebSocketFactory;
 import me.syari.ss.discord.annotations.Incubating;
-import me.syari.ss.discord.api.audio.factory.IAudioSendFactory;
+
 import me.syari.ss.discord.api.entities.Activity;
 import me.syari.ss.discord.api.exceptions.AccountTypeException;
 import me.syari.ss.discord.api.hooks.IEventManager;
@@ -52,7 +52,6 @@ public class JDABuilder
     protected WebSocketFactory wsFactory = null;
     protected String token = null;
     protected IEventManager eventManager = null;
-    protected IAudioSendFactory audioSendFactory = null;
     protected JDA.ShardInfo shardInfo = null;
     protected Compression compression = Compression.ZLIB;
     protected Activity activity = null;
@@ -85,68 +84,6 @@ public class JDABuilder
 
         this.accountType = accountType;
         this.listeners = new LinkedList<>();
-    }
-
-
-    @Nonnull
-    public JDABuilder setRawEventsEnabled(boolean enable)
-    {
-        return setFlag(ConfigFlag.RAW_EVENTS, enable);
-    }
-
-
-    @Nonnull
-    public JDABuilder setRelativeRateLimit(boolean enable)
-    {
-        return setFlag(ConfigFlag.USE_RELATIVE_RATELIMIT, enable);
-    }
-
-
-    @Nonnull
-    public JDABuilder setEnabledCacheFlags(@Nullable EnumSet<CacheFlag> flags)
-    {
-        this.cacheFlags = flags == null ? EnumSet.noneOf(CacheFlag.class) : EnumSet.copyOf(flags);
-        return this;
-    }
-
-
-    @Nonnull
-    public JDABuilder setDisabledCacheFlags(@Nullable EnumSet<CacheFlag> flags)
-    {
-        return setEnabledCacheFlags(flags == null ? EnumSet.allOf(CacheFlag.class) : EnumSet.complementOf(flags));
-    }
-
-
-    @Nonnull
-    public JDABuilder setContextMap(@Nullable ConcurrentMap<String, String> map)
-    {
-        this.contextMap = map;
-        if (map != null)
-            setContextEnabled(true);
-        return this;
-    }
-
-
-    @Nonnull
-    public JDABuilder setContextEnabled(boolean enable)
-    {
-        return setFlag(ConfigFlag.MDC_CONTEXT, enable);
-    }
-
-
-    @Nonnull
-    public JDABuilder setCompression(@Nonnull Compression compression)
-    {
-        Checks.notNull(compression, "Compression");
-        this.compression = compression;
-        return this;
-    }
-
-
-    @Nonnull
-    public JDABuilder setRequestTimeoutRetry(boolean retryOnTimeout)
-    {
-        return setFlag(ConfigFlag.RETRY_TIMEOUT, retryOnTimeout);
     }
 
 
@@ -229,50 +166,6 @@ public class JDABuilder
         return this;
     }
 
-
-    @Nonnull
-    public JDABuilder setBulkDeleteSplittingEnabled(boolean enabled)
-    {
-        return setFlag(ConfigFlag.BULK_DELETE_SPLIT, enabled);
-    }
-
-
-    @Nonnull
-    public JDABuilder setEnableShutdownHook(boolean enable)
-    {
-        return setFlag(ConfigFlag.SHUTDOWN_HOOK, enable);
-    }
-
-
-    @Nonnull
-    public JDABuilder setAutoReconnect(boolean autoReconnect)
-    {
-        return setFlag(ConfigFlag.AUTO_RECONNECT, autoReconnect);
-    }
-
-
-    @Nonnull
-    public JDABuilder setEventManager(@Nullable IEventManager manager)
-    {
-        this.eventManager = manager;
-        return this;
-    }
-
-
-    @Nonnull
-    public JDABuilder setAudioSendFactory(@Nullable IAudioSendFactory factory)
-    {
-        this.audioSendFactory = factory;
-        return this;
-    }
-
-
-    @Nonnull
-    public JDABuilder setIdle(boolean idle)
-    {
-        this.idle = idle;
-        return this;
-    }
 
 
     @Nonnull
@@ -414,9 +307,6 @@ public class JDABuilder
 
         if (eventManager != null)
             jda.setEventManager(eventManager);
-
-        if (audioSendFactory != null)
-            jda.setAudioSendFactory(audioSendFactory);
 
         listeners.forEach(jda::addEventListener);
         jda.setStatus(JDA.Status.INITIALIZED);  //This is already set by JDA internally, but this is to make sure the listeners catch it.

@@ -7,7 +7,6 @@ import me.syari.ss.discord.annotations.ForRemoval;
 import me.syari.ss.discord.annotations.ReplaceWith;
 import me.syari.ss.discord.api.entities.*;
 import me.syari.ss.discord.api.hooks.IEventManager;
-import me.syari.ss.discord.api.managers.AudioManager;
 import me.syari.ss.discord.api.managers.DirectAudioController;
 import me.syari.ss.discord.api.managers.Presence;
 import me.syari.ss.discord.api.requests.RestAction;
@@ -15,7 +14,6 @@ import me.syari.ss.discord.api.requests.restaction.AuditableRestAction;
 import me.syari.ss.discord.api.requests.restaction.GuildAction;
 import me.syari.ss.discord.api.sharding.ShardManager;
 import me.syari.ss.discord.api.utils.MiscUtil;
-import me.syari.ss.discord.api.utils.cache.CacheView;
 import me.syari.ss.discord.api.utils.cache.SnowflakeCacheView;
 import me.syari.ss.discord.internal.requests.CompletedRestAction;
 import me.syari.ss.discord.internal.requests.RestActionImpl;
@@ -154,20 +152,6 @@ public interface JDA
 
 
     @Nonnull
-    default RestAction<Long> getRestPing()
-    {
-        AtomicLong time = new AtomicLong();
-        Route.CompiledRoute route = Route.Self.GET_SELF.compile();
-        RestActionImpl<Long> action = new RestActionImpl<>(this, route, (response, request) -> System.currentTimeMillis() - time.get());
-        action.setCheck(() -> {
-            time.set(System.currentTimeMillis());
-            return true;
-        });
-        return action;
-    }
-
-
-    @Nonnull
     default JDA awaitStatus(@Nonnull JDA.Status status) throws InterruptedException
     {
         //This is done to retain backwards compatible ABI as it would otherwise change the signature of the method
@@ -203,10 +187,6 @@ public interface JDA
     OkHttpClient getHttpClient();
 
 
-    @Nonnull
-    DirectAudioController getDirectAudioController();
-
-
     void setEventManager(@Nullable IEventManager manager);
 
 
@@ -223,18 +203,6 @@ public interface JDA
     @Nonnull
     @CheckReturnValue
     GuildAction createGuild(@Nonnull String name);
-
-
-    @Nonnull
-    CacheView<AudioManager> getAudioManagerCache();
-
-
-    @Nonnull
-    default List<AudioManager> getAudioManagers()
-    {
-        return getAudioManagerCache().asList();
-    }
-
 
 
     @Nonnull

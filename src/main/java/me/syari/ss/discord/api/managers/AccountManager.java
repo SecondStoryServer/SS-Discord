@@ -2,7 +2,6 @@
 
 package me.syari.ss.discord.api.managers;
 
-import me.syari.ss.discord.api.entities.Icon;
 import me.syari.ss.discord.api.entities.SelfUser;
 
 import javax.annotation.CheckReturnValue;

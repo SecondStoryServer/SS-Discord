@@ -10,7 +10,6 @@ import me.syari.ss.discord.api.utils.cache.CacheFlag;
 import me.syari.ss.discord.api.utils.data.DataObject;
 import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.entities.*;
-import me.syari.ss.discord.internal.managers.AudioManagerImpl;
 import me.syari.ss.discord.internal.utils.UnlockHook;
 import me.syari.ss.discord.internal.utils.cache.MemberCacheViewImpl;
 import me.syari.ss.discord.internal.utils.cache.SnowflakeCacheViewImpl;
@@ -124,8 +123,6 @@ public class VoiceStateUpdateHandler extends SocketHandler
             else if (channel == null)
             {
                 oldChannel.getConnectedMembersMap().remove(userId);
-                if (isSelf)
-                    getJDA().getDirectAudioController().update(guild, null);
                 getJDA().handleEvent(
                         new GuildVoiceLeaveEvent(
                                 getJDA(), responseNumber,
@@ -133,24 +130,6 @@ public class VoiceStateUpdateHandler extends SocketHandler
             }
             else
             {
-                AudioManagerImpl mng = (AudioManagerImpl) getJDA().getAudioManagersView().get(guildId);
-                //If the currently connected account is the one that is being moved
-                if (isSelf && mng != null && voiceInterceptor == null)
-                {
-                    //And this instance of JDA is connected or attempting to connect,
-                    // then change the channel we expect to be connected to.
-                    if (mng.isConnected() || mng.isAttemptingToConnect())
-                        mng.setConnectedChannel(channel);
-
-                    //If we have connected (VOICE_SERVER_UPDATE received and AudioConnection created (actual connection might still be setting up)),
-                    // then we need to stop sending audioOpen/Move requests through the MainWS if the channel
-                    // we have just joined / moved to is the same as the currently queued audioRequest
-                    // (handled by updateAudioConnection)
-                    if (mng.isConnected())
-                        getJDA().getDirectAudioController().update(guild, channel);
-                    //If we are not already connected this will be removed by VOICE_SERVER_UPDATE
-                }
-
                 channel.getConnectedMembersMap().put(userId, member);
                 oldChannel.getConnectedMembersMap().remove(userId);
                 getJDA().handleEvent(
@@ -158,11 +137,6 @@ public class VoiceStateUpdateHandler extends SocketHandler
                                 getJDA(), responseNumber,
                                 member, oldChannel));
             }
-        }
-        if (isSelf && voiceInterceptor != null)
-        {
-            if (voiceInterceptor.onVoiceStateUpdate(new VoiceDispatchInterceptor.VoiceStateUpdate(channel, vState, allContent)))
-                getJDA().getDirectAudioController().update(guild, channel);
         }
     }
 

@@ -8,13 +8,12 @@ import gnu.trove.map.TLongObjectMap;
 import me.syari.ss.discord.api.AccountType;
 import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.Permission;
-import me.syari.ss.discord.api.audio.hooks.ConnectionListener;
-import me.syari.ss.discord.api.audio.hooks.ConnectionStatus;
+
+
 import me.syari.ss.discord.api.entities.Guild;
 import me.syari.ss.discord.api.entities.VoiceChannel;
 import me.syari.ss.discord.api.events.*;
 import me.syari.ss.discord.api.exceptions.ParsingException;
-import me.syari.ss.discord.api.managers.AudioManager;
 import me.syari.ss.discord.api.requests.CloseCode;
 import me.syari.ss.discord.api.utils.Compression;
 import me.syari.ss.discord.api.utils.MiscUtil;
@@ -23,11 +22,8 @@ import me.syari.ss.discord.api.utils.data.DataArray;
 import me.syari.ss.discord.api.utils.data.DataObject;
 import me.syari.ss.discord.api.utils.data.DataType;
 import me.syari.ss.discord.internal.JDAImpl;
-import me.syari.ss.discord.internal.audio.ConnectionRequest;
-import me.syari.ss.discord.internal.audio.ConnectionStage;
 import me.syari.ss.discord.internal.entities.GuildImpl;
 import me.syari.ss.discord.internal.handle.*;
-import me.syari.ss.discord.internal.managers.AudioManagerImpl;
 import me.syari.ss.discord.internal.managers.PresenceImpl;
 import me.syari.ss.discord.internal.utils.IOUtil;
 import me.syari.ss.discord.internal.utils.JDALogger;
@@ -82,7 +78,6 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
     protected long heartbeatStartTime;
     protected long identifyTime = 0;
 
-    protected final TLongObjectMap<ConnectionRequest> queuedAudioConnections = MiscUtil.newLongMap();
     protected final Queue<String> chunkSyncQueue = new ConcurrentLinkedQueue<>();
     protected final Queue<String> ratelimitQueue = new ConcurrentLinkedQueue<>();
 
@@ -168,7 +163,6 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
             }
             else
             {
-                updateAudioManagerReferences();
                 JDAImpl.LOG.info("Finished (Re)Loading!");
                 api.handleEvent(new ReconnectedEvent(api, api.getResponseTotal()));
             }
@@ -228,7 +222,7 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
             if (!printedRateLimitMessage)
             {
                 LOG.warn("Hit the WebSocket RateLimit! This can be caused by too many presence or voice status updates (connect/disconnect/mute/deaf). " +
-                         "Regular: {} Voice: {} Chunking: {}", ratelimitQueue.size(), queuedAudioConnections.size(), chunkSyncQueue.size());
+                         "Regular: {} Chunking: {}", ratelimitQueue.size(), chunkSyncQueue.size());
                 printedRateLimitMessage = true;
             }
             return false;
@@ -641,33 +635,6 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
         api.getGuildSetupController().clearCache();
     }
 
-    protected void updateAudioManagerReferences()
-    {
-        AbstractCacheView<AudioManager> managerView = api.getAudioManagersView();
-        try (UnlockHook hook = managerView.writeLock())
-        {
-            final TLongObjectMap<AudioManager> managerMap = managerView.getMap();
-            if (managerMap.size() > 0)
-                LOG.trace("Updating AudioManager references");
-
-            for (TLongObjectIterator<AudioManager> it = managerMap.iterator(); it.hasNext(); )
-            {
-                it.advance();
-                final long guildId = it.key();
-                final AudioManagerImpl mng = (AudioManagerImpl) it.value();
-
-                GuildImpl guild = (GuildImpl) api.getGuildById(guildId);
-                if (guild == null)
-                {
-                    //We no longer have access to the guild that this audio manager was for. Set the value to null.
-                    queuedAudioConnections.remove(guildId);
-                    mng.closeAudioConnection(ConnectionStatus.DISCONNECTED_REMOVED_DURING_RECONNECT);
-                    it.remove();
-                }
-            }
-        }
-    }
-
     protected String getToken()
     {
         if (api.getAccountType() == AccountType.BOT)
@@ -978,185 +945,9 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
         }
     }
 
-    public void queueAudioReconnect(VoiceChannel channel)
-    {
-        locked("There was an error queueing the audio reconnect", () ->
-        {
-            final long guildId = channel.getGuild().getIdLong();
-            ConnectionRequest request = queuedAudioConnections.get(guildId);
-
-            if (request == null)
-            {
-                // If no request, then just reconnect
-                request = new ConnectionRequest(channel, ConnectionStage.RECONNECT);
-                queuedAudioConnections.put(guildId, request);
-            }
-            else
-            {
-                // If there is a request we change it to reconnect, no matter what it is
-                request.setStage(ConnectionStage.RECONNECT);
-            }
-            // in all cases, update to this channel
-            request.setChannel(channel);
-        });
-    }
-
-    public void queueAudioConnect(VoiceChannel channel)
-    {
-        locked("There was an error queueing the audio connect", () ->
-        {
-            final long guildId = channel.getGuild().getIdLong();
-            ConnectionRequest request = queuedAudioConnections.get(guildId);
-
-            if (request == null)
-            {
-                // starting a whole new connection
-                request = new ConnectionRequest(channel, ConnectionStage.CONNECT);
-                queuedAudioConnections.put(guildId, request);
-            }
-            else if (request.getStage() == ConnectionStage.DISCONNECT)
-            {
-                // if planned to disconnect, we want to reconnect
-                request.setStage(ConnectionStage.RECONNECT);
-            }
-
-            // in all cases, update to this channel
-            request.setChannel(channel);
-        });
-    }
-
-    public void queueAudioDisconnect(Guild guild)
-    {
-        locked("There was an error queueing the audio disconnect", () ->
-        {
-            final long guildId = guild.getIdLong();
-            ConnectionRequest request = queuedAudioConnections.get(guildId);
-
-            if (request == null)
-            {
-                // If we do not have a request
-                queuedAudioConnections.put(guildId, new ConnectionRequest(guild));
-            }
-            else
-            {
-                // If we have a request, change to DISCONNECT
-                request.setStage(ConnectionStage.DISCONNECT);
-            }
-        });
-    }
-
-    public ConnectionRequest removeAudioConnection(long guildId)
-    {
-        //This will only be used by GuildDeleteHandler to ensure that
-        // no further voice state updates are sent for this Guild
-        //TODO: users may still queue new requests via the old AudioManager, how could we prevent this?
-        return locked("There was an error cleaning up audio connections for deleted guild", () -> queuedAudioConnections.remove(guildId));
-    }
-
-    public ConnectionRequest updateAudioConnection(long guildId, VoiceChannel connectedChannel)
-    {
-        return locked("There was an error updating the audio connection", () -> updateAudioConnection0(guildId, connectedChannel));
-    }
-
-    public ConnectionRequest updateAudioConnection0(long guildId, VoiceChannel connectedChannel)
-    {
-        //Called by VoiceStateUpdateHandler when we receive a response from discord
-        // about our request to CONNECT or DISCONNECT.
-        // "stage" should never be RECONNECT here thus we don't check for that case
-        ConnectionRequest request = queuedAudioConnections.get(guildId);
-
-        if (request == null)
-            return null;
-        ConnectionStage requestStage = request.getStage();
-        if (connectedChannel == null)
-        {
-            //If we got an update that DISCONNECT happened
-            // -> If it was on RECONNECT we now switch to CONNECT
-            // -> If it was on DISCONNECT we can now remove it
-            // -> Otherwise we ignore it
-            switch (requestStage)
-            {
-                case DISCONNECT:
-                    return queuedAudioConnections.remove(guildId);
-                case RECONNECT:
-                    request.setStage(ConnectionStage.CONNECT);
-                    request.setNextAttemptEpoch(System.currentTimeMillis());
-                default:
-                    return null;
-            }
-        }
-        else if (requestStage == ConnectionStage.CONNECT)
-        {
-            //If the removeRequest was related to a channel that isn't the currently queued
-            // request, then don't remove it.
-            if (request.getChannelId() == connectedChannel.getIdLong())
-                return queuedAudioConnections.remove(guildId);
-        }
-        //If the channel is not the one we are looking for!
-        return null;
-    }
-
     private SoftReference<ByteArrayOutputStream> newDecompressBuffer()
     {
         return new SoftReference<>(new ByteArrayOutputStream(1024));
-    }
-
-    protected ConnectionRequest getNextAudioConnectRequest()
-    {
-        //Don't try to setup audio connections before JDA has finished loading.
-        if (sessionId == null)
-            return null;
-
-        long now = System.currentTimeMillis();
-        TLongObjectIterator<ConnectionRequest> it =  queuedAudioConnections.iterator();
-        while (it.hasNext())
-        {
-            it.advance();
-            ConnectionRequest audioRequest = it.value();
-            if (audioRequest.getNextAttemptEpoch() < now)
-            {
-                // Check if the guild is ready
-                long guildId = audioRequest.getGuildIdLong();
-                Guild guild = api.getGuildById(guildId);
-                if (guild == null)
-                {
-                    // Not yet ready, check if the guild is known to this shard
-                    GuildSetupController controller = api.getGuildSetupController();
-                    if (!controller.isKnown(guildId))
-                    {
-                        // The guild is not tracked anymore -> we can't connect the audio channel
-                        LOG.debug("Removing audio connection request because the guild has been removed. {}", audioRequest);
-                        it.remove();
-                    }
-                    continue;
-                }
-
-                ConnectionListener listener = guild.getAudioManager().getConnectionListener();
-                if (audioRequest.getStage() != ConnectionStage.DISCONNECT)
-                {
-                    VoiceChannel channel = guild.getVoiceChannelById(audioRequest.getChannelId());
-                    if (channel == null)
-                    {
-                        it.remove();
-                        if (listener != null)
-                            listener.onStatusChange(ConnectionStatus.DISCONNECTED_CHANNEL_DELETED);
-                        continue;
-                    }
-
-                    if (!guild.getSelfMember().hasPermission(channel, Permission.VOICE_CONNECT))
-                    {
-                        it.remove();
-                        if (listener != null)
-                            listener.onStatusChange(ConnectionStatus.DISCONNECTED_LOST_PERMISSION);
-                        continue;
-                    }
-                }
-
-                return audioRequest;
-            }
-        }
-
-        return null;
     }
 
     public Map<String, SocketHandler> getHandlers()
