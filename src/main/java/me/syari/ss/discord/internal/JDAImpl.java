@@ -4,10 +4,8 @@ package me.syari.ss.discord.internal;
 
 import com.neovisionaries.ws.client.WebSocketFactory;
 import gnu.trove.map.TLongObjectMap;
-import gnu.trove.set.TLongSet;
 import me.syari.ss.discord.api.AccountType;
 import me.syari.ss.discord.api.JDA;
-import me.syari.ss.discord.api.Permission;
 import me.syari.ss.discord.api.entities.*;
 import me.syari.ss.discord.api.events.GatewayPingEvent;
 import me.syari.ss.discord.api.events.GenericEvent;
@@ -20,7 +18,6 @@ import me.syari.ss.discord.api.managers.Presence;
 import me.syari.ss.discord.api.requests.Request;
 import me.syari.ss.discord.api.requests.Response;
 import me.syari.ss.discord.api.requests.RestAction;
-import me.syari.ss.discord.api.sharding.ShardManager;
 import me.syari.ss.discord.api.utils.ChunkingFilter;
 import me.syari.ss.discord.api.utils.Compression;
 import me.syari.ss.discord.api.utils.MiscUtil;
@@ -34,8 +31,10 @@ import me.syari.ss.discord.internal.handle.EventCache;
 import me.syari.ss.discord.internal.handle.GuildSetupController;
 import me.syari.ss.discord.internal.hooks.EventManagerProxy;
 import me.syari.ss.discord.internal.managers.PresenceImpl;
-import me.syari.ss.discord.internal.requests.*;
-import me.syari.ss.discord.internal.requests.restaction.GuildActionImpl;
+import me.syari.ss.discord.internal.requests.Requester;
+import me.syari.ss.discord.internal.requests.RestActionImpl;
+import me.syari.ss.discord.internal.requests.Route;
+import me.syari.ss.discord.internal.requests.WebSocketClient;
 import me.syari.ss.discord.internal.utils.Checks;
 import me.syari.ss.discord.internal.utils.JDALogger;
 import me.syari.ss.discord.internal.utils.cache.SnowflakeCacheViewImpl;
@@ -57,7 +56,6 @@ public class JDAImpl implements JDA
 {
     public static final Logger LOG = JDALogger.getLog(JDA.class);
 
-    protected final Object audioLifeCycleLock = new Object();
     protected ScheduledThreadPoolExecutor audioLifeCyclePool;
 
     protected final SnowflakeCacheViewImpl<User> userCache = new SnowflakeCacheViewImpl<>(User.class, User::getName);
@@ -95,7 +93,6 @@ public class JDAImpl implements JDA
     protected ChunkingFilter chunkingFilter;
 
     protected String clientId = null;
-    protected ShardManager shardManager = null;
 
     public JDAImpl(AuthorizationConfig authConfig)
     {
@@ -393,21 +390,6 @@ public class JDAImpl implements JDA
     }
 
     @Override
-    public void setAutoReconnect(boolean autoReconnect)
-    {
-        sessionConfig.setAutoReconnect(autoReconnect);
-        WebSocketClient client = getClient();
-        if (client != null)
-            client.setAutoReconnect(autoReconnect);
-    }
-
-    @Override
-    public void setRequestTimeoutRetry(boolean retryOnTimeout)
-    {
-        requester.setRetryOnTimeout(retryOnTimeout);
-    }
-
-    @Override
     public boolean isAutoReconnect()
     {
         return sessionConfig.isAutoReconnect();
@@ -498,38 +480,9 @@ public class JDAImpl implements JDA
 
     @Nonnull
     @Override
-    public RestAction<User> retrieveUserById(@Nonnull String id)
-    {
-        return retrieveUserById(MiscUtil.parseSnowflake(id));
-    }
-
-    @Nonnull
-    @Override
-    public RestAction<User> retrieveUserById(long id)
-    {
-        AccountTypeException.check(getAccountType(), AccountType.BOT);
-        return new DeferredRestAction<>(this, User.class, () -> getUserById(id), () -> {
-            Route.CompiledRoute route = Route.Users.GET_USER.compile(Long.toUnsignedString(id));
-            return new RestActionImpl<>(this, route,
-                    (response, request) -> getEntityBuilder().createFakeUser(response.getObject(), false));
-        });
-    }
-
-    @Nonnull
-    @Override
     public SnowflakeCacheView<Guild> getGuildCache()
     {
         return guildCache;
-    }
-
-    @Nonnull
-    @Override
-    public Set<String> getUnavailableGuilds()
-    {
-        TLongSet unavailableGuilds = guildSetupController.getUnavailableGuilds();
-        Set<String> copy = new HashSet<>();
-        unavailableGuilds.forEach(id -> copy.add(Long.toUnsignedString(id)));
-        return copy;
     }
 
     @Override
@@ -709,55 +662,6 @@ public class JDAImpl implements JDA
             eventManager.register(listener);
     }
 
-    @Override
-    public void removeEventListener(@Nonnull Object... listeners)
-    {
-        Checks.noneNull(listeners, "listeners");
-
-        for (Object listener: listeners)
-            eventManager.unregister(listener);
-    }
-
-    @Nonnull
-    @Override
-    public List<Object> getRegisteredListeners()
-    {
-        return eventManager.getRegisteredListeners();
-    }
-
-    @Nonnull
-    @Override
-    public GuildActionImpl createGuild(@Nonnull String name)
-    {
-        switch (getAccountType())
-        {
-            case BOT:
-                if (guildCache.size() >= 10)
-                    throw new IllegalStateException("Cannot create a Guild with a Bot in 10 or more guilds!");
-                break;
-            case CLIENT:
-                if (guildCache.size() >= 100)
-                    throw new IllegalStateException("Cannot be in more than 100 guilds with AccountType.CLIENT!");
-        }
-        return new GuildActionImpl(this, name);
-    }
-
-    @Nonnull
-    @Override
-    public RestAction<Webhook> retrieveWebhookById(@Nonnull String webhookId)
-    {
-        Checks.isSnowflake(webhookId, "Webhook ID");
-
-        Route.CompiledRoute route = Route.Webhooks.GET_WEBHOOK.compile(webhookId);
-
-        return new RestActionImpl<>(this, route, (response, request) ->
-        {
-            DataObject object = response.getObject();
-            EntityBuilder builder = getEntityBuilder();
-            return builder.createWebhook(object);
-        });
-    }
-
     @Nonnull
     @Override
     public RestAction<ApplicationInfo> retrieveApplicationInfo()
@@ -772,26 +676,6 @@ public class JDAImpl implements JDA
         });
     }
 
-    @Nonnull
-    @Override
-    public String getInviteUrl(Permission... permissions)
-    {
-        StringBuilder builder = buildBaseInviteUrl();
-        if (permissions != null && permissions.length > 0)
-            builder.append("&permissions=").append(Permission.getRaw(permissions));
-        return builder.toString();
-    }
-
-    @Nonnull
-    @Override
-    public String getInviteUrl(Collection<Permission> permissions)
-    {
-        StringBuilder builder = buildBaseInviteUrl();
-        if (permissions != null && !permissions.isEmpty())
-            builder.append("&permissions=").append(Permission.getRaw(permissions));
-        return builder.toString();
-    }
-
     private StringBuilder buildBaseInviteUrl()
     {
         if (clientId == null)
@@ -799,17 +683,6 @@ public class JDAImpl implements JDA
         StringBuilder builder = new StringBuilder("https://discordapp.com/oauth2/authorize?scope=bot&client_id=");
         builder.append(clientId);
         return builder;
-    }
-
-    public void setShardManager(ShardManager shardManager)
-    {
-        this.shardManager = shardManager;
-    }
-
-    @Override
-    public ShardManager getShardManager()
-    {
-        return shardManager;
     }
 
     public EntityBuilder getEntityBuilder()

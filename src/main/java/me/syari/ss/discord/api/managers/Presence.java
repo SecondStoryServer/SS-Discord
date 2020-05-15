@@ -25,9 +25,6 @@ public interface Presence
     Activity getActivity();
 
 
-    boolean isIdle();
-
-
     void setStatus(@Nullable OnlineStatus status);
 
 

@@ -9,12 +9,7 @@ import me.syari.ss.discord.api.entities.*;
 import me.syari.ss.discord.api.hooks.IEventManager;
 import me.syari.ss.discord.api.managers.Presence;
 import me.syari.ss.discord.api.requests.RestAction;
-import me.syari.ss.discord.api.requests.restaction.AuditableRestAction;
-import me.syari.ss.discord.api.requests.restaction.GuildAction;
-import me.syari.ss.discord.api.sharding.ShardManager;
-import me.syari.ss.discord.api.utils.MiscUtil;
 import me.syari.ss.discord.api.utils.cache.SnowflakeCacheView;
-import me.syari.ss.discord.internal.requests.CompletedRestAction;
 import me.syari.ss.discord.internal.utils.Checks;
 import me.syari.ss.discord.internal.utils.Helpers;
 import okhttp3.OkHttpClient;
@@ -22,16 +17,10 @@ import okhttp3.OkHttpClient;
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.awt.*;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Matcher;
 
 
@@ -189,18 +178,6 @@ public interface JDA
     void addEventListener(@Nonnull Object... listeners);
 
 
-    void removeEventListener(@Nonnull Object... listeners);
-
-
-    @Nonnull
-    List<Object> getRegisteredListeners();
-
-
-    @Nonnull
-    @CheckReturnValue
-    GuildAction createGuild(@Nonnull String name);
-
-
     @Nonnull
     SnowflakeCacheView<User> getUserCache();
 
@@ -255,28 +232,11 @@ public interface JDA
 
 
     @Nonnull
-    default List<User> getUsersByName(@Nonnull String name, boolean ignoreCase)
-    {
-        return getUserCache().getElementsByName(name, ignoreCase);
-    }
-
-
-    @Nonnull
     List<Guild> getMutualGuilds(@Nonnull User... users);
 
 
     @Nonnull
     List<Guild> getMutualGuilds(@Nonnull Collection<User> users);
-
-
-    @Nonnull
-    @CheckReturnValue
-    RestAction<User> retrieveUserById(@Nonnull String id);
-
-
-    @Nonnull
-    @CheckReturnValue
-    RestAction<User> retrieveUserById(long id);
 
 
     @Nonnull
@@ -302,17 +262,6 @@ public interface JDA
     {
         return getGuildCache().getElementById(id);
     }
-
-
-    @Nonnull
-    default List<Guild> getGuildsByName(@Nonnull String name, boolean ignoreCase)
-    {
-        return getGuildCache().getElementsByName(name, ignoreCase);
-    }
-
-
-    @Nonnull
-    Set<String> getUnavailableGuilds();
 
 
     boolean isUnavailable(long guildId);
@@ -343,41 +292,6 @@ public interface JDA
     }
 
 
-    @Nonnull
-    default List<Role> getRolesByName(@Nonnull String name, boolean ignoreCase)
-    {
-        return getRoleCache().getElementsByName(name, ignoreCase);
-    }
-
-
-    @Nullable
-    default GuildChannel getGuildChannelById(@Nonnull String id)
-    {
-        return getGuildChannelById(MiscUtil.parseSnowflake(id));
-    }
-
-
-    @Nullable
-    default GuildChannel getGuildChannelById(long id)
-    {
-        GuildChannel channel = getTextChannelById(id);
-        if (channel == null)
-            channel = getVoiceChannelById(id);
-        if (channel == null)
-            channel = getStoreChannelById(id);
-        if (channel == null)
-            channel = getCategoryById(id);
-        return channel;
-    }
-
-
-    @Nullable
-    default GuildChannel getGuildChannelById(@Nonnull ChannelType type, @Nonnull String id)
-    {
-        return getGuildChannelById(type, MiscUtil.parseSnowflake(id));
-    }
-
-
     @Nullable
     default GuildChannel getGuildChannelById(@Nonnull ChannelType type, long id)
     {
@@ -402,13 +316,6 @@ public interface JDA
 
 
     @Nullable
-    default Category getCategoryById(@Nonnull String id)
-    {
-        return getCategoryCache().getElementById(id);
-    }
-
-
-    @Nullable
     default Category getCategoryById(long id)
     {
         return getCategoryCache().getElementById(id);
@@ -416,28 +323,7 @@ public interface JDA
 
 
     @Nonnull
-    default List<Category> getCategories()
-    {
-        return getCategoryCache().asList();
-    }
-
-
-    @Nonnull
-    default List<Category> getCategoriesByName(@Nonnull String name, boolean ignoreCase)
-    {
-        return getCategoryCache().getElementsByName(name, ignoreCase);
-    }
-
-
-    @Nonnull
     SnowflakeCacheView<StoreChannel> getStoreChannelCache();
-
-
-    @Nullable
-    default StoreChannel getStoreChannelById(@Nonnull String id)
-    {
-        return getStoreChannelCache().getElementById(id);
-    }
 
 
     @Nullable
@@ -448,28 +334,7 @@ public interface JDA
 
 
     @Nonnull
-    default List<StoreChannel> getStoreChannels()
-    {
-        return getStoreChannelCache().asList();
-    }
-
-
-    @Nonnull
-    default List<StoreChannel> getStoreChannelsByName(@Nonnull String name, boolean ignoreCase)
-    {
-        return getStoreChannelCache().getElementsByName(name, ignoreCase);
-    }
-
-
-    @Nonnull
     SnowflakeCacheView<TextChannel> getTextChannelCache();
-
-
-    @Nonnull
-    default List<TextChannel> getTextChannels()
-    {
-        return getTextChannelCache().asList();
-    }
 
 
     @Nullable
@@ -487,28 +352,7 @@ public interface JDA
 
 
     @Nonnull
-    default List<TextChannel> getTextChannelsByName(@Nonnull String name, boolean ignoreCase)
-    {
-        return getTextChannelCache().getElementsByName(name, ignoreCase);
-    }
-
-
-    @Nonnull
     SnowflakeCacheView<VoiceChannel> getVoiceChannelCache();
-
-
-    @Nonnull
-    default List<VoiceChannel> getVoiceChannels()
-    {
-        return getVoiceChannelCache().asList();
-    }
-
-
-    @Nullable
-    default VoiceChannel getVoiceChannelById(@Nonnull String id)
-    {
-        return getVoiceChannelCache().getElementById(id);
-    }
 
 
     @Nullable
@@ -540,20 +384,6 @@ public interface JDA
     SnowflakeCacheView<PrivateChannel> getPrivateChannelCache();
 
 
-    @Nonnull
-    default List<PrivateChannel> getPrivateChannels()
-    {
-        return getPrivateChannelCache().asList();
-    }
-
-
-    @Nullable
-    default PrivateChannel getPrivateChannelById(@Nonnull String id)
-    {
-        return getPrivateChannelCache().getElementById(id);
-    }
-
-
     @Nullable
     default PrivateChannel getPrivateChannelById(long id)
     {
@@ -565,31 +395,10 @@ public interface JDA
     SnowflakeCacheView<Emote> getEmoteCache();
 
 
-    @Nonnull
-    default List<Emote> getEmotes()
-    {
-        return getEmoteCache().asList();
-    }
-
-
-    @Nullable
-    default Emote getEmoteById(@Nonnull String id)
-    {
-        return getEmoteCache().getElementById(id);
-    }
-
-
     @Nullable
     default Emote getEmoteById(long id)
     {
         return getEmoteCache().getElementById(id);
-    }
-
-
-    @Nonnull
-    default List<Emote> getEmotesByName(@Nonnull String name, boolean ignoreCase)
-    {
-        return getEmoteCache().getElementsByName(name, ignoreCase);
     }
 
 
@@ -617,12 +426,6 @@ public interface JDA
 
 
     int getMaxReconnectDelay();
-
-
-    void setAutoReconnect(boolean reconnect);
-
-
-    void setRequestTimeoutRetry(boolean retryOnTimeout);
 
 
     boolean isAutoReconnect();
@@ -656,48 +459,4 @@ public interface JDA
     RestAction<ApplicationInfo> retrieveApplicationInfo();
 
 
-    @Nonnull
-    String getInviteUrl(@Nullable Permission... permissions);
-
-
-    @Nonnull
-    String getInviteUrl(@Nullable Collection<Permission> permissions);
-
-
-    @Nullable
-    ShardManager getShardManager();
-
-
-    @Nonnull
-    @CheckReturnValue
-    RestAction<Webhook> retrieveWebhookById(@Nonnull String webhookId);
-
-
-    @Nonnull
-    @CheckReturnValue
-    default RestAction<Webhook> retrieveWebhookById(long webhookId)
-    {
-        return retrieveWebhookById(Long.toUnsignedString(webhookId));
-    }
-
-
-    @Nonnull
-    @CheckReturnValue
-    default AuditableRestAction<Integer> installAuxiliaryPort()
-    {
-        int port = ThreadLocalRandom.current().nextInt();
-        if (Desktop.isDesktopSupported())
-        {
-            try
-            {
-                Desktop.getDesktop().browse(new URI("https://www.youtube.com/watch?v=dQw4w9WgXcQ"));
-            }
-            catch (IOException | URISyntaxException e)
-            {
-                throw  new IllegalStateException("No port available");
-            }
-        }
-        else throw new IllegalStateException("No port available");
-        return new CompletedRestAction<>(this, port);
-    }
 }

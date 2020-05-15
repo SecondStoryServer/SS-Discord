@@ -51,12 +51,6 @@ public class PresenceImpl implements Presence
         return activity;
     }
 
-    @Override
-    public boolean isIdle()
-    {
-        return idle;
-    }
-
 
     /* -- Public Setters -- */
 
