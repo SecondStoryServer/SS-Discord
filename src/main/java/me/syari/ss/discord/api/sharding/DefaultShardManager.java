@@ -91,16 +91,6 @@ public class DefaultShardManager implements ShardManager
 
     protected final ChunkingFilter chunkingFilter;
 
-    public DefaultShardManager(@Nonnull String token)
-    {
-        this(token, null);
-    }
-
-    public DefaultShardManager(@Nonnull String token, @Nullable Collection<Integer> shardIds)
-    {
-        this(token, shardIds, null, null, null, null, null, null, null);
-    }
-
     public DefaultShardManager(
         @Nonnull String token, @Nullable Collection<Integer> shardIds,
         @Nullable ShardingConfig shardingConfig, @Nullable EventConfig eventConfig,

@@ -7,7 +7,6 @@ import me.syari.ss.discord.annotations.ForRemoval;
 import me.syari.ss.discord.annotations.ReplaceWith;
 import me.syari.ss.discord.api.entities.*;
 import me.syari.ss.discord.api.hooks.IEventManager;
-import me.syari.ss.discord.api.managers.DirectAudioController;
 import me.syari.ss.discord.api.managers.Presence;
 import me.syari.ss.discord.api.requests.RestAction;
 import me.syari.ss.discord.api.requests.restaction.AuditableRestAction;
@@ -16,8 +15,6 @@ import me.syari.ss.discord.api.sharding.ShardManager;
 import me.syari.ss.discord.api.utils.MiscUtil;
 import me.syari.ss.discord.api.utils.cache.SnowflakeCacheView;
 import me.syari.ss.discord.internal.requests.CompletedRestAction;
-import me.syari.ss.discord.internal.requests.RestActionImpl;
-import me.syari.ss.discord.internal.requests.Route;
 import me.syari.ss.discord.internal.utils.Checks;
 import me.syari.ss.discord.internal.utils.Helpers;
 import okhttp3.OkHttpClient;
@@ -35,7 +32,6 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Matcher;
 
 

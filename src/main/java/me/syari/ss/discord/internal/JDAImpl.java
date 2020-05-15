@@ -8,9 +8,6 @@ import gnu.trove.set.TLongSet;
 import me.syari.ss.discord.api.AccountType;
 import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.Permission;
-
-
-
 import me.syari.ss.discord.api.entities.*;
 import me.syari.ss.discord.api.events.GatewayPingEvent;
 import me.syari.ss.discord.api.events.GenericEvent;
@@ -19,7 +16,6 @@ import me.syari.ss.discord.api.exceptions.AccountTypeException;
 import me.syari.ss.discord.api.exceptions.RateLimitedException;
 import me.syari.ss.discord.api.hooks.IEventManager;
 import me.syari.ss.discord.api.hooks.InterfacedEventManager;
-import me.syari.ss.discord.api.hooks.VoiceDispatchInterceptor;
 import me.syari.ss.discord.api.managers.Presence;
 import me.syari.ss.discord.api.requests.Request;
 import me.syari.ss.discord.api.requests.Response;
@@ -185,16 +181,6 @@ public class JDAImpl implements JDA
         return guildSetupController;
     }
 
-    public VoiceDispatchInterceptor getVoiceInterceptor()
-    {
-        return sessionConfig.getVoiceDispatchInterceptor();
-    }
-
-    public int login() throws LoginException
-    {
-        return login(null, null, Compression.ZLIB, true);
-    }
-
     public int login(ShardInfo shardInfo, Compression compression, boolean validateToken) throws LoginException
     {
         return login(null, shardInfo, compression, validateToken);
@@ -210,7 +196,7 @@ public class JDAImpl implements JDA
 
         String token = authConfig.getToken();
         setStatus(Status.LOGGING_IN);
-        if (token == null || token.isEmpty())
+        if (token.isEmpty())
             throw new LoginException("Provided token was null or empty!");
 
         Map<String, String> previousContext = null;
@@ -931,18 +917,4 @@ public class JDAImpl implements JDA
         this.gatewayUrl = getGateway();
     }
 
-    public ScheduledThreadPoolExecutor getAudioLifeCyclePool()
-    {
-        ScheduledThreadPoolExecutor pool = audioLifeCyclePool;
-        if (pool == null)
-        {
-            synchronized (audioLifeCycleLock)
-            {
-                pool = audioLifeCyclePool;
-                if (pool == null)
-                    pool = audioLifeCyclePool = ThreadingConfig.newScheduler(1, this::getIdentifierString, "AudioLifeCycle");
-            }
-        }
-        return pool;
-    }
 }

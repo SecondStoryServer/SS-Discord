@@ -3,7 +3,6 @@
 package me.syari.ss.discord.internal.handle;
 
 import gnu.trove.set.TLongSet;
-
 import me.syari.ss.discord.api.entities.*;
 import me.syari.ss.discord.api.events.guild.GuildLeaveEvent;
 import me.syari.ss.discord.api.events.guild.GuildUnavailableEvent;
@@ -14,7 +13,6 @@ import me.syari.ss.discord.internal.entities.PrivateChannelImpl;
 import me.syari.ss.discord.internal.entities.UserImpl;
 import me.syari.ss.discord.internal.requests.WebSocketClient;
 import me.syari.ss.discord.internal.utils.UnlockHook;
-import me.syari.ss.discord.internal.utils.cache.AbstractCacheView;
 import me.syari.ss.discord.internal.utils.cache.SnowflakeCacheViewImpl;
 
 public class GuildDeleteHandler extends SocketHandler

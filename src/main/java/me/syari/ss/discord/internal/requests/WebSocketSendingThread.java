@@ -2,13 +2,7 @@
 
 package me.syari.ss.discord.internal.requests;
 
-import gnu.trove.map.TLongObjectMap;
-import me.syari.ss.discord.api.entities.Guild;
-import me.syari.ss.discord.api.entities.GuildVoiceState;
-import me.syari.ss.discord.api.utils.data.DataObject;
 import me.syari.ss.discord.internal.JDAImpl;
-
-
 import org.slf4j.Logger;
 
 import java.util.Queue;

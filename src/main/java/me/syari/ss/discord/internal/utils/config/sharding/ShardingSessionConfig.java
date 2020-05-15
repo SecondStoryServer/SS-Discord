@@ -3,12 +3,9 @@
 package me.syari.ss.discord.internal.utils.config.sharding;
 
 import com.neovisionaries.ws.client.WebSocketFactory;
-
-import me.syari.ss.discord.api.hooks.VoiceDispatchInterceptor;
 import me.syari.ss.discord.api.utils.SessionController;
 import me.syari.ss.discord.internal.utils.config.SessionConfig;
 import me.syari.ss.discord.internal.utils.config.flags.ConfigFlag;
-import me.syari.ss.discord.internal.utils.config.flags.ShardingConfigFlag;
 import okhttp3.OkHttpClient;
 
 import javax.annotation.Nonnull;
@@ -18,31 +15,24 @@ import java.util.EnumSet;
 public class ShardingSessionConfig extends SessionConfig
 {
     private final OkHttpClient.Builder builder;
-    private final EnumSet<ShardingConfigFlag> shardingFlags;
 
     public ShardingSessionConfig(
-            @Nullable SessionController sessionController, @Nullable VoiceDispatchInterceptor interceptor,
+            @Nullable SessionController sessionController,
             @Nullable OkHttpClient httpClient, @Nullable OkHttpClient.Builder httpClientBuilder,
             @Nullable WebSocketFactory webSocketFactory,
-            EnumSet<ConfigFlag> flags, EnumSet<ShardingConfigFlag> shardingFlags,
+            EnumSet<ConfigFlag> flags,
             int maxReconnectDelay, int largeThreshold)
     {
-        super(sessionController, httpClient, webSocketFactory, interceptor, flags, maxReconnectDelay, largeThreshold);
+        super(sessionController, httpClient, webSocketFactory, flags, maxReconnectDelay, largeThreshold);
         if (httpClient == null)
             this.builder = httpClientBuilder == null ? new OkHttpClient.Builder() : httpClientBuilder;
         else
             this.builder = null;
-        this.shardingFlags = shardingFlags;
     }
 
     public SessionConfig toSessionConfig(OkHttpClient client)
     {
-        return new SessionConfig(getSessionController(), client, getWebSocketFactory(), getVoiceDispatchInterceptor(), getFlags(), getMaxReconnectDelay(), getLargeThreshold());
-    }
-
-    public EnumSet<ShardingConfigFlag> getShardingFlags()
-    {
-        return this.shardingFlags;
+        return new SessionConfig(getSessionController(), client, getWebSocketFactory(), getFlags(), getMaxReconnectDelay(), getLargeThreshold());
     }
 
     @Nullable
@@ -54,6 +44,6 @@ public class ShardingSessionConfig extends SessionConfig
     @Nonnull
     public static ShardingSessionConfig getDefault()
     {
-        return new ShardingSessionConfig(null, null, new OkHttpClient(), null, null, ConfigFlag.getDefault(), ShardingConfigFlag.getDefault(), 900, 250);
+        return new ShardingSessionConfig(null, new OkHttpClient(), null, null, ConfigFlag.getDefault(), 900, 250);
     }
 }

@@ -5,10 +5,8 @@ import com.neovisionaries.ws.client.WebSocketFactory;
 import me.syari.ss.discord.annotations.DeprecatedSince;
 import me.syari.ss.discord.annotations.ReplaceWith;
 import me.syari.ss.discord.api.OnlineStatus;
-
 import me.syari.ss.discord.api.entities.Activity;
 import me.syari.ss.discord.api.hooks.IEventManager;
-import me.syari.ss.discord.api.hooks.VoiceDispatchInterceptor;
 import me.syari.ss.discord.api.utils.ChunkingFilter;
 import me.syari.ss.discord.api.utils.Compression;
 import me.syari.ss.discord.api.utils.SessionController;
@@ -36,7 +34,6 @@ public class  DefaultShardManagerBuilder
     protected final List<Object> listeners = new ArrayList<>();
     protected final List<IntFunction<Object>> listenerProviders = new ArrayList<>();
     protected SessionController sessionController = null;
-    protected VoiceDispatchInterceptor voiceDispatchInterceptor = null;
     protected EnumSet<CacheFlag> cacheFlags = EnumSet.allOf(CacheFlag.class);
     protected EnumSet<ConfigFlag> flags = ConfigFlag.getDefault();
     protected EnumSet<ShardingConfigFlag> shardingFlags = ShardingConfigFlag.getDefault();
@@ -60,16 +57,6 @@ public class  DefaultShardManagerBuilder
     protected WebSocketFactory wsFactory = null;
     protected ThreadFactory threadFactory = null;
     protected ChunkingFilter chunkingFilter;
-
-
-    public DefaultShardManagerBuilder() {}
-
-
-    public DefaultShardManagerBuilder(@Nonnull String token)
-    {
-        this.setToken(token);
-    }
-
     
     @Nonnull
     public DefaultShardManagerBuilder setRawEventsEnabled(boolean enable)
@@ -84,71 +71,7 @@ public class  DefaultShardManagerBuilder
         return setFlag(ConfigFlag.USE_RELATIVE_RATELIMIT, enable);
     }
 
-    
-    @Nonnull
-    public DefaultShardManagerBuilder setEnabledCacheFlags(@Nullable EnumSet<CacheFlag> flags)
-    {
-        this.cacheFlags = flags == null ? EnumSet.noneOf(CacheFlag.class) : EnumSet.copyOf(flags);
-        return this;
-    }
 
-    
-    @Nonnull
-    public DefaultShardManagerBuilder setDisabledCacheFlags(@Nullable EnumSet<CacheFlag> flags)
-    {
-        return setEnabledCacheFlags(flags == null ? EnumSet.allOf(CacheFlag.class) : EnumSet.complementOf(flags));
-    }
-
-    
-    @Nonnull
-    public DefaultShardManagerBuilder setSessionController(@Nullable SessionController controller)
-    {
-        this.sessionController = controller;
-        return this;
-    }
-
-    
-    @Nonnull
-    public DefaultShardManagerBuilder setVoiceDispatchInterceptor(@Nullable VoiceDispatchInterceptor interceptor)
-    {
-        this.voiceDispatchInterceptor = interceptor;
-        return this;
-    }
-
-    
-    @Nonnull
-    public DefaultShardManagerBuilder setContextMap(@Nullable IntFunction<? extends ConcurrentMap<String, String>> provider)
-    {
-        this.contextProvider = provider;
-        if (provider != null)
-            setContextEnabled(true);
-        return this;
-    }
-
-    
-    @Nonnull
-    public DefaultShardManagerBuilder setContextEnabled(boolean enable)
-    {
-        return setFlag(ConfigFlag.MDC_CONTEXT, enable);
-    }
-
-    
-    @Nonnull
-    public DefaultShardManagerBuilder setCompression(@Nonnull Compression compression)
-    {
-        Checks.notNull(compression, "Compression");
-        this.compression = compression;
-        return this;
-    }
-
-    
-    @Nonnull
-    public DefaultShardManagerBuilder addEventListeners(@Nonnull final Object... listeners)
-    {
-        return this.addEventListeners(Arrays.asList(listeners));
-    }
-
-    
     @Nonnull
     public DefaultShardManagerBuilder addEventListeners(@Nonnull final Collection<Object> listeners)
     {
@@ -175,14 +98,7 @@ public class  DefaultShardManagerBuilder
         return this;
     }
 
-    
-    @Nonnull
-    public DefaultShardManagerBuilder addEventListenerProvider(@Nonnull final IntFunction<Object> listenerProvider)
-    {
-        return this.addEventListenerProviders(Collections.singleton(listenerProvider));
-    }
 
-    
     @Nonnull
     public DefaultShardManagerBuilder addEventListenerProviders(@Nonnull final Collection<IntFunction<Object>> listenerProviders)
     {
@@ -536,7 +452,7 @@ public class  DefaultShardManagerBuilder
         presenceConfig.setStatusProvider(statusProvider);
         presenceConfig.setIdleProvider(idleProvider);
         final ThreadingProviderConfig threadingConfig = new ThreadingProviderConfig(rateLimitPoolProvider, gatewayPoolProvider, callbackPoolProvider, threadFactory);
-        final ShardingSessionConfig sessionConfig = new ShardingSessionConfig(sessionController, voiceDispatchInterceptor, httpClient, httpClientBuilder, wsFactory, flags, shardingFlags, maxReconnectDelay, largeThreshold);
+        final ShardingSessionConfig sessionConfig = new ShardingSessionConfig(sessionController, httpClient, httpClientBuilder, wsFactory, flags, maxReconnectDelay, largeThreshold);
         final ShardingMetaConfig metaConfig = new ShardingMetaConfig(maxBufferSize, contextProvider, cacheFlags, flags, compression);
         final DefaultShardManager manager = new DefaultShardManager(this.token, this.shards, shardingConfig, eventConfig, presenceConfig, threadingConfig, sessionConfig, metaConfig, chunkingFilter);
 

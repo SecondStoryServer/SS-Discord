@@ -5,7 +5,6 @@ package me.syari.ss.discord.internal.handle;
 import me.syari.ss.discord.api.entities.Guild;
 import me.syari.ss.discord.api.entities.User;
 import me.syari.ss.discord.api.events.guild.voice.*;
-import me.syari.ss.discord.api.hooks.VoiceDispatchInterceptor;
 import me.syari.ss.discord.api.utils.cache.CacheFlag;
 import me.syari.ss.discord.api.utils.data.DataObject;
 import me.syari.ss.discord.internal.JDAImpl;
@@ -71,8 +70,6 @@ public class VoiceStateUpdateHandler extends SocketHandler
         if (vState == null)
             return;
         vState.setSessionId(sessionId); //Cant really see a reason for an event for this
-        VoiceDispatchInterceptor voiceInterceptor = getJDA().getVoiceInterceptor();
-        boolean isSelf = guild.getSelfMember().equals(member);
 
         boolean wasMute = vState.isMuted();
         boolean wasDeaf = vState.isDeafened();

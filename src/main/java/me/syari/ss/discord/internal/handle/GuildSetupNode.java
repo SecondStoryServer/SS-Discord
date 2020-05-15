@@ -8,9 +8,6 @@ import gnu.trove.map.TLongObjectMap;
 import gnu.trove.map.hash.TLongObjectHashMap;
 import gnu.trove.set.TLongSet;
 import gnu.trove.set.hash.TLongHashSet;
-
-
-import me.syari.ss.discord.api.entities.VoiceChannel;
 import me.syari.ss.discord.api.events.guild.GuildAvailableEvent;
 import me.syari.ss.discord.api.events.guild.GuildJoinEvent;
 import me.syari.ss.discord.api.events.guild.GuildReadyEvent;
@@ -19,10 +16,7 @@ import me.syari.ss.discord.api.utils.data.DataArray;
 import me.syari.ss.discord.api.utils.data.DataObject;
 import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.entities.GuildImpl;
-import me.syari.ss.discord.internal.utils.UnlockHook;
-import me.syari.ss.discord.internal.utils.cache.AbstractCacheView;
 
-import javax.annotation.Nullable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;

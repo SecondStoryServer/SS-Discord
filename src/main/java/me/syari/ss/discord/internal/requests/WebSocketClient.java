@@ -3,32 +3,21 @@
 package me.syari.ss.discord.internal.requests;
 
 import com.neovisionaries.ws.client.*;
-import gnu.trove.iterator.TLongObjectIterator;
-import gnu.trove.map.TLongObjectMap;
 import me.syari.ss.discord.api.AccountType;
 import me.syari.ss.discord.api.JDA;
-import me.syari.ss.discord.api.Permission;
-
-
-import me.syari.ss.discord.api.entities.Guild;
-import me.syari.ss.discord.api.entities.VoiceChannel;
 import me.syari.ss.discord.api.events.*;
 import me.syari.ss.discord.api.exceptions.ParsingException;
 import me.syari.ss.discord.api.requests.CloseCode;
 import me.syari.ss.discord.api.utils.Compression;
-import me.syari.ss.discord.api.utils.MiscUtil;
 import me.syari.ss.discord.api.utils.SessionController;
 import me.syari.ss.discord.api.utils.data.DataArray;
 import me.syari.ss.discord.api.utils.data.DataObject;
 import me.syari.ss.discord.api.utils.data.DataType;
 import me.syari.ss.discord.internal.JDAImpl;
-import me.syari.ss.discord.internal.entities.GuildImpl;
 import me.syari.ss.discord.internal.handle.*;
 import me.syari.ss.discord.internal.managers.PresenceImpl;
 import me.syari.ss.discord.internal.utils.IOUtil;
 import me.syari.ss.discord.internal.utils.JDALogger;
-import me.syari.ss.discord.internal.utils.UnlockHook;
-import me.syari.ss.discord.internal.utils.cache.AbstractCacheView;
 import me.syari.ss.discord.internal.utils.compress.Decompressor;
 import me.syari.ss.discord.internal.utils.compress.ZlibDecompressor;
 import org.slf4j.Logger;

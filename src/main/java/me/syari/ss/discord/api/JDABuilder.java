@@ -3,11 +3,9 @@ package me.syari.ss.discord.api;
 
 import com.neovisionaries.ws.client.WebSocketFactory;
 import me.syari.ss.discord.annotations.Incubating;
-
 import me.syari.ss.discord.api.entities.Activity;
 import me.syari.ss.discord.api.exceptions.AccountTypeException;
 import me.syari.ss.discord.api.hooks.IEventManager;
-import me.syari.ss.discord.api.hooks.VoiceDispatchInterceptor;
 import me.syari.ss.discord.api.utils.ChunkingFilter;
 import me.syari.ss.discord.api.utils.Compression;
 import me.syari.ss.discord.api.utils.SessionController;
@@ -46,7 +44,6 @@ public class JDABuilder
     protected EnumSet<CacheFlag> cacheFlags = EnumSet.allOf(CacheFlag.class);
     protected ConcurrentMap<String, String> contextMap = null;
     protected SessionController controller = null;
-    protected VoiceDispatchInterceptor voiceDispatchInterceptor = null;
     protected OkHttpClient.Builder httpClientBuilder = null;
     protected OkHttpClient httpClient = null;
     protected WebSocketFactory wsFactory = null;
@@ -239,22 +236,6 @@ public class JDABuilder
 
 
     @Nonnull
-    public JDABuilder setVoiceDispatchInterceptor(@Nullable VoiceDispatchInterceptor interceptor)
-    {
-        this.voiceDispatchInterceptor = interceptor;
-        return this;
-    }
-
-
-    @Nonnull
-    public JDABuilder setChunkingFilter(@Nullable ChunkingFilter filter)
-    {
-        this.chunkingFilter = filter == null ? ChunkingFilter.ALL : filter;
-        return this;
-    }
-
-
-    @Nonnull
     public JDABuilder setGuildSubscriptionsEnabled(boolean enabled)
     {
         return setFlag(ConfigFlag.GUILD_SUBSCRIPTIONS, enabled);
@@ -299,7 +280,7 @@ public class JDABuilder
         threadingConfig.setCallbackPool(callbackPool, shutdownCallbackPool);
         threadingConfig.setGatewayPool(mainWsPool, shutdownMainWsPool);
         threadingConfig.setRateLimitPool(rateLimitPool, shutdownRateLimitPool);
-        SessionConfig sessionConfig = new SessionConfig(controller, httpClient, wsFactory, voiceDispatchInterceptor, flags, maxReconnectDelay, largeThreshold);
+        SessionConfig sessionConfig = new SessionConfig(controller, httpClient, wsFactory, flags, maxReconnectDelay, largeThreshold);
         MetaConfig metaConfig = new MetaConfig(maxBufferSize, contextMap, cacheFlags, flags);
 
         JDAImpl jda = new JDAImpl(authConfig, sessionConfig, threadingConfig, metaConfig);

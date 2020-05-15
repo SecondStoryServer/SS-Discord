@@ -3,7 +3,6 @@
 package me.syari.ss.discord.internal.utils.config;
 
 import com.neovisionaries.ws.client.WebSocketFactory;
-import me.syari.ss.discord.api.hooks.VoiceDispatchInterceptor;
 import me.syari.ss.discord.api.utils.SessionController;
 import me.syari.ss.discord.api.utils.SessionControllerAdapter;
 import me.syari.ss.discord.internal.utils.config.flags.ConfigFlag;
@@ -18,20 +17,18 @@ public class SessionConfig
     private final SessionController sessionController;
     private final OkHttpClient httpClient;
     private final WebSocketFactory webSocketFactory;
-    private final VoiceDispatchInterceptor interceptor;
     private final int largeThreshold;
     private EnumSet<ConfigFlag> flags;
     private int maxReconnectDelay;
 
     public SessionConfig(
-        @Nullable SessionController sessionController, @Nullable OkHttpClient httpClient,
-        @Nullable WebSocketFactory webSocketFactory, @Nullable VoiceDispatchInterceptor interceptor,
-        EnumSet<ConfigFlag> flags, int maxReconnectDelay, int largeThreshold)
+            @Nullable SessionController sessionController, @Nullable OkHttpClient httpClient,
+            @Nullable WebSocketFactory webSocketFactory,
+            EnumSet<ConfigFlag> flags, int maxReconnectDelay, int largeThreshold)
     {
         this.sessionController = sessionController == null ? new SessionControllerAdapter() : sessionController;
         this.httpClient = httpClient;
         this.webSocketFactory = webSocketFactory == null ? new WebSocketFactory() : webSocketFactory;
-        this.interceptor = interceptor;
         this.flags = flags;
         this.maxReconnectDelay = maxReconnectDelay;
         this.largeThreshold = largeThreshold;
@@ -61,12 +58,6 @@ public class SessionConfig
     public WebSocketFactory getWebSocketFactory()
     {
         return webSocketFactory;
-    }
-
-    @Nullable
-    public VoiceDispatchInterceptor getVoiceDispatchInterceptor()
-    {
-        return interceptor;
     }
 
     public boolean isAutoReconnect()
@@ -112,6 +103,6 @@ public class SessionConfig
     @Nonnull
     public static SessionConfig getDefault()
     {
-        return new SessionConfig(null, new OkHttpClient(), null, null, ConfigFlag.getDefault(), 900, 250);
+        return new SessionConfig(null, new OkHttpClient(), null, ConfigFlag.getDefault(), 900, 250);
     }
 }

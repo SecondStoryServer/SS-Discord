@@ -40,7 +40,6 @@ import me.syari.ss.discord.internal.requests.restaction.order.ChannelOrderAction
 import me.syari.ss.discord.internal.requests.restaction.order.RoleOrderActionImpl;
 import me.syari.ss.discord.internal.requests.restaction.pagination.AuditLogPaginationActionImpl;
 import me.syari.ss.discord.internal.utils.*;
-import me.syari.ss.discord.internal.utils.cache.AbstractCacheView;
 import me.syari.ss.discord.internal.utils.cache.MemberCacheViewImpl;
 import me.syari.ss.discord.internal.utils.cache.SnowflakeCacheViewImpl;
 import me.syari.ss.discord.internal.utils.cache.SortedSnowflakeCacheViewImpl;
