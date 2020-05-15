@@ -54,11 +54,11 @@ public interface TeamMember
      */
     enum MembershipState
     {
-        /** The user has a pending invite */
+
         INVITED(1),
-        /** The user has accepted an invite as is a member of this team */
+
         ACCEPTED(2),
-        /** Placeholder for future states */
+
         UNKNOWN(-1);
 
         private final int key;

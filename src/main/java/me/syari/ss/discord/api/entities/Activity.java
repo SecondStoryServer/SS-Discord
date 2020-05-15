@@ -29,7 +29,7 @@ import java.util.regex.Pattern;
  */
 public interface Activity
 {
-    /** The Pattern used for {@link #isValidStreamingUrl(String)} */
+
     Pattern STREAMING_URL = Pattern.compile("https?://(www\\.)?(twitch\\.tv/|youtube\\.com/watch\\?v=).+", Pattern.CASE_INSENSITIVE);
 
     /**

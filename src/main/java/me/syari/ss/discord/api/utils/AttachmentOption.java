@@ -9,6 +9,6 @@ import me.syari.ss.discord.api.requests.restaction.MessageAction;
  */
 public enum AttachmentOption
 {
-    /** Marks an image attachment as a spoiler by prefixing the name with {@code SPOILER_} */
+
     SPOILER
 }

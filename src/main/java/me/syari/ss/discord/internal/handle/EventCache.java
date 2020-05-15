@@ -17,7 +17,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class EventCache
 {
     public static final Logger LOG = JDALogger.getLog(EventCache.class);
-    /** Sequence difference after which events will be removed from cache */
+
     public static final long TIMEOUT_AMOUNT = 100;
     private final EnumMap<Type, TLongObjectMap<List<CacheNode>>> eventCache = new EnumMap<>(Type.class);
     private final boolean cacheUsers;

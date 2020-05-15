@@ -20,9 +20,9 @@ package me.syari.ss.discord.internal.utils.tuple;
  */
 public final class ImmutablePair<L, R> extends Pair<L, R>
 {
-    /** Left object */
+
     public final L left;
-    /** Right object */
+
     public final R right;
 
     /**

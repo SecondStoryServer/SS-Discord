@@ -12,15 +12,15 @@ import me.syari.ss.discord.api.managers.AudioManager;
  */
 public enum ConnectionStatus
 {
-    /** Indicates that there is no open connection or that the connection was closed by choice, not by error.*/
+
     NOT_CONNECTED(false),
-    /** Indicates that JDA was shutdown and no further connections should be established */
+
     SHUTTING_DOWN(false),
-    /** JDA is waiting on Discord to send a valid endpoint which to connect the audio websocket to.*/
+
     CONNECTING_AWAITING_ENDPOINT,
-    /** JDA has received a valid endpoint and is attempting to setup and connect the audio websocket */
+
     CONNECTING_AWAITING_WEBSOCKET_CONNECT,
-    /** JDA has connected the audio websocket to Discord and has sent the authentication information, awaiting reply.*/
+
     CONNECTING_AWAITING_AUTHENTICATION,
     /**
      * JDA successfully authenticated the audio websocket and it now attempting UDP discovery. UDP discovery involves
@@ -33,23 +33,21 @@ public enum ConnectionStatus
      * audio packets for us to properly receive. At this point, JDA is waiting for final websocket READY.
      */
     CONNECTING_AWAITING_READY,
-    /** The audio connection has been successfully setup and is ready for use. */
+
     CONNECTED,
     /**
      * Indicates that the logged in account lost the {@link Permission#VOICE_CONNECT Permission.VOICE_CONNECT}
      * and cannot connect to the channel.
      */
     DISCONNECTED_LOST_PERMISSION(false),
-    /**
-     * Indicates that the channel which the audio connection was connected to was deleted, thus the connection was severed.
-     * */
+
     DISCONNECTED_CHANNEL_DELETED(false),
     /**
      * Indicates that the logged in account was removed from the {@link Guild Guild}
      * that this audio connection was connected to, thus the connection was severed.
      */
     DISCONNECTED_REMOVED_FROM_GUILD(false),
-    /** Indicates that we were kicked from a channel by a moderator */
+
     DISCONNECTED_KICKED_FROM_CHANNEL(false),
     /**
      * Indicates that the logged in account was removed from the {@link Guild Guild}

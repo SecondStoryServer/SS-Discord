@@ -197,16 +197,16 @@ public class Icon
      */
     public enum IconType
     {
-        /** JPEG */
+
         JPEG("image/jpeg"),
-        /** PNG */
+
         PNG("image/png"),
-        /** WEBP */
+
         WEBP("image/webp"),
-        /** GIF */
+
         GIF("image/gif"),
 
-        /** Placeholder for unsupported IconTypes */
+
         UNKNOWN("image/jpeg");
 
         private final String mime;

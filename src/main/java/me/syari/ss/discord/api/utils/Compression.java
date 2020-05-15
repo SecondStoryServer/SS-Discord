@@ -13,9 +13,9 @@ import me.syari.ss.discord.api.sharding.DefaultShardManagerBuilder;
  */
 public enum Compression
 {
-    /** Don't use any compression */
+
     NONE(""),
-    /** Use ZLIB transport compression */
+
     ZLIB("zlib-stream");
 
     private final String key;

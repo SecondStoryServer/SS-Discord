@@ -33,23 +33,23 @@ import java.util.Collection;
  */
 public interface ChannelManager extends Manager<ChannelManager>
 {
-    /** Used to reset the name field */
+
     long NAME       = 0x1;
-    /** Used to reset the parent field */
+
     long PARENT     = 0x2;
-    /** Used to reset the topic field */
+
     long TOPIC      = 0x4;
-    /** Used to reset the position field */
+
     long POSITION   = 0x8;
-    /** Used to reset the nsfw field */
+
     long NSFW       = 0x10;
-    /** Used to reset the userlimit field */
+
     long USERLIMIT  = 0x20;
-    /** Used to reset the bitrate field */
+
     long BITRATE    = 0x40;
-    /** Used to reset the permission field */
+
     long PERMISSION = 0x80;
-    /** Used to reset the rate-limit per user field */
+
     long SLOWMODE   = 0x100;
 
     /**

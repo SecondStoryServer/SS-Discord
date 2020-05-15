@@ -49,7 +49,7 @@ import java.util.List;
  */
 public interface Emote extends IMentionable, IFakeable
 {
-    /** Template for {@link #getImageUrl()} */
+
     String ICON_URL = "https://cdn.discordapp.com/emojis/%s.%s";
 
     /**

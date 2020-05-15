@@ -134,7 +134,7 @@ public class SessionControllerAdapter implements SessionController
 
     protected class QueueWorker extends Thread
     {
-        /** Delay (in milliseconds) to sleep between connecting sessions */
+
         protected final long delay;
 
         public QueueWorker()

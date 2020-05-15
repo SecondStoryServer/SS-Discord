@@ -31,13 +31,13 @@ import javax.annotation.Nullable;
  */
 public interface AccountManager extends Manager<AccountManager>
 {
-    /** Used to reset the name field */
+
     long NAME = 0x1;
-    /** Used to reset the avatar field */
+
     long AVATAR = 0x2;
-    /** Used to reset the email field */
+
     long EMAIL = 0x4;
-    /** Used to reset the password field */
+
     long PASSWORD = 0x8;
 
     /**

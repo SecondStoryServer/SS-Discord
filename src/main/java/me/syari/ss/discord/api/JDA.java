@@ -67,40 +67,35 @@ public interface JDA
      */
     enum Status
     {
-        /**JDA is currently setting up supporting systems like the AudioSystem.*/
+
         INITIALIZING(true),
-        /**JDA has finished setting up supporting systems and is ready to log in.*/
+
         INITIALIZED(true),
-        /**JDA is currently attempting to log in.*/
+
         LOGGING_IN(true),
-        /**JDA is currently attempting to connect it's websocket to Discord.*/
+
         CONNECTING_TO_WEBSOCKET(true),
-        /**JDA has successfully connected it's websocket to Discord and is sending authentication*/
+
         IDENTIFYING_SESSION(true),
-        /**JDA has sent authentication to discord and is awaiting confirmation*/
+
         AWAITING_LOGIN_CONFIRMATION(true),
-        /**JDA is populating internal objects.
-         * This process often takes the longest of all Statuses (besides CONNECTED)*/
+
         LOADING_SUBSYSTEMS(true),
-        /**JDA has finished loading everything, is receiving information from Discord and is firing events.*/
+
         CONNECTED(true),
-        /**JDA's main websocket has been disconnected. This <b>DOES NOT</b> mean JDA has shutdown permanently.
-         * This is an in-between status. Most likely ATTEMPTING_TO_RECONNECT or SHUTTING_DOWN/SHUTDOWN will soon follow.*/
+
         DISCONNECTED,
-        /** JDA session has been added to {@link SessionController SessionController}
-         * and is awaiting to be dequeued for reconnecting.*/
+
         RECONNECT_QUEUED,
-        /**When trying to reconnect to Discord JDA encountered an issue, most likely related to a lack of internet connection,
-         * and is waiting to try reconnecting again.*/
+
         WAITING_TO_RECONNECT,
-        /**JDA has been disconnected from Discord and is currently trying to reestablish the connection.*/
+
         ATTEMPTING_TO_RECONNECT,
-        /**JDA has received a shutdown request or has been disconnected from Discord and reconnect is disabled, thus,
-         * JDA is in the process of shutting down*/
+
         SHUTTING_DOWN,
-        /**JDA has finished shutting down and this instance can no longer be used to communicate with the Discord servers.*/
+
         SHUTDOWN,
-        /**While attempting to authenticate, Discord reported that the provided authentication information was invalid.*/
+
         FAILED_TO_LOGIN;
 
         private final boolean isInit;
@@ -126,7 +121,7 @@ public interface JDA
      */
     class ShardInfo
     {
-        /** Default sharding config with one shard */
+
         public static final ShardInfo SINGLE = new ShardInfo(0, 1);
 
         int shardId;

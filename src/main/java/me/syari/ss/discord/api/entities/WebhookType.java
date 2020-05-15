@@ -6,11 +6,11 @@ import javax.annotation.Nonnull;
 
 public enum WebhookType
 {
-    /** Placeholder for unsupported types */
+
     UNKNOWN(-1),
-    /** Normal webhooks that can be used for sending messages */
+
     INCOMING(1),
-    /** Webhook responsible for re-posting messages from another channel */
+
     FOLLOWER(2);
 
     private final int key;

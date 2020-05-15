@@ -33,15 +33,15 @@ import java.util.Collection;
  */
 public interface RoleManager extends Manager<RoleManager>
 {
-    /** Used to reset the name field */
+
     long NAME        = 0x1;
-    /** Used to reset the color field */
+
     long COLOR       = 0x2;
-    /** Used to reset the permission field */
+
     long PERMISSION  = 0x4;
-    /** Used to reset the hoisted field */
+
     long HOIST       = 0x8;
-    /** Used to reset the mentionable field */
+
     long MENTIONABLE = 0x10;
 
     /**

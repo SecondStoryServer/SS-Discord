@@ -10,7 +10,7 @@ import me.syari.ss.discord.annotations.Incubating;
  */
 public enum AccountType
 {
-    /** An OAuth2 Bot which was created by an application */
+
     BOT,
     /**
      * A User-Account which can be used via the official Discord Client

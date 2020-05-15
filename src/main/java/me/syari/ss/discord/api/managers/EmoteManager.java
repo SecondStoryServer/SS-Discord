@@ -29,9 +29,9 @@ import java.util.Set;
  */
 public interface EmoteManager extends Manager<EmoteManager>
 {
-    /** Used to reset the name field */
+
     long NAME = 0x1;
-    /** Used to reset the roles field */
+
     long ROLES = 0x2;
 
     /**

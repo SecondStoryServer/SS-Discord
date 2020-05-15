@@ -30,11 +30,11 @@ import java.util.Collection;
  */
 public interface PermOverrideManager extends Manager<PermOverrideManager>
 {
-    /** Used to reset the denied field */
+
     long DENIED      = 0x1;
-    /** Used to reset the granted field */
+
     long ALLOWED     = 0x2;
-    /** Used to reset <b>all</b> permissions to their original value */
+
     long PERMISSIONS = 0x3;
 
     /**

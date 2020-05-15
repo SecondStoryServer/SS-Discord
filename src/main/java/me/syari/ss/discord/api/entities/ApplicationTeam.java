@@ -16,7 +16,7 @@ import java.util.List;
  */
 public interface ApplicationTeam extends ISnowflake
 {
-    /** Template for {@link #getIconUrl()} */
+
     String ICON_URL = "https://cdn.discordapp.com/team-icons/%s/%s.png";
 
     /**
