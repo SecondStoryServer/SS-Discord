@@ -1584,7 +1584,7 @@ public class EntityBuilder
         final User owner = createFakeUser(object.getObject("owner"), false);
         final ApplicationTeam team = !object.isNull("team") ? createApplicationTeam(object.getObject("team")) : null;
 
-        return new ApplicationInfoImpl(getJDA(), description, doesBotRequireCodeGrant, iconId, id, isBotPublic, name, owner, team);
+        return new ApplicationInfoImpl(getJDA(), description, iconId, id, name);
     }
 
     public ApplicationTeam createApplicationTeam(DataObject object)
@@ -1598,7 +1598,7 @@ public class EntityBuilder
             User user = createFakeUser(userJson, false);
             return new TeamMemberImpl(user, state, id);
         });
-        return new ApplicationTeamImpl(iconId, members, id, ownerId);
+        return new ApplicationTeamImpl(iconId, members, id);
     }
 
     public AuditLogEntry createAuditLogEntry(GuildImpl guild, DataObject entryJson, DataObject userJson, DataObject webhookJson)

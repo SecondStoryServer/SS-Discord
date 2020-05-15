@@ -186,11 +186,6 @@ public class AudioConnection
         opusDecoders.clear();
     }
 
-    public WebSocket getWebSocket()
-    {
-        return webSocket.socket;
-    }
-
     /* Used by AudioWebSocket */
 
     protected void prepareReady()

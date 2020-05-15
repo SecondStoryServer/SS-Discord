@@ -84,41 +84,6 @@ public class AccountManagerImpl extends ManagerBase<AccountManager> implements A
         return this;
     }
 
-    @Nonnull
-    @Override
-    @CheckReturnValue
-    public AccountManagerImpl setAvatar(Icon avatar, String currentPassword)
-    {
-        this.currentPassword = currentPassword;
-        this.avatar = avatar;
-        set |= AVATAR;
-        return this;
-    }
-
-    @Nonnull
-    @Override
-    @CheckReturnValue
-    public AccountManagerImpl setEmail(@Nonnull String email, @Nonnull String currentPassword)
-    {
-        Checks.notNull(email, "email");
-        this.currentPassword = currentPassword;
-        this.email = email;
-        set |= EMAIL;
-        return this;
-    }
-
-    @Override
-    @CheckReturnValue
-    public AccountManagerImpl setPassword(@Nonnull String newPassword, @Nonnull String currentPassword)
-    {
-        Checks.notNull(newPassword, "password");
-        Checks.check(newPassword.length() >= 6 && newPassword.length() <= 128, "Password must be between 2-128 characters long");
-        this.currentPassword = currentPassword;
-        this.password = newPassword;
-        set |= PASSWORD;
-        return this;
-    }
-
     @Override
     protected RequestBody finalizeData()
     {

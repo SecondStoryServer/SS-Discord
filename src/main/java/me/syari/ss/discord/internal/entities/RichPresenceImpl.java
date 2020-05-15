@@ -41,18 +41,6 @@ public class RichPresenceImpl extends ActivityImpl implements RichPresence
     }
 
     @Override
-    public boolean isRich()
-    {
-        return true;
-    }
-
-    @Override
-    public RichPresence asRichPresence()
-    {
-        return this;
-    }
-
-    @Override
     public long getApplicationIdLong()
     {
         return applicationId;

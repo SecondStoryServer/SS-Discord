@@ -13,46 +13,13 @@ import java.util.List;
 public interface ApplicationTeam extends ISnowflake
 {
 
-    String ICON_URL = "https://cdn.discordapp.com/team-icons/%s/%s.png";
-
-
-    @Nullable
-    default TeamMember getOwner()
-    {
-        return getMemberById(getOwnerIdLong());
-    }
-
-
-    @Nonnull
-    default String getOwnerId()
-    {
-        return Long.toUnsignedString(getOwnerIdLong());
-    }
-
-
-    long getOwnerIdLong();
-
 
     @Nullable
     String getIconId();
 
 
-    @Nullable
-    default String getIconUrl()
-    {
-        String iconId = getIconId();
-        return iconId == null ? null : String.format(ICON_URL, getId(), iconId);
-    }
-
-
     @Nonnull
     List<TeamMember> getMembers();
-
-
-    default boolean isMember(@Nonnull User user)
-    {
-        return getMember(user) != null;
-    }
 
 
     @Nullable

@@ -13,20 +13,13 @@ public class ApplicationTeamImpl implements ApplicationTeam
 {
     private final String iconId;
     private final List<TeamMember> members;
-    private final long id, ownerId;
+    private final long id;
 
-    public ApplicationTeamImpl(String iconId, List<TeamMember> members, long id, long ownerId)
+    public ApplicationTeamImpl(String iconId, List<TeamMember> members, long id)
     {
         this.iconId = iconId;
         this.members = Collections.unmodifiableList(members);
         this.id = id;
-        this.ownerId = ownerId;
-    }
-
-    @Override
-    public long getOwnerIdLong()
-    {
-        return ownerId;
     }
 
     @Override

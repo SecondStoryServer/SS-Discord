@@ -16,11 +16,9 @@ import me.syari.ss.discord.api.utils.MiscUtil;
 import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.audio.AudioConnection;
 import me.syari.ss.discord.internal.entities.GuildImpl;
-import me.syari.ss.discord.internal.utils.Checks;
 import me.syari.ss.discord.internal.utils.PermissionUtil;
 
 import javax.annotation.Nonnull;
-import java.util.Collection;
 import java.util.EnumSet;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -50,79 +48,6 @@ public class AudioManagerImpl implements AudioManager
         this.guild = guild;
     }
 
-    public AudioConnection getAudioConnection()
-    {
-        return audioConnection;
-    }
-
-    @Override
-    public void openAudioConnection(VoiceChannel channel)
-    {
-        Checks.notNull(channel, "Provided VoiceChannel");
-
-//        if (!AUDIO_SUPPORTED)
-//            throw new UnsupportedOperationException("Sorry! Audio is disabled due to an internal JDA error! Contact Dev!");
-        if (!getGuild().equals(channel.getGuild()))
-            throw new IllegalArgumentException("The provided VoiceChannel is not a part of the Guild that this AudioManager handles." +
-                    "Please provide a VoiceChannel from the proper Guild");
-        final Member self = getGuild().getSelfMember();
-        //if (!self.hasPermission(channel, Permission.VOICE_CONNECT))
-        //    throw new InsufficientPermissionException(Permission.VOICE_CONNECT);
-
-        if (audioConnection == null)
-        {
-            checkChannel(channel, self);
-            //Start establishing connection, joining provided channel
-            queuedAudioConnection = channel;
-            getJDA().getDirectAudioController().connect(channel);
-        }
-        else
-        {
-            //Connection is already established, move to specified channel
-
-            //If we are already connected to this VoiceChannel, then do nothing.
-            if (channel.equals(audioConnection.getChannel()))
-                return;
-
-            checkChannel(channel, self);
-
-            getJDA().getDirectAudioController().connect(channel);
-            audioConnection.setChannel(channel);
-        }
-    }
-
-    private void checkChannel(VoiceChannel channel, Member self)
-    {
-        EnumSet<Permission> perms = Permission.getPermissions(PermissionUtil.getEffectivePermission(channel, self));
-        if (!perms.contains(Permission.VOICE_CONNECT))
-            throw new InsufficientPermissionException(channel, Permission.VOICE_CONNECT);
-        final int userLimit = channel.getUserLimit(); // userLimit is 0 if no limit is set!
-        if (userLimit > 0 && !perms.contains(Permission.ADMINISTRATOR))
-        {
-            // Check if we can actually join this channel
-            // - If there is a userlimit
-            // - If that userlimit is reached
-            // - If we don't have voice move others permissions
-            // VOICE_MOVE_OTHERS allows access because you would be able to move people out to
-            // open up a slot anyway
-            if (userLimit <= channel.getMembers().size()
-                && !perms.contains(Permission.VOICE_MOVE_OTHERS))
-            {
-                throw new InsufficientPermissionException(channel, Permission.VOICE_MOVE_OTHERS,
-                    "Unable to connect to VoiceChannel due to userlimit! Requires permission VOICE_MOVE_OTHERS to bypass");
-            }
-        }
-    }
-
-    @Override
-    public void closeAudioConnection()
-    {
-        getJDA().getAudioLifeCyclePool().execute(() -> {
-            getJDA().setContext();
-            closeAudioConnection(ConnectionStatus.NOT_CONNECTED);
-        });
-    }
-
     public void closeAudioConnection(ConnectionStatus reason)
     {
         MiscUtil.locked(CONNECTION_LOCK, () ->
@@ -134,30 +59,6 @@ public class AudioManagerImpl implements AudioManager
                 getJDA().getDirectAudioController().disconnect(getGuild());
             this.audioConnection = null;
         });
-    }
-
-    @Override
-    public void setSpeakingMode(@Nonnull Collection<SpeakingMode> mode)
-    {
-        Checks.notEmpty(mode, "Speaking Mode");
-        this.speakingModes = EnumSet.copyOf(mode);
-        if (audioConnection != null)
-            audioConnection.setSpeakingMode(this.speakingModes);
-    }
-
-    @Nonnull
-    @Override
-    public EnumSet<SpeakingMode> getSpeakingMode()
-    {
-        return EnumSet.copyOf(this.speakingModes);
-    }
-
-    @Override
-    public void setSpeakingDelay(int millis)
-    {
-        this.speakingDelay = millis;
-        if (audioConnection != null)
-            audioConnection.setSpeakingDelay(millis);
     }
 
     @Nonnull
@@ -196,12 +97,6 @@ public class AudioManagerImpl implements AudioManager
     public boolean isConnected()
     {
         return audioConnection != null;
-    }
-
-    @Override
-    public void setConnectTimeout(long timeout)
-    {
-        this.timeout = timeout;
     }
 
     @Override
@@ -248,16 +143,6 @@ public class AudioManagerImpl implements AudioManager
     public ConnectionListener getConnectionListener()
     {
         return connectionListener.getListener();
-    }
-
-    @Nonnull
-    @Override
-    public ConnectionStatus getConnectionStatus()
-    {
-        if (audioConnection != null)
-            return audioConnection.getConnectionStatus();
-        else
-            return ConnectionStatus.NOT_CONNECTED;
     }
 
     @Override

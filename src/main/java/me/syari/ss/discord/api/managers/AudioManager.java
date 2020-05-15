@@ -29,32 +29,6 @@ public interface AudioManager
     Logger LOG = JDALogger.getLog(AudioManager.class);
 
 
-    void openAudioConnection(VoiceChannel channel);
-
-
-    void closeAudioConnection();
-
-
-    @Incubating
-    void setSpeakingMode(@Nonnull Collection<SpeakingMode> mode);
-
-
-    @Incubating
-    default void setSpeakingMode(@Nonnull SpeakingMode... mode)
-    {
-        Checks.notNull(mode, "Speaking Mode");
-        setSpeakingMode(Arrays.asList(mode));
-    }
-
-
-    @Nonnull
-    @Incubating
-    EnumSet<SpeakingMode> getSpeakingMode();
-
-
-    void setSpeakingDelay(int millis);
-
-
     @Nonnull
     JDA getJDA();
 
@@ -75,9 +49,6 @@ public interface AudioManager
 
 
     boolean isConnected();
-
-
-    void setConnectTimeout(long timeout);
 
 
     long getConnectTimeout();
@@ -102,10 +73,6 @@ public interface AudioManager
 
     @Nullable
     ConnectionListener getConnectionListener();
-
-
-    @Nonnull
-    ConnectionStatus getConnectionStatus();
 
 
     void setAutoReconnect(boolean shouldReconnect);

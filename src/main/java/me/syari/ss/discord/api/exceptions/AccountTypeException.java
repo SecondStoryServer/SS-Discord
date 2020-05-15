@@ -23,11 +23,6 @@ public class AccountTypeException extends RuntimeException
     }
 
 
-    public AccountType getRequiredType()
-    {
-        return requiredType;
-    }
-
     public static void check(AccountType actualType, AccountType requiredType)
     {
         if (actualType != requiredType)

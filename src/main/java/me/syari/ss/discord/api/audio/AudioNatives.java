@@ -18,18 +18,6 @@ public final class AudioNatives
     private AudioNatives() {}
 
 
-    public static boolean isAudioSupported()
-    {
-        return audioSupported;
-    }
-
-
-    public static boolean isInitialized()
-    {
-        return initialized;
-    }
-
-
     public static synchronized boolean ensureOpus()
     {
         if (initialized)

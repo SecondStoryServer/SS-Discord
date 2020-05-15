@@ -8,8 +8,6 @@ import me.syari.ss.discord.internal.utils.EncodingUtil;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.time.Instant;
-import java.time.temporal.TemporalUnit;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
@@ -18,13 +16,6 @@ public interface Activity
 {
 
     Pattern STREAMING_URL = Pattern.compile("https?://(www\\.)?(twitch\\.tv/|youtube\\.com/watch\\?v=).+", Pattern.CASE_INSENSITIVE);
-
-
-    boolean isRich();
-
-
-    @Nullable
-    RichPresence asRichPresence();
 
 
     @Nonnull
@@ -37,14 +28,6 @@ public interface Activity
 
     @Nonnull
     ActivityType getType();
-
-
-    @Nullable
-    Timestamps getTimestamps();
-
-
-    @Nullable
-    Emoji getEmoji();
 
 
     @Nonnull
@@ -187,40 +170,11 @@ public interface Activity
         }
 
 
-        @Nullable
-        public Instant getStartTime()
-        {
-            return start <= 0 ? null : Instant.ofEpochMilli(start);
-        }
-
-
         public long getEnd()
         {
             return end;
         }
 
-
-        @Nullable
-        public Instant getEndTime()
-        {
-            return end <= 0 ? null : Instant.ofEpochMilli(end);
-        }
-
-
-        public long getRemainingTime(TemporalUnit unit)
-        {
-            Checks.notNull(unit, "TemporalUnit");
-            Instant end = getEndTime();
-            return end != null ? Instant.now().until(end, unit) : -1;
-        }
-
-
-        public long getElapsedTime(TemporalUnit unit)
-        {
-            Checks.notNull(unit, "TemporalUnit");
-            Instant start = getStartTime();
-            return start != null ? start.until(Instant.now(), unit) : -1;
-        }
 
         @Override
         public String toString()
@@ -256,11 +210,6 @@ public interface Activity
             this.name = name;
             this.id = id;
             this.animated = animated;
-        }
-
-        public Emoji(String name)
-        {
-            this(name, 0, false);
         }
 
 

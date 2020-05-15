@@ -5,7 +5,6 @@ import me.syari.ss.discord.api.entities.Activity;
 import me.syari.ss.discord.api.entities.RichPresence;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Objects;
 
 public class ActivityImpl implements Activity
@@ -15,16 +14,6 @@ public class ActivityImpl implements Activity
     protected final ActivityType type;
     protected final Timestamps timestamps;
     protected final Emoji emoji;
-
-    protected ActivityImpl(String name)
-    {
-        this(name, null, ActivityType.DEFAULT);
-    }
-
-    protected ActivityImpl(String name, String url)
-    {
-        this(name, url, ActivityType.STREAMING);
-    }
 
     protected ActivityImpl(String name, String url, ActivityType type)
     {
@@ -38,18 +27,6 @@ public class ActivityImpl implements Activity
         this.type = type;
         this.timestamps = timestamps;
         this.emoji = emoji;
-    }
-
-    @Override
-    public boolean isRich()
-    {
-        return false;
-    }
-
-    @Override
-    public RichPresence asRichPresence()
-    {
-        return null;
     }
 
     @Nonnull
@@ -70,19 +47,6 @@ public class ActivityImpl implements Activity
     public ActivityType getType()
     {
         return type;
-    }
-
-    @Nullable
-    public RichPresence.Timestamps getTimestamps()
-    {
-        return timestamps;
-    }
-
-    @Nullable
-    @Override
-    public Emoji getEmoji()
-    {
-        return emoji;
     }
 
     @Override

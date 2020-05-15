@@ -15,19 +15,11 @@ public enum ActivityFlag
     SYNC(4),
     PLAY(5);
 
-    private final int offset;
     private final int raw;
 
     ActivityFlag(int offset)
     {
-        this.offset = offset;
         this.raw = 1 << offset;
-    }
-
-
-    public int getOffset()
-    {
-        return offset;
     }
 
 

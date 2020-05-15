@@ -51,25 +51,4 @@ public interface AccountManager extends Manager<AccountManager>
     AccountManager setName(@Nonnull String name, @Nullable String currentPassword);
 
 
-    @Nonnull
-    @CheckReturnValue
-    default AccountManager setAvatar(@Nullable Icon avatar)
-    {
-        return setAvatar(avatar, null);
-    }
-
-
-    @Nonnull
-    @CheckReturnValue
-    AccountManager setAvatar(@Nullable Icon avatar, @Nullable String currentPassword);
-
-
-    @Nonnull
-    @CheckReturnValue
-    AccountManager setEmail(@Nonnull String email, @Nonnull String currentPassword);
-
-
-    @Nonnull
-    @CheckReturnValue
-    AccountManager setPassword(@Nonnull String newPassword, @Nonnull String currentPassword);
 }
