@@ -31,17 +31,10 @@ public interface Presence
     void setActivity(@Nullable Activity activity);
 
 
-    void setIdle(boolean idle);
-
-
     void setPresence(@Nullable OnlineStatus status, @Nullable Activity activity, boolean idle);
 
 
     void setPresence(@Nullable OnlineStatus status, @Nullable Activity activity);
 
 
-    void setPresence(@Nullable OnlineStatus status, boolean idle);
-
-
-    void setPresence(@Nullable Activity activity, boolean idle);
 }

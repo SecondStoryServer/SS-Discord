@@ -68,12 +68,6 @@ public class PresenceImpl implements Presence
     }
 
     @Override
-    public void setIdle(boolean idle)
-    {
-        setPresence(status, idle);
-    }
-
-    @Override
     public void setPresence(OnlineStatus status, Activity activity, boolean idle)
     {
         DataObject gameObj = getGameJson(activity);
@@ -99,18 +93,6 @@ public class PresenceImpl implements Presence
     public void setPresence(OnlineStatus status, Activity activity)
     {
         setPresence(status, activity, idle);
-    }
-
-    @Override
-    public void setPresence(OnlineStatus status, boolean idle)
-    {
-        setPresence(status, activity, idle);
-    }
-
-    @Override
-    public void setPresence(Activity game, boolean idle)
-    {
-        setPresence(status, game, idle);
     }
 
 

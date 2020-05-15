@@ -234,12 +234,6 @@ public class JDAImpl implements JDA
     }
 
 
-    // This method also checks for a valid bot token as it is required to get the recommended shard count.
-    public SessionController.ShardedGateway getShardedGateway()
-    {
-        return getSessionController().getShardedGateway(this);
-    }
-
     public ConcurrentMap<String, String> getContextMap()
     {
         return metaConfig.getMdcContextMap() == null ? null : new ConcurrentHashMap<>(metaConfig.getMdcContextMap());
@@ -674,15 +668,6 @@ public class JDAImpl implements JDA
             this.clientId = info.getId();
             return info;
         });
-    }
-
-    private StringBuilder buildBaseInviteUrl()
-    {
-        if (clientId == null)
-            retrieveApplicationInfo().complete();
-        StringBuilder builder = new StringBuilder("https://discordapp.com/oauth2/authorize?scope=bot&client_id=");
-        builder.append(clientId);
-        return builder;
     }
 
     public EntityBuilder getEntityBuilder()
