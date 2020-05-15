@@ -3,8 +3,8 @@
 package me.syari.ss.discord.internal.requests;
 
 import me.syari.ss.discord.api.requests.Request;
-import me.syari.ss.discord.internal.utils.JDALogger;
 import me.syari.ss.discord.internal.requests.ratelimit.IBucket;
+import me.syari.ss.discord.internal.utils.JDALogger;
 import org.slf4j.Logger;
 
 import java.util.ArrayList;

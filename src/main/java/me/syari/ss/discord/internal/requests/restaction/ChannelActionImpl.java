@@ -2,17 +2,16 @@
 
 package me.syari.ss.discord.internal.requests.restaction;
 
+import me.syari.ss.discord.api.Permission;
 import me.syari.ss.discord.api.entities.*;
 import me.syari.ss.discord.api.requests.Request;
 import me.syari.ss.discord.api.requests.Response;
 import me.syari.ss.discord.api.requests.restaction.ChannelAction;
+import me.syari.ss.discord.api.utils.data.DataArray;
+import me.syari.ss.discord.api.utils.data.DataObject;
 import me.syari.ss.discord.internal.entities.EntityBuilder;
 import me.syari.ss.discord.internal.requests.Route;
 import me.syari.ss.discord.internal.utils.Checks;
-import me.syari.ss.discord.api.Permission;
-import me.syari.ss.discord.api.entities.*;
-import me.syari.ss.discord.api.utils.data.DataArray;
-import me.syari.ss.discord.api.utils.data.DataObject;
 import okhttp3.RequestBody;
 
 import javax.annotation.CheckReturnValue;

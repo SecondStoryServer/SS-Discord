@@ -1,7 +1,6 @@
 
 package me.syari.ss.discord.api.hooks;
 
-import me.syari.ss.discord.api.events.Event;
 import me.syari.ss.discord.api.events.GenericEvent;
 import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.utils.JDALogger;

@@ -1,10 +1,6 @@
 
 package me.syari.ss.discord.api;
 
-import me.syari.ss.discord.api.entities.PermissionOverride;
-import me.syari.ss.discord.api.entities.Role;
-import me.syari.ss.discord.api.entities.TextChannel;
-import me.syari.ss.discord.api.entities.VoiceChannel;
 import me.syari.ss.discord.internal.utils.Checks;
 
 import javax.annotation.Nonnull;

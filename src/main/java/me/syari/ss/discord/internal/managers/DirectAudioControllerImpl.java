@@ -3,11 +3,11 @@
 package me.syari.ss.discord.internal.managers;
 
 import me.syari.ss.discord.api.entities.Guild;
-import me.syari.ss.discord.internal.JDAImpl;
-import me.syari.ss.discord.internal.utils.Checks;
 import me.syari.ss.discord.api.entities.VoiceChannel;
 import me.syari.ss.discord.api.managers.DirectAudioController;
+import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.requests.WebSocketClient;
+import me.syari.ss.discord.internal.utils.Checks;
 
 import javax.annotation.Nonnull;
 

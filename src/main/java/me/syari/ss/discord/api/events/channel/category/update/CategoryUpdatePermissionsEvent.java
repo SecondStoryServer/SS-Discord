@@ -2,12 +2,12 @@
 
 package me.syari.ss.discord.api.events.channel.category.update;
 
-import me.syari.ss.discord.api.events.channel.category.GenericCategoryEvent;
 import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.entities.Category;
 import me.syari.ss.discord.api.entities.IPermissionHolder;
 import me.syari.ss.discord.api.entities.Member;
 import me.syari.ss.discord.api.entities.Role;
+import me.syari.ss.discord.api.events.channel.category.GenericCategoryEvent;
 
 import javax.annotation.Nonnull;
 import java.util.List;

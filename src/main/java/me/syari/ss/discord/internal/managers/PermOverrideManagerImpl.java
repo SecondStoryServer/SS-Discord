@@ -2,11 +2,10 @@
 
 package me.syari.ss.discord.internal.managers;
 
-import me.syari.ss.discord.api.entities.*;
-import me.syari.ss.discord.api.exceptions.InsufficientPermissionException;
 import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.Permission;
 import me.syari.ss.discord.api.entities.*;
+import me.syari.ss.discord.api.exceptions.InsufficientPermissionException;
 import me.syari.ss.discord.api.managers.PermOverrideManager;
 import me.syari.ss.discord.api.utils.data.DataObject;
 import me.syari.ss.discord.internal.requests.Route;

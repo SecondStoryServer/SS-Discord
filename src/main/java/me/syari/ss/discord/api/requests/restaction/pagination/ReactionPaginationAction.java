@@ -2,8 +2,6 @@
 
 package me.syari.ss.discord.api.requests.restaction.pagination;
 
-import me.syari.ss.discord.api.entities.Emote;
-import me.syari.ss.discord.api.entities.Message;
 import me.syari.ss.discord.api.entities.MessageReaction;
 import me.syari.ss.discord.api.entities.User;
 

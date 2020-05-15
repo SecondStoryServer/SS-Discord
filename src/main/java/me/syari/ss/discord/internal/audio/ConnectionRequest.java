@@ -2,8 +2,8 @@
 
 package me.syari.ss.discord.internal.audio;
 
-import me.syari.ss.discord.api.entities.Guild;
 import me.syari.ss.discord.api.JDA;
+import me.syari.ss.discord.api.entities.Guild;
 import me.syari.ss.discord.api.entities.VoiceChannel;
 
 public class ConnectionRequest

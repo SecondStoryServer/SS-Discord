@@ -1,15 +1,15 @@
 
 package me.syari.ss.discord.internal.entities;
 
-import me.syari.ss.discord.api.entities.Message;
-import me.syari.ss.discord.api.exceptions.AccountTypeException;
-import me.syari.ss.discord.api.requests.RestAction;
-import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.api.AccountType;
+import me.syari.ss.discord.api.entities.Message;
 import me.syari.ss.discord.api.entities.PrivateChannel;
 import me.syari.ss.discord.api.entities.SelfUser;
+import me.syari.ss.discord.api.exceptions.AccountTypeException;
 import me.syari.ss.discord.api.managers.AccountManager;
+import me.syari.ss.discord.api.requests.RestAction;
 import me.syari.ss.discord.api.utils.MiscUtil;
+import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.managers.AccountManagerImpl;
 
 import javax.annotation.Nonnull;

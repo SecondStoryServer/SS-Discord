@@ -2,16 +2,16 @@
 
 package me.syari.ss.discord.internal.entities;
 
+import me.syari.ss.discord.api.Permission;
 import me.syari.ss.discord.api.entities.Guild;
 import me.syari.ss.discord.api.entities.ListedEmote;
-import me.syari.ss.discord.api.exceptions.InsufficientPermissionException;
-import me.syari.ss.discord.api.requests.restaction.AuditableRestAction;
-import me.syari.ss.discord.internal.JDAImpl;
-import me.syari.ss.discord.api.Permission;
 import me.syari.ss.discord.api.entities.Role;
 import me.syari.ss.discord.api.entities.User;
+import me.syari.ss.discord.api.exceptions.InsufficientPermissionException;
 import me.syari.ss.discord.api.managers.EmoteManager;
+import me.syari.ss.discord.api.requests.restaction.AuditableRestAction;
 import me.syari.ss.discord.api.utils.MiscUtil;
+import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.managers.EmoteManagerImpl;
 import me.syari.ss.discord.internal.requests.Route;
 import me.syari.ss.discord.internal.requests.restaction.AuditableRestActionImpl;

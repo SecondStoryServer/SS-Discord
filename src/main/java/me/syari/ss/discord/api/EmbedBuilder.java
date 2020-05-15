@@ -2,17 +2,15 @@
 package me.syari.ss.discord.api;
 
 import me.syari.ss.discord.api.entities.EmbedType;
-import me.syari.ss.discord.api.entities.MessageChannel;
 import me.syari.ss.discord.api.entities.MessageEmbed;
-import me.syari.ss.discord.api.utils.AttachmentOption;
+import me.syari.ss.discord.api.entities.Role;
 import me.syari.ss.discord.internal.entities.EntityBuilder;
 import me.syari.ss.discord.internal.utils.Checks;
 import me.syari.ss.discord.internal.utils.Helpers;
-import me.syari.ss.discord.api.entities.Role;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.awt.Color;
+import java.awt.*;
 import java.time.*;
 import java.time.temporal.TemporalAccessor;
 import java.util.LinkedList;

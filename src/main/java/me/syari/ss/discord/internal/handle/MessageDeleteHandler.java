@@ -2,12 +2,12 @@
 package me.syari.ss.discord.internal.handle;
 
 import me.syari.ss.discord.api.entities.MessageChannel;
+import me.syari.ss.discord.api.entities.TextChannel;
 import me.syari.ss.discord.api.events.message.MessageDeleteEvent;
 import me.syari.ss.discord.api.events.message.guild.GuildMessageDeleteEvent;
 import me.syari.ss.discord.api.events.message.priv.PrivateMessageDeleteEvent;
-import me.syari.ss.discord.internal.JDAImpl;
-import me.syari.ss.discord.api.entities.TextChannel;
 import me.syari.ss.discord.api.utils.data.DataObject;
+import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.entities.PrivateChannelImpl;
 import me.syari.ss.discord.internal.entities.TextChannelImpl;
 

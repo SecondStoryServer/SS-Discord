@@ -4,13 +4,13 @@ package me.syari.ss.discord.internal.utils.cache;
 
 import me.syari.ss.discord.api.entities.ISnowflake;
 import me.syari.ss.discord.api.entities.Member;
-import me.syari.ss.discord.internal.utils.ChainedClosableIterator;
 import me.syari.ss.discord.api.entities.Role;
 import me.syari.ss.discord.api.utils.ClosableIterator;
 import me.syari.ss.discord.api.utils.cache.CacheView;
 import me.syari.ss.discord.api.utils.cache.MemberCacheView;
 import me.syari.ss.discord.api.utils.cache.SnowflakeCacheView;
 import me.syari.ss.discord.api.utils.cache.UnifiedMemberCacheView;
+import me.syari.ss.discord.internal.utils.ChainedClosableIterator;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

@@ -2,10 +2,7 @@
 
 package me.syari.ss.discord.api.audio.hooks;
 
-import me.syari.ss.discord.api.audio.AudioReceiveHandler;
-import me.syari.ss.discord.api.audio.CombinedAudio;
 import me.syari.ss.discord.api.audio.SpeakingMode;
-import me.syari.ss.discord.api.audio.UserAudio;
 import me.syari.ss.discord.api.entities.User;
 
 import javax.annotation.Nonnull;

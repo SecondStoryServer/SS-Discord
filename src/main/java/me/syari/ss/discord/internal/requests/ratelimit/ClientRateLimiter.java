@@ -2,14 +2,14 @@
 
 package me.syari.ss.discord.internal.requests.ratelimit;
 
+import me.syari.ss.discord.api.events.ExceptionEvent;
 import me.syari.ss.discord.api.requests.Request;
+import me.syari.ss.discord.api.utils.data.DataObject;
 import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.requests.RateLimiter;
 import me.syari.ss.discord.internal.requests.Requester;
 import me.syari.ss.discord.internal.requests.Route;
 import me.syari.ss.discord.internal.utils.IOUtil;
-import me.syari.ss.discord.api.events.ExceptionEvent;
-import me.syari.ss.discord.api.utils.data.DataObject;
 
 import java.io.IOException;
 import java.io.InputStream;

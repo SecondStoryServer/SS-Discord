@@ -2,8 +2,6 @@
 
 package me.syari.ss.discord.api.sharding;
 
-import me.syari.ss.discord.api.JDA;
-
 import javax.annotation.Nullable;
 import java.util.concurrent.ExecutorService;
 

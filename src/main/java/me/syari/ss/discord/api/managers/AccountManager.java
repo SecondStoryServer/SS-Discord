@@ -2,11 +2,8 @@
 
 package me.syari.ss.discord.api.managers;
 
-import me.syari.ss.discord.api.AccountType;
-import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.entities.Icon;
 import me.syari.ss.discord.api.entities.SelfUser;
-import me.syari.ss.discord.api.exceptions.AccountTypeException;
 
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;

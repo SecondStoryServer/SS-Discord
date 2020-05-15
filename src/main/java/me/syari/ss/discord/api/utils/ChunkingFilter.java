@@ -2,8 +2,6 @@
 
 package me.syari.ss.discord.api.utils;
 
-import me.syari.ss.discord.api.JDABuilder;
-import me.syari.ss.discord.api.sharding.DefaultShardManagerBuilder;
 import me.syari.ss.discord.internal.utils.Checks;
 
 import javax.annotation.Nonnull;

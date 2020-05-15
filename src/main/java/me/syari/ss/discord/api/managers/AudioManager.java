@@ -2,8 +2,8 @@
 
 package me.syari.ss.discord.api.managers;
 
+import me.syari.ss.discord.annotations.Incubating;
 import me.syari.ss.discord.api.JDA;
-import me.syari.ss.discord.api.Permission;
 import me.syari.ss.discord.api.audio.AudioReceiveHandler;
 import me.syari.ss.discord.api.audio.AudioSendHandler;
 import me.syari.ss.discord.api.audio.SpeakingMode;
@@ -11,10 +11,8 @@ import me.syari.ss.discord.api.audio.hooks.ConnectionListener;
 import me.syari.ss.discord.api.audio.hooks.ConnectionStatus;
 import me.syari.ss.discord.api.entities.Guild;
 import me.syari.ss.discord.api.entities.VoiceChannel;
-import me.syari.ss.discord.api.exceptions.InsufficientPermissionException;
 import me.syari.ss.discord.internal.utils.Checks;
 import me.syari.ss.discord.internal.utils.JDALogger;
-import me.syari.ss.discord.annotations.Incubating;
 import org.slf4j.Logger;
 
 import javax.annotation.Nonnull;

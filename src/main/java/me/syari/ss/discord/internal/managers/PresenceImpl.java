@@ -2,14 +2,14 @@
 
 package me.syari.ss.discord.internal.managers;
 
-import me.syari.ss.discord.api.entities.Activity;
-import me.syari.ss.discord.internal.JDAImpl;
-import me.syari.ss.discord.internal.utils.Checks;
 import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.OnlineStatus;
+import me.syari.ss.discord.api.entities.Activity;
 import me.syari.ss.discord.api.managers.Presence;
 import me.syari.ss.discord.api.utils.data.DataObject;
+import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.requests.WebSocketCode;
+import me.syari.ss.discord.internal.utils.Checks;
 
 import javax.annotation.Nonnull;
 

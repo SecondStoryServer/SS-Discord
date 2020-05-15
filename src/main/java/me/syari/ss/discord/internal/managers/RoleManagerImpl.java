@@ -2,17 +2,17 @@
 
 package me.syari.ss.discord.internal.managers;
 
-import me.syari.ss.discord.api.entities.Member;
-import me.syari.ss.discord.api.exceptions.HierarchyException;
-import me.syari.ss.discord.api.exceptions.InsufficientPermissionException;
-import me.syari.ss.discord.internal.utils.Checks;
-import me.syari.ss.discord.internal.utils.PermissionUtil;
 import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.Permission;
+import me.syari.ss.discord.api.entities.Member;
 import me.syari.ss.discord.api.entities.Role;
+import me.syari.ss.discord.api.exceptions.HierarchyException;
+import me.syari.ss.discord.api.exceptions.InsufficientPermissionException;
 import me.syari.ss.discord.api.managers.RoleManager;
 import me.syari.ss.discord.api.utils.data.DataObject;
 import me.syari.ss.discord.internal.requests.Route;
+import me.syari.ss.discord.internal.utils.Checks;
+import me.syari.ss.discord.internal.utils.PermissionUtil;
 import me.syari.ss.discord.internal.utils.cache.SnowflakeReference;
 import okhttp3.RequestBody;
 

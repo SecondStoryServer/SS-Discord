@@ -15,13 +15,9 @@ import me.syari.ss.discord.api.events.channel.store.update.StoreChannelUpdatePer
 import me.syari.ss.discord.api.events.channel.store.update.StoreChannelUpdatePositionEvent;
 import me.syari.ss.discord.api.events.channel.text.update.*;
 import me.syari.ss.discord.api.events.channel.voice.update.*;
-import me.syari.ss.discord.internal.JDAImpl;
-import me.syari.ss.discord.internal.entities.*;
-import me.syari.ss.discord.api.entities.*;
-import me.syari.ss.discord.api.events.channel.text.update.*;
-import me.syari.ss.discord.api.events.channel.voice.update.*;
 import me.syari.ss.discord.api.utils.data.DataArray;
 import me.syari.ss.discord.api.utils.data.DataObject;
+import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.entities.*;
 import me.syari.ss.discord.internal.requests.WebSocketClient;
 

@@ -2,14 +2,13 @@
 
 package me.syari.ss.discord.internal.entities;
 
+import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.entities.*;
 import me.syari.ss.discord.api.requests.RestAction;
 import me.syari.ss.discord.api.requests.restaction.AuditableRestAction;
 import me.syari.ss.discord.api.requests.restaction.MessageAction;
 import me.syari.ss.discord.api.requests.restaction.pagination.ReactionPaginationAction;
 import me.syari.ss.discord.internal.utils.Helpers;
-import me.syari.ss.discord.api.JDA;
-import me.syari.ss.discord.api.entities.*;
 import org.apache.commons.collections4.Bag;
 
 import javax.annotation.Nonnull;

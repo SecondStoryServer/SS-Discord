@@ -1,23 +1,23 @@
 
 package me.syari.ss.discord.internal.handle;
 
+import me.syari.ss.discord.api.OnlineStatus;
 import me.syari.ss.discord.api.entities.Activity;
 import me.syari.ss.discord.api.entities.ClientType;
 import me.syari.ss.discord.api.events.user.UserActivityEndEvent;
 import me.syari.ss.discord.api.events.user.UserActivityStartEvent;
 import me.syari.ss.discord.api.events.user.update.UserUpdateActivityOrderEvent;
 import me.syari.ss.discord.api.events.user.update.UserUpdateOnlineStatusEvent;
-import me.syari.ss.discord.internal.JDAImpl;
-import me.syari.ss.discord.internal.utils.Helpers;
-import me.syari.ss.discord.internal.utils.JDALogger;
-import me.syari.ss.discord.api.OnlineStatus;
 import me.syari.ss.discord.api.utils.cache.CacheFlag;
 import me.syari.ss.discord.api.utils.data.DataArray;
 import me.syari.ss.discord.api.utils.data.DataObject;
+import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.entities.EntityBuilder;
 import me.syari.ss.discord.internal.entities.GuildImpl;
 import me.syari.ss.discord.internal.entities.MemberImpl;
 import me.syari.ss.discord.internal.entities.UserImpl;
+import me.syari.ss.discord.internal.utils.Helpers;
+import me.syari.ss.discord.internal.utils.JDALogger;
 import org.slf4j.Logger;
 
 import java.util.ArrayList;

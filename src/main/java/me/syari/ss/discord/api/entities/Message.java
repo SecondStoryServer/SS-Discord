@@ -1,20 +1,11 @@
 
 package me.syari.ss.discord.api.entities;
 
-import me.syari.ss.discord.api.AccountType;
-import me.syari.ss.discord.api.MessageBuilder;
-import me.syari.ss.discord.api.Permission;
-import me.syari.ss.discord.api.events.message.MessageUpdateEvent;
-import me.syari.ss.discord.api.exceptions.InsufficientPermissionException;
-import me.syari.ss.discord.api.exceptions.PermissionException;
-import me.syari.ss.discord.api.managers.AccountManager;
-import me.syari.ss.discord.api.requests.ErrorResponse;
+import me.syari.ss.discord.api.JDA;
+import me.syari.ss.discord.api.exceptions.HttpException;
 import me.syari.ss.discord.api.requests.RestAction;
 import me.syari.ss.discord.api.requests.restaction.AuditableRestAction;
 import me.syari.ss.discord.api.requests.restaction.MessageAction;
-import me.syari.ss.discord.api.utils.AttachmentOption;
-import me.syari.ss.discord.api.JDA;
-import me.syari.ss.discord.api.exceptions.HttpException;
 import me.syari.ss.discord.api.requests.restaction.pagination.ReactionPaginationAction;
 import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.requests.FunctionalCallback;

@@ -2,9 +2,9 @@
 
 package me.syari.ss.discord.internal.requests.restaction.operator;
 
+import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.exceptions.ContextException;
 import me.syari.ss.discord.api.requests.RestAction;
-import me.syari.ss.discord.api.JDA;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

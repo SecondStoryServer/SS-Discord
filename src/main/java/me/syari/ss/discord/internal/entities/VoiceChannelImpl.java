@@ -5,9 +5,8 @@ package me.syari.ss.discord.internal.entities;
 import gnu.trove.map.TLongObjectMap;
 import me.syari.ss.discord.api.entities.*;
 import me.syari.ss.discord.api.requests.restaction.ChannelAction;
-import me.syari.ss.discord.internal.utils.Checks;
-import me.syari.ss.discord.api.entities.*;
 import me.syari.ss.discord.api.utils.MiscUtil;
+import me.syari.ss.discord.internal.utils.Checks;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;

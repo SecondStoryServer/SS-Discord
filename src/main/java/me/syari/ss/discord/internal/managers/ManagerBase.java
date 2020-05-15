@@ -2,12 +2,12 @@
 
 package me.syari.ss.discord.internal.managers;
 
-import me.syari.ss.discord.api.exceptions.RateLimitedException;
-import me.syari.ss.discord.internal.utils.Checks;
 import me.syari.ss.discord.api.JDA;
+import me.syari.ss.discord.api.exceptions.RateLimitedException;
 import me.syari.ss.discord.api.managers.Manager;
 import me.syari.ss.discord.internal.requests.Route;
 import me.syari.ss.discord.internal.requests.restaction.AuditableRestActionImpl;
+import me.syari.ss.discord.internal.utils.Checks;
 
 import javax.annotation.Nonnull;
 import java.util.function.BooleanSupplier;

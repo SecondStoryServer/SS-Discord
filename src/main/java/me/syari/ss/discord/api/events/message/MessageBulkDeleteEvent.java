@@ -2,7 +2,6 @@
 package me.syari.ss.discord.api.events.message;
 
 import me.syari.ss.discord.api.JDA;
-import me.syari.ss.discord.api.JDABuilder;
 import me.syari.ss.discord.api.entities.Guild;
 import me.syari.ss.discord.api.entities.TextChannel;
 import me.syari.ss.discord.api.events.Event;

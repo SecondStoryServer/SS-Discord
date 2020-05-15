@@ -9,14 +9,13 @@ import me.syari.ss.discord.api.events.message.priv.react.PrivateMessageReactionA
 import me.syari.ss.discord.api.events.message.priv.react.PrivateMessageReactionRemoveEvent;
 import me.syari.ss.discord.api.events.message.react.MessageReactionAddEvent;
 import me.syari.ss.discord.api.events.message.react.MessageReactionRemoveEvent;
-import me.syari.ss.discord.internal.JDAImpl;
-import me.syari.ss.discord.internal.utils.JDALogger;
-import me.syari.ss.discord.api.entities.*;
 import me.syari.ss.discord.api.utils.data.DataObject;
+import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.entities.EmoteImpl;
 import me.syari.ss.discord.internal.entities.GuildImpl;
 import me.syari.ss.discord.internal.entities.MemberImpl;
 import me.syari.ss.discord.internal.requests.WebSocketClient;
+import me.syari.ss.discord.internal.utils.JDALogger;
 
 import java.util.Objects;
 import java.util.Optional;

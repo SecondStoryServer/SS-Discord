@@ -1,13 +1,6 @@
 
 package me.syari.ss.discord.internal.managers;
 
-import me.syari.ss.discord.api.entities.Member;
-import me.syari.ss.discord.api.exceptions.InsufficientPermissionException;
-import me.syari.ss.discord.internal.JDAImpl;
-import me.syari.ss.discord.internal.audio.AudioConnection;
-import me.syari.ss.discord.internal.entities.GuildImpl;
-import me.syari.ss.discord.internal.utils.Checks;
-import me.syari.ss.discord.internal.utils.PermissionUtil;
 import me.syari.ss.discord.api.Permission;
 import me.syari.ss.discord.api.audio.AudioReceiveHandler;
 import me.syari.ss.discord.api.audio.AudioSendHandler;
@@ -15,9 +8,16 @@ import me.syari.ss.discord.api.audio.SpeakingMode;
 import me.syari.ss.discord.api.audio.hooks.ConnectionListener;
 import me.syari.ss.discord.api.audio.hooks.ConnectionStatus;
 import me.syari.ss.discord.api.audio.hooks.ListenerProxy;
+import me.syari.ss.discord.api.entities.Member;
 import me.syari.ss.discord.api.entities.VoiceChannel;
+import me.syari.ss.discord.api.exceptions.InsufficientPermissionException;
 import me.syari.ss.discord.api.managers.AudioManager;
 import me.syari.ss.discord.api.utils.MiscUtil;
+import me.syari.ss.discord.internal.JDAImpl;
+import me.syari.ss.discord.internal.audio.AudioConnection;
+import me.syari.ss.discord.internal.entities.GuildImpl;
+import me.syari.ss.discord.internal.utils.Checks;
+import me.syari.ss.discord.internal.utils.PermissionUtil;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;

@@ -2,9 +2,7 @@
 
 package me.syari.ss.discord.api.requests.restaction;
 
-import me.syari.ss.discord.api.entities.GuildChannel;
 import me.syari.ss.discord.api.entities.Invite;
-import me.syari.ss.discord.api.requests.RestAction;
 
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;

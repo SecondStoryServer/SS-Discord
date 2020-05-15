@@ -2,8 +2,6 @@
 
 package me.syari.ss.discord.api.managers;
 
-import me.syari.ss.discord.api.exceptions.InsufficientPermissionException;
-import me.syari.ss.discord.api.requests.ErrorResponse;
 import me.syari.ss.discord.api.requests.restaction.AuditableRestAction;
 import me.syari.ss.discord.internal.managers.ManagerBase;
 

@@ -1,7 +1,6 @@
 
 package me.syari.ss.discord.api.exceptions;
 
-import me.syari.ss.discord.api.entities.Guild;
 import me.syari.ss.discord.annotations.DeprecatedSince;
 import me.syari.ss.discord.annotations.ForRemoval;
 

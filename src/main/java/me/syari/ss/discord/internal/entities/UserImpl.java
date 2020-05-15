@@ -3,12 +3,12 @@
 package me.syari.ss.discord.internal.entities;
 
 import me.syari.ss.discord.api.entities.Guild;
-import me.syari.ss.discord.api.requests.RestAction;
-import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.api.entities.PrivateChannel;
 import me.syari.ss.discord.api.entities.User;
+import me.syari.ss.discord.api.requests.RestAction;
 import me.syari.ss.discord.api.utils.MiscUtil;
 import me.syari.ss.discord.api.utils.data.DataObject;
+import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.requests.DeferredRestAction;
 import me.syari.ss.discord.internal.requests.RestActionImpl;
 import me.syari.ss.discord.internal.requests.Route;

@@ -2,10 +2,10 @@
 
 package me.syari.ss.discord.api.events.channel.category.update;
 
-import me.syari.ss.discord.api.events.UpdateEvent;
-import me.syari.ss.discord.api.events.channel.category.GenericCategoryEvent;
 import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.entities.Category;
+import me.syari.ss.discord.api.events.UpdateEvent;
+import me.syari.ss.discord.api.events.channel.category.GenericCategoryEvent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

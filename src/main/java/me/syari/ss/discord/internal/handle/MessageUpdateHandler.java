@@ -8,10 +8,9 @@ import me.syari.ss.discord.api.events.message.guild.GuildMessageEmbedEvent;
 import me.syari.ss.discord.api.events.message.guild.GuildMessageUpdateEvent;
 import me.syari.ss.discord.api.events.message.priv.PrivateMessageEmbedEvent;
 import me.syari.ss.discord.api.events.message.priv.PrivateMessageUpdateEvent;
-import me.syari.ss.discord.internal.JDAImpl;
-import me.syari.ss.discord.api.entities.*;
 import me.syari.ss.discord.api.utils.data.DataArray;
 import me.syari.ss.discord.api.utils.data.DataObject;
+import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.entities.EntityBuilder;
 import me.syari.ss.discord.internal.requests.WebSocketClient;
 

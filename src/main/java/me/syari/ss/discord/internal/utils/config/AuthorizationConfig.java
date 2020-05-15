@@ -2,8 +2,8 @@
 
 package me.syari.ss.discord.internal.utils.config;
 
-import me.syari.ss.discord.internal.utils.Checks;
 import me.syari.ss.discord.api.AccountType;
+import me.syari.ss.discord.internal.utils.Checks;
 
 import javax.annotation.Nonnull;
 

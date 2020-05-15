@@ -2,7 +2,6 @@
 
 package me.syari.ss.discord.api.audio;
 
-import me.syari.ss.discord.api.entities.User;
 import me.syari.ss.discord.internal.audio.AudioPacket;
 import me.syari.ss.discord.internal.audio.Decoder;
 

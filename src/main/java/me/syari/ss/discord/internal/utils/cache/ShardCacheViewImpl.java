@@ -5,14 +5,14 @@ import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.set.TIntSet;
 import gnu.trove.set.hash.TIntHashSet;
-import me.syari.ss.discord.internal.utils.ChainedClosableIterator;
-import me.syari.ss.discord.internal.utils.Checks;
-import me.syari.ss.discord.internal.utils.UnlockHook;
 import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.utils.ClosableIterator;
 import me.syari.ss.discord.api.utils.LockIterator;
 import me.syari.ss.discord.api.utils.cache.CacheView;
 import me.syari.ss.discord.api.utils.cache.ShardCacheView;
+import me.syari.ss.discord.internal.utils.ChainedClosableIterator;
+import me.syari.ss.discord.internal.utils.Checks;
+import me.syari.ss.discord.internal.utils.UnlockHook;
 import org.apache.commons.collections4.iterators.ObjectArrayIterator;
 
 import javax.annotation.Nonnull;

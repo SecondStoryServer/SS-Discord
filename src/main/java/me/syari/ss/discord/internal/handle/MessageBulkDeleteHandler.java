@@ -2,10 +2,10 @@
 
 package me.syari.ss.discord.internal.handle;
 
-import me.syari.ss.discord.api.events.message.MessageBulkDeleteEvent;
-import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.api.entities.TextChannel;
+import me.syari.ss.discord.api.events.message.MessageBulkDeleteEvent;
 import me.syari.ss.discord.api.utils.data.DataObject;
+import me.syari.ss.discord.internal.JDAImpl;
 
 import java.util.LinkedList;
 

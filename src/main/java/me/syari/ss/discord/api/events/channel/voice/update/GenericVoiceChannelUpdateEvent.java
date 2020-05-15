@@ -2,10 +2,10 @@
 
 package me.syari.ss.discord.api.events.channel.voice.update;
 
-import me.syari.ss.discord.api.events.UpdateEvent;
-import me.syari.ss.discord.api.events.channel.voice.GenericVoiceChannelEvent;
 import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.entities.VoiceChannel;
+import me.syari.ss.discord.api.events.UpdateEvent;
+import me.syari.ss.discord.api.events.channel.voice.GenericVoiceChannelEvent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

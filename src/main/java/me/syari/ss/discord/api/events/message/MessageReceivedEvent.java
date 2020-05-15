@@ -1,8 +1,9 @@
 
 package me.syari.ss.discord.api.events.message;
 
-import me.syari.ss.discord.api.entities.*;
 import me.syari.ss.discord.api.JDA;
+import me.syari.ss.discord.api.entities.Member;
+import me.syari.ss.discord.api.entities.Message;
 import me.syari.ss.discord.api.entities.User;
 
 import javax.annotation.Nonnull;

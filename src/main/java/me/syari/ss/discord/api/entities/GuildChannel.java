@@ -2,17 +2,15 @@
 package me.syari.ss.discord.api.entities;
 
 import gnu.trove.map.TLongObjectMap;
-import me.syari.ss.discord.api.exceptions.PermissionException;
-import me.syari.ss.discord.api.requests.ErrorResponse;
-import me.syari.ss.discord.api.requests.RestAction;
-import me.syari.ss.discord.api.requests.restaction.ChannelAction;
-import me.syari.ss.discord.api.requests.restaction.PermissionOverrideAction;
 import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.Permission;
 import me.syari.ss.discord.api.exceptions.InsufficientPermissionException;
 import me.syari.ss.discord.api.managers.ChannelManager;
+import me.syari.ss.discord.api.requests.RestAction;
 import me.syari.ss.discord.api.requests.restaction.AuditableRestAction;
+import me.syari.ss.discord.api.requests.restaction.ChannelAction;
 import me.syari.ss.discord.api.requests.restaction.InviteAction;
+import me.syari.ss.discord.api.requests.restaction.PermissionOverrideAction;
 import me.syari.ss.discord.api.utils.data.DataObject;
 import me.syari.ss.discord.internal.entities.GuildImpl;
 

@@ -2,15 +2,15 @@
 
 package me.syari.ss.discord.internal.managers;
 
-import me.syari.ss.discord.api.entities.Icon;
-import me.syari.ss.discord.api.requests.Request;
-import me.syari.ss.discord.api.requests.Response;
-import me.syari.ss.discord.internal.utils.Checks;
 import me.syari.ss.discord.api.AccountType;
+import me.syari.ss.discord.api.entities.Icon;
 import me.syari.ss.discord.api.entities.SelfUser;
 import me.syari.ss.discord.api.managers.AccountManager;
+import me.syari.ss.discord.api.requests.Request;
+import me.syari.ss.discord.api.requests.Response;
 import me.syari.ss.discord.api.utils.data.DataObject;
 import me.syari.ss.discord.internal.requests.Route;
+import me.syari.ss.discord.internal.utils.Checks;
 import okhttp3.RequestBody;
 
 import javax.annotation.CheckReturnValue;

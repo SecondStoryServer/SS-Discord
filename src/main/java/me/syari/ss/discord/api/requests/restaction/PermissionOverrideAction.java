@@ -2,7 +2,6 @@
 
 package me.syari.ss.discord.api.requests.restaction;
 
-import me.syari.ss.discord.api.entities.*;
 import me.syari.ss.discord.api.Permission;
 import me.syari.ss.discord.api.entities.*;
 import me.syari.ss.discord.internal.utils.Checks;

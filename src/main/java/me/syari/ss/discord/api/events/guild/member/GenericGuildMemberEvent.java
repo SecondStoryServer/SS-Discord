@@ -1,11 +1,10 @@
 
 package me.syari.ss.discord.api.events.guild.member;
 
-import me.syari.ss.discord.api.entities.Guild;
-import me.syari.ss.discord.api.events.guild.GenericGuildEvent;
 import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.entities.Member;
 import me.syari.ss.discord.api.entities.User;
+import me.syari.ss.discord.api.events.guild.GenericGuildEvent;
 
 import javax.annotation.Nonnull;
 

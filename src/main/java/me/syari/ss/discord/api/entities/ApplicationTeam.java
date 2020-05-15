@@ -2,8 +2,8 @@
 
 package me.syari.ss.discord.api.entities;
 
-import me.syari.ss.discord.internal.utils.Checks;
 import me.syari.ss.discord.api.utils.MiscUtil;
+import me.syari.ss.discord.internal.utils.Checks;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

@@ -2,10 +2,10 @@
 
 package me.syari.ss.discord.internal.requests;
 
+import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.exceptions.RateLimitedException;
 import me.syari.ss.discord.api.requests.RestAction;
 import me.syari.ss.discord.api.requests.restaction.AuditableRestAction;
-import me.syari.ss.discord.api.JDA;
 
 import javax.annotation.Nonnull;
 import java.util.concurrent.CompletableFuture;

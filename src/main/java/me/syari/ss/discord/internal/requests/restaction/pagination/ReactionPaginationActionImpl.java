@@ -4,16 +4,16 @@ package me.syari.ss.discord.internal.requests.restaction.pagination;
 
 import me.syari.ss.discord.api.entities.Message;
 import me.syari.ss.discord.api.entities.MessageReaction;
+import me.syari.ss.discord.api.entities.User;
 import me.syari.ss.discord.api.exceptions.ParsingException;
 import me.syari.ss.discord.api.requests.Request;
 import me.syari.ss.discord.api.requests.Response;
 import me.syari.ss.discord.api.requests.restaction.pagination.ReactionPaginationAction;
+import me.syari.ss.discord.api.utils.data.DataArray;
 import me.syari.ss.discord.internal.entities.EntityBuilder;
 import me.syari.ss.discord.internal.requests.RestActionImpl;
 import me.syari.ss.discord.internal.requests.Route;
 import me.syari.ss.discord.internal.utils.EncodingUtil;
-import me.syari.ss.discord.api.entities.User;
-import me.syari.ss.discord.api.utils.data.DataArray;
 
 import javax.annotation.Nonnull;
 import java.util.LinkedList;

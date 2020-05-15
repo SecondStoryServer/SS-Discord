@@ -1,10 +1,10 @@
 
 package me.syari.ss.discord.internal.handle;
 
-import me.syari.ss.discord.api.events.role.RoleCreateEvent;
-import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.api.entities.Role;
+import me.syari.ss.discord.api.events.role.RoleCreateEvent;
 import me.syari.ss.discord.api.utils.data.DataObject;
+import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.entities.GuildImpl;
 
 public class GuildRoleCreateHandler extends SocketHandler

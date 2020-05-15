@@ -2,12 +2,6 @@
 
 package me.syari.ss.discord.api.audio.hooks;
 
-import me.syari.ss.discord.api.Permission;
-import me.syari.ss.discord.api.Region;
-import me.syari.ss.discord.api.entities.Guild;
-import me.syari.ss.discord.api.managers.AudioManager;
-
-
 public enum ConnectionStatus
 {
 

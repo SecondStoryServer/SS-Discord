@@ -2,7 +2,6 @@
 
 package me.syari.ss.discord.api.audio.factory;
 
-import me.syari.ss.discord.api.audio.AudioSendHandler;
 import me.syari.ss.discord.api.audio.hooks.ConnectionStatus;
 import me.syari.ss.discord.api.entities.VoiceChannel;
 

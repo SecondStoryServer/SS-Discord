@@ -3,14 +3,13 @@
 package me.syari.ss.discord.internal.handle;
 
 import gnu.trove.set.TLongSet;
+import me.syari.ss.discord.api.audio.hooks.ConnectionStatus;
 import me.syari.ss.discord.api.entities.*;
 import me.syari.ss.discord.api.events.guild.GuildLeaveEvent;
 import me.syari.ss.discord.api.events.guild.GuildUnavailableEvent;
-import me.syari.ss.discord.internal.JDAImpl;
-import me.syari.ss.discord.api.audio.hooks.ConnectionStatus;
-import me.syari.ss.discord.api.entities.*;
 import me.syari.ss.discord.api.managers.AudioManager;
 import me.syari.ss.discord.api.utils.data.DataObject;
+import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.entities.GuildImpl;
 import me.syari.ss.discord.internal.entities.PrivateChannelImpl;
 import me.syari.ss.discord.internal.entities.UserImpl;

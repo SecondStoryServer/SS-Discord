@@ -2,8 +2,8 @@
 
 package me.syari.ss.discord.internal.utils.config.sharding;
 
-import me.syari.ss.discord.api.entities.Activity;
 import me.syari.ss.discord.api.OnlineStatus;
+import me.syari.ss.discord.api.entities.Activity;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

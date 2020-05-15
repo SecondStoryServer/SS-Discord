@@ -2,8 +2,6 @@
 
 package me.syari.ss.discord.api.events;
 
-import me.syari.ss.discord.api.JDABuilder;
-import me.syari.ss.discord.api.sharding.DefaultShardManagerBuilder;
 import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.utils.data.DataObject;
 

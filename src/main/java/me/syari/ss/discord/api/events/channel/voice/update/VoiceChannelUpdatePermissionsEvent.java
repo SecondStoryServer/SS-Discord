@@ -1,13 +1,12 @@
 
 package me.syari.ss.discord.api.events.channel.voice.update;
 
-import me.syari.ss.discord.api.entities.User;
-import me.syari.ss.discord.api.events.channel.voice.GenericVoiceChannelEvent;
 import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.entities.IPermissionHolder;
 import me.syari.ss.discord.api.entities.Member;
 import me.syari.ss.discord.api.entities.Role;
 import me.syari.ss.discord.api.entities.VoiceChannel;
+import me.syari.ss.discord.api.events.channel.voice.GenericVoiceChannelEvent;
 
 import javax.annotation.Nonnull;
 import java.util.List;

@@ -2,8 +2,8 @@
 
 package me.syari.ss.discord.internal.utils.compress;
 
-import me.syari.ss.discord.internal.utils.JDALogger;
 import me.syari.ss.discord.api.utils.Compression;
+import me.syari.ss.discord.internal.utils.JDALogger;
 import org.slf4j.Logger;
 
 import javax.annotation.Nullable;

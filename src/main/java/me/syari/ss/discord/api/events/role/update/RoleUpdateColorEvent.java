@@ -7,7 +7,7 @@ import me.syari.ss.discord.api.entities.Role;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.awt.Color;
+import java.awt.*;
 
 
 public class RoleUpdateColorEvent extends GenericRoleUpdateEvent<Integer>

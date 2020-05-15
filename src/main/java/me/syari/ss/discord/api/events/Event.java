@@ -2,8 +2,6 @@
 package me.syari.ss.discord.api.events;
 
 import me.syari.ss.discord.api.JDA;
-import me.syari.ss.discord.api.hooks.EventListener;
-import me.syari.ss.discord.api.hooks.ListenerAdapter;
 
 import javax.annotation.Nonnull;
 

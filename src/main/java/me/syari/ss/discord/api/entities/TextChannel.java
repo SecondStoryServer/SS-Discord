@@ -1,18 +1,12 @@
 
 package me.syari.ss.discord.api.entities;
 
-import me.syari.ss.discord.api.AccountType;
-import me.syari.ss.discord.api.JDA;
-import me.syari.ss.discord.api.Permission;
-import me.syari.ss.discord.api.exceptions.InsufficientPermissionException;
-import me.syari.ss.discord.api.exceptions.PermissionException;
-import me.syari.ss.discord.api.requests.ErrorResponse;
 import me.syari.ss.discord.api.requests.RestAction;
 import me.syari.ss.discord.api.requests.restaction.AuditableRestAction;
 import me.syari.ss.discord.api.requests.restaction.ChannelAction;
 import me.syari.ss.discord.api.requests.restaction.WebhookAction;
-import me.syari.ss.discord.internal.utils.Checks;
 import me.syari.ss.discord.api.utils.MiscUtil;
+import me.syari.ss.discord.internal.utils.Checks;
 
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;

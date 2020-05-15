@@ -2,11 +2,10 @@
 
 package me.syari.ss.discord.internal.handle;
 
-import me.syari.ss.discord.api.events.self.*;
-import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.api.AccountType;
 import me.syari.ss.discord.api.events.self.*;
 import me.syari.ss.discord.api.utils.data.DataObject;
+import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.entities.SelfUserImpl;
 
 import java.util.Objects;

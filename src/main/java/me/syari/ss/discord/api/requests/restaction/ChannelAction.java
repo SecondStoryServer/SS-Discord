@@ -2,9 +2,6 @@
 
 package me.syari.ss.discord.api.requests.restaction;
 
-import me.syari.ss.discord.api.AccountType;
-import me.syari.ss.discord.api.entities.*;
-import me.syari.ss.discord.api.requests.RestAction;
 import me.syari.ss.discord.api.Permission;
 import me.syari.ss.discord.api.entities.*;
 

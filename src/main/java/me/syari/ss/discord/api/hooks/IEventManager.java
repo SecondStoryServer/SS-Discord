@@ -1,7 +1,6 @@
 
 package me.syari.ss.discord.api.hooks;
 
-import me.syari.ss.discord.api.JDABuilder;
 import me.syari.ss.discord.api.events.GenericEvent;
 
 import javax.annotation.Nonnull;

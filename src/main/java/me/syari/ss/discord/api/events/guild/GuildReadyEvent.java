@@ -2,7 +2,6 @@
 
 package me.syari.ss.discord.api.events.guild;
 
-import me.syari.ss.discord.api.events.ReconnectedEvent;
 import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.entities.Guild;
 

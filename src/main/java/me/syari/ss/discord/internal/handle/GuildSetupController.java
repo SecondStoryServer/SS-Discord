@@ -11,15 +11,15 @@ import gnu.trove.map.hash.TLongLongHashMap;
 import gnu.trove.map.hash.TLongObjectHashMap;
 import gnu.trove.set.TLongSet;
 import gnu.trove.set.hash.TLongHashSet;
-import me.syari.ss.discord.api.events.guild.UnavailableGuildLeaveEvent;
-import me.syari.ss.discord.internal.JDAImpl;
-import me.syari.ss.discord.internal.utils.JDALogger;
 import me.syari.ss.discord.api.AccountType;
+import me.syari.ss.discord.api.events.guild.UnavailableGuildLeaveEvent;
 import me.syari.ss.discord.api.utils.MiscUtil;
 import me.syari.ss.discord.api.utils.data.DataArray;
 import me.syari.ss.discord.api.utils.data.DataObject;
+import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.requests.WebSocketClient;
 import me.syari.ss.discord.internal.requests.WebSocketCode;
+import me.syari.ss.discord.internal.utils.JDALogger;
 import org.slf4j.Logger;
 
 import javax.annotation.Nullable;

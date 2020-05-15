@@ -2,13 +2,6 @@
 
 package me.syari.ss.discord.api.audit;
 
-import me.syari.ss.discord.api.JDA;
-import me.syari.ss.discord.api.Permission;
-import me.syari.ss.discord.api.Region;
-import me.syari.ss.discord.api.entities.*;
-import me.syari.ss.discord.api.entities.Guild;
-
-
 public enum AuditLogKey
 {
     

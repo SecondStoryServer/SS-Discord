@@ -2,18 +2,18 @@
 
 package me.syari.ss.discord.internal.managers;
 
-import me.syari.ss.discord.api.entities.Guild;
-import me.syari.ss.discord.api.entities.Icon;
-import me.syari.ss.discord.api.exceptions.InsufficientPermissionException;
-import me.syari.ss.discord.internal.utils.Checks;
 import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.Permission;
 import me.syari.ss.discord.api.Region;
+import me.syari.ss.discord.api.entities.Guild;
+import me.syari.ss.discord.api.entities.Icon;
 import me.syari.ss.discord.api.entities.TextChannel;
 import me.syari.ss.discord.api.entities.VoiceChannel;
+import me.syari.ss.discord.api.exceptions.InsufficientPermissionException;
 import me.syari.ss.discord.api.managers.GuildManager;
 import me.syari.ss.discord.api.utils.data.DataObject;
 import me.syari.ss.discord.internal.requests.Route;
+import me.syari.ss.discord.internal.utils.Checks;
 import me.syari.ss.discord.internal.utils.cache.SnowflakeReference;
 import okhttp3.RequestBody;
 

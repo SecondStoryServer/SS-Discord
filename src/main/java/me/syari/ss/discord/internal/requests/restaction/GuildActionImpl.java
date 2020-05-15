@@ -2,17 +2,17 @@
 
 package me.syari.ss.discord.internal.requests.restaction;
 
+import me.syari.ss.discord.api.JDA;
+import me.syari.ss.discord.api.Region;
 import me.syari.ss.discord.api.entities.ChannelType;
 import me.syari.ss.discord.api.entities.Guild;
 import me.syari.ss.discord.api.entities.Icon;
 import me.syari.ss.discord.api.requests.restaction.GuildAction;
+import me.syari.ss.discord.api.utils.data.DataArray;
+import me.syari.ss.discord.api.utils.data.DataObject;
 import me.syari.ss.discord.internal.requests.RestActionImpl;
 import me.syari.ss.discord.internal.requests.Route;
 import me.syari.ss.discord.internal.utils.Checks;
-import me.syari.ss.discord.api.JDA;
-import me.syari.ss.discord.api.Region;
-import me.syari.ss.discord.api.utils.data.DataArray;
-import me.syari.ss.discord.api.utils.data.DataObject;
 import okhttp3.RequestBody;
 
 import javax.annotation.CheckReturnValue;

@@ -6,7 +6,6 @@ import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.entities.Guild;
 import me.syari.ss.discord.api.entities.GuildVoiceState;
 import me.syari.ss.discord.api.entities.VoiceChannel;
-import me.syari.ss.discord.api.managers.AudioManager;
 import me.syari.ss.discord.api.managers.DirectAudioController;
 import me.syari.ss.discord.api.utils.data.DataObject;
 import me.syari.ss.discord.api.utils.data.SerializableData;

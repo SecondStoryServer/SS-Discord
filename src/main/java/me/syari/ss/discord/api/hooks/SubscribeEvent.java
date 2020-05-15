@@ -1,8 +1,6 @@
 
 package me.syari.ss.discord.api.hooks;
 
-import me.syari.ss.discord.api.JDABuilder;
-
 import java.lang.annotation.*;
 
 

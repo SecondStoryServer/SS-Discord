@@ -3,7 +3,6 @@
 package me.syari.ss.discord.api.utils;
 
 import me.syari.ss.discord.api.entities.ISnowflake;
-import me.syari.ss.discord.api.entities.MessageHistory;
 import me.syari.ss.discord.internal.utils.Checks;
 
 import javax.annotation.Nonnull;

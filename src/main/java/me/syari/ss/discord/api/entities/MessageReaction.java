@@ -2,15 +2,12 @@
 
 package me.syari.ss.discord.api.entities;
 
-import me.syari.ss.discord.api.events.message.react.MessageReactionAddEvent;
-import me.syari.ss.discord.api.events.message.react.MessageReactionRemoveEvent;
-import me.syari.ss.discord.api.exceptions.InsufficientPermissionException;
-import me.syari.ss.discord.api.requests.ErrorResponse;
-import me.syari.ss.discord.api.requests.RestAction;
-import me.syari.ss.discord.api.requests.restaction.pagination.ReactionPaginationAction;
 import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.Permission;
+import me.syari.ss.discord.api.exceptions.InsufficientPermissionException;
 import me.syari.ss.discord.api.exceptions.PermissionException;
+import me.syari.ss.discord.api.requests.RestAction;
+import me.syari.ss.discord.api.requests.restaction.pagination.ReactionPaginationAction;
 import me.syari.ss.discord.internal.requests.RestActionImpl;
 import me.syari.ss.discord.internal.requests.Route;
 import me.syari.ss.discord.internal.requests.restaction.pagination.ReactionPaginationActionImpl;

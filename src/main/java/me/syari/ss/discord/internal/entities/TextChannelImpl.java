@@ -2,6 +2,8 @@
 
 package me.syari.ss.discord.internal.entities;
 
+import me.syari.ss.discord.api.AccountType;
+import me.syari.ss.discord.api.Permission;
 import me.syari.ss.discord.api.entities.*;
 import me.syari.ss.discord.api.exceptions.InsufficientPermissionException;
 import me.syari.ss.discord.api.exceptions.VerificationLevelException;
@@ -10,21 +12,18 @@ import me.syari.ss.discord.api.requests.restaction.AuditableRestAction;
 import me.syari.ss.discord.api.requests.restaction.ChannelAction;
 import me.syari.ss.discord.api.requests.restaction.MessageAction;
 import me.syari.ss.discord.api.requests.restaction.WebhookAction;
-import me.syari.ss.discord.internal.JDAImpl;
-import me.syari.ss.discord.internal.utils.Checks;
-import me.syari.ss.discord.internal.utils.EncodingUtil;
-import me.syari.ss.discord.api.AccountType;
-import me.syari.ss.discord.api.Permission;
-import me.syari.ss.discord.api.entities.*;
 import me.syari.ss.discord.api.utils.AttachmentOption;
 import me.syari.ss.discord.api.utils.MiscUtil;
 import me.syari.ss.discord.api.utils.TimeUtil;
 import me.syari.ss.discord.api.utils.data.DataArray;
 import me.syari.ss.discord.api.utils.data.DataObject;
+import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.requests.RestActionImpl;
 import me.syari.ss.discord.internal.requests.Route;
 import me.syari.ss.discord.internal.requests.restaction.AuditableRestActionImpl;
 import me.syari.ss.discord.internal.requests.restaction.WebhookActionImpl;
+import me.syari.ss.discord.internal.utils.Checks;
+import me.syari.ss.discord.internal.utils.EncodingUtil;
 
 import javax.annotation.Nonnull;
 import java.io.InputStream;

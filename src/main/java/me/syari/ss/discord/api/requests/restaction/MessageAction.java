@@ -2,16 +2,10 @@
 
 package me.syari.ss.discord.api.requests.restaction;
 
-import me.syari.ss.discord.api.AccountType;
-import me.syari.ss.discord.api.EmbedBuilder;
-import me.syari.ss.discord.api.MessageBuilder;
-import me.syari.ss.discord.api.Permission;
-import me.syari.ss.discord.api.entities.MessageEmbed;
-import me.syari.ss.discord.api.entities.SelfUser;
-import me.syari.ss.discord.api.exceptions.InsufficientPermissionException;
-import me.syari.ss.discord.api.requests.RestAction;
 import me.syari.ss.discord.api.entities.Message;
 import me.syari.ss.discord.api.entities.MessageChannel;
+import me.syari.ss.discord.api.entities.MessageEmbed;
+import me.syari.ss.discord.api.requests.RestAction;
 import me.syari.ss.discord.api.utils.AttachmentOption;
 import me.syari.ss.discord.internal.utils.Checks;
 

@@ -3,18 +3,18 @@
 package me.syari.ss.discord.internal.audio;
 
 import com.neovisionaries.ws.client.*;
-import me.syari.ss.discord.api.entities.Guild;
-import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.api.JDAInfo;
 import me.syari.ss.discord.api.audio.SpeakingMode;
 import me.syari.ss.discord.api.audio.hooks.ConnectionListener;
 import me.syari.ss.discord.api.audio.hooks.ConnectionStatus;
+import me.syari.ss.discord.api.entities.Guild;
 import me.syari.ss.discord.api.entities.User;
 import me.syari.ss.discord.api.entities.VoiceChannel;
 import me.syari.ss.discord.api.events.ExceptionEvent;
 import me.syari.ss.discord.api.utils.MiscUtil;
 import me.syari.ss.discord.api.utils.data.DataArray;
 import me.syari.ss.discord.api.utils.data.DataObject;
+import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.managers.AudioManagerImpl;
 import me.syari.ss.discord.internal.utils.IOUtil;
 import me.syari.ss.discord.internal.utils.JDALogger;

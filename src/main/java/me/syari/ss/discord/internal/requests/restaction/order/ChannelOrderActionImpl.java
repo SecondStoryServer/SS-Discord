@@ -2,16 +2,16 @@
 
 package me.syari.ss.discord.internal.requests.restaction.order;
 
+import me.syari.ss.discord.api.Permission;
 import me.syari.ss.discord.api.entities.Guild;
 import me.syari.ss.discord.api.entities.GuildChannel;
 import me.syari.ss.discord.api.entities.Member;
 import me.syari.ss.discord.api.exceptions.InsufficientPermissionException;
 import me.syari.ss.discord.api.requests.restaction.order.ChannelOrderAction;
-import me.syari.ss.discord.internal.requests.Route;
-import me.syari.ss.discord.internal.utils.Checks;
-import me.syari.ss.discord.api.Permission;
 import me.syari.ss.discord.api.utils.data.DataArray;
 import me.syari.ss.discord.api.utils.data.DataObject;
+import me.syari.ss.discord.internal.requests.Route;
+import me.syari.ss.discord.internal.utils.Checks;
 import okhttp3.RequestBody;
 
 import javax.annotation.Nonnull;

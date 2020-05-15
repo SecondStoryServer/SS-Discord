@@ -2,15 +2,6 @@
 
 package me.syari.ss.discord.api.entities;
 
-import me.syari.ss.discord.api.Permission;
-import me.syari.ss.discord.api.events.guild.member.GuildMemberLeaveEvent;
-import me.syari.ss.discord.api.events.guild.voice.GuildVoiceGuildDeafenEvent;
-import me.syari.ss.discord.api.events.guild.voice.GuildVoiceGuildMuteEvent;
-import me.syari.ss.discord.api.exceptions.HierarchyException;
-import me.syari.ss.discord.api.exceptions.InsufficientPermissionException;
-import me.syari.ss.discord.api.requests.ErrorResponse;
-import me.syari.ss.discord.api.requests.RestAction;
-import me.syari.ss.discord.api.utils.cache.CacheFlag;
 import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.OnlineStatus;
 import me.syari.ss.discord.api.requests.restaction.AuditableRestAction;
@@ -18,7 +9,7 @@ import me.syari.ss.discord.api.requests.restaction.AuditableRestAction;
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.awt.Color;
+import java.awt.*;
 import java.time.OffsetDateTime;
 import java.util.EnumSet;
 import java.util.List;

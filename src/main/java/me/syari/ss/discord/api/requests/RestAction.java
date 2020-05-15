@@ -2,8 +2,6 @@
 
 package me.syari.ss.discord.api.requests;
 
-import me.syari.ss.discord.api.entities.MessageChannel;
-import me.syari.ss.discord.api.requests.restaction.MessageAction;
 import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.exceptions.ContextException;
 import me.syari.ss.discord.api.exceptions.RateLimitedException;

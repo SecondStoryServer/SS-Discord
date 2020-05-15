@@ -3,9 +3,9 @@
 package me.syari.ss.discord.internal.utils.cache;
 
 import me.syari.ss.discord.api.entities.Member;
-import me.syari.ss.discord.internal.utils.Checks;
 import me.syari.ss.discord.api.entities.Role;
 import me.syari.ss.discord.api.utils.cache.MemberCacheView;
+import me.syari.ss.discord.internal.utils.Checks;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

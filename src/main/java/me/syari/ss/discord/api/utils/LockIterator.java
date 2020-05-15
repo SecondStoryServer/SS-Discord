@@ -3,7 +3,6 @@
 package me.syari.ss.discord.api.utils;
 
 import me.syari.ss.discord.internal.utils.JDALogger;
-import me.syari.ss.discord.api.utils.cache.CacheView;
 import org.slf4j.Logger;
 
 import javax.annotation.Nonnull;

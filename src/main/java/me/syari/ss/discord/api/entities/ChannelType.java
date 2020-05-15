@@ -1,8 +1,6 @@
 
 package me.syari.ss.discord.api.entities;
 
-import me.syari.ss.discord.api.AccountType;
-
 import javax.annotation.Nonnull;
 import java.util.EnumSet;
 

@@ -1,10 +1,10 @@
 
 package me.syari.ss.discord.api.events.channel.text.update;
 
-import me.syari.ss.discord.api.events.UpdateEvent;
-import me.syari.ss.discord.api.events.channel.text.GenericTextChannelEvent;
 import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.entities.TextChannel;
+import me.syari.ss.discord.api.events.UpdateEvent;
+import me.syari.ss.discord.api.events.channel.text.GenericTextChannelEvent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

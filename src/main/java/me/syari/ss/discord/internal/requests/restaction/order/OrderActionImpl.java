@@ -2,11 +2,11 @@
 
 package me.syari.ss.discord.internal.requests.restaction.order;
 
+import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.requests.restaction.order.OrderAction;
 import me.syari.ss.discord.internal.requests.RestActionImpl;
 import me.syari.ss.discord.internal.requests.Route;
 import me.syari.ss.discord.internal.utils.Checks;
-import me.syari.ss.discord.api.JDA;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;

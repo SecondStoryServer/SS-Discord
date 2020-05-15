@@ -8,8 +8,8 @@ import me.syari.ss.discord.api.events.channel.priv.PrivateChannelCreateEvent;
 import me.syari.ss.discord.api.events.channel.store.StoreChannelCreateEvent;
 import me.syari.ss.discord.api.events.channel.text.TextChannelCreateEvent;
 import me.syari.ss.discord.api.events.channel.voice.VoiceChannelCreateEvent;
-import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.api.utils.data.DataObject;
+import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.entities.EntityBuilder;
 import me.syari.ss.discord.internal.requests.WebSocketClient;
 

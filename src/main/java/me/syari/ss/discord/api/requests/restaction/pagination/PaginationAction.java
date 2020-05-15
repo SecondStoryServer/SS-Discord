@@ -3,7 +3,6 @@
 package me.syari.ss.discord.api.requests.restaction.pagination;
 
 import me.syari.ss.discord.api.requests.RestAction;
-import me.syari.ss.discord.api.utils.TimeUtil;
 import me.syari.ss.discord.api.utils.Procedure;
 import me.syari.ss.discord.internal.requests.RestActionImpl;
 import me.syari.ss.discord.internal.utils.Checks;

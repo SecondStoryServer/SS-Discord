@@ -1,7 +1,6 @@
 
 package me.syari.ss.discord.internal.utils;
 
-import me.syari.ss.discord.api.entities.*;
 import me.syari.ss.discord.api.Permission;
 import me.syari.ss.discord.api.entities.*;
 import me.syari.ss.discord.internal.entities.GuildImpl;

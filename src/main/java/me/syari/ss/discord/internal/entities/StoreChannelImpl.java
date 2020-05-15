@@ -4,7 +4,6 @@ package me.syari.ss.discord.internal.entities;
 
 import me.syari.ss.discord.api.entities.*;
 import me.syari.ss.discord.api.requests.restaction.ChannelAction;
-import me.syari.ss.discord.api.entities.*;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;

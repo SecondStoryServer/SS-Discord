@@ -3,7 +3,6 @@
 package me.syari.ss.discord.api.requests.restaction.order;
 
 import me.syari.ss.discord.api.entities.ChannelType;
-import me.syari.ss.discord.api.requests.RestAction;
 import me.syari.ss.discord.api.entities.Guild;
 import me.syari.ss.discord.api.entities.GuildChannel;
 

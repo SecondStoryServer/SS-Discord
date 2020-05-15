@@ -2,11 +2,11 @@
 package me.syari.ss.discord.internal.handle;
 
 import me.syari.ss.discord.api.entities.MessageChannel;
-import me.syari.ss.discord.api.events.user.UserTypingEvent;
-import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.api.entities.PrivateChannel;
 import me.syari.ss.discord.api.entities.User;
+import me.syari.ss.discord.api.events.user.UserTypingEvent;
 import me.syari.ss.discord.api.utils.data.DataObject;
+import me.syari.ss.discord.internal.JDAImpl;
 
 import java.time.Instant;
 import java.time.OffsetDateTime;

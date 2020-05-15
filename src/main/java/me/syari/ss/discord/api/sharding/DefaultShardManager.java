@@ -22,7 +22,6 @@ import me.syari.ss.discord.internal.utils.config.MetaConfig;
 import me.syari.ss.discord.internal.utils.config.SessionConfig;
 import me.syari.ss.discord.internal.utils.config.ThreadingConfig;
 import me.syari.ss.discord.internal.utils.config.sharding.*;
-import me.syari.ss.discord.internal.utils.config.sharding.*;
 import okhttp3.OkHttpClient;
 import org.slf4j.Logger;
 

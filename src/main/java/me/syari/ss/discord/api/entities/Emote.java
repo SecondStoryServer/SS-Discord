@@ -2,10 +2,6 @@
 
 package me.syari.ss.discord.api.entities;
 
-import me.syari.ss.discord.api.Permission;
-import me.syari.ss.discord.api.exceptions.InsufficientPermissionException;
-import me.syari.ss.discord.api.requests.ErrorResponse;
-import me.syari.ss.discord.api.requests.RestAction;
 import me.syari.ss.discord.annotations.DeprecatedSince;
 import me.syari.ss.discord.annotations.ReplaceWith;
 import me.syari.ss.discord.api.JDA;

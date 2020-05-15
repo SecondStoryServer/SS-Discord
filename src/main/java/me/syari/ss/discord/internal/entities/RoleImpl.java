@@ -2,25 +2,25 @@
 
 package me.syari.ss.discord.internal.entities;
 
-import me.syari.ss.discord.api.entities.Guild;
-import me.syari.ss.discord.api.entities.GuildChannel;
-import me.syari.ss.discord.api.exceptions.HierarchyException;
-import me.syari.ss.discord.api.exceptions.InsufficientPermissionException;
-import me.syari.ss.discord.api.requests.restaction.AuditableRestAction;
-import me.syari.ss.discord.api.requests.restaction.RoleAction;
-import me.syari.ss.discord.internal.JDAImpl;
-import me.syari.ss.discord.internal.utils.Checks;
-import me.syari.ss.discord.internal.utils.PermissionUtil;
 import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.Permission;
+import me.syari.ss.discord.api.entities.Guild;
+import me.syari.ss.discord.api.entities.GuildChannel;
 import me.syari.ss.discord.api.entities.Role;
+import me.syari.ss.discord.api.exceptions.HierarchyException;
+import me.syari.ss.discord.api.exceptions.InsufficientPermissionException;
 import me.syari.ss.discord.api.managers.RoleManager;
+import me.syari.ss.discord.api.requests.restaction.AuditableRestAction;
+import me.syari.ss.discord.api.requests.restaction.RoleAction;
 import me.syari.ss.discord.api.utils.MiscUtil;
+import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.managers.RoleManagerImpl;
 import me.syari.ss.discord.internal.requests.Route;
 import me.syari.ss.discord.internal.requests.restaction.AuditableRestActionImpl;
-import me.syari.ss.discord.internal.utils.cache.SortedSnowflakeCacheViewImpl;
+import me.syari.ss.discord.internal.utils.Checks;
+import me.syari.ss.discord.internal.utils.PermissionUtil;
 import me.syari.ss.discord.internal.utils.cache.SnowflakeReference;
+import me.syari.ss.discord.internal.utils.cache.SortedSnowflakeCacheViewImpl;
 
 import javax.annotation.Nonnull;
 import java.awt.*;

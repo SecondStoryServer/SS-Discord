@@ -2,17 +2,17 @@
 
 package me.syari.ss.discord.internal.managers;
 
+import me.syari.ss.discord.api.Permission;
 import me.syari.ss.discord.api.entities.Emote;
 import me.syari.ss.discord.api.entities.Guild;
-import me.syari.ss.discord.api.exceptions.InsufficientPermissionException;
-import me.syari.ss.discord.internal.entities.EmoteImpl;
-import me.syari.ss.discord.internal.utils.Checks;
-import me.syari.ss.discord.api.Permission;
 import me.syari.ss.discord.api.entities.Role;
+import me.syari.ss.discord.api.exceptions.InsufficientPermissionException;
 import me.syari.ss.discord.api.managers.EmoteManager;
 import me.syari.ss.discord.api.utils.data.DataArray;
 import me.syari.ss.discord.api.utils.data.DataObject;
+import me.syari.ss.discord.internal.entities.EmoteImpl;
 import me.syari.ss.discord.internal.requests.Route;
+import me.syari.ss.discord.internal.utils.Checks;
 import okhttp3.RequestBody;
 
 import javax.annotation.CheckReturnValue;

@@ -2,15 +2,12 @@
 package me.syari.ss.discord.api;
 
 import me.syari.ss.discord.api.entities.*;
-import me.syari.ss.discord.api.events.message.MessageReceivedEvent;
 import me.syari.ss.discord.api.exceptions.InsufficientPermissionException;
-import me.syari.ss.discord.api.exceptions.PermissionException;
 import me.syari.ss.discord.api.requests.restaction.MessageAction;
 import me.syari.ss.discord.internal.entities.DataMessage;
 import me.syari.ss.discord.internal.requests.Route;
 import me.syari.ss.discord.internal.requests.restaction.MessageActionImpl;
 import me.syari.ss.discord.internal.utils.Checks;
-import me.syari.ss.discord.api.entities.*;
 
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;

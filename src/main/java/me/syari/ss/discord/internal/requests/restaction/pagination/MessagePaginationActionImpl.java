@@ -2,19 +2,19 @@
 
 package me.syari.ss.discord.internal.requests.restaction.pagination;
 
+import me.syari.ss.discord.api.Permission;
 import me.syari.ss.discord.api.entities.ChannelType;
 import me.syari.ss.discord.api.entities.Message;
 import me.syari.ss.discord.api.entities.MessageChannel;
+import me.syari.ss.discord.api.entities.TextChannel;
 import me.syari.ss.discord.api.exceptions.InsufficientPermissionException;
 import me.syari.ss.discord.api.exceptions.ParsingException;
 import me.syari.ss.discord.api.requests.Request;
 import me.syari.ss.discord.api.requests.Response;
 import me.syari.ss.discord.api.requests.restaction.pagination.MessagePaginationAction;
+import me.syari.ss.discord.api.utils.data.DataArray;
 import me.syari.ss.discord.internal.entities.EntityBuilder;
 import me.syari.ss.discord.internal.requests.Route;
-import me.syari.ss.discord.api.Permission;
-import me.syari.ss.discord.api.entities.TextChannel;
-import me.syari.ss.discord.api.utils.data.DataArray;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;

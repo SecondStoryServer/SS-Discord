@@ -2,11 +2,10 @@
 
 package me.syari.ss.discord.api.requests.restaction;
 
-import me.syari.ss.discord.api.entities.Member;
-import me.syari.ss.discord.api.requests.RestAction;
 import me.syari.ss.discord.api.entities.Guild;
 import me.syari.ss.discord.api.entities.Role;
 import me.syari.ss.discord.api.entities.User;
+import me.syari.ss.discord.api.requests.RestAction;
 
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;

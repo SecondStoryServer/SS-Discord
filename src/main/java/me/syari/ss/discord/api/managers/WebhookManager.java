@@ -2,12 +2,10 @@
 
 package me.syari.ss.discord.api.managers;
 
-import me.syari.ss.discord.api.Permission;
 import me.syari.ss.discord.api.entities.Guild;
 import me.syari.ss.discord.api.entities.Icon;
 import me.syari.ss.discord.api.entities.TextChannel;
 import me.syari.ss.discord.api.entities.Webhook;
-import me.syari.ss.discord.api.exceptions.InsufficientPermissionException;
 
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;

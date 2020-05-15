@@ -2,8 +2,6 @@
 
 package me.syari.ss.discord.api.requests.restaction;
 
-import me.syari.ss.discord.api.exceptions.InsufficientPermissionException;
-import me.syari.ss.discord.api.requests.RestAction;
 import me.syari.ss.discord.api.Permission;
 import me.syari.ss.discord.api.entities.Guild;
 import me.syari.ss.discord.api.entities.Role;
@@ -12,7 +10,7 @@ import me.syari.ss.discord.internal.utils.Checks;
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.awt.Color;
+import java.awt.*;
 import java.util.Collection;
 import java.util.function.BooleanSupplier;
 

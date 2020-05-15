@@ -2,12 +2,8 @@
 
 package me.syari.ss.discord.api.audit;
 
-import me.syari.ss.discord.api.requests.RestAction;
-import me.syari.ss.discord.api.requests.restaction.AuditableRestAction;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.function.Consumer;
 
 
 public final class ThreadLocalReason

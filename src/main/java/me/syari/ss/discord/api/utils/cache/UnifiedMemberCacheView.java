@@ -2,8 +2,6 @@
 
 package me.syari.ss.discord.api.utils.cache;
 
-import me.syari.ss.discord.api.entities.Guild;
-import me.syari.ss.discord.api.entities.ISnowflake;
 import me.syari.ss.discord.api.entities.Member;
 import me.syari.ss.discord.api.entities.Role;
 import me.syari.ss.discord.api.utils.MiscUtil;

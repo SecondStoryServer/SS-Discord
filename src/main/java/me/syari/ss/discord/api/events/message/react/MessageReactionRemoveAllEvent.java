@@ -2,9 +2,9 @@
 
 package me.syari.ss.discord.api.events.message.react;
 
-import me.syari.ss.discord.api.events.message.GenericMessageEvent;
 import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.entities.MessageChannel;
+import me.syari.ss.discord.api.events.message.GenericMessageEvent;
 
 import javax.annotation.Nonnull;
 

@@ -1,7 +1,6 @@
 
 package me.syari.ss.discord.api.events.message.priv;
 
-import me.syari.ss.discord.api.entities.Message;
 import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.entities.PrivateChannel;
 import me.syari.ss.discord.api.events.Event;

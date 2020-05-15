@@ -2,12 +2,6 @@
 
 package me.syari.ss.discord.api.audit;
 
-import me.syari.ss.discord.api.JDA;
-import me.syari.ss.discord.api.entities.Guild;
-import me.syari.ss.discord.api.entities.MessageChannel;
-import me.syari.ss.discord.api.entities.VoiceChannel;
-
-
 public enum AuditLogOption
 {
 

@@ -3,27 +3,26 @@
 package me.syari.ss.discord.internal.entities;
 
 import gnu.trove.map.TLongObjectMap;
+import me.syari.ss.discord.api.JDA;
+import me.syari.ss.discord.api.Permission;
 import me.syari.ss.discord.api.entities.*;
 import me.syari.ss.discord.api.exceptions.InsufficientPermissionException;
+import me.syari.ss.discord.api.managers.ChannelManager;
 import me.syari.ss.discord.api.requests.RestAction;
 import me.syari.ss.discord.api.requests.restaction.AuditableRestAction;
 import me.syari.ss.discord.api.requests.restaction.ChannelAction;
 import me.syari.ss.discord.api.requests.restaction.InviteAction;
 import me.syari.ss.discord.api.requests.restaction.PermissionOverrideAction;
-import me.syari.ss.discord.internal.JDAImpl;
-import me.syari.ss.discord.internal.utils.Checks;
-import me.syari.ss.discord.api.JDA;
-import me.syari.ss.discord.api.Permission;
-import me.syari.ss.discord.api.entities.*;
-import me.syari.ss.discord.api.managers.ChannelManager;
 import me.syari.ss.discord.api.utils.MiscUtil;
 import me.syari.ss.discord.api.utils.data.DataArray;
+import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.managers.ChannelManagerImpl;
 import me.syari.ss.discord.internal.requests.RestActionImpl;
 import me.syari.ss.discord.internal.requests.Route;
 import me.syari.ss.discord.internal.requests.restaction.AuditableRestActionImpl;
 import me.syari.ss.discord.internal.requests.restaction.InviteActionImpl;
 import me.syari.ss.discord.internal.requests.restaction.PermissionOverrideActionImpl;
+import me.syari.ss.discord.internal.utils.Checks;
 import me.syari.ss.discord.internal.utils.cache.SnowflakeReference;
 
 import javax.annotation.Nonnull;

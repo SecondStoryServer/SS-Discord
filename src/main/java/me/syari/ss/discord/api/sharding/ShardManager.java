@@ -1,18 +1,13 @@
 
 package me.syari.ss.discord.api.sharding;
 
-import me.syari.ss.discord.api.Permission;
-import me.syari.ss.discord.api.entities.*;
-import me.syari.ss.discord.api.hooks.EventListener;
-import me.syari.ss.discord.api.hooks.InterfacedEventManager;
-import me.syari.ss.discord.api.requests.ErrorResponse;
-import me.syari.ss.discord.api.requests.RestAction;
 import me.syari.ss.discord.annotations.DeprecatedSince;
 import me.syari.ss.discord.annotations.ReplaceWith;
 import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.JDA.Status;
 import me.syari.ss.discord.api.OnlineStatus;
 import me.syari.ss.discord.api.entities.*;
+import me.syari.ss.discord.api.requests.RestAction;
 import me.syari.ss.discord.api.utils.MiscUtil;
 import me.syari.ss.discord.api.utils.cache.CacheView;
 import me.syari.ss.discord.api.utils.cache.ShardCacheView;

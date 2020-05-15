@@ -2,10 +2,6 @@
 
 package me.syari.ss.discord.api.utils;
 
-import me.syari.ss.discord.api.JDABuilder;
-import me.syari.ss.discord.api.sharding.DefaultShardManagerBuilder;
-
-
 public enum Compression
 {
 

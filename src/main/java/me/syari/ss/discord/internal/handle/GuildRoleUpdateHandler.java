@@ -1,11 +1,10 @@
 
 package me.syari.ss.discord.internal.handle;
 
-import me.syari.ss.discord.api.events.role.update.*;
-import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.api.entities.Role;
 import me.syari.ss.discord.api.events.role.update.*;
 import me.syari.ss.discord.api.utils.data.DataObject;
+import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.entities.GuildImpl;
 import me.syari.ss.discord.internal.entities.RoleImpl;
 

@@ -2,12 +2,12 @@
 
 package me.syari.ss.discord.api.requests.restaction;
 
-import me.syari.ss.discord.api.JDA;
-import me.syari.ss.discord.api.entities.*;
-import me.syari.ss.discord.api.requests.RestAction;
 import me.syari.ss.discord.api.Permission;
 import me.syari.ss.discord.api.Region;
 import me.syari.ss.discord.api.entities.ChannelType;
+import me.syari.ss.discord.api.entities.Guild;
+import me.syari.ss.discord.api.entities.Icon;
+import me.syari.ss.discord.api.requests.RestAction;
 import me.syari.ss.discord.api.utils.data.DataObject;
 import me.syari.ss.discord.api.utils.data.SerializableData;
 import me.syari.ss.discord.internal.requests.restaction.GuildActionImpl;
@@ -17,7 +17,7 @@ import me.syari.ss.discord.internal.utils.Checks;
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.awt.Color;
+import java.awt.*;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;

@@ -2,10 +2,10 @@
 
 package me.syari.ss.discord.api.events.self;
 
-import me.syari.ss.discord.api.events.UpdateEvent;
 import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.entities.SelfUser;
 import me.syari.ss.discord.api.events.Event;
+import me.syari.ss.discord.api.events.UpdateEvent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

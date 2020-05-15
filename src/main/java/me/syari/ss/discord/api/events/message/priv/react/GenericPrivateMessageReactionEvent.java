@@ -2,11 +2,11 @@
 
 package me.syari.ss.discord.api.events.message.priv.react;
 
-import me.syari.ss.discord.api.events.message.priv.GenericPrivateMessageEvent;
 import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.entities.MessageReaction;
 import me.syari.ss.discord.api.entities.PrivateChannel;
 import me.syari.ss.discord.api.entities.User;
+import me.syari.ss.discord.api.events.message.priv.GenericPrivateMessageEvent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

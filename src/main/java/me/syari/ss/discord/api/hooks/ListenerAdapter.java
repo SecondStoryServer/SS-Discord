@@ -64,19 +64,6 @@ import me.syari.ss.discord.api.events.user.UserActivityEndEvent;
 import me.syari.ss.discord.api.events.user.UserActivityStartEvent;
 import me.syari.ss.discord.api.events.user.UserTypingEvent;
 import me.syari.ss.discord.api.events.user.update.*;
-import me.syari.ss.discord.api.events.*;
-import me.syari.ss.discord.api.events.channel.text.update.*;
-import me.syari.ss.discord.api.events.channel.voice.update.*;
-import me.syari.ss.discord.api.events.guild.*;
-import me.syari.ss.discord.api.events.guild.member.*;
-import me.syari.ss.discord.api.events.guild.update.*;
-import me.syari.ss.discord.api.events.guild.voice.*;
-import me.syari.ss.discord.api.events.message.*;
-import me.syari.ss.discord.api.events.message.guild.*;
-import me.syari.ss.discord.api.events.message.priv.*;
-import me.syari.ss.discord.api.events.role.update.*;
-import me.syari.ss.discord.api.events.self.*;
-import me.syari.ss.discord.api.events.user.update.*;
 
 import javax.annotation.Nonnull;
 

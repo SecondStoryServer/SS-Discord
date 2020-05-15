@@ -3,7 +3,6 @@ package me.syari.ss.discord.api.events;
 
 import com.neovisionaries.ws.client.WebSocketFrame;
 import me.syari.ss.discord.api.JDA;
-import me.syari.ss.discord.api.JDABuilder;
 import me.syari.ss.discord.api.requests.CloseCode;
 
 import javax.annotation.Nonnull;

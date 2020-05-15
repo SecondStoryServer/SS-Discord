@@ -3,7 +3,6 @@
 package me.syari.ss.discord.api.events.user.update;
 
 import me.syari.ss.discord.api.JDA;
-import me.syari.ss.discord.api.JDABuilder;
 import me.syari.ss.discord.api.entities.User;
 
 import javax.annotation.Nonnull;

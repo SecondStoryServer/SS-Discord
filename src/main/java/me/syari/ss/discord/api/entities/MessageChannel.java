@@ -1,18 +1,13 @@
 
 package me.syari.ss.discord.api.entities;
 
-import me.syari.ss.discord.api.*;
-import me.syari.ss.discord.api.events.message.MessageReceivedEvent;
-import me.syari.ss.discord.api.exceptions.InsufficientPermissionException;
-import me.syari.ss.discord.api.exceptions.PermissionException;
-import me.syari.ss.discord.api.exceptions.VerificationLevelException;
-import me.syari.ss.discord.api.requests.ErrorResponse;
+import me.syari.ss.discord.api.AccountType;
+import me.syari.ss.discord.api.JDA;
+import me.syari.ss.discord.api.exceptions.AccountTypeException;
 import me.syari.ss.discord.api.requests.RestAction;
 import me.syari.ss.discord.api.requests.restaction.AuditableRestAction;
 import me.syari.ss.discord.api.requests.restaction.MessageAction;
-import me.syari.ss.discord.api.exceptions.AccountTypeException;
 import me.syari.ss.discord.api.requests.restaction.pagination.MessagePaginationAction;
-import me.syari.ss.discord.api.requests.restaction.pagination.PaginationAction;
 import me.syari.ss.discord.api.utils.AttachmentOption;
 import me.syari.ss.discord.api.utils.MiscUtil;
 import me.syari.ss.discord.api.utils.data.DataArray;
@@ -31,7 +26,6 @@ import javax.annotation.Nonnull;
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Function;
 
 
 public interface MessageChannel extends ISnowflake, Formattable

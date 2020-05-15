@@ -2,10 +2,10 @@
 
 package me.syari.ss.discord.api.events.emote.update;
 
-import me.syari.ss.discord.api.events.UpdateEvent;
-import me.syari.ss.discord.api.events.emote.GenericEmoteEvent;
 import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.entities.Emote;
+import me.syari.ss.discord.api.events.UpdateEvent;
+import me.syari.ss.discord.api.events.emote.GenericEmoteEvent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

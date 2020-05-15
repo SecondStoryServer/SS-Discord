@@ -1,7 +1,6 @@
 
 package me.syari.ss.discord.api.events.guild;
 
-import me.syari.ss.discord.api.events.guild.member.GuildMemberLeaveEvent;
 import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.entities.Guild;
 import me.syari.ss.discord.api.entities.User;

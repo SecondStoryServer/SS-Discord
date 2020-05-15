@@ -1,7 +1,6 @@
 
 package me.syari.ss.discord.api.events;
 
-import me.syari.ss.discord.api.events.guild.GuildReadyEvent;
 import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.handle.GuildSetupController;

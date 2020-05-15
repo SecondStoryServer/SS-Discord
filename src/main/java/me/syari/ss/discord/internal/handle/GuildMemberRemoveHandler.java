@@ -1,13 +1,12 @@
 
 package me.syari.ss.discord.internal.handle;
 
-import me.syari.ss.discord.api.events.guild.member.GuildMemberLeaveEvent;
-import me.syari.ss.discord.api.events.guild.voice.GuildVoiceLeaveEvent;
-import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.api.entities.User;
 import me.syari.ss.discord.api.entities.VoiceChannel;
+import me.syari.ss.discord.api.events.guild.member.GuildMemberLeaveEvent;
+import me.syari.ss.discord.api.events.guild.voice.GuildVoiceLeaveEvent;
 import me.syari.ss.discord.api.utils.data.DataObject;
-import me.syari.ss.discord.internal.entities.*;
+import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.entities.*;
 import me.syari.ss.discord.internal.requests.WebSocketClient;
 import me.syari.ss.discord.internal.utils.UnlockHook;

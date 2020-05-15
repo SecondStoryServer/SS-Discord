@@ -2,9 +2,9 @@
 
 package me.syari.ss.discord.internal.utils.compress;
 
+import me.syari.ss.discord.api.utils.Compression;
 import me.syari.ss.discord.internal.utils.IOUtil;
 import me.syari.ss.discord.internal.utils.JDALogger;
-import me.syari.ss.discord.api.utils.Compression;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

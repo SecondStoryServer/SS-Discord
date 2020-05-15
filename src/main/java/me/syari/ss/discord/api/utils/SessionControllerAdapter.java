@@ -8,11 +8,11 @@ import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.exceptions.AccountTypeException;
 import me.syari.ss.discord.api.requests.Request;
 import me.syari.ss.discord.api.requests.Response;
+import me.syari.ss.discord.api.utils.data.DataObject;
 import me.syari.ss.discord.internal.requests.RestActionImpl;
 import me.syari.ss.discord.internal.requests.Route;
 import me.syari.ss.discord.internal.utils.JDALogger;
 import me.syari.ss.discord.internal.utils.tuple.Pair;
-import me.syari.ss.discord.api.utils.data.DataObject;
 import org.slf4j.Logger;
 
 import javax.annotation.Nonnull;

@@ -2,11 +2,11 @@
 
 package me.syari.ss.discord.api.exceptions;
 
-import me.syari.ss.discord.api.entities.ChannelType;
-import me.syari.ss.discord.api.entities.GuildChannel;
 import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.Permission;
+import me.syari.ss.discord.api.entities.ChannelType;
 import me.syari.ss.discord.api.entities.Guild;
+import me.syari.ss.discord.api.entities.GuildChannel;
 import me.syari.ss.discord.internal.utils.Checks;
 
 import javax.annotation.Nonnull;

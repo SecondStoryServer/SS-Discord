@@ -2,11 +2,11 @@
 
 package me.syari.ss.discord.internal.handle;
 
+import me.syari.ss.discord.api.entities.TextChannel;
 import me.syari.ss.discord.api.events.message.guild.react.GuildMessageReactionRemoveAllEvent;
 import me.syari.ss.discord.api.events.message.react.MessageReactionRemoveAllEvent;
-import me.syari.ss.discord.internal.JDAImpl;
-import me.syari.ss.discord.api.entities.TextChannel;
 import me.syari.ss.discord.api.utils.data.DataObject;
+import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.requests.WebSocketClient;
 
 public class MessageReactionBulkRemoveHandler extends SocketHandler

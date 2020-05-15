@@ -4,15 +4,15 @@ package me.syari.ss.discord.internal.handle;
 
 import gnu.trove.map.TLongObjectMap;
 import me.syari.ss.discord.api.entities.Emote;
+import me.syari.ss.discord.api.entities.Role;
 import me.syari.ss.discord.api.events.emote.EmoteAddedEvent;
 import me.syari.ss.discord.api.events.emote.EmoteRemovedEvent;
 import me.syari.ss.discord.api.events.emote.update.EmoteUpdateNameEvent;
 import me.syari.ss.discord.api.events.emote.update.EmoteUpdateRolesEvent;
-import me.syari.ss.discord.internal.JDAImpl;
-import me.syari.ss.discord.api.entities.Role;
 import me.syari.ss.discord.api.utils.cache.CacheFlag;
 import me.syari.ss.discord.api.utils.data.DataArray;
 import me.syari.ss.discord.api.utils.data.DataObject;
+import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.entities.EmoteImpl;
 import me.syari.ss.discord.internal.entities.GuildImpl;
 import me.syari.ss.discord.internal.utils.UnlockHook;

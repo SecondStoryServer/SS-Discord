@@ -2,10 +2,10 @@
 
 package me.syari.ss.discord.internal.entities;
 
+import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.entities.Guild;
 import me.syari.ss.discord.api.entities.GuildVoiceState;
 import me.syari.ss.discord.api.entities.Member;
-import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.entities.VoiceChannel;
 import me.syari.ss.discord.internal.utils.cache.SnowflakeReference;
 

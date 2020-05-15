@@ -2,10 +2,10 @@
 
 package me.syari.ss.discord.api.events.role.update;
 
-import me.syari.ss.discord.api.events.UpdateEvent;
-import me.syari.ss.discord.api.events.role.GenericRoleEvent;
 import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.entities.Role;
+import me.syari.ss.discord.api.events.UpdateEvent;
+import me.syari.ss.discord.api.events.role.GenericRoleEvent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

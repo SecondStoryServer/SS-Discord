@@ -3,12 +3,12 @@
 package me.syari.ss.discord.internal.utils.config.sharding;
 
 import com.neovisionaries.ws.client.WebSocketFactory;
-import me.syari.ss.discord.internal.utils.config.SessionConfig;
-import me.syari.ss.discord.internal.utils.config.flags.ConfigFlag;
-import me.syari.ss.discord.internal.utils.config.flags.ShardingConfigFlag;
 import me.syari.ss.discord.api.audio.factory.IAudioSendFactory;
 import me.syari.ss.discord.api.hooks.VoiceDispatchInterceptor;
 import me.syari.ss.discord.api.utils.SessionController;
+import me.syari.ss.discord.internal.utils.config.SessionConfig;
+import me.syari.ss.discord.internal.utils.config.flags.ConfigFlag;
+import me.syari.ss.discord.internal.utils.config.flags.ShardingConfigFlag;
 import okhttp3.OkHttpClient;
 
 import javax.annotation.Nonnull;

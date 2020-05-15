@@ -2,6 +2,7 @@
 
 package me.syari.ss.discord.internal.requests;
 
+import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.exceptions.ErrorResponseException;
 import me.syari.ss.discord.api.exceptions.PermissionException;
 import me.syari.ss.discord.api.exceptions.RateLimitedException;
@@ -9,12 +10,11 @@ import me.syari.ss.discord.api.requests.Request;
 import me.syari.ss.discord.api.requests.Response;
 import me.syari.ss.discord.api.requests.RestAction;
 import me.syari.ss.discord.api.requests.RestFuture;
+import me.syari.ss.discord.api.utils.data.DataArray;
+import me.syari.ss.discord.api.utils.data.DataObject;
 import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.utils.Checks;
 import me.syari.ss.discord.internal.utils.JDALogger;
-import me.syari.ss.discord.api.JDA;
-import me.syari.ss.discord.api.utils.data.DataArray;
-import me.syari.ss.discord.api.utils.data.DataObject;
 import okhttp3.RequestBody;
 import org.apache.commons.collections4.map.CaseInsensitiveMap;
 import org.slf4j.Logger;

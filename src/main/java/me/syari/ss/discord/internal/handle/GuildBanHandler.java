@@ -1,11 +1,11 @@
 
 package me.syari.ss.discord.internal.handle;
 
+import me.syari.ss.discord.api.entities.User;
 import me.syari.ss.discord.api.events.guild.GuildBanEvent;
 import me.syari.ss.discord.api.events.guild.GuildUnbanEvent;
-import me.syari.ss.discord.internal.JDAImpl;
-import me.syari.ss.discord.api.entities.User;
 import me.syari.ss.discord.api.utils.data.DataObject;
+import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.entities.GuildImpl;
 import me.syari.ss.discord.internal.utils.JDALogger;
 

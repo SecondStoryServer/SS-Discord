@@ -2,20 +2,14 @@
 package me.syari.ss.discord.api.entities;
 
 import me.syari.ss.discord.api.JDA;
-import me.syari.ss.discord.api.Permission;
-import me.syari.ss.discord.api.exceptions.HierarchyException;
-import me.syari.ss.discord.api.exceptions.InsufficientPermissionException;
-import me.syari.ss.discord.api.exceptions.PermissionException;
-import me.syari.ss.discord.api.requests.ErrorResponse;
-import me.syari.ss.discord.api.requests.RestAction;
+import me.syari.ss.discord.api.managers.RoleManager;
 import me.syari.ss.discord.api.requests.restaction.AuditableRestAction;
 import me.syari.ss.discord.api.requests.restaction.RoleAction;
-import me.syari.ss.discord.api.managers.RoleManager;
 
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.awt.Color;
+import java.awt.*;
 
 
 public interface Role extends IMentionable, IPermissionHolder, Comparable<Role>

@@ -2,8 +2,8 @@
 
 package me.syari.ss.discord.internal.handle;
 
-import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.api.utils.data.DataObject;
+import me.syari.ss.discord.internal.JDAImpl;
 
 public class GuildSyncHandler extends SocketHandler
 {

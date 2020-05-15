@@ -2,10 +2,10 @@
 
 package me.syari.ss.discord.internal.utils.config.sharding;
 
-import me.syari.ss.discord.internal.utils.config.MetaConfig;
-import me.syari.ss.discord.internal.utils.config.flags.ConfigFlag;
 import me.syari.ss.discord.api.utils.Compression;
 import me.syari.ss.discord.api.utils.cache.CacheFlag;
+import me.syari.ss.discord.internal.utils.config.MetaConfig;
+import me.syari.ss.discord.internal.utils.config.flags.ConfigFlag;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

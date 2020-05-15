@@ -2,7 +2,6 @@
 
 package me.syari.ss.discord.api.events.guild.voice;
 
-import me.syari.ss.discord.api.entities.GuildVoiceState;
 import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.entities.Member;
 

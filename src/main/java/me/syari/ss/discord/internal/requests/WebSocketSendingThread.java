@@ -5,11 +5,11 @@ package me.syari.ss.discord.internal.requests;
 import gnu.trove.map.TLongObjectMap;
 import me.syari.ss.discord.api.entities.Guild;
 import me.syari.ss.discord.api.entities.GuildVoiceState;
+import me.syari.ss.discord.api.managers.AudioManager;
+import me.syari.ss.discord.api.utils.data.DataObject;
 import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.audio.ConnectionRequest;
 import me.syari.ss.discord.internal.audio.ConnectionStage;
-import me.syari.ss.discord.api.managers.AudioManager;
-import me.syari.ss.discord.api.utils.data.DataObject;
 import org.slf4j.Logger;
 
 import java.util.Queue;

@@ -3,8 +3,8 @@ package me.syari.ss.discord.internal.handle;
 
 import me.syari.ss.discord.api.entities.Member;
 import me.syari.ss.discord.api.events.guild.member.GuildMemberJoinEvent;
-import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.api.utils.data.DataObject;
+import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.entities.GuildImpl;
 import me.syari.ss.discord.internal.requests.WebSocketClient;
 

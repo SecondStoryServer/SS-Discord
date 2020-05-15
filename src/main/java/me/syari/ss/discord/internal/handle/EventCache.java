@@ -4,8 +4,8 @@ package me.syari.ss.discord.internal.handle;
 import gnu.trove.iterator.TLongObjectIterator;
 import gnu.trove.map.TLongObjectMap;
 import gnu.trove.map.hash.TLongObjectHashMap;
-import me.syari.ss.discord.internal.utils.CacheConsumer;
 import me.syari.ss.discord.api.utils.data.DataObject;
+import me.syari.ss.discord.internal.utils.CacheConsumer;
 import me.syari.ss.discord.internal.utils.JDALogger;
 import org.slf4j.Logger;
 

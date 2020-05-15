@@ -2,12 +2,12 @@
 package me.syari.ss.discord.internal.handle;
 
 import me.syari.ss.discord.api.entities.Message;
+import me.syari.ss.discord.api.entities.MessageType;
 import me.syari.ss.discord.api.events.message.MessageReceivedEvent;
 import me.syari.ss.discord.api.events.message.guild.GuildMessageReceivedEvent;
 import me.syari.ss.discord.api.events.message.priv.PrivateMessageReceivedEvent;
-import me.syari.ss.discord.internal.JDAImpl;
-import me.syari.ss.discord.api.entities.MessageType;
 import me.syari.ss.discord.api.utils.data.DataObject;
+import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.entities.EntityBuilder;
 import me.syari.ss.discord.internal.entities.PrivateChannelImpl;
 import me.syari.ss.discord.internal.entities.TextChannelImpl;

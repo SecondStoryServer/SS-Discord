@@ -2,8 +2,6 @@
 
 package me.syari.ss.discord.api.events.user.update;
 
-import me.syari.ss.discord.api.JDABuilder;
-import me.syari.ss.discord.api.entities.User;
 import me.syari.ss.discord.api.entities.Activity;
 import me.syari.ss.discord.api.entities.Guild;
 import me.syari.ss.discord.api.entities.Member;

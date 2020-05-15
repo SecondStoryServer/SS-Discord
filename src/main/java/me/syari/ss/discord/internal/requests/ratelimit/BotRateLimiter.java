@@ -3,10 +3,10 @@
 package me.syari.ss.discord.internal.requests.ratelimit;
 
 import me.syari.ss.discord.api.requests.Request;
+import me.syari.ss.discord.api.utils.MiscUtil;
 import me.syari.ss.discord.internal.requests.RateLimiter;
 import me.syari.ss.discord.internal.requests.Requester;
 import me.syari.ss.discord.internal.requests.Route;
-import me.syari.ss.discord.api.utils.MiscUtil;
 import okhttp3.Headers;
 import org.jetbrains.annotations.Contract;
 

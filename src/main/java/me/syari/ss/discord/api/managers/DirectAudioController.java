@@ -5,7 +5,6 @@ package me.syari.ss.discord.api.managers;
 import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.entities.Guild;
 import me.syari.ss.discord.api.entities.VoiceChannel;
-import me.syari.ss.discord.api.hooks.VoiceDispatchInterceptor;
 
 import javax.annotation.Nonnull;
 

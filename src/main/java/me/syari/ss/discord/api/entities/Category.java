@@ -2,15 +2,8 @@
 
 package me.syari.ss.discord.api.entities;
 
-import me.syari.ss.discord.api.Permission;
-import me.syari.ss.discord.api.exceptions.InsufficientPermissionException;
-import me.syari.ss.discord.api.requests.ErrorResponse;
-import me.syari.ss.discord.api.requests.RestAction;
-import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.requests.restaction.ChannelAction;
 import me.syari.ss.discord.api.requests.restaction.order.CategoryOrderAction;
-import me.syari.ss.discord.api.requests.restaction.order.ChannelOrderAction;
-import me.syari.ss.discord.api.requests.restaction.order.OrderAction;
 
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;

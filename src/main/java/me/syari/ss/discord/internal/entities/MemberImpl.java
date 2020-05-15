@@ -2,15 +2,14 @@
 
 package me.syari.ss.discord.internal.entities;
 
-import me.syari.ss.discord.api.entities.*;
-import me.syari.ss.discord.internal.JDAImpl;
-import me.syari.ss.discord.internal.utils.Checks;
-import me.syari.ss.discord.internal.utils.PermissionUtil;
 import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.OnlineStatus;
 import me.syari.ss.discord.api.Permission;
 import me.syari.ss.discord.api.entities.*;
 import me.syari.ss.discord.api.utils.cache.CacheFlag;
+import me.syari.ss.discord.internal.JDAImpl;
+import me.syari.ss.discord.internal.utils.Checks;
+import me.syari.ss.discord.internal.utils.PermissionUtil;
 import me.syari.ss.discord.internal.utils.cache.SnowflakeReference;
 
 import javax.annotation.Nonnull;

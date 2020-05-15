@@ -2,11 +2,16 @@
 
 package me.syari.ss.discord.internal.requests.restaction;
 
+import me.syari.ss.discord.api.AccountType;
+import me.syari.ss.discord.api.JDA;
+import me.syari.ss.discord.api.Permission;
 import me.syari.ss.discord.api.entities.*;
 import me.syari.ss.discord.api.exceptions.InsufficientPermissionException;
 import me.syari.ss.discord.api.requests.Request;
 import me.syari.ss.discord.api.requests.Response;
 import me.syari.ss.discord.api.requests.restaction.MessageAction;
+import me.syari.ss.discord.api.utils.AttachmentOption;
+import me.syari.ss.discord.api.utils.data.DataObject;
 import me.syari.ss.discord.internal.requests.Method;
 import me.syari.ss.discord.internal.requests.Requester;
 import me.syari.ss.discord.internal.requests.RestActionImpl;
@@ -14,12 +19,6 @@ import me.syari.ss.discord.internal.requests.Route;
 import me.syari.ss.discord.internal.utils.Checks;
 import me.syari.ss.discord.internal.utils.Helpers;
 import me.syari.ss.discord.internal.utils.IOUtil;
-import me.syari.ss.discord.api.AccountType;
-import me.syari.ss.discord.api.JDA;
-import me.syari.ss.discord.api.Permission;
-import me.syari.ss.discord.api.entities.*;
-import me.syari.ss.discord.api.utils.AttachmentOption;
-import me.syari.ss.discord.api.utils.data.DataObject;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 

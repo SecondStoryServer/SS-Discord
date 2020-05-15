@@ -2,12 +2,12 @@
 
 package me.syari.ss.discord.internal.requests.restaction.pagination;
 
+import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.requests.restaction.pagination.PaginationAction;
+import me.syari.ss.discord.api.utils.Procedure;
 import me.syari.ss.discord.internal.requests.RestActionImpl;
 import me.syari.ss.discord.internal.requests.Route;
 import me.syari.ss.discord.internal.utils.Checks;
-import me.syari.ss.discord.api.JDA;
-import me.syari.ss.discord.api.utils.Procedure;
 
 import javax.annotation.Nonnull;
 import java.util.*;

@@ -2,17 +2,16 @@
 
 package me.syari.ss.discord.internal.requests.restaction;
 
-import me.syari.ss.discord.api.entities.Icon;
-import me.syari.ss.discord.api.requests.Request;
-import me.syari.ss.discord.api.requests.Response;
-import me.syari.ss.discord.api.requests.RestAction;
-import me.syari.ss.discord.api.requests.restaction.WebhookAction;
-import me.syari.ss.discord.internal.requests.Route;
-import me.syari.ss.discord.internal.utils.Checks;
 import me.syari.ss.discord.api.JDA;
+import me.syari.ss.discord.api.entities.Icon;
 import me.syari.ss.discord.api.entities.TextChannel;
 import me.syari.ss.discord.api.entities.Webhook;
+import me.syari.ss.discord.api.requests.Request;
+import me.syari.ss.discord.api.requests.Response;
+import me.syari.ss.discord.api.requests.restaction.WebhookAction;
 import me.syari.ss.discord.api.utils.data.DataObject;
+import me.syari.ss.discord.internal.requests.Route;
+import me.syari.ss.discord.internal.utils.Checks;
 import okhttp3.RequestBody;
 
 import javax.annotation.CheckReturnValue;

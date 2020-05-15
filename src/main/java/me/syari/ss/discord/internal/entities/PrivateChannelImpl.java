@@ -2,12 +2,11 @@
 
 package me.syari.ss.discord.internal.entities;
 
-import me.syari.ss.discord.api.entities.*;
-import me.syari.ss.discord.api.requests.RestAction;
-import me.syari.ss.discord.api.requests.restaction.MessageAction;
 import me.syari.ss.discord.api.AccountType;
 import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.entities.*;
+import me.syari.ss.discord.api.requests.RestAction;
+import me.syari.ss.discord.api.requests.restaction.MessageAction;
 import me.syari.ss.discord.api.utils.AttachmentOption;
 import me.syari.ss.discord.internal.requests.RestActionImpl;
 import me.syari.ss.discord.internal.requests.Route;

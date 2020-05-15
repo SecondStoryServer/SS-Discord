@@ -1,10 +1,9 @@
 
 package me.syari.ss.discord.api.events.message.guild;
 
-import me.syari.ss.discord.api.entities.Message;
-import me.syari.ss.discord.api.events.guild.GenericGuildEvent;
 import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.entities.TextChannel;
+import me.syari.ss.discord.api.events.guild.GenericGuildEvent;
 
 import javax.annotation.Nonnull;
 

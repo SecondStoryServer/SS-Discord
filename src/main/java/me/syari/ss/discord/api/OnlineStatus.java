@@ -1,9 +1,6 @@
 
 package me.syari.ss.discord.api;
 
-import me.syari.ss.discord.api.entities.Member;
-
-
 public enum OnlineStatus
 {
 

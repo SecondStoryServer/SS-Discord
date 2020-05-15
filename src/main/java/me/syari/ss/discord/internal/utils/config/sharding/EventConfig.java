@@ -2,8 +2,8 @@
 
 package me.syari.ss.discord.internal.utils.config.sharding;
 
-import me.syari.ss.discord.internal.utils.Checks;
 import me.syari.ss.discord.api.hooks.IEventManager;
+import me.syari.ss.discord.internal.utils.Checks;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

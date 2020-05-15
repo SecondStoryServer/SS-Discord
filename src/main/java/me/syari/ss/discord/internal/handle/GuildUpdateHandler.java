@@ -3,13 +3,12 @@ package me.syari.ss.discord.internal.handle;
 
 import me.syari.ss.discord.api.entities.Guild;
 import me.syari.ss.discord.api.entities.Member;
-import me.syari.ss.discord.api.events.guild.update.*;
-import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.api.entities.TextChannel;
 import me.syari.ss.discord.api.entities.VoiceChannel;
 import me.syari.ss.discord.api.events.guild.update.*;
 import me.syari.ss.discord.api.utils.data.DataArray;
 import me.syari.ss.discord.api.utils.data.DataObject;
+import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.entities.GuildImpl;
 import me.syari.ss.discord.internal.requests.WebSocketClient;
 

@@ -1,10 +1,6 @@
 
 package me.syari.ss.discord.api.entities;
 
-import me.syari.ss.discord.api.AccountType;
-import me.syari.ss.discord.api.JDA;
-import me.syari.ss.discord.api.exceptions.AccountTypeException;
-import me.syari.ss.discord.api.requests.RestAction;
 import me.syari.ss.discord.api.managers.AccountManager;
 
 import javax.annotation.Nonnull;

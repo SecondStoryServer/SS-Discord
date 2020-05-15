@@ -2,11 +2,10 @@
 
 package me.syari.ss.discord.api.events.guild.voice;
 
-import me.syari.ss.discord.api.entities.Guild;
-import me.syari.ss.discord.api.events.guild.GenericGuildEvent;
 import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.entities.GuildVoiceState;
 import me.syari.ss.discord.api.entities.Member;
+import me.syari.ss.discord.api.events.guild.GenericGuildEvent;
 
 import javax.annotation.Nonnull;
 
