@@ -1,0 +1,117 @@
+
+
+package me.syari.ss.discord.internal.utils.config;
+
+import com.neovisionaries.ws.client.WebSocketFactory;
+import me.syari.ss.discord.api.hooks.VoiceDispatchInterceptor;
+import me.syari.ss.discord.api.utils.SessionController;
+import me.syari.ss.discord.api.utils.SessionControllerAdapter;
+import me.syari.ss.discord.internal.utils.config.flags.ConfigFlag;
+import okhttp3.OkHttpClient;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.EnumSet;
+
+public class SessionConfig
+{
+    private final SessionController sessionController;
+    private final OkHttpClient httpClient;
+    private final WebSocketFactory webSocketFactory;
+    private final VoiceDispatchInterceptor interceptor;
+    private final int largeThreshold;
+    private EnumSet<ConfigFlag> flags;
+    private int maxReconnectDelay;
+
+    public SessionConfig(
+        @Nullable SessionController sessionController, @Nullable OkHttpClient httpClient,
+        @Nullable WebSocketFactory webSocketFactory, @Nullable VoiceDispatchInterceptor interceptor,
+        EnumSet<ConfigFlag> flags, int maxReconnectDelay, int largeThreshold)
+    {
+        this.sessionController = sessionController == null ? new SessionControllerAdapter() : sessionController;
+        this.httpClient = httpClient;
+        this.webSocketFactory = webSocketFactory == null ? new WebSocketFactory() : webSocketFactory;
+        this.interceptor = interceptor;
+        this.flags = flags;
+        this.maxReconnectDelay = maxReconnectDelay;
+        this.largeThreshold = largeThreshold;
+    }
+
+    public void setAutoReconnect(boolean autoReconnect)
+    {
+        if (autoReconnect)
+            flags.add(ConfigFlag.AUTO_RECONNECT);
+        else
+            flags.remove(ConfigFlag.AUTO_RECONNECT);
+    }
+
+    @Nonnull
+    public SessionController getSessionController()
+    {
+        return sessionController;
+    }
+
+    @Nullable
+    public OkHttpClient getHttpClient()
+    {
+        return httpClient;
+    }
+
+    @Nonnull
+    public WebSocketFactory getWebSocketFactory()
+    {
+        return webSocketFactory;
+    }
+
+    @Nullable
+    public VoiceDispatchInterceptor getVoiceDispatchInterceptor()
+    {
+        return interceptor;
+    }
+
+    public boolean isAutoReconnect()
+    {
+        return flags.contains(ConfigFlag.AUTO_RECONNECT);
+    }
+
+    public boolean isRetryOnTimeout()
+    {
+        return flags.contains(ConfigFlag.RETRY_TIMEOUT);
+    }
+
+    public boolean isBulkDeleteSplittingEnabled()
+    {
+        return flags.contains(ConfigFlag.BULK_DELETE_SPLIT);
+    }
+
+    public boolean isRawEvents()
+    {
+        return flags.contains(ConfigFlag.RAW_EVENTS);
+    }
+
+    public boolean isRelativeRateLimit()
+    {
+        return flags.contains(ConfigFlag.USE_RELATIVE_RATELIMIT);
+    }
+
+    public int getMaxReconnectDelay()
+    {
+        return maxReconnectDelay;
+    }
+
+    public int getLargeThreshold()
+    {
+        return largeThreshold;
+    }
+
+    public EnumSet<ConfigFlag> getFlags()
+    {
+        return flags;
+    }
+
+    @Nonnull
+    public static SessionConfig getDefault()
+    {
+        return new SessionConfig(null, new OkHttpClient(), null, null, ConfigFlag.getDefault(), 900, 250);
+    }
+}

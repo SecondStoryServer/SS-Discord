@@ -1,10 +1,10 @@
-import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.JDABuilder;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.MessageChannel;
-import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import me.syari.ss.discord.api.JDA;
+import me.syari.ss.discord.api.JDABuilder;
+import me.syari.ss.discord.api.entities.Member;
+import me.syari.ss.discord.api.entities.MessageChannel;
+import me.syari.ss.discord.api.entities.User;
+import me.syari.ss.discord.api.events.message.MessageReceivedEvent;
+import me.syari.ss.discord.api.hooks.ListenerAdapter;
 
 import javax.security.auth.login.LoginException;
 
