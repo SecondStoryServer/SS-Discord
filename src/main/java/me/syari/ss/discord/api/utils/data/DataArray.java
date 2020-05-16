@@ -45,16 +45,6 @@ public class DataArray implements Iterable<Object> {
     }
 
 
-    @Nonnull
-    public static DataArray fromJson(@Nonnull Reader json) {
-        try {
-            return new DataArray(mapper.readValue(json, listType));
-        } catch (IOException e) {
-            throw new ParsingException(e);
-        }
-    }
-
-
     public int length() {
         return data.size();
     }

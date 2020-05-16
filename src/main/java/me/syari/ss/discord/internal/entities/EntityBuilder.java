@@ -63,7 +63,6 @@ public class EntityBuilder {
         final DataArray roleArray = guildJson.getArray("roles");
         final DataArray channelArray = guildJson.getArray("channels");
         final DataArray emotesArray = guildJson.getArray("emojis");
-        final DataArray voiceStateArray = guildJson.getArray("voice_states");
         final long ownerId = guildJson.getUnsignedLong("owner_id", 0L);
 
         guildObj.setName(name)
