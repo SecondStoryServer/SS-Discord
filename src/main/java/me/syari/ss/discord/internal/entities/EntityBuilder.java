@@ -1231,14 +1231,14 @@ public class EntityBuilder
             final String coverId = applicationData.getString("cover_image", null);
             final long applicationId = applicationData.getLong("id");
 
-            application = new MessageActivity.Application(name, description, iconId, coverId, applicationId);
+            application = new MessageActivity.Application(applicationId);
         }
         if (activityType == MessageActivity.ActivityType.UNKNOWN)
         {
             LOG.debug("Received an unknown ActivityType, Activity: {}", activityData);
         }
 
-        return new MessageActivity(activityType, partyId, application);
+        return new MessageActivity();
     }
 
     public MessageReaction createMessageReaction(MessageChannel chan, long id, DataObject obj)
