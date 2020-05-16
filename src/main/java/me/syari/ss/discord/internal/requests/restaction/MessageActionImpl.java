@@ -7,7 +7,6 @@ import me.syari.ss.discord.api.exceptions.InsufficientPermissionException;
 import me.syari.ss.discord.api.requests.Request;
 import me.syari.ss.discord.api.requests.Response;
 import me.syari.ss.discord.api.requests.restaction.MessageAction;
-import me.syari.ss.discord.api.utils.AttachmentOption;
 import me.syari.ss.discord.api.utils.data.DataObject;
 import me.syari.ss.discord.internal.entities.Message;
 import me.syari.ss.discord.internal.requests.Method;
@@ -160,21 +159,6 @@ public class MessageActionImpl extends RestActionImpl<Message> implements Messag
     @Nonnull
     @Override
     @CheckReturnValue
-    public MessageActionImpl addFile(@Nonnull final InputStream data, @Nonnull String name, @Nonnull AttachmentOption... options) {
-        checkEdit();
-        Checks.notNull(data, "Data");
-        Checks.notBlank(name, "Name");
-        Checks.noneNull(options, "Options");
-        checkFileAmount();
-        checkPermission();
-        name = applyOptions(name, options);
-        files.put(name, data);
-        return this;
-    }
-
-    @Nonnull
-    @Override
-    @CheckReturnValue
     public MessageActionImpl clearFiles() {
         files.clear();
         clearResources();
@@ -187,16 +171,6 @@ public class MessageActionImpl extends RestActionImpl<Message> implements Messag
     public MessageActionImpl override(final boolean bool) {
         this.override = isEdit() && bool;
         return this;
-    }
-
-    private String applyOptions(String name, AttachmentOption[] options) {
-        for (AttachmentOption opt : options) {
-            if (opt == AttachmentOption.SPOILER) {
-                name = "SPOILER_" + name;
-                break;
-            }
-        }
-        return name;
     }
 
     private void clearResources() {

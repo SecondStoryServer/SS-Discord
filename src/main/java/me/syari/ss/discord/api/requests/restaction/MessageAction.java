@@ -3,7 +3,6 @@ package me.syari.ss.discord.api.requests.restaction;
 import me.syari.ss.discord.api.entities.MessageChannel;
 import me.syari.ss.discord.api.entities.MessageEmbed;
 import me.syari.ss.discord.api.requests.RestAction;
-import me.syari.ss.discord.api.utils.AttachmentOption;
 import me.syari.ss.discord.internal.entities.Message;
 
 import javax.annotation.CheckReturnValue;
@@ -77,11 +76,6 @@ public interface MessageAction extends RestAction<Message>, Appendable {
     @Override
     @CheckReturnValue
     MessageAction append(final char c);
-
-
-    @Nonnull
-    @CheckReturnValue
-    MessageAction addFile(@Nonnull final InputStream data, @Nonnull final String name, @Nonnull AttachmentOption... options);
 
 
     @Nonnull

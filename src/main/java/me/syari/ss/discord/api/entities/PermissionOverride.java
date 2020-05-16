@@ -47,7 +47,4 @@ public interface PermissionOverride extends ISnowflake {
     PermissionOverrideAction getManager();
 
 
-    @Nonnull
-    @CheckReturnValue
-    AuditableRestAction<Void> delete();
 }

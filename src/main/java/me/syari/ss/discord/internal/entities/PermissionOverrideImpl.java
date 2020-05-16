@@ -4,12 +4,9 @@ import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.Permission;
 import me.syari.ss.discord.api.entities.*;
 import me.syari.ss.discord.api.exceptions.InsufficientPermissionException;
-import me.syari.ss.discord.api.requests.restaction.AuditableRestAction;
 import me.syari.ss.discord.api.requests.restaction.PermissionOverrideAction;
 import me.syari.ss.discord.api.utils.MiscUtil;
 import me.syari.ss.discord.internal.JDAImpl;
-import me.syari.ss.discord.internal.requests.Route;
-import me.syari.ss.discord.internal.requests.restaction.AuditableRestActionImpl;
 import me.syari.ss.discord.internal.requests.restaction.PermissionOverrideActionImpl;
 import me.syari.ss.discord.internal.utils.cache.SnowflakeReference;
 
@@ -101,16 +98,6 @@ public class PermissionOverrideImpl implements PermissionOverride {
             });
         }
         return mng.reset();
-    }
-
-    @Nonnull
-    @Override
-    public AuditableRestAction<Void> delete() {
-        if (!getGuild().getSelfMember().hasPermission(getChannel(), Permission.MANAGE_PERMISSIONS))
-            throw new InsufficientPermissionException(getChannel(), Permission.MANAGE_PERMISSIONS);
-
-        Route.CompiledRoute route = Route.Channels.DELETE_PERM_OVERRIDE.compile(channel.getId(), getId());
-        return new AuditableRestActionImpl<>(getJDA(), route);
     }
 
     @Override

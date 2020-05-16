@@ -7,7 +7,6 @@ import me.syari.ss.discord.api.exceptions.VerificationLevelException;
 import me.syari.ss.discord.api.requests.RestAction;
 import me.syari.ss.discord.api.requests.restaction.AuditableRestAction;
 import me.syari.ss.discord.api.requests.restaction.MessageAction;
-import me.syari.ss.discord.api.utils.AttachmentOption;
 import me.syari.ss.discord.api.utils.TimeUtil;
 import me.syari.ss.discord.api.utils.data.DataObject;
 import me.syari.ss.discord.internal.requests.RestActionImpl;
@@ -144,18 +143,6 @@ public class TextChannelImpl extends AbstractChannelImpl<TextChannel, TextChanne
 
         //Call MessageChannel's default
         return TextChannel.super.sendMessage(msg);
-    }
-
-    @Nonnull
-    @Override
-    public MessageAction sendFile(@Nonnull InputStream data, @Nonnull String fileName, @Nonnull AttachmentOption... options) {
-        checkVerification();
-        checkPermission(Permission.MESSAGE_READ);
-        checkPermission(Permission.MESSAGE_WRITE);
-        checkPermission(Permission.MESSAGE_ATTACH_FILES);
-
-        //Call MessageChannel's default method
-        return TextChannel.super.sendFile(data, fileName, options);
     }
 
     @Nonnull

@@ -4,7 +4,6 @@ import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.requests.RestAction;
 import me.syari.ss.discord.api.requests.restaction.AuditableRestAction;
 import me.syari.ss.discord.api.requests.restaction.MessageAction;
-import me.syari.ss.discord.api.utils.AttachmentOption;
 import me.syari.ss.discord.api.utils.MiscUtil;
 import me.syari.ss.discord.api.utils.data.DataArray;
 import me.syari.ss.discord.internal.JDAImpl;
@@ -95,17 +94,6 @@ public interface MessageChannel extends ISnowflake, Formattable {
 
         Route.CompiledRoute route = Route.Messages.SEND_MESSAGE.compile(getId());
         return new MessageActionImpl(getJDA(), route, this).apply(msg);
-    }
-
-
-    @Nonnull
-    @CheckReturnValue
-    default MessageAction sendFile(@Nonnull InputStream data, @Nonnull String fileName, @Nonnull AttachmentOption... options) {
-        Checks.notNull(data, "data InputStream");
-        Checks.notNull(fileName, "fileName");
-
-        Route.CompiledRoute route = Route.Messages.SEND_MESSAGE.compile(getId());
-        return new MessageActionImpl(getJDA(), route, this).addFile(data, fileName, options);
     }
 
 
