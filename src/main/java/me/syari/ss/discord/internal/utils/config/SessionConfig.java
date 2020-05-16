@@ -30,13 +30,6 @@ public class SessionConfig {
         this.largeThreshold = largeThreshold;
     }
 
-    public void setAutoReconnect(boolean autoReconnect) {
-        if (autoReconnect)
-            flags.add(ConfigFlag.AUTO_RECONNECT);
-        else
-            flags.remove(ConfigFlag.AUTO_RECONNECT);
-    }
-
     @Nonnull
     public SessionController getSessionController() {
         return sessionController;
@@ -58,14 +51,6 @@ public class SessionConfig {
 
     public boolean isRetryOnTimeout() {
         return flags.contains(ConfigFlag.RETRY_TIMEOUT);
-    }
-
-    public boolean isBulkDeleteSplittingEnabled() {
-        return flags.contains(ConfigFlag.BULK_DELETE_SPLIT);
-    }
-
-    public boolean isRawEvents() {
-        return flags.contains(ConfigFlag.RAW_EVENTS);
     }
 
     public boolean isRelativeRateLimit() {

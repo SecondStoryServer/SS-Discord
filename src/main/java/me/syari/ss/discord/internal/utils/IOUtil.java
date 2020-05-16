@@ -43,7 +43,7 @@ public class IOUtil {
 
             // Read in the bytes
             int offset = 0;
-            int numRead = 0;
+            int numRead;
             while (offset < bytes.length && (numRead = is.read(bytes, offset, bytes.length - offset)) >= 0) {
                 offset += numRead;
             }
@@ -65,7 +65,7 @@ public class IOUtil {
 
         byte[] buffer = new byte[1024];
         try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
-            int readAmount = 0;
+            int readAmount;
             while ((readAmount = stream.read(buffer)) != -1) {
                 bos.write(buffer, 0, readAmount);
             }
@@ -76,17 +76,6 @@ public class IOUtil {
 
     public static RequestBody createRequestBody(final MediaType contentType, final InputStream stream) {
         return new BufferedRequestBody(Okio.source(stream), contentType);
-    }
-
-    public static short getShortBigEndian(byte[] arr, int offset) {
-        return (short) ((arr[offset] & 0xff) << 8
-                | arr[offset + 1] & 0xff);
-    }
-
-    public static short getShortLittleEndian(byte[] arr, int offset) {
-        // Same as big endian but reversed order of bytes (java uses big endian)
-        return (short) ((arr[offset] & 0xff)
-                | (arr[offset + 1] & 0xff) << 8);
     }
 
     public static int getIntBigEndian(byte[] arr, int offset) {

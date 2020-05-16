@@ -63,12 +63,6 @@ public class JDABuilder {
         this.token = token;
     }
 
-    @Nonnull
-    public JDABuilder setActivity(@Nullable Activity activity) {
-        this.activity = activity;
-        return this;
-    }
-
 
     @Nonnull
     @SuppressWarnings("ConstantConditions") // we have to enforce the nonnull at runtime

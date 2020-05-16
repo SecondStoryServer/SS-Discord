@@ -11,7 +11,6 @@ import me.syari.ss.discord.internal.utils.PermissionUtil;
 import me.syari.ss.discord.internal.utils.cache.SnowflakeReference;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
@@ -28,8 +27,6 @@ public class MemberImpl implements Member {
 
     private String nickname;
     private long joinDate, boostDate;
-    private List<Activity> activities = null;
-    private OnlineStatus onlineStatus = OnlineStatus.OFFLINE;
 
     public MemberImpl(GuildImpl guild, User user) {
         this.api = (JDAImpl) user.getJDA();
@@ -61,24 +58,6 @@ public class MemberImpl implements Member {
     @Override
     public OffsetDateTime getTimeJoined() {
         return OffsetDateTime.ofInstant(Instant.ofEpochMilli(joinDate), OFFSET);
-    }
-
-    @Nullable
-    @Override
-    public OffsetDateTime getTimeBoosted() {
-        return boostDate != 0 ? OffsetDateTime.ofInstant(Instant.ofEpochMilli(boostDate), OFFSET) : null;
-    }
-
-    @Nonnull
-    @Override
-    public List<Activity> getActivities() {
-        return activities == null || activities.isEmpty() ? Collections.emptyList() : activities;
-    }
-
-    @Nonnull
-    @Override
-    public OnlineStatus getOnlineStatus() {
-        return onlineStatus;
     }
 
     @Override
@@ -132,11 +111,6 @@ public class MemberImpl implements Member {
     }
 
     @Override
-    public boolean canInteract(@Nonnull Member member) {
-        return PermissionUtil.canInteract(this, member);
-    }
-
-    @Override
     public boolean canInteract(@Nonnull Role role) {
         return PermissionUtil.canInteract(this, role);
     }
@@ -169,10 +143,6 @@ public class MemberImpl implements Member {
         this.boostDate = boostDate;
     }
 
-    public void setActivities(List<Activity> activities) {
-        this.activities = Collections.unmodifiableList(activities);
-    }
-
     public void setOnlineStatus(ClientType type, OnlineStatus status) {
         if (this.clientStatus == null || type == ClientType.UNKNOWN || type == null)
             return;
@@ -180,10 +150,6 @@ public class MemberImpl implements Member {
             this.clientStatus.remove(type);
         else
             this.clientStatus.put(type, status);
-    }
-
-    public void setOnlineStatus(OnlineStatus onlineStatus) {
-        this.onlineStatus = onlineStatus;
     }
 
     public Set<Role> getRoleSet() {

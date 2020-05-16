@@ -39,11 +39,6 @@ public class PresenceImpl implements Presence {
         return status;
     }
 
-    @Override
-    public Activity getActivity() {
-        return activity;
-    }
-
 
     /* -- Public Setters -- */
 
@@ -51,11 +46,6 @@ public class PresenceImpl implements Presence {
     @Override
     public void setStatus(OnlineStatus status) {
         setPresence(status, activity, idle);
-    }
-
-    @Override
-    public void setActivity(Activity game) {
-        setPresence(status, game);
     }
 
     @Override
@@ -79,22 +69,16 @@ public class PresenceImpl implements Presence {
         this.activity = gameObj == null ? null : activity;
     }
 
-    @Override
-    public void setPresence(OnlineStatus status, Activity activity) {
-        setPresence(status, activity, idle);
-    }
-
 
     /* -- Impl Setters -- */
 
 
-    public PresenceImpl setCacheStatus(OnlineStatus status) {
+    public void setCacheStatus(OnlineStatus status) {
         if (status == null)
             throw new NullPointerException("Null OnlineStatus is not allowed.");
         if (status == OnlineStatus.OFFLINE)
             status = OnlineStatus.INVISIBLE;
         this.status = status;
-        return this;
     }
 
     public PresenceImpl setCacheActivity(Activity game) {

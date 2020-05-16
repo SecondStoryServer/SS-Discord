@@ -23,13 +23,7 @@ public interface Role extends IMentionable, IPermissionHolder, Comparable<Role> 
     String getName();
 
 
-    boolean isMentionable();
-
-
     long getPermissionsRaw();
-
-
-    int getColorRaw();
 
 
     boolean isPublicRole();

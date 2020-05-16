@@ -8,22 +8,15 @@ import java.util.Optional;
 
 
 public class ErrorResponseException extends RuntimeException {
-    private final ErrorResponse errorResponse;
     private final Response response;
 
 
-    private ErrorResponseException(ErrorResponse errorResponse, Response response, int code, String meaning) {
+    private ErrorResponseException(Response response, int code, String meaning) {
         super(code + ": " + meaning);
 
         this.response = response;
         if (response != null && response.getException() != null)
             initCause(response.getException());
-        this.errorResponse = errorResponse;
-    }
-
-
-    public ErrorResponse getErrorResponse() {
-        return errorResponse;
     }
 
 
@@ -60,7 +53,7 @@ public class ErrorResponseException extends RuntimeException {
             meaning = response.getString();
         }
 
-        return new ErrorResponseException(errorResponse, response, code, meaning);
+        return new ErrorResponseException(response, code, meaning);
     }
 
 

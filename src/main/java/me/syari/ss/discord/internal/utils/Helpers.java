@@ -101,9 +101,4 @@ public final class Helpers {
         return true;
     }
 
-    public static boolean deepEqualsUnordered(Collection<?> first, Collection<?> second) {
-        if (first == second) return true;
-        if (first == null || second == null) return false;
-        return first.size() == second.size() && second.containsAll(first);
-    }
 }

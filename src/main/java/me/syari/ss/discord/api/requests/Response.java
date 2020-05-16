@@ -88,16 +88,6 @@ public class Response implements Closeable {
     }
 
     @Nullable
-    public okhttp3.Response getRawResponse() {
-        return this.rawResponse;
-    }
-
-    @Nonnull
-    public Set<String> getCFRays() {
-        return cfRays;
-    }
-
-    @Nullable
     public Exception getException() {
         return exception;
     }

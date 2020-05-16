@@ -26,17 +26,6 @@ public interface CacheView<T> extends Iterable<T> {
     ClosableIterator<T> lockedIterator();
 
 
-    @Nullable
-    default <R> R applyStream(@Nonnull Function<? super Stream<T>, ? extends R> action) {
-        Checks.notNull(action, "Action");
-        try (ClosableIterator<T> it = lockedIterator()) {
-            Spliterator<T> spliterator = Spliterators.spliterator(it, size(), Spliterator.IMMUTABLE | Spliterator.NONNULL);
-            Stream<T> stream = StreamSupport.stream(spliterator, false);
-            return action.apply(stream);
-        }
-    }
-
-
     long size();
 
 

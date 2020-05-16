@@ -93,16 +93,6 @@ public class Request<T> {
         return api;
     }
 
-    @Nonnull
-    public RestAction<T> getRestAction() {
-        return restAction;
-    }
-
-    @Nonnull
-    public Consumer<? super T> getOnSuccess() {
-        return onSuccess;
-    }
-
     public boolean runChecks() {
         return checks == null || checks.getAsBoolean();
     }

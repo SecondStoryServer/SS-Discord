@@ -121,19 +121,4 @@ public interface Message extends ISnowflake, Formattable {
     }
 
 
-    class Attachment implements ISnowflake {
-        private final long id;
-
-        public Attachment(long id) {
-            this.id = id;
-        }
-
-
-        @Override
-        public long getIdLong() {
-            return id;
-        }
-
-
-    }
 }

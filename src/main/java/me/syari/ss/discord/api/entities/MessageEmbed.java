@@ -26,8 +26,6 @@ public class MessageEmbed implements SerializableData {
     public static final int EMBED_MAX_LENGTH_BOT = 6000;
 
 
-    public static final int EMBED_MAX_LENGTH_CLIENT = 2000;
-
     protected final Object mutex = new Object();
 
     protected final String url;

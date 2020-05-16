@@ -22,10 +22,6 @@ public class ChainedClosableIterator<T> implements ClosableIterator<T> {
         this.generator = generator;
     }
 
-    public Set<T> getItems() {
-        return items;
-    }
-
     @Override
     public void close() {
         if (currentIterator != null)

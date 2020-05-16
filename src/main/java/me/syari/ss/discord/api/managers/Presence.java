@@ -18,20 +18,10 @@ public interface Presence {
     OnlineStatus getStatus();
 
 
-    @Nullable
-    Activity getActivity();
-
-
     void setStatus(@Nullable OnlineStatus status);
 
 
-    void setActivity(@Nullable Activity activity);
-
-
     void setPresence(@Nullable OnlineStatus status, @Nullable Activity activity, boolean idle);
-
-
-    void setPresence(@Nullable OnlineStatus status, @Nullable Activity activity);
 
 
 }

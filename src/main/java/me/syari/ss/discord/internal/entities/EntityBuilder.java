@@ -439,15 +439,12 @@ public class EntityBuilder {
 
         DataArray activityArray = !cacheGame || presenceJson.isNull("activities") ? null : presenceJson.getArray("activities");
         DataObject clientStatusJson = !cacheStatus || presenceJson.isNull("client_status") ? null : presenceJson.getObject("client_status");
-        OnlineStatus onlineStatus = OnlineStatus.fromKey(presenceJson.getString("status"));
         List<Activity> activities = new ArrayList<>();
-        boolean parsedActivity = false;
 
         if (cacheGame && activityArray != null) {
             for (int i = 0; i < activityArray.length(); i++) {
                 try {
                     activities.add(createActivity(activityArray.getObject(i)));
-                    parsedActivity = true;
                 } catch (Exception ex) {
                     String userId;
                     userId = member.getUser().getId();
@@ -458,9 +455,6 @@ public class EntityBuilder {
                 }
             }
         }
-        if (cacheGame && parsedActivity)
-            member.setActivities(activities);
-        member.setOnlineStatus(onlineStatus);
         if (clientStatusJson != null) {
             for (String key : clientStatusJson.keys()) {
                 ClientType type = ClientType.fromKey(key);
@@ -733,10 +727,7 @@ public class EntityBuilder {
         role.setName(roleJson.getString("name"))
                 .setRawPosition(roleJson.getInt("position"))
                 .setRawPermissions(roleJson.getLong("permissions"))
-                .setManaged(roleJson.getBoolean("managed"))
-                .setHoisted(roleJson.getBoolean("hoist"))
-                .setColor(color == 0 ? Role.DEFAULT_COLOR_RAW : color)
-                .setMentionable(roleJson.getBoolean("mentionable"));
+                .setManaged(roleJson.getBoolean("managed"));
         if (playbackCache)
             getJDA().getEventCache().playbackCache(EventCache.Type.ROLE, id);
         return role;

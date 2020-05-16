@@ -35,9 +35,7 @@ public class RoleImpl implements Role {
 
     private String name;
     private boolean managed;
-    private boolean mentionable;
     private long rawPermissions;
-    private int color;
     private int rawPosition;
 
     public RoleImpl(long id, Guild guild) {
@@ -74,11 +72,6 @@ public class RoleImpl implements Role {
     }
 
     @Override
-    public boolean isMentionable() {
-        return mentionable;
-    }
-
-    @Override
     public long getPermissionsRaw() {
         return rawPermissions;
     }
@@ -87,11 +80,6 @@ public class RoleImpl implements Role {
     @Override
     public EnumSet<Permission> getPermissions() {
         return Permission.getPermissions(rawPermissions);
-    }
-
-    @Override
-    public int getColorRaw() {
-        return color;
     }
 
     @Override
@@ -238,22 +226,8 @@ public class RoleImpl implements Role {
         return this;
     }
 
-    public RoleImpl setColor(int color) {
-        this.color = color;
-        return this;
-    }
-
     public RoleImpl setManaged(boolean managed) {
         this.managed = managed;
-        return this;
-    }
-
-    public RoleImpl setHoisted(boolean hoisted) {
-        return this;
-    }
-
-    public RoleImpl setMentionable(boolean mentionable) {
-        this.mentionable = mentionable;
         return this;
     }
 

@@ -148,11 +148,11 @@ public class JDAImpl implements JDA {
         return guildSetupController;
     }
 
-    public int login(ShardInfo shardInfo, Compression compression, boolean validateToken) throws LoginException {
-        return login(null, shardInfo, compression, validateToken);
+    public void login(ShardInfo shardInfo, Compression compression, boolean validateToken) throws LoginException {
+        login(null, shardInfo, compression, validateToken);
     }
 
-    public int login(String gatewayUrl, ShardInfo shardInfo, Compression compression, boolean validateToken) throws LoginException {
+    public void login(String gatewayUrl, ShardInfo shardInfo, Compression compression, boolean validateToken) throws LoginException {
         this.shardInfo = shardInfo;
         threadConfig.init(this::getIdentifierString);
         requester.getRateLimiter().init();
@@ -190,7 +190,6 @@ public class JDAImpl implements JDA {
         if (shutdownHook != null)
             Runtime.getRuntime().addShutdownHook(shutdownHook);
 
-        return shardInfo == null ? -1 : shardInfo.getShardTotal();
     }
 
     public String getGateway() {

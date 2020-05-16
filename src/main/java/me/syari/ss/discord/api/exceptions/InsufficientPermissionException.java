@@ -46,22 +46,6 @@ public class InsufficientPermissionException extends PermissionException {
     }
 
 
-    public long getGuildId() {
-        return guildId;
-    }
-
-
-    public long getChannelId() {
-        return channelId;
-    }
-
-
-    @Nonnull
-    public ChannelType getChannelType() {
-        return channelType;
-    }
-
-
     @Nullable
     public Guild getGuild(@Nonnull JDA api) {
         Checks.notNull(api, "JDA");

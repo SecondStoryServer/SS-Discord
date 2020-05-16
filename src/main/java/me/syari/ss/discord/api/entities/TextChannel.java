@@ -7,8 +7,6 @@ import java.util.Formatter;
 
 public interface TextChannel extends GuildChannel, MessageChannel, IMentionable {
 
-    int MAX_SLOWMODE = 21600;
-
 
     @Override
     default void formatTo(Formatter formatter, int flags, int width, int precision) {

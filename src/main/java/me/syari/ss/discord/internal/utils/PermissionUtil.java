@@ -3,28 +3,11 @@ package me.syari.ss.discord.internal.utils;
 import me.syari.ss.discord.api.Permission;
 import me.syari.ss.discord.api.entities.*;
 import me.syari.ss.discord.internal.entities.GuildImpl;
-import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class PermissionUtil {
-
-    public static boolean canInteract(Member issuer, Member target) {
-        Checks.notNull(issuer, "Issuer Member");
-        Checks.notNull(target, "Target Member");
-
-        Guild guild = issuer.getGuild();
-        if (!guild.equals(target.getGuild()))
-            throw new IllegalArgumentException("Provided members must both be Member objects of the same Guild!");
-        if (issuer.isOwner())
-            return true;
-        if (target.isOwner())
-            return false;
-        List<Role> issuerRoles = issuer.getRoles();
-        List<Role> targetRoles = target.getRoles();
-        return !issuerRoles.isEmpty() && (targetRoles.isEmpty() || canInteract(issuerRoles.get(0), targetRoles.get(0)));
-    }
 
 
     public static boolean canInteract(Member issuer, Role target) {
@@ -48,59 +31,6 @@ public class PermissionUtil {
         if (!issuer.getGuild().equals(target.getGuild()))
             throw new IllegalArgumentException("The 2 Roles are not from same Guild!");
         return target.getPosition() < issuer.getPosition();
-    }
-
-
-    public static boolean canInteract(Member issuer, Emote emote) {
-        Checks.notNull(issuer, "Issuer Member");
-        Checks.notNull(emote, "Target Emote");
-
-        if (!issuer.getGuild().equals(emote.getGuild()))
-            throw new IllegalArgumentException("The issuer and target are not in the same Guild");
-
-        // We don't need to check based on the fact it is animated if it's a BOT account
-        // because BOT accounts cannot have nitro, and have access to animated Emotes naturally.
-        if (emote.isAnimated() && !issuer.getUser().isBot()) {
-            // This is a currently logged in client, meaning we can check if they have nitro or not.
-            // If this isn't the currently logged in account, we just check it like a normal emote,
-            // since there is no way to verify if they have nitro or not.
-            if (issuer.getUser() instanceof SelfUser) {
-                // If they don't have nitro, we immediately return
-                // false, otherwise we proceed with the remaining checks.
-                return false;
-            }
-        }
-
-        return emote.canProvideRoles() && (emote.getRoles().isEmpty() // Emote restricted to roles -> check if the issuer has them
-                || CollectionUtils.containsAny(issuer.getRoles(), emote.getRoles()));
-    }
-
-
-    public static boolean canInteract(User issuer, Emote emote, MessageChannel channel, boolean botOverride) {
-        Checks.notNull(issuer, "Issuer Member");
-        Checks.notNull(emote, "Target Emote");
-        Checks.notNull(channel, "Target Channel");
-
-        if (emote.getGuild() == null || !emote.getGuild().isMember(issuer))
-            return false; // cannot use an emote if you're not in its guild
-        Member member = emote.getGuild().getMemberById(issuer.getIdLong());
-        if (!canInteract(member, emote))
-            return false;
-        // external means it is available outside of its own guild - works for bots or if its managed
-        // currently we cannot check whether other users have nitro, we assume no here
-        final boolean external = emote.isManaged() || (issuer.isBot() && botOverride);
-        if (channel.getType() == ChannelType.TEXT) {
-            TextChannel text = (TextChannel) channel;
-            member = text.getGuild().getMemberById(issuer.getIdLong());
-            return emote.getGuild().equals(text.getGuild()) // within the same guild
-                    || (external && member != null && member.hasPermission(text, Permission.MESSAGE_EXT_EMOJI)); // in different guild
-        }
-        return external; // In Group or Private it only needs to be external
-    }
-
-
-    public static boolean canInteract(User issuer, Emote emote, MessageChannel channel) {
-        return canInteract(issuer, emote, channel, true);
     }
 
 
@@ -202,38 +132,6 @@ public class PermissionUtil {
         else if (!isApplied(permissions, Permission.VIEW_CHANNEL.getRawValue()))
             return 0;
         return permissions;
-    }
-
-
-    public static long getExplicitPermission(Member member) {
-        Checks.notNull(member, "Member");
-
-        final Guild guild = member.getGuild();
-        long permission = guild.getPublicRole().getPermissionsRaw();
-
-        for (Role role : member.getRoles())
-            permission |= role.getPermissionsRaw();
-
-        return permission;
-    }
-
-
-    public static long getExplicitPermission(GuildChannel channel, Member member) {
-        Checks.notNull(channel, "Channel");
-        Checks.notNull(member, "Member");
-
-        final Guild guild = member.getGuild();
-        checkGuild(channel.getGuild(), guild, "Member");
-
-        long permission = getExplicitPermission(member);
-
-        AtomicLong allow = new AtomicLong(0);
-        AtomicLong deny = new AtomicLong(0);
-
-        // populates allow/deny
-        getExplicitOverrides(channel, member, allow, deny);
-
-        return apply(permission, allow.get(), deny.get());
     }
 
 

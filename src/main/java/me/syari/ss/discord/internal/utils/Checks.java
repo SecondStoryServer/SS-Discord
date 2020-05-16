@@ -48,18 +48,6 @@ public class Checks {
             throw new IllegalArgumentException(name + " may not contain blanks");
     }
 
-    public static void notEmpty(final Collection<?> argument, final String name) {
-        notNull(argument, name);
-        if (argument.isEmpty())
-            throw new IllegalArgumentException(name + " may not be empty");
-    }
-
-    public static void notEmpty(final Object[] argument, final String name) {
-        notNull(argument, name);
-        if (argument.length == 0)
-            throw new IllegalArgumentException(name + " may not be empty");
-    }
-
     public static void noneNull(final Collection<?> argument, final String name) {
         notNull(argument, name);
         argument.forEach(it -> notNull(it, name));
@@ -70,31 +58,6 @@ public class Checks {
         for (Object it : argument) {
             notNull(it, name);
         }
-    }
-
-    public static <T extends CharSequence> void noneEmpty(final Collection<T> argument, final String name) {
-        notNull(argument, name);
-        argument.forEach(it -> notEmpty(it, name));
-    }
-
-    public static <T extends CharSequence> void noneBlank(final Collection<T> argument, final String name) {
-        notNull(argument, name);
-        argument.forEach(it -> notBlank(it, name));
-    }
-
-    public static <T extends CharSequence> void noneContainBlanks(final Collection<T> argument, final String name) {
-        notNull(argument, name);
-        argument.forEach(it -> noWhitespace(it, name));
-    }
-
-    public static void positive(final int n, final String name) {
-        if (n <= 0)
-            throw new IllegalArgumentException(name + " may not be negative or zero");
-    }
-
-    public static void positive(final long n, final String name) {
-        if (n <= 0)
-            throw new IllegalArgumentException(name + " may not be negative or zero");
     }
 
     public static void notNegative(final int n, final String name) {

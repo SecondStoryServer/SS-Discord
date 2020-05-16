@@ -19,17 +19,11 @@ public class EncodingUtil {
         String[] codePoints = input.substring(2).split("\\s*U\\+\\s*");
         StringBuilder encoded = new StringBuilder();
         for (String part : codePoints) {
-            String utf16 = decodeCodepoint(part, 16);
+            String utf16 = decodeCodepoint(part);
             String urlEncoded = encodeUTF8(utf16);
             encoded.append(urlEncoded);
         }
         return encoded.toString();
-    }
-
-    public static String decodeCodepoint(String codepoint) {
-        if (!codepoint.startsWith("U+"))
-            throw new IllegalArgumentException("Invalid format");
-        return decodeCodepoint(codepoint.substring(2), 16);
     }
 
     public static String encodeCodepoints(String unicode) {
@@ -38,8 +32,8 @@ public class EncodingUtil {
                 .collect(Collectors.joining());
     }
 
-    private static String decodeCodepoint(String hex, int radix) {
-        int codePoint = Integer.parseUnsignedInt(hex, radix);
+    private static String decodeCodepoint(String hex) {
+        int codePoint = Integer.parseUnsignedInt(hex, 16);
         return String.valueOf(Character.toChars(codePoint));
     }
 

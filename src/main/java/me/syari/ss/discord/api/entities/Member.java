@@ -9,7 +9,6 @@ import java.time.OffsetDateTime;
 import java.util.List;
 
 
-@SuppressWarnings("ALL")
 public interface Member extends IMentionable, IPermissionHolder, IFakeable {
 
     @Nonnull
@@ -29,18 +28,6 @@ public interface Member extends IMentionable, IPermissionHolder, IFakeable {
 
 
     @Nullable
-    OffsetDateTime getTimeBoosted();
-
-
-    @Nonnull
-    List<Activity> getActivities();
-
-
-    @Nonnull
-    OnlineStatus getOnlineStatus();
-
-
-    @Nullable
     String getNickname();
 
 
@@ -50,9 +37,6 @@ public interface Member extends IMentionable, IPermissionHolder, IFakeable {
 
     @Nonnull
     List<Role> getRoles();
-
-
-    boolean canInteract(@Nonnull Member member);
 
 
     boolean canInteract(@Nonnull Role role);
