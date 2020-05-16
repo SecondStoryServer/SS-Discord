@@ -22,8 +22,6 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAccessor;
 import java.util.*;
 import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 public class EntityBuilder {
     public static final Logger LOG = JDALogger.getLog(EntityBuilder.class);
@@ -394,11 +392,10 @@ public class EntityBuilder {
             Guild guild = guildChannel.getGuild();
             MemberImpl cachedMember = (MemberImpl) guild.getMemberById(authorId);
             // Update member cache with new information if needed
-            if (cachedMember == null || cachedMember.isIncomplete() || !getJDA().isGuildSubscriptions()) {
+            if (cachedMember == null) {
                 DataObject memberJson = jsonObject.getObject("member");
                 memberJson.put("user", author);
-                if (cachedMember == null)
-                    LOG.trace("Initializing member from message create {}", memberJson);
+                LOG.trace("Initializing member from message create {}", memberJson);
                 member = createMember((GuildImpl) guild, memberJson);
             } else {
                 member = cachedMember;

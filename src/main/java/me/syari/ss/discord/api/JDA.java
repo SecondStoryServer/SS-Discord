@@ -5,7 +5,6 @@ import me.syari.ss.discord.api.hooks.IEventManager;
 import me.syari.ss.discord.api.hooks.ListenerAdapter;
 import me.syari.ss.discord.api.managers.Presence;
 import me.syari.ss.discord.api.utils.cache.SnowflakeCacheView;
-import me.syari.ss.discord.internal.utils.Checks;
 import okhttp3.OkHttpClient;
 
 import javax.annotation.Nonnull;
@@ -183,16 +182,6 @@ public interface JDA {
     @Nullable
     default Role getRoleById(long id) {
         return getRoleCache().getElementById(id);
-    }
-
-
-    @Nullable
-    default GuildChannel getGuildChannelById(@Nonnull ChannelType type, long id) {
-        Checks.notNull(type, "ChannelType");
-        if (type == ChannelType.TEXT) {
-            return getTextChannelById(id);
-        }
-        return null;
     }
 
 

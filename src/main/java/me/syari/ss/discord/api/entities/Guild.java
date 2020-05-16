@@ -1,18 +1,12 @@
 package me.syari.ss.discord.api.entities;
 
-import me.syari.ss.discord.annotations.DeprecatedSince;
-import me.syari.ss.discord.annotations.ForRemoval;
-import me.syari.ss.discord.annotations.ReplaceWith;
 import me.syari.ss.discord.api.JDA;
-import me.syari.ss.discord.api.requests.RestAction;
 import me.syari.ss.discord.api.utils.cache.MemberCacheView;
 import me.syari.ss.discord.api.utils.cache.SnowflakeCacheView;
 import me.syari.ss.discord.api.utils.cache.SortedSnowflakeCacheView;
 
-import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Set;
 
 
 public interface Guild extends ISnowflake {
