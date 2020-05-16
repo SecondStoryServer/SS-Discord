@@ -51,6 +51,4 @@ public interface GuildVoiceState
     boolean inVoiceChannel();
 
 
-    @Nullable
-    String getSessionId();
 }

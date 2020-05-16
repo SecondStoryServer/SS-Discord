@@ -3,7 +3,6 @@ package me.syari.ss.discord.api.entities;
 
 import me.syari.ss.discord.api.requests.RestAction;
 import me.syari.ss.discord.api.requests.restaction.AuditableRestAction;
-import me.syari.ss.discord.api.requests.restaction.ChannelAction;
 import me.syari.ss.discord.api.requests.restaction.WebhookAction;
 import me.syari.ss.discord.api.utils.MiscUtil;
 import me.syari.ss.discord.internal.utils.Checks;
@@ -32,15 +31,7 @@ public interface TextChannel extends GuildChannel, MessageChannel, IMentionable
     
     int getSlowmode();
 
-    @Nonnull
-    @Override
-    ChannelAction<TextChannel> createCopy(@Nonnull Guild guild);
 
-    @Nonnull
-    @Override
-    ChannelAction<TextChannel> createCopy();
-
-    
     @Nonnull
     @CheckReturnValue
     RestAction<List<Webhook>> retrieveWebhooks();

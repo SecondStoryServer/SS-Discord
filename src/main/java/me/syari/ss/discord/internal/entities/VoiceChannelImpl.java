@@ -4,9 +4,7 @@ package me.syari.ss.discord.internal.entities;
 
 import gnu.trove.map.TLongObjectMap;
 import me.syari.ss.discord.api.entities.*;
-import me.syari.ss.discord.api.requests.restaction.ChannelAction;
 import me.syari.ss.discord.api.utils.MiscUtil;
-import me.syari.ss.discord.internal.utils.Checks;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -55,40 +53,6 @@ public class VoiceChannelImpl extends AbstractChannelImpl<VoiceChannel, VoiceCha
     public List<Member> getMembers()
     {
         return Collections.unmodifiableList(new ArrayList<>(connectedMembers.valueCollection()));
-    }
-
-    @Override
-    public int getPosition()
-    {
-        List<VoiceChannel> channels = getGuild().getVoiceChannels();
-        for (int i = 0; i < channels.size(); i++)
-        {
-            if (equals(channels.get(i)))
-                return i;
-        }
-        throw new AssertionError("Somehow when determining position we never found the VoiceChannel in the Guild's channels? wtf?");
-    }
-
-    @Nonnull
-    @Override
-    public ChannelAction<VoiceChannel> createCopy(@Nonnull Guild guild)
-    {
-        Checks.notNull(guild, "Guild");
-        ChannelAction<VoiceChannel> action = guild.createVoiceChannel(name).setBitrate(bitrate).setUserlimit(userLimit);
-        if (guild.equals(getGuild()))
-        {
-            Category parent = getParent();
-            if (parent != null)
-                action.setParent(parent);
-            for (PermissionOverride o : overrides.valueCollection())
-            {
-                if (o.isMemberOverride())
-                    action.addPermissionOverride(o.getMember(), o.getAllowedRaw(), o.getDeniedRaw());
-                else
-                    action.addPermissionOverride(o.getRole(), o.getAllowedRaw(), o.getDeniedRaw());
-            }
-        }
-        return action;
     }
 
     @Override

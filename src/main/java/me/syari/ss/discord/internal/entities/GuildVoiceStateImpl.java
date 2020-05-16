@@ -52,12 +52,6 @@ public class GuildVoiceStateImpl implements GuildVoiceState
     }
 
     @Override
-    public String getSessionId()
-    {
-        return sessionId;
-    }
-
-    @Override
     public boolean isMuted()
     {
         return isSelfMuted() || isGuildMuted();

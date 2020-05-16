@@ -3,10 +3,8 @@
 package me.syari.ss.discord.internal.entities;
 
 import me.syari.ss.discord.api.entities.*;
-import me.syari.ss.discord.api.requests.restaction.ChannelAction;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -36,27 +34,6 @@ public class StoreChannelImpl extends AbstractChannelImpl<StoreChannel, StoreCha
     public List<Member> getMembers()
     {
         return Collections.emptyList();
-    }
-
-    @Override
-    public int getPosition()
-    {
-        List<GuildChannel> channels = new ArrayList<>(getGuild().getTextChannels());
-        channels.addAll(getGuild().getStoreChannels());
-        Collections.sort(channels);
-        for (int i = 0; i < channels.size(); i++)
-        {
-            if (equals(channels.get(i)))
-                return i;
-        }
-        throw new AssertionError("Somehow when determining position we never found the StoreChannel in the Guild's channels? wtf?");
-    }
-
-    @Nonnull
-    @Override
-    public ChannelAction<StoreChannel> createCopy(@Nonnull Guild guild)
-    {
-        throw new UnsupportedOperationException("Bots cannot create store channels");
     }
 
     @Override

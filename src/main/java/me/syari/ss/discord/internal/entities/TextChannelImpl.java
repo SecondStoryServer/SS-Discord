@@ -9,7 +9,6 @@ import me.syari.ss.discord.api.exceptions.InsufficientPermissionException;
 import me.syari.ss.discord.api.exceptions.VerificationLevelException;
 import me.syari.ss.discord.api.requests.RestAction;
 import me.syari.ss.discord.api.requests.restaction.AuditableRestAction;
-import me.syari.ss.discord.api.requests.restaction.ChannelAction;
 import me.syari.ss.discord.api.requests.restaction.MessageAction;
 import me.syari.ss.discord.api.requests.restaction.WebhookAction;
 import me.syari.ss.discord.api.utils.AttachmentOption;
@@ -269,44 +268,6 @@ public class TextChannelImpl extends AbstractChannelImpl<TextChannel, TextChanne
         return Collections.unmodifiableList(getGuild().getMembersView().stream()
                   .filter(m -> m.hasPermission(this, Permission.MESSAGE_READ))
                   .collect(Collectors.toList()));
-    }
-
-    @Override
-    public int getPosition()
-    {
-        //We call getTextChannels instead of directly accessing the GuildImpl.getTextChannelsView because
-        // getTextChannels does the sorting logic.
-        List<GuildChannel> channels = new ArrayList<>(getGuild().getTextChannels());
-        channels.addAll(getGuild().getStoreChannels());
-        Collections.sort(channels);
-        for (int i = 0; i < channels.size(); i++)
-        {
-            if (equals(channels.get(i)))
-                return i;
-        }
-        throw new AssertionError("Somehow when determining position we never found the TextChannel in the Guild's channels? wtf?");
-    }
-
-    @Nonnull
-    @Override
-    public ChannelAction<TextChannel> createCopy(@Nonnull Guild guild)
-    {
-        Checks.notNull(guild, "Guild");
-        ChannelAction<TextChannel> action = guild.createTextChannel(name).setNSFW(nsfw).setTopic(topic).setSlowmode(slowmode);
-        if (guild.equals(getGuild()))
-        {
-            Category parent = getParent();
-            if (parent != null)
-                action.setParent(parent);
-            for (PermissionOverride o : overrides.valueCollection())
-            {
-                if (o.isMemberOverride())
-                    action.addPermissionOverride(o.getMember(), o.getAllowedRaw(), o.getDeniedRaw());
-                else
-                    action.addPermissionOverride(o.getRole(), o.getAllowedRaw(), o.getDeniedRaw());
-            }
-        }
-        return action;
     }
 
     @Nonnull

@@ -8,30 +8,15 @@ import me.syari.ss.discord.api.Permission;
 import me.syari.ss.discord.api.entities.*;
 import me.syari.ss.discord.api.exceptions.InsufficientPermissionException;
 import me.syari.ss.discord.api.managers.ChannelManager;
-import me.syari.ss.discord.api.requests.RestAction;
-import me.syari.ss.discord.api.requests.restaction.AuditableRestAction;
-import me.syari.ss.discord.api.requests.restaction.ChannelAction;
-import me.syari.ss.discord.api.requests.restaction.InviteAction;
-import me.syari.ss.discord.api.requests.restaction.PermissionOverrideAction;
 import me.syari.ss.discord.api.utils.MiscUtil;
-import me.syari.ss.discord.api.utils.data.DataArray;
 import me.syari.ss.discord.internal.JDAImpl;
-import me.syari.ss.discord.internal.managers.ChannelManagerImpl;
-import me.syari.ss.discord.internal.requests.RestActionImpl;
-import me.syari.ss.discord.internal.requests.Route;
-import me.syari.ss.discord.internal.requests.restaction.AuditableRestActionImpl;
-import me.syari.ss.discord.internal.requests.restaction.InviteActionImpl;
-import me.syari.ss.discord.internal.requests.restaction.PermissionOverrideActionImpl;
 import me.syari.ss.discord.internal.utils.Checks;
 import me.syari.ss.discord.internal.utils.cache.SnowflakeReference;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.stream.Collectors;
 
 public abstract class AbstractChannelImpl<T extends GuildChannel, M extends AbstractChannelImpl<T, M>> implements GuildChannel
 {
@@ -64,17 +49,6 @@ public abstract class AbstractChannelImpl<T extends GuildChannel, M extends Abst
         if (getPositionRaw() != o.getPositionRaw())                   // if position matters
             return Integer.compare(getPositionRaw(), o.getPositionRaw());
         return Long.compareUnsigned(id, o.getIdLong());               // last resort by id
-    }
-
-    @Nonnull
-    @Override
-    public abstract ChannelAction<T> createCopy(@Nonnull Guild guild);
-
-    @Nonnull
-    @Override
-    public ChannelAction<T> createCopy()
-    {
-        return createCopy(getGuild());
     }
 
     @Nonnull
@@ -123,103 +97,6 @@ public abstract class AbstractChannelImpl<T extends GuildChannel, M extends Abst
     public List<PermissionOverride> getPermissionOverrides()
     {
         return Arrays.asList(overrides.values(new PermissionOverride[overrides.size()]));
-    }
-
-    @Nonnull
-    @Override
-    public List<PermissionOverride> getMemberPermissionOverrides()
-    {
-        return Collections.unmodifiableList(getPermissionOverrides().stream()
-                .filter(PermissionOverride::isMemberOverride)
-                .collect(Collectors.toList()));
-    }
-
-    @Nonnull
-    @Override
-    public List<PermissionOverride> getRolePermissionOverrides()
-    {
-        return Collections.unmodifiableList(getPermissionOverrides().stream()
-                .filter(PermissionOverride::isRoleOverride)
-                .collect(Collectors.toList()));
-    }
-
-    @Nonnull
-    @Override
-    public ChannelManager getManager()
-    {
-        ChannelManager mng = manager;
-        if (mng == null)
-        {
-            mng = MiscUtil.locked(mngLock, () ->
-            {
-                if (manager == null)
-                    manager = new ChannelManagerImpl(this);
-                return manager;
-            });
-        }
-        return mng;
-    }
-
-    @Nonnull
-    @Override
-    public AuditableRestAction<Void> delete()
-    {
-        checkPermission(Permission.MANAGE_CHANNEL);
-
-        Route.CompiledRoute route = Route.Channels.DELETE_CHANNEL.compile(getId());
-        return new AuditableRestActionImpl<>(getJDA(), route);
-    }
-
-    @Nonnull
-    @Override
-    public PermissionOverrideAction createPermissionOverride(@Nonnull IPermissionHolder permissionHolder)
-    {
-        Checks.notNull(permissionHolder, "PermissionHolder");
-        if (getPermissionOverride(permissionHolder) != null)
-            throw new IllegalStateException("Provided member already has a PermissionOverride in this channel!");
-
-        return putPermissionOverride(permissionHolder);
-    }
-
-    @Nonnull
-    @Override
-    public PermissionOverrideAction putPermissionOverride(@Nonnull IPermissionHolder permissionHolder)
-    {
-        checkPermission(Permission.MANAGE_PERMISSIONS);
-        Checks.notNull(permissionHolder, "PermissionHolder");
-        Checks.check(permissionHolder.getGuild().equals(getGuild()), "Provided permission holder is not from the same guild as this channel!");
-        return new PermissionOverrideActionImpl(getJDA(), this, permissionHolder);
-    }
-
-    @Nonnull
-    @Override
-    public InviteAction createInvite()
-    {
-        if (!this.getGuild().getSelfMember().hasPermission(this, Permission.CREATE_INSTANT_INVITE))
-            throw new InsufficientPermissionException(this, Permission.CREATE_INSTANT_INVITE);
-
-        return new InviteActionImpl(this.getJDA(), this.getId());
-    }
-
-    @Nonnull
-    @Override
-    public RestAction<List<Invite>> retrieveInvites()
-    {
-        if (!this.getGuild().getSelfMember().hasPermission(this, Permission.MANAGE_CHANNEL))
-            throw new InsufficientPermissionException(this, Permission.MANAGE_CHANNEL);
-
-        final Route.CompiledRoute route = Route.Invites.GET_CHANNEL_INVITES.compile(getId());
-
-        JDAImpl jda = (JDAImpl) getJDA();
-        return new RestActionImpl<>(jda, route, (response, request) ->
-        {
-            EntityBuilder entityBuilder = jda.getEntityBuilder();
-            DataArray array = response.getArray();
-            List<Invite> invites = new ArrayList<>(array.length());
-            for (int i = 0; i < array.length(); i++)
-                invites.add(entityBuilder.createInvite(array.getObject(i)));
-            return Collections.unmodifiableList(invites);
-        });
     }
 
     @Override

@@ -104,20 +104,11 @@ public class Icon
 
         UNKNOWN("image/jpeg");
 
-        private final String mime;
         private final String header;
 
         IconType(@Nonnull String mime)
         {
-            this.mime = mime;
             this.header = "data:" + mime + ";base64,";
-        }
-
-
-        @Nonnull
-        public String getMIME()
-        {
-            return mime;
         }
 
 
@@ -125,19 +116,6 @@ public class Icon
         public String getHeader()
         {
             return header;
-        }
-
-
-        @Nonnull
-        public static IconType fromMIME(@Nonnull String mime)
-        {
-            Checks.notNull(mime, "MIME Type");
-            for (IconType type : values())
-            {
-                if (type.mime.equalsIgnoreCase(mime))
-                    return type;
-            }
-            return UNKNOWN;
         }
 
 
