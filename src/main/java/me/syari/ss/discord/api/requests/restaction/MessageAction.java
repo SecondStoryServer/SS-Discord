@@ -5,17 +5,12 @@ import me.syari.ss.discord.api.entities.MessageChannel;
 import me.syari.ss.discord.api.entities.MessageEmbed;
 import me.syari.ss.discord.api.requests.RestAction;
 import me.syari.ss.discord.api.utils.AttachmentOption;
-import me.syari.ss.discord.internal.utils.Checks;
 
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.InputStream;
-import java.util.function.BiConsumer;
 import java.util.function.BooleanSupplier;
-import java.util.function.Consumer;
 
 
 public interface MessageAction extends RestAction<Message>, Appendable {

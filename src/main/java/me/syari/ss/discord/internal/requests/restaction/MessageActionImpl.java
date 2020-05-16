@@ -21,7 +21,8 @@ import okhttp3.RequestBody;
 
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 import java.util.function.BooleanSupplier;
 

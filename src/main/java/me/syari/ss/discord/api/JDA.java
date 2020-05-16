@@ -1,8 +1,5 @@
 package me.syari.ss.discord.api;
 
-import me.syari.ss.discord.annotations.DeprecatedSince;
-import me.syari.ss.discord.annotations.ForRemoval;
-import me.syari.ss.discord.annotations.ReplaceWith;
 import me.syari.ss.discord.api.entities.*;
 import me.syari.ss.discord.api.hooks.IEventManager;
 import me.syari.ss.discord.api.managers.Presence;

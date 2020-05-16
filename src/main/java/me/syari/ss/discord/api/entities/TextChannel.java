@@ -2,7 +2,6 @@ package me.syari.ss.discord.api.entities;
 
 import me.syari.ss.discord.api.utils.MiscUtil;
 
-import javax.annotation.Nullable;
 import java.util.FormattableFlags;
 import java.util.Formatter;
 
