@@ -3,7 +3,9 @@
 package me.syari.ss.discord.internal.entities;
 
 import gnu.trove.map.TLongObjectMap;
-import me.syari.ss.discord.api.entities.*;
+import me.syari.ss.discord.api.entities.ChannelType;
+import me.syari.ss.discord.api.entities.Member;
+import me.syari.ss.discord.api.entities.VoiceChannel;
 import me.syari.ss.discord.api.utils.MiscUtil;
 
 import javax.annotation.Nonnull;

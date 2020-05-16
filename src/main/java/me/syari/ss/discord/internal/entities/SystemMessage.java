@@ -18,7 +18,7 @@ public class SystemMessage extends ReceivedMessage
             List<MessageReaction> reactions, List<Attachment> attachments, List<MessageEmbed> embeds, int flags)
     {
         super(id, channel, type, fromWebhook, mentionsEveryone, mentionedUsers, mentionedRoles,
-            tts, pinned, content, nonce, author, member, activity, editTime, reactions, attachments, embeds, flags);
+            tts, content, nonce, author, member, embeds);
     }
 
     @Override

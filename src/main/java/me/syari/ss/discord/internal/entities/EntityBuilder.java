@@ -1160,8 +1160,8 @@ public class EntityBuilder
         {
             case DEFAULT:
                 message = new ReceivedMessage(id, chan, type, fromWebhook,
-                    mentionsEveryone, mentionedUsers, mentionedRoles, tts, pinned,
-                    content, nonce, user, member, activity, editTime, reactions, attachments, embeds, flags);
+                    mentionsEveryone, mentionedUsers, mentionedRoles, tts,
+                        content, nonce, user, member, embeds);
                 break;
             case UNKNOWN:
                 throw new IllegalArgumentException(UNKNOWN_MESSAGE_TYPE);
@@ -1471,106 +1471,6 @@ public class EntityBuilder
                 .setToken(token)
                 .setOwner(owner == null ? null : channel.getGuild().getMember(owner))
                 .setUser(defaultUser);
-    }
-
-    public Invite createInvite(DataObject object)
-    {
-        final String code = object.getString("code");
-        final User inviter = object.hasKey("inviter") ? this.createFakeUser(object.getObject("inviter"), false) : null;
-
-        final DataObject channelObject = object.getObject("channel");
-        final ChannelType channelType = ChannelType.fromId(channelObject.getInt("type"));
-
-        final Invite.InviteType type;
-        final Invite.Guild guild;
-        final Invite.Channel channel;
-        final Invite.Group group;
-
-        if (channelType == ChannelType.GROUP)
-        {
-            type = Invite.InviteType.GROUP;
-            guild = null;
-            channel = null;
-
-            final String groupName = channelObject.getString("name", "");
-            final long groupId = channelObject.getLong("id");
-            final String groupIconId = channelObject.getString("icon", null);
-
-            final List<String> usernames;
-            if (channelObject.isNull("recipients"))
-                usernames = null;
-            else
-                usernames = map(channelObject, "recipients", (json) -> json.getString("username"));
-
-            group = new InviteImpl.GroupImpl(groupIconId, groupName, groupId, usernames);
-        }
-        else if (channelType.isGuild())
-        {
-            type = Invite.InviteType.GUILD;
-
-            final DataObject guildObject = object.getObject("guild");
-
-            final String guildIconId = guildObject.getString("icon", null);
-            final long guildId = guildObject.getLong("id");
-            final String guildName = guildObject.getString("name");
-            final String guildSplashId = guildObject.getString("splash", null);
-            final Guild.VerificationLevel guildVerificationLevel = Guild.VerificationLevel.fromKey(guildObject.getInt("verification_level", -1));
-            final int presenceCount = object.getInt("approximate_presence_count", -1);
-            final int memberCount = object.getInt("approximate_member_count", -1);
-
-            final Set<String> guildFeatures;
-            if (guildObject.isNull("features"))
-                guildFeatures = Collections.emptySet();
-            else
-                guildFeatures = Collections.unmodifiableSet(StreamSupport.stream(guildObject.getArray("features").spliterator(), false).map(String::valueOf).collect(Collectors.toSet()));
-
-            guild = new InviteImpl.GuildImpl(guildId, guildIconId, guildName, guildSplashId, guildVerificationLevel, presenceCount, memberCount, guildFeatures);
-
-            final String channelName = channelObject.getString("name");
-            final long channelId = channelObject.getLong("id");
-
-            channel = new InviteImpl.ChannelImpl(channelId, channelName, channelType);
-            group = null;
-        }
-        else
-        {
-            // Unknown channel type for invites
-
-            type = Invite.InviteType.UNKNOWN;
-            guild = null;
-            channel = null;
-            group = null;
-        }
-
-        final int maxAge;
-        final int maxUses;
-        final boolean temporary;
-        final OffsetDateTime timeCreated;
-        final int uses;
-        final boolean expanded;
-
-        if (object.hasKey("max_uses"))
-        {
-            expanded = true;
-            maxAge = object.getInt("max_age");
-            maxUses = object.getInt("max_uses");
-            uses = object.getInt("uses");
-            temporary = object.getBoolean("temporary");
-            timeCreated = OffsetDateTime.parse(object.getString("created_at"));
-        }
-        else
-        {
-            expanded = false;
-            maxAge = -1;
-            maxUses = -1;
-            uses = -1;
-            temporary = false;
-            timeCreated = null;
-        }
-
-        return new InviteImpl(getJDA(), code, expanded, inviter,
-                              maxAge, maxUses, temporary,
-                              timeCreated, uses, channel, guild, group, type);
     }
 
     public ApplicationInfo createApplicationInfo(DataObject object)

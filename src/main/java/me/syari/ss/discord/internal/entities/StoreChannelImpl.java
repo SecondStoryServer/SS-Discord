@@ -2,7 +2,9 @@
 
 package me.syari.ss.discord.internal.entities;
 
-import me.syari.ss.discord.api.entities.*;
+import me.syari.ss.discord.api.entities.ChannelType;
+import me.syari.ss.discord.api.entities.Member;
+import me.syari.ss.discord.api.entities.StoreChannel;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;

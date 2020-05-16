@@ -15,7 +15,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.regex.Pattern;
 
 
 public class MessageEmbed implements SerializableData
@@ -25,12 +24,6 @@ public class MessageEmbed implements SerializableData
 
 
     public static final int VALUE_MAX_LENGTH = 1024;
-
-
-    public static final int TEXT_MAX_LENGTH = 2048;
-
-
-    public static final int URL_MAX_LENGTH = 2000;
 
 
     public static final int EMBED_MAX_LENGTH_BOT = 6000;
@@ -80,27 +73,6 @@ public class MessageEmbed implements SerializableData
 
 
     @Nullable
-    public String getUrl()
-    {
-        return url;
-    }
-
-
-    @Nullable
-    public String getTitle()
-    {
-        return title;
-    }
-
-
-    @Nullable
-    public String getDescription()
-    {
-        return description;
-    }
-
-
-    @Nullable
     public Thumbnail getThumbnail()
     {
         return thumbnail;
@@ -108,43 +80,9 @@ public class MessageEmbed implements SerializableData
 
 
     @Nullable
-    public AuthorInfo getAuthor()
-    {
-        return author;
-    }
-
-
-    @Nullable
-    public Footer getFooter()
-    {
-        return footer;
-    }
-    
-
-    @Nullable
     public ImageInfo getImage()
     {
         return image;
-    }
-    
-
-    @Nonnull
-    public List<Field> getFields()
-    {
-        return fields;
-    }
-
-
-    public int getColorRaw()
-    {
-        return color;
-    }
-    
-
-    @Nullable
-    public OffsetDateTime getTimestamp()
-    {
-        return timestamp;
     }
 
 
@@ -537,7 +475,6 @@ public class MessageEmbed implements SerializableData
     }
 
     private final static String ZERO_WIDTH_SPACE = "\u200E";
-    private final static Pattern URL_PATTERN = Pattern.compile("\\s*(https?|attachment)://\\S+\\s*", Pattern.CASE_INSENSITIVE);
 
     public static class Field
     {
@@ -572,11 +509,6 @@ public class MessageEmbed implements SerializableData
                 this.value = value;
             }
             this.inline = inline;
-        }
-        
-        public Field(String name, String value, boolean inline)
-        {
-            this(name, value, inline, true);
         }
 
 

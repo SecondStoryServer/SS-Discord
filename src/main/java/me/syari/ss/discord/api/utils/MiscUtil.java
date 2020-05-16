@@ -4,7 +4,6 @@ package me.syari.ss.discord.api.utils;
 import gnu.trove.impl.sync.TSynchronizedLongObjectMap;
 import gnu.trove.map.TLongObjectMap;
 import gnu.trove.map.hash.TLongObjectHashMap;
-import me.syari.ss.discord.api.entities.Guild;
 import me.syari.ss.discord.internal.utils.Checks;
 import me.syari.ss.discord.internal.utils.Helpers;
 
@@ -16,25 +15,6 @@ import java.util.function.Supplier;
 
 public class MiscUtil
 {
-
-    public static int getShardForGuild(long guildId, int shards)
-    {
-        return (int) ((guildId >>> 22) % shards);
-    }
-
-
-    public static int getShardForGuild(String guildId, int shards)
-    {
-        return getShardForGuild(parseSnowflake(guildId), shards);
-    }
-
-
-    public static int getShardForGuild(Guild guild, int shards)
-    {
-        return getShardForGuild(guild.getIdLong(), shards);
-    }
-
-
     public static <T> TLongObjectMap<T> newLongMap()
     {
         return new TSynchronizedLongObjectMap<>(new TLongObjectHashMap<T>(), new Object());

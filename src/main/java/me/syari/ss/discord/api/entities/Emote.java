@@ -7,7 +7,6 @@ import me.syari.ss.discord.annotations.ReplaceWith;
 import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.managers.EmoteManager;
 import me.syari.ss.discord.api.requests.restaction.AuditableRestAction;
-import me.syari.ss.discord.internal.utils.PermissionUtil;
 
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;

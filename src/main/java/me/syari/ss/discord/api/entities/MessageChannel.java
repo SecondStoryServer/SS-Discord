@@ -21,7 +21,7 @@ import me.syari.ss.discord.internal.utils.EncodingUtil;
 
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
-import java.io.*;
+import java.io.InputStream;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 

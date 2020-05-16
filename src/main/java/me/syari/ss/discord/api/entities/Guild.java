@@ -7,13 +7,10 @@ import me.syari.ss.discord.annotations.ReplaceWith;
 import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.Region;
 import me.syari.ss.discord.api.requests.RestAction;
-import me.syari.ss.discord.api.requests.restaction.AuditableRestAction;
-import me.syari.ss.discord.api.requests.restaction.ChannelAction;
 import me.syari.ss.discord.api.requests.restaction.RoleAction;
 import me.syari.ss.discord.api.utils.cache.MemberCacheView;
 import me.syari.ss.discord.api.utils.cache.SnowflakeCacheView;
 import me.syari.ss.discord.api.utils.cache.SortedSnowflakeCacheView;
-import me.syari.ss.discord.internal.utils.Checks;
 
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;

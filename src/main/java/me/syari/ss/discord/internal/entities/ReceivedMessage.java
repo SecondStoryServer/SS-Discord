@@ -11,7 +11,6 @@ import me.syari.ss.discord.internal.utils.Checks;
 import org.apache.commons.collections4.CollectionUtils;
 
 import javax.annotation.Nonnull;
-import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.function.Function;
 import java.util.regex.Matcher;
@@ -27,34 +26,25 @@ public class ReceivedMessage extends AbstractMessage
     protected final MessageChannel channel;
     protected final boolean fromWebhook;
     protected final boolean mentionsEveryone;
-    protected final boolean pinned;
     protected final User author;
     protected final Member member;
-    protected final MessageActivity activity;
-    protected final OffsetDateTime editedTime;
-    protected final List<MessageReaction> reactions;
-    protected final List<Message.Attachment> attachments;
     protected final List<MessageEmbed> embeds;
     protected final TLongSet mentionedUsers;
     protected final TLongSet mentionedRoles;
-    protected final int flags;
 
     // LAZY EVALUATED
     protected String altContent = null;
-    protected String strippedContent = null;
 
     protected List<User> userMentions = null;
-    protected List<Member> memberMentions = null;
     protected List<Emote> emoteMentions = null;
     protected List<Role> roleMentions = null;
     protected List<TextChannel> channelMentions = null;
-    protected List<String> invites = null;
 
     public ReceivedMessage(
             long id, MessageChannel channel, MessageType type,
-            boolean fromWebhook, boolean mentionsEveryone, TLongSet mentionedUsers, TLongSet mentionedRoles, boolean tts, boolean pinned,
-            String content, String nonce, User author, Member member, MessageActivity activity, OffsetDateTime editTime,
-            List<MessageReaction> reactions, List<Message.Attachment> attachments, List<MessageEmbed> embeds, int flags)
+            boolean fromWebhook, boolean mentionsEveryone, TLongSet mentionedUsers, TLongSet mentionedRoles, boolean tts,
+            String content, String nonce, User author, Member member,
+            List<MessageEmbed> embeds)
     {
         super(content, nonce, tts);
         this.id = id;
@@ -63,17 +53,11 @@ public class ReceivedMessage extends AbstractMessage
         this.api = (channel != null) ? (JDAImpl) channel.getJDA() : null;
         this.fromWebhook = fromWebhook;
         this.mentionsEveryone = mentionsEveryone;
-        this.pinned = pinned;
         this.author = author;
         this.member = member;
-        this.activity = activity;
-        this.editedTime = editTime;
-        this.reactions = Collections.unmodifiableList(reactions);
-        this.attachments = Collections.unmodifiableList(attachments);
         this.embeds = Collections.unmodifiableList(embeds);
         this.mentionedUsers = mentionedUsers;
         this.mentionedRoles = mentionedRoles;
-        this.flags = flags;
     }
 
     @Nonnull
@@ -115,7 +99,7 @@ public class ReceivedMessage extends AbstractMessage
     public synchronized List<User> getMentionedUsers()
     {
         if (userMentions == null)
-            userMentions = Collections.unmodifiableList(processMentions(Message.MentionType.USER, new ArrayList<>(), true, this::matchUser));
+            userMentions = Collections.unmodifiableList(processMentions(Message.MentionType.USER, new ArrayList<>(), this::matchUser));
         return userMentions;
     }
 
@@ -130,7 +114,7 @@ public class ReceivedMessage extends AbstractMessage
     public synchronized List<TextChannel> getMentionedChannels()
     {
         if (channelMentions == null)
-            channelMentions = Collections.unmodifiableList(processMentions(Message.MentionType.CHANNEL, new ArrayList<>(), true, this::matchTextChannel));
+            channelMentions = Collections.unmodifiableList(processMentions(Message.MentionType.CHANNEL, new ArrayList<>(), this::matchTextChannel));
         return channelMentions;
     }
 
@@ -150,7 +134,7 @@ public class ReceivedMessage extends AbstractMessage
     public synchronized List<Role> getMentionedRoles()
     {
         if (roleMentions == null)
-            roleMentions = Collections.unmodifiableList(processMentions(Message.MentionType.ROLE, new ArrayList<>(), true, this::matchRole));
+            roleMentions = Collections.unmodifiableList(processMentions(Message.MentionType.ROLE, new ArrayList<>(), this::matchRole));
         return roleMentions;
     }
 
@@ -158,7 +142,7 @@ public class ReceivedMessage extends AbstractMessage
     @Override
     public List<IMentionable> getMentions(@Nonnull Message.MentionType... types)
     {
-        if (types == null || types.length == 0)
+        if (types.length == 0)
             return getMentions(Message.MentionType.values());
         List<IMentionable> mentions = new ArrayList<>();
         // boolean duplicate checks
@@ -419,7 +403,7 @@ public class ReceivedMessage extends AbstractMessage
     public synchronized List<Emote> getEmotes()
     {
         if (this.emoteMentions == null)
-            emoteMentions = Collections.unmodifiableList(processMentions(Message.MentionType.EMOTE, new ArrayList<>(), true, this::matchEmote));
+            emoteMentions = Collections.unmodifiableList(processMentions(Message.MentionType.EMOTE, new ArrayList<>(), this::matchEmote));
         return emoteMentions;
     }
 
@@ -493,10 +477,9 @@ public class ReceivedMessage extends AbstractMessage
                 )));
 
         this.userMentions = Collections.unmodifiableList(users);
-        this.memberMentions = Collections.unmodifiableList(members);
     }
 
-    private <T, C extends Collection<T>> C processMentions(Message.MentionType type, C collection, boolean distinct, Function<Matcher, T> map)
+    private <T, C extends Collection<T>> C processMentions(MentionType type, C collection, Function<Matcher, T> map)
     {
         Matcher matcher = type.getPattern().matcher(getContentRaw());
         while (matcher.find())
@@ -504,7 +487,7 @@ public class ReceivedMessage extends AbstractMessage
             try
             {
                 T elem = map.apply(matcher);
-                if (elem == null || (distinct && collection.contains(elem)))
+                if (elem == null || (collection.contains(elem)))
                     continue;
                 collection.add(elem);
             }
@@ -513,15 +496,4 @@ public class ReceivedMessage extends AbstractMessage
         return collection;
     }
 
-    private static class FormatToken
-    {
-        public final String format;
-        public final int start;
-
-        public FormatToken(String format, int start)
-        {
-            this.format = format;
-            this.start = start;
-        }
-    }
 }

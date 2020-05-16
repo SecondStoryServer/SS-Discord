@@ -18,7 +18,6 @@ public class GuildVoiceStateImpl implements GuildVoiceState
     private final JDA api;
 
     private VoiceChannel connectedChannel;
-    private String sessionId;
     private boolean selfMuted = false;
     private boolean selfDeafened = false;
     private boolean guildMuted = false;
@@ -140,7 +139,6 @@ public class GuildVoiceStateImpl implements GuildVoiceState
 
     public GuildVoiceStateImpl setSessionId(String sessionId)
     {
-        this.sessionId = sessionId;
         return this;
     }
 
