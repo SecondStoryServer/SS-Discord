@@ -15,7 +15,6 @@ import java.util.List;
 
 public abstract class AbstractMessage implements Message
 {
-    protected static final String UNSUPPORTED = "This operation is not supported for Messages of this type!";
 
     protected final String content;
     protected final String nonce;

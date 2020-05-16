@@ -1484,7 +1484,7 @@ public class EntityBuilder
         final User owner = createFakeUser(object.getObject("owner"), false);
         final ApplicationTeam team = !object.isNull("team") ? createApplicationTeam(object.getObject("team")) : null;
 
-        return new ApplicationInfoImpl(getJDA(), description, iconId, id, name);
+        return new ApplicationInfoImpl(getJDA(), id, name);
     }
 
     public ApplicationTeam createApplicationTeam(DataObject object)

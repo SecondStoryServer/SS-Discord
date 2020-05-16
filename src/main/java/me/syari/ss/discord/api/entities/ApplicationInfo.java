@@ -13,14 +13,6 @@ public interface ApplicationInfo extends ISnowflake
 
 
     @Nonnull
-    String getDescription();
-
-
-    @Nullable
-    String getIconId();
-
-
-    @Nonnull
     JDA getJDA();
 
 

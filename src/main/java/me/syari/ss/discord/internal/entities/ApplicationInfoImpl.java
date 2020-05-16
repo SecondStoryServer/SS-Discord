@@ -13,15 +13,11 @@ public class ApplicationInfoImpl implements ApplicationInfo
 
 
     private final long id;
-    private final String iconId;
-    private final String description;
     private final String name;
 
-    public ApplicationInfoImpl(JDA api, String description, String iconId, long id, String name)
+    public ApplicationInfoImpl(JDA api, long id, String name)
     {
         this.api = api;
-        this.description = description;
-        this.iconId = iconId;
         this.id = id;
         this.name = name;
     }
@@ -30,19 +26,6 @@ public class ApplicationInfoImpl implements ApplicationInfo
     public boolean equals(final Object obj)
     {
         return obj instanceof ApplicationInfoImpl && this.id == ((ApplicationInfoImpl) obj).id;
-    }
-
-    @Nonnull
-    @Override
-    public String getDescription()
-    {
-        return this.description;
-    }
-
-    @Override
-    public String getIconId()
-    {
-        return this.iconId;
     }
 
     @Override
