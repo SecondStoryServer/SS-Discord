@@ -5,34 +5,20 @@ import me.syari.ss.discord.annotations.DeprecatedSince;
 import me.syari.ss.discord.annotations.ForRemoval;
 import me.syari.ss.discord.annotations.ReplaceWith;
 import me.syari.ss.discord.api.JDA;
-import me.syari.ss.discord.api.Permission;
 import me.syari.ss.discord.api.Region;
-import me.syari.ss.discord.api.exceptions.HierarchyException;
-import me.syari.ss.discord.api.exceptions.InsufficientPermissionException;
-import me.syari.ss.discord.api.managers.GuildManager;
 import me.syari.ss.discord.api.requests.RestAction;
 import me.syari.ss.discord.api.requests.restaction.AuditableRestAction;
 import me.syari.ss.discord.api.requests.restaction.ChannelAction;
-import me.syari.ss.discord.api.requests.restaction.MemberAction;
 import me.syari.ss.discord.api.requests.restaction.RoleAction;
-import me.syari.ss.discord.api.requests.restaction.order.CategoryOrderAction;
-import me.syari.ss.discord.api.requests.restaction.order.ChannelOrderAction;
-import me.syari.ss.discord.api.requests.restaction.order.RoleOrderAction;
-import me.syari.ss.discord.api.requests.restaction.pagination.AuditLogPaginationAction;
-import me.syari.ss.discord.api.utils.MiscUtil;
 import me.syari.ss.discord.api.utils.cache.MemberCacheView;
 import me.syari.ss.discord.api.utils.cache.SnowflakeCacheView;
 import me.syari.ss.discord.api.utils.cache.SortedSnowflakeCacheView;
-import me.syari.ss.discord.internal.requests.DeferredRestAction;
-import me.syari.ss.discord.internal.requests.Route;
-import me.syari.ss.discord.internal.requests.restaction.AuditableRestActionImpl;
 import me.syari.ss.discord.internal.utils.Checks;
 
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 
 
 public interface Guild extends ISnowflake
@@ -124,13 +110,6 @@ public interface Guild extends ISnowflake
 
 
     @Nonnull
-    default String getOwnerId()
-    {
-        return Long.toUnsignedString(getOwnerIdLong());
-    }
-
-
-    @Nonnull
     Timeout getAfkTimeout();
 
 
@@ -157,13 +136,6 @@ public interface Guild extends ISnowflake
 
 
     @Nullable
-    default Member getMemberById(@Nonnull String userId)
-    {
-        return getMemberCache().getElementById(userId);
-    }
-
-
-    @Nullable
     default Member getMemberById(long userId)
     {
         return getMemberCache().getElementById(userId);
@@ -185,25 +157,6 @@ public interface Guild extends ISnowflake
         if (channel == null)
             channel = getCategoryById(id);
         return channel;
-    }
-
-
-    @Nullable
-    default GuildChannel getGuildChannelById(@Nonnull ChannelType type, long id)
-    {
-        Checks.notNull(type, "ChannelType");
-        switch (type)
-        {
-            case TEXT:
-                return getTextChannelById(id);
-            case VOICE:
-                return getVoiceChannelById(id);
-            case STORE:
-                return getStoreChannelById(id);
-            case CATEGORY:
-                return getCategoryById(id);
-        }
-        return null;
     }
 
 
@@ -316,13 +269,6 @@ public interface Guild extends ISnowflake
 
 
     @Nullable
-    default Emote getEmoteById(@Nonnull String id)
-    {
-        return getEmoteCache().getElementById(id);
-    }
-
-
-    @Nullable
     default Emote getEmoteById(long id)
     {
         return getEmoteCache().getElementById(id);
@@ -334,22 +280,7 @@ public interface Guild extends ISnowflake
 
 
     @Nonnull
-    @CheckReturnValue
-    RestAction<ListedEmote> retrieveEmoteById(@Nonnull String id);
-
-
-    @Nonnull
-    @CheckReturnValue
-    RestAction<Ban> retrieveBanById(@Nonnull String userId);
-
-
-    @Nonnull
     Role getPublicRole();
-
-
-    @Nonnull
-    @CheckReturnValue
-    RestAction<Void> delete(@Nullable String mfaCode);
 
 
     @Nonnull
@@ -382,23 +313,7 @@ public interface Guild extends ISnowflake
     boolean isAvailable();
 
 
-    @Nonnull
-    default RestAction<Member> retrieveMemberById(@Nonnull String id)
-    {
-        return retrieveMemberById(MiscUtil.parseSnowflake(id));
-    }
-
-
-    @Nonnull
-    RestAction<Member> retrieveMemberById(long id);
-
-
     /* From GuildController */
-
-
-    @Nonnull
-    @CheckReturnValue
-    RestAction<Void> moveVoiceMember(@Nonnull Member member, @Nullable VoiceChannel voiceChannel);
 
 
     @Nonnull
@@ -413,11 +328,6 @@ public interface Guild extends ISnowflake
 
     @Nonnull
     @CheckReturnValue
-    AuditableRestAction<Void> kick(@Nonnull String userId, @Nullable String reason);
-
-
-    @Nonnull
-    @CheckReturnValue
     default AuditableRestAction<Void> kick(@Nonnull Member member)
     {
         return kick(member, null);
@@ -427,11 +337,6 @@ public interface Guild extends ISnowflake
     @Nonnull
     @CheckReturnValue
     AuditableRestAction<Void> ban(@Nonnull User user, int delDays, @Nullable String reason);
-
-
-    @Nonnull
-    @CheckReturnValue
-    AuditableRestAction<Void> ban(@Nonnull String userId, int delDays, @Nullable String reason);
 
 
     @Nonnull
@@ -455,70 +360,12 @@ public interface Guild extends ISnowflake
 
     @Nonnull
     @CheckReturnValue
-    AuditableRestAction<Void> unban(@Nonnull String userId);
-
-
-    @Nonnull
-    @CheckReturnValue
     AuditableRestAction<Void> deafen(@Nonnull Member member, boolean deafen);
 
 
     @Nonnull
     @CheckReturnValue
     AuditableRestAction<Void> mute(@Nonnull Member member, boolean mute);
-
-
-    @Nonnull
-    @CheckReturnValue
-    AuditableRestAction<Void> addRoleToMember(@Nonnull Member member, @Nonnull Role role);
-
-
-    @Nonnull
-    @CheckReturnValue
-    default AuditableRestAction<Void> addRoleToMember(long userId, @Nonnull Role role)
-    {
-        Checks.notNull(role, "Role");
-        Checks.check(role.getGuild().equals(this), "Role must be from the same guild! Trying to use role from %s in %s", role.getGuild().toString(), toString());
-
-        Member member = getMemberById(userId);
-        if (member != null)
-            return addRoleToMember(member, role);
-        if (!getSelfMember().hasPermission(Permission.MANAGE_ROLES))
-            throw new InsufficientPermissionException(this, Permission.MANAGE_ROLES);
-        if (!getSelfMember().canInteract(role))
-            throw new HierarchyException("Can't modify a role with higher or equal highest role than yourself! Role: " + role.toString());
-        Route.CompiledRoute route = Route.Guilds.ADD_MEMBER_ROLE.compile(getId(), Long.toUnsignedString(userId), role.getId());
-        return new AuditableRestActionImpl<>(getJDA(), route);
-    }
-
-
-    @Nonnull
-    @CheckReturnValue
-    AuditableRestAction<Void> removeRoleFromMember(@Nonnull Member member, @Nonnull Role role);
-
-
-    @Nonnull
-    @CheckReturnValue
-    default AuditableRestAction<Void> removeRoleFromMember(long userId, @Nonnull Role role)
-    {
-        Checks.notNull(role, "Role");
-        Checks.check(role.getGuild().equals(this), "Role must be from the same guild! Trying to use role from %s in %s", role.getGuild().toString(), toString());
-
-        Member member = getMemberById(userId);
-        if (member != null)
-            return removeRoleFromMember(member, role);
-        if (!getSelfMember().hasPermission(Permission.MANAGE_ROLES))
-            throw new InsufficientPermissionException(this, Permission.MANAGE_ROLES);
-        if (!getSelfMember().canInteract(role))
-            throw new HierarchyException("Can't modify a role with higher or equal highest role than yourself! Role: " + role.toString());
-        Route.CompiledRoute route = Route.Guilds.REMOVE_MEMBER_ROLE.compile(getId(), Long.toUnsignedString(userId), role.getId());
-        return new AuditableRestActionImpl<>(getJDA(), route);
-    }
-
-
-    @Nonnull
-    @CheckReturnValue
-    AuditableRestAction<Void> modifyMemberRoles(@Nonnull Member member, @Nonnull Collection<Role> roles);
 
 
     @Nonnull
@@ -540,10 +387,6 @@ public interface Guild extends ISnowflake
     @CheckReturnValue
     RoleAction createRole();
 
-
-    @Nonnull
-    @CheckReturnValue
-    RoleOrderAction modifyRolePositions(boolean useAscendingOrder);
 
     //////////////////////////
 
@@ -687,19 +530,17 @@ public interface Guild extends ISnowflake
 
     enum ExplicitContentLevel
     {
-        OFF(0, "Don't scan any messages."),
-        NO_ROLE(1, "Scan messages from members without a role."),
-        ALL(2, "Scan messages sent by all members."),
+        OFF(0),
+        NO_ROLE(1),
+        ALL(2),
 
-        UNKNOWN(-1, "Unknown filter level!");
+        UNKNOWN(-1);
 
         private final int key;
-        private final String description;
 
-        ExplicitContentLevel(int key, String description)
+        ExplicitContentLevel(int key)
         {
             this.key = key;
-            this.description = description;
         }
 
 
@@ -725,37 +566,29 @@ public interface Guild extends ISnowflake
     enum BoostTier
     {
 
-        NONE(0, 96000, 50),
+        NONE(0, 96000),
 
-        TIER_1(1, 128000, 100),
+        TIER_1(1, 128000),
 
-        TIER_2(2, 256000, 150),
+        TIER_2(2, 256000),
 
-        TIER_3(3, 384000, 250),
+        TIER_3(3, 384000),
 
-        UNKNOWN(-1, Integer.MAX_VALUE, Integer.MAX_VALUE);
+        UNKNOWN(-1, Integer.MAX_VALUE);
 
         private final int key;
         private final int maxBitrate;
-        private final int maxEmotes;
 
-        BoostTier(int key, int maxBitrate, int maxEmotes)
+        BoostTier(int key, int maxBitrate)
         {
             this.key = key;
             this.maxBitrate = maxBitrate;
-            this.maxEmotes = maxEmotes;
         }
 
 
         public int getMaxBitrate()
         {
             return maxBitrate;
-        }
-
-
-        public int getMaxEmotes() 
-        {
-            return maxEmotes;
         }
 
 
@@ -772,22 +605,4 @@ public interface Guild extends ISnowflake
     }
 
 
-    class Ban
-    {
-        protected final User user;
-        protected final String reason;
-
-        public Ban(User user, String reason)
-        {
-            this.user = user;
-            this.reason = reason;
-        }
-
-
-        @Override
-        public String toString()
-        {
-            return "GuildBan:" + user + (reason == null ? "" : '(' + reason + ')');
-        }
-    }
 }
