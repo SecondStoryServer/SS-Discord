@@ -3,14 +3,13 @@ package me.syari.ss.discord.api.events.message;
 import me.syari.ss.discord.api.entities.Member;
 import me.syari.ss.discord.api.entities.MessageChannel;
 import me.syari.ss.discord.api.entities.User;
-import me.syari.ss.discord.api.events.GenericEvent;
 import me.syari.ss.discord.internal.entities.Message;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 
-public class MessageReceivedEvent implements GenericEvent {
+public class MessageReceivedEvent {
     protected long messageId;
     protected MessageChannel channel;
     private final Message message;

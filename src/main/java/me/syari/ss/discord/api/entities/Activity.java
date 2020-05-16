@@ -4,7 +4,6 @@ import me.syari.ss.discord.annotations.Incubating;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Objects;
 
 
 public interface Activity {

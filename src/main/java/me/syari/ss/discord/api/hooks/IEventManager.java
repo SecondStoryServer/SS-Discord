@@ -1,6 +1,6 @@
 package me.syari.ss.discord.api.hooks;
 
-import me.syari.ss.discord.api.events.GenericEvent;
+import me.syari.ss.discord.api.events.message.MessageReceivedEvent;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -14,7 +14,7 @@ public interface IEventManager {
     void unregister(@Nonnull Object listener);
 
 
-    void handle(@Nonnull GenericEvent event);
+    void handle(@Nonnull MessageReceivedEvent event);
 
 
     @Nonnull

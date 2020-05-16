@@ -1,23 +1,14 @@
 package me.syari.ss.discord.internal.entities;
 
 import me.syari.ss.discord.api.Permission;
-import me.syari.ss.discord.api.entities.*;
-import me.syari.ss.discord.api.exceptions.InsufficientPermissionException;
+import me.syari.ss.discord.api.entities.ChannelType;
+import me.syari.ss.discord.api.entities.MessageEmbed;
+import me.syari.ss.discord.api.entities.TextChannel;
 import me.syari.ss.discord.api.exceptions.VerificationLevelException;
-import me.syari.ss.discord.api.requests.RestAction;
-import me.syari.ss.discord.api.requests.restaction.AuditableRestAction;
 import me.syari.ss.discord.api.requests.restaction.MessageAction;
-import me.syari.ss.discord.api.utils.TimeUtil;
-import me.syari.ss.discord.api.utils.data.DataObject;
-import me.syari.ss.discord.internal.requests.RestActionImpl;
-import me.syari.ss.discord.internal.requests.Route;
 import me.syari.ss.discord.internal.utils.Checks;
 
 import javax.annotation.Nonnull;
-import java.io.InputStream;
-import java.util.*;
-import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
 
 public class TextChannelImpl extends AbstractChannelImpl<TextChannel, TextChannelImpl> implements TextChannel {
 
@@ -41,14 +32,6 @@ public class TextChannelImpl extends AbstractChannelImpl<TextChannel, TextChanne
     @Override
     public ChannelType getType() {
         return ChannelType.TEXT;
-    }
-
-    @Nonnull
-    @Override
-    public List<Member> getMembers() {
-        return Collections.unmodifiableList(getGuild().getMembersView().stream()
-                .filter(m -> m.hasPermission(this, Permission.MESSAGE_READ))
-                .collect(Collectors.toList()));
     }
 
     @Nonnull

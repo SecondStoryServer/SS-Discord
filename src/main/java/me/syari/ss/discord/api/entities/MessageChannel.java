@@ -1,26 +1,18 @@
 package me.syari.ss.discord.api.entities;
 
 import me.syari.ss.discord.api.JDA;
-import me.syari.ss.discord.api.requests.RestAction;
-import me.syari.ss.discord.api.requests.restaction.AuditableRestAction;
 import me.syari.ss.discord.api.requests.restaction.MessageAction;
 import me.syari.ss.discord.api.utils.MiscUtil;
-import me.syari.ss.discord.api.utils.data.DataArray;
-import me.syari.ss.discord.internal.JDAImpl;
-import me.syari.ss.discord.internal.entities.EntityBuilder;
 import me.syari.ss.discord.internal.entities.Message;
-import me.syari.ss.discord.internal.requests.RestActionImpl;
 import me.syari.ss.discord.internal.requests.Route;
-import me.syari.ss.discord.internal.requests.restaction.AuditableRestActionImpl;
 import me.syari.ss.discord.internal.requests.restaction.MessageActionImpl;
 import me.syari.ss.discord.internal.utils.Checks;
-import me.syari.ss.discord.internal.utils.EncodingUtil;
 
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
-import java.io.InputStream;
-import java.util.*;
-import java.util.concurrent.CompletableFuture;
+import java.util.Formattable;
+import java.util.FormattableFlags;
+import java.util.Formatter;
 
 
 public interface MessageChannel extends ISnowflake, Formattable {

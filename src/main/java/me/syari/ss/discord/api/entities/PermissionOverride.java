@@ -1,10 +1,8 @@
 package me.syari.ss.discord.api.entities;
 
 import me.syari.ss.discord.api.JDA;
-import me.syari.ss.discord.api.requests.restaction.AuditableRestAction;
 import me.syari.ss.discord.api.requests.restaction.PermissionOverrideAction;
 
-import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 

@@ -4,7 +4,6 @@ import me.syari.ss.discord.api.JDA;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.List;
 
 
 public interface GuildChannel extends ISnowflake, Comparable<GuildChannel> {
@@ -19,10 +18,6 @@ public interface GuildChannel extends ISnowflake, Comparable<GuildChannel> {
 
     @Nonnull
     Guild getGuild();
-
-
-    @Nonnull
-    List<Member> getMembers();
 
 
     int getPositionRaw();

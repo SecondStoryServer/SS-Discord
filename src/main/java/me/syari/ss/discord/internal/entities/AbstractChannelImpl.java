@@ -3,7 +3,10 @@ package me.syari.ss.discord.internal.entities;
 import gnu.trove.map.TLongObjectMap;
 import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.Permission;
-import me.syari.ss.discord.api.entities.*;
+import me.syari.ss.discord.api.entities.Guild;
+import me.syari.ss.discord.api.entities.GuildChannel;
+import me.syari.ss.discord.api.entities.IPermissionHolder;
+import me.syari.ss.discord.api.entities.PermissionOverride;
 import me.syari.ss.discord.api.exceptions.InsufficientPermissionException;
 import me.syari.ss.discord.api.utils.MiscUtil;
 import me.syari.ss.discord.internal.JDAImpl;
@@ -112,15 +115,8 @@ public abstract class AbstractChannelImpl<T extends GuildChannel, M extends Abst
     }
 
     protected void checkPermission(Permission permission) {
-        checkPermission(permission, null);
-    }
-
-    protected void checkPermission(Permission permission, String message) {
         if (!getGuild().getSelfMember().hasPermission(this, permission)) {
-            if (message != null)
-                throw new InsufficientPermissionException(this, permission, message);
-            else
-                throw new InsufficientPermissionException(this, permission);
+            throw new InsufficientPermissionException(this, permission);
         }
     }
 }

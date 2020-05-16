@@ -1,6 +1,6 @@
 package me.syari.ss.discord.internal.hooks;
 
-import me.syari.ss.discord.api.events.GenericEvent;
+import me.syari.ss.discord.api.events.message.MessageReceivedEvent;
 import me.syari.ss.discord.api.hooks.IEventManager;
 import me.syari.ss.discord.api.hooks.InterfacedEventManager;
 import me.syari.ss.discord.internal.JDAImpl;
@@ -30,7 +30,7 @@ public class EventManagerProxy implements IEventManager {
     }
 
     @Override
-    public void handle(@Nonnull GenericEvent event) {
+    public void handle(@Nonnull MessageReceivedEvent event) {
         // don't allow mere exceptions to obstruct the socket handler
         try {
             subject.handle(event);

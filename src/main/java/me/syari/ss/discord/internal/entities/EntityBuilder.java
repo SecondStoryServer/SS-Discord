@@ -4,7 +4,6 @@ import gnu.trove.map.TLongObjectMap;
 import gnu.trove.set.TLongSet;
 import gnu.trove.set.hash.TLongHashSet;
 import me.syari.ss.discord.api.JDA;
-import me.syari.ss.discord.api.OnlineStatus;
 import me.syari.ss.discord.api.entities.*;
 import me.syari.ss.discord.api.utils.cache.CacheFlag;
 import me.syari.ss.discord.api.utils.data.DataArray;

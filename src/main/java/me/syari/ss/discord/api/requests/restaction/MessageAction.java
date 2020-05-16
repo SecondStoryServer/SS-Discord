@@ -8,7 +8,6 @@ import me.syari.ss.discord.internal.entities.Message;
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.InputStream;
 import java.util.function.BooleanSupplier;
 
 
