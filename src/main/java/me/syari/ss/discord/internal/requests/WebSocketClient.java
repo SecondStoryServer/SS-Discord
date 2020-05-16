@@ -178,11 +178,6 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
             socket.sendClose(1000);
     }
 
-    public void close(int code) {
-        if (socket != null)
-            socket.sendClose(code);
-    }
-
     public void close(int code, String reason) {
         if (socket != null)
             socket.sendClose(code, reason);

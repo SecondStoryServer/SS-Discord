@@ -31,7 +31,6 @@ public class Requester {
     public static final MediaType MEDIA_TYPE_OCTET = MediaType.parse("application/octet-stream; charset=utf-8");
 
     protected final JDAImpl api;
-    protected final AuthorizationConfig authConfig;
     private final RateLimiter rateLimiter;
 
     private final OkHttpClient httpClient;
@@ -39,14 +38,6 @@ public class Requester {
     private volatile boolean retryOnTimeout = false;
 
     public Requester(JDA api) {
-        this(api, ((JDAImpl) api).getAuthorizationConfig());
-    }
-
-    public Requester(JDA api, AuthorizationConfig authConfig) {
-        if (authConfig == null)
-            throw new NullPointerException("Provided config was null!");
-
-        this.authConfig = authConfig;
         this.api = (JDAImpl) api;
         rateLimiter = new BotRateLimiter(this);
 

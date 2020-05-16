@@ -205,10 +205,8 @@ public class DataObject implements SerializableData {
     }
 
 
-    @Nonnull
-    public DataObject remove(@Nonnull String key) {
+    public void remove(@Nonnull String key) {
         data.remove(key);
-        return this;
     }
 
 

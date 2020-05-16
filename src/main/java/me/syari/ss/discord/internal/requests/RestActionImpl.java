@@ -52,14 +52,6 @@ public class RestActionImpl<T> implements RestAction<T> {
         return passContext;
     }
 
-    public static Consumer<? super Throwable> getDefaultFailure() {
-        return DEFAULT_FAILURE;
-    }
-
-    public static Consumer<Object> getDefaultSuccess() {
-        return DEFAULT_SUCCESS;
-    }
-
     public RestActionImpl(JDA api, Route.CompiledRoute route) {
         this(api, route, null, null);
     }

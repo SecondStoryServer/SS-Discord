@@ -26,31 +26,7 @@ public interface SessionController {
     String getGateway(@Nonnull JDA api);
 
 
-    class ShardedGateway {
-        private final String url;
-        private final int shardTotal;
-
-
-        public ShardedGateway(String url, int shardTotal) {
-            this.url = url;
-            this.shardTotal = shardTotal;
-        }
-
-
-        public String getUrl() {
-            return url;
-        }
-
-
-        public int getShardTotal() {
-            return shardTotal;
-        }
-    }
-
-
     interface SessionConnectNode {
-
-
         void run(boolean isLast) throws InterruptedException;
     }
 }

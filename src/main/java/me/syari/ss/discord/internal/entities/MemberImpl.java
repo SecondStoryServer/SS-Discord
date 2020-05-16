@@ -14,14 +14,13 @@ import java.util.concurrent.ConcurrentHashMap;
 public class MemberImpl implements Member {
     private final SnowflakeReference<Guild> guild;
     private final User user;
-    private final JDAImpl api;
     private final Set<Role> roles = ConcurrentHashMap.newKeySet();
 
     private String nickname;
     private long boostDate;
 
     public MemberImpl(GuildImpl guild, User user) {
-        this.api = (JDAImpl) user.getJDA();
+        JDAImpl api = (JDAImpl) user.getJDA();
         this.guild = new SnowflakeReference<>(guild, api::getGuildById);
         this.user = user;
     }

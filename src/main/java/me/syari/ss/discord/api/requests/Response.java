@@ -2,7 +2,6 @@ package me.syari.ss.discord.api.requests;
 
 import me.syari.ss.discord.api.exceptions.ParsingException;
 import me.syari.ss.discord.api.utils.IOFunction;
-import me.syari.ss.discord.api.utils.data.DataArray;
 import me.syari.ss.discord.api.utils.data.DataObject;
 import me.syari.ss.discord.internal.utils.IOUtil;
 
@@ -27,11 +26,11 @@ public class Response implements Closeable {
     private Exception exception;
 
     public Response(@Nullable final okhttp3.Response response, @Nonnull final Exception exception) {
-        this(response, response != null ? response.code() : ERROR_CODE, ERROR_MESSAGE, -1);
+        this(response, response != null ? response.code() : ERROR_CODE, -1);
         this.exception = exception;
     }
 
-    public Response(@Nullable final okhttp3.Response response, final int code, @Nonnull final String message, final long retryAfter) {
+    public Response(@Nullable final okhttp3.Response response, final int code, final long retryAfter) {
         this.rawResponse = response;
         this.code = code;
         this.exception = null;
@@ -49,11 +48,11 @@ public class Response implements Closeable {
     }
 
     public Response(final long retryAfter) {
-        this(null, 429, "TOO MANY REQUESTS", retryAfter);
+        this(null, 429, retryAfter);
     }
 
     public Response(@Nonnull final okhttp3.Response response, final long retryAfter) {
-        this(response, response.code(), response.message(), retryAfter);
+        this(response, response.code(), retryAfter);
     }
 
     @Nonnull

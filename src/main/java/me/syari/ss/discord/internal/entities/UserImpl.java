@@ -99,9 +99,8 @@ public class UserImpl implements User {
         return this;
     }
 
-    public UserImpl setBot(boolean bot) {
+    public void setBot(boolean bot) {
         this.bot = bot;
-        return this;
     }
 
     public UserImpl setFake(boolean fake) {
