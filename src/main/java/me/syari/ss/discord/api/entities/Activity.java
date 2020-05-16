@@ -48,53 +48,6 @@ public interface Activity {
         }
 
 
-        @Nonnull
-        public static ActivityType fromKey(int key) {
-            switch (key) {
-                case 0:
-                default:
-                    return DEFAULT;
-                case 1:
-                    return STREAMING;
-                case 2:
-                    return LISTENING;
-                case 3:
-                    return WATCHING;
-                case 4:
-                    return CUSTOM_STATUS;
-            }
-        }
-    }
-
-
-    class Timestamps {
-        protected final long start;
-
-        protected final long end;
-
-        public Timestamps(long start, long end) {
-            this.start = start;
-            this.end = end;
-        }
-
-
-        @Override
-        public String toString() {
-            return String.format("RichPresenceTimestamp(%d-%d)", start, end);
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (!(obj instanceof Timestamps))
-                return false;
-            Timestamps t = (Timestamps) obj;
-            return start == t.start && end == t.end;
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(start, end);
-        }
     }
 
 
