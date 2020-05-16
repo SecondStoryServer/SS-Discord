@@ -35,18 +35,10 @@ dependencies {
     api("com.neovisionaries:nv-websocket-client:2.9")
     api("com.squareup.okhttp3:okhttp:3.13.0")
 
-    //Opus library support
-    api("club.minnced:opus-java:1.0.4@pom") {
-        isTransitive = true
-    }
 
     //Collections Utility
     api("org.apache.commons:commons-collections4:4.1")
 
-    //we use this only together with opus-java
-    // if that dependency is excluded it also doesn't need jna anymore
-    // since jna is a transitive runtime dependency of opus-java we don't include it explicitly as dependency
-    compileOnly("net.java.dev.jna:jna:4.4.0")
 
     /* Internal dependencies */
 
@@ -57,6 +49,4 @@ dependencies {
     //Sets the dependencies for the examples
     configurations.asMap["examplesCompile"] = configurations["apiElements"]
     configurations.asMap["examplesRuntime"] = configurations["implementation"]
-
-    testImplementation("org.junit.jupiter:junit-jupiter:5.4.0")
 }
