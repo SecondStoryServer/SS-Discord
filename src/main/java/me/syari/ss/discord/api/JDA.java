@@ -166,12 +166,6 @@ public interface JDA {
     SnowflakeCacheView<User> getUserCache();
 
 
-    @Nonnull
-    default List<User> getUsers() {
-        return getUserCache().asList();
-    }
-
-
     @Nullable
     default User getUserById(@Nonnull String id) {
         return getUserCache().getElementById(id);
@@ -184,40 +178,6 @@ public interface JDA {
     }
 
 
-    @Nullable
-    default User getUserByTag(@Nonnull String tag) {
-        Checks.notNull(tag, "Tag");
-        Matcher matcher = User.USER_TAG.matcher(tag);
-        Checks.check(matcher.matches(), "Invalid tag format!");
-        String username = matcher.group(1);
-        String discriminator = matcher.group(2);
-        return getUserByTag(username, discriminator);
-    }
-
-
-    @Nullable
-    default User getUserByTag(@Nonnull String username, @Nonnull String discriminator) {
-        Checks.notNull(username, "Username");
-        Checks.notNull(discriminator, "Discriminator");
-        Checks.check(discriminator.length() == 4 && Helpers.isNumeric(discriminator), "Invalid format for discriminator!");
-        Checks.check(username.length() >= 2 && username.length() <= 32, "Username must be between 2 and 32 characters in length!");
-        return getUserCache().applyStream(stream ->
-                stream.filter(it -> it.getDiscriminator().equals(discriminator))
-                        .filter(it -> it.getName().equals(username))
-                        .findFirst()
-                        .orElse(null)
-        );
-    }
-
-
-    @Nonnull
-    List<Guild> getMutualGuilds(@Nonnull User... users);
-
-
-    @Nonnull
-    List<Guild> getMutualGuilds(@Nonnull Collection<User> users);
-
-
     @Nonnull
     SnowflakeCacheView<Guild> getGuildCache();
 
@@ -225,12 +185,6 @@ public interface JDA {
     @Nonnull
     default List<Guild> getGuilds() {
         return getGuildCache().asList();
-    }
-
-
-    @Nullable
-    default Guild getGuildById(@Nonnull String id) {
-        return getGuildCache().getElementById(id);
     }
 
 
@@ -250,12 +204,6 @@ public interface JDA {
     @Nonnull
     default List<Role> getRoles() {
         return getRoleCache().asList();
-    }
-
-
-    @Nullable
-    default Role getRoleById(@Nonnull String id) {
-        return getRoleCache().getElementById(id);
     }
 
 
@@ -304,12 +252,6 @@ public interface JDA {
 
     @Nonnull
     SnowflakeCacheView<TextChannel> getTextChannelCache();
-
-
-    @Nullable
-    default TextChannel getTextChannelById(@Nonnull String id) {
-        return getTextChannelCache().getElementById(id);
-    }
 
 
     @Nullable
@@ -393,9 +335,6 @@ public interface JDA {
     boolean isAutoReconnect();
 
 
-    boolean isBulkDeleteSplittingEnabled();
-
-
     void shutdown();
 
 
@@ -414,11 +353,6 @@ public interface JDA {
 
     @Nonnull
     AccountType getAccountType();
-
-
-    @Nonnull
-    @CheckReturnValue
-    RestAction<ApplicationInfo> retrieveApplicationInfo();
 
 
 }

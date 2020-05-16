@@ -1119,7 +1119,7 @@ public class EntityBuilder {
             reactionEmote = MessageReaction.ReactionEmote.fromUnicode(name, getJDA());
         }
 
-        return new MessageReaction(chan, reactionEmote, id, me, count);
+        return new MessageReaction(chan, reactionEmote, id, me);
     }
 
     public Message.Attachment createMessageAttachment(DataObject jsonObject) {

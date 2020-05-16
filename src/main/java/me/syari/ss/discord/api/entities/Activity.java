@@ -13,8 +13,6 @@ import java.util.regex.Pattern;
 
 public interface Activity {
 
-    Pattern STREAMING_URL = Pattern.compile("https?://(www\\.)?(twitch\\.tv/|youtube\\.com/watch\\?v=).+", Pattern.CASE_INSENSITIVE);
-
 
     @Nonnull
     String getName();
@@ -26,45 +24,6 @@ public interface Activity {
 
     @Nonnull
     ActivityType getType();
-
-
-    @Nonnull
-    static Activity playing(@Nonnull String name) {
-        Checks.notBlank(name, "Name");
-        return EntityBuilder.createActivity(name, null, ActivityType.DEFAULT);
-    }
-
-
-    @Nonnull
-    static Activity streaming(@Nonnull String name, @Nullable String url) {
-        Checks.notEmpty(name, "Provided game name");
-        ActivityType type;
-        if (isValidStreamingUrl(url))
-            type = ActivityType.STREAMING;
-        else
-            type = ActivityType.DEFAULT;
-        return EntityBuilder.createActivity(name, url, type);
-    }
-
-
-    @Nonnull
-    static Activity listening(@Nonnull String name) {
-        Checks.notBlank(name, "Name");
-        return EntityBuilder.createActivity(name, null, ActivityType.LISTENING);
-    }
-
-
-    @Nonnull
-    @Incubating
-    static Activity watching(@Nonnull String name) {
-        Checks.notBlank(name, "Name");
-        return EntityBuilder.createActivity(name, null, ActivityType.WATCHING);
-    }
-
-
-    static boolean isValidStreamingUrl(@Nullable String url) {
-        return url != null && STREAMING_URL.matcher(url).matches();
-    }
 
 
     enum ActivityType {

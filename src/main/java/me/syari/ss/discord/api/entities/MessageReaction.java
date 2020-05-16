@@ -23,15 +23,13 @@ public class MessageReaction {
     private final ReactionEmote emote;
     private final long messageId;
     private final boolean self;
-    private final int count;
 
 
-    public MessageReaction(@Nonnull MessageChannel channel, @Nonnull ReactionEmote emote, long messageId, boolean self, int count) {
+    public MessageReaction(@Nonnull MessageChannel channel, @Nonnull ReactionEmote emote, long messageId, boolean self) {
         this.channel = channel;
         this.emote = emote;
         this.messageId = messageId;
         this.self = self;
-        this.count = count;
     }
 
 
@@ -43,29 +41,6 @@ public class MessageReaction {
 
     public boolean isSelf() {
         return self;
-    }
-
-
-    public boolean hasCount() {
-        return count >= 0;
-    }
-
-
-    public int getCount() {
-        if (!hasCount())
-            throw new IllegalStateException("Cannot retrieve count for this MessageReaction!");
-        return count;
-    }
-
-
-    @Nonnull
-    public ChannelType getChannelType() {
-        return channel.getType();
-    }
-
-
-    public boolean isFromType(@Nonnull ChannelType type) {
-        return getChannelType() == type;
     }
 
 
@@ -110,43 +85,6 @@ public class MessageReaction {
         return messageId;
     }
 
-
-    @Nonnull
-    @CheckReturnValue
-    public ReactionPaginationAction retrieveUsers() {
-        return new ReactionPaginationActionImpl(this);
-    }
-
-
-    @Nonnull
-    @CheckReturnValue
-    public RestAction<Void> removeReaction() {
-        return removeReaction(getJDA().getSelfUser());
-    }
-
-
-    @Nonnull
-    @CheckReturnValue
-    public RestAction<Void> removeReaction(@Nonnull User user) {
-        Checks.notNull(user, "User");
-        boolean self = user.equals(getJDA().getSelfUser());
-        if (!self) {
-            if (channel.getType() == ChannelType.TEXT) {
-                GuildChannel channel = (GuildChannel) this.channel;
-                if (!channel.getGuild().getSelfMember().hasPermission(channel, Permission.MESSAGE_MANAGE))
-                    throw new InsufficientPermissionException(channel, Permission.MESSAGE_MANAGE);
-            } else {
-                throw new PermissionException("Unable to remove Reaction of other user in non-text channel!");
-            }
-        }
-
-        String code = emote.isEmote()
-                ? emote.getName() + ":" + emote.getId()
-                : EncodingUtil.encodeUTF8(emote.getName());
-        String target = self ? "@me" : user.getId();
-        Route.CompiledRoute route = Route.Messages.REMOVE_REACTION.compile(channel.getId(), getMessageId(), code, target);
-        return new RestActionImpl<>(getJDA(), route);
-    }
 
     @Override
     public boolean equals(Object obj) {
@@ -225,14 +163,6 @@ public class MessageReaction {
             if (!isEmote())
                 throw new IllegalStateException("Cannot get id for emoji reaction");
             return id;
-        }
-
-
-        @Nonnull
-        public String getEmoji() {
-            if (!isEmoji())
-                throw new IllegalStateException("Cannot get emoji code for custom emote reaction");
-            return getName();
         }
 
 

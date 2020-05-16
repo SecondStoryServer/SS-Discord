@@ -15,7 +15,6 @@ import me.syari.ss.discord.api.hooks.InterfacedEventManager;
 import me.syari.ss.discord.api.managers.Presence;
 import me.syari.ss.discord.api.requests.Request;
 import me.syari.ss.discord.api.requests.Response;
-import me.syari.ss.discord.api.requests.RestAction;
 import me.syari.ss.discord.api.utils.ChunkingFilter;
 import me.syari.ss.discord.api.utils.Compression;
 import me.syari.ss.discord.api.utils.MiscUtil;
@@ -48,7 +47,6 @@ import javax.annotation.Nonnull;
 import javax.security.auth.login.LoginException;
 import java.util.*;
 import java.util.concurrent.*;
-import java.util.stream.Collectors;
 
 public class JDAImpl implements JDA {
     public static final Logger LOG = JDALogger.getLog(JDA.class);
@@ -330,11 +328,6 @@ public class JDAImpl implements JDA {
 
 
     @Override
-    public boolean isBulkDeleteSplittingEnabled() {
-        return sessionConfig.isBulkDeleteSplittingEnabled();
-    }
-
-    @Override
     public boolean isAutoReconnect() {
         return sessionConfig.isAutoReconnect();
     }
@@ -393,24 +386,6 @@ public class JDAImpl implements JDA {
     @SuppressWarnings("ConstantConditions") // this can't really happen unless you pass bad configs
     public OkHttpClient getHttpClient() {
         return sessionConfig.getHttpClient();
-    }
-
-    @Nonnull
-    @Override
-    public List<Guild> getMutualGuilds(@Nonnull User... users) {
-        Checks.notNull(users, "users");
-        return getMutualGuilds(Arrays.asList(users));
-    }
-
-    @Nonnull
-    @Override
-    public List<Guild> getMutualGuilds(@Nonnull Collection<User> users) {
-        Checks.notNull(users, "users");
-        for (User u : users)
-            Checks.notNull(u, "All users");
-        return Collections.unmodifiableList(getGuilds().stream()
-                .filter(guild -> users.stream().allMatch(guild::isMember))
-                .collect(Collectors.toList()));
     }
 
     @Nonnull
@@ -570,19 +545,6 @@ public class JDAImpl implements JDA {
 
         for (Object listener : listeners)
             eventManager.register(listener);
-    }
-
-    @Nonnull
-    @Override
-    public RestAction<ApplicationInfo> retrieveApplicationInfo() {
-        AccountTypeException.check(getAccountType(), AccountType.BOT);
-        Route.CompiledRoute route = Route.Applications.GET_BOT_APPLICATION.compile();
-        return new RestActionImpl<>(this, route, (response, request) ->
-        {
-            ApplicationInfo info = getEntityBuilder().createApplicationInfo(response.getObject());
-            this.clientId = info.getId();
-            return info;
-        });
     }
 
     public EntityBuilder getEntityBuilder() {
