@@ -28,12 +28,6 @@ public interface EmoteManager extends Manager<EmoteManager> {
 
 
     @Nonnull
-    default Guild getGuild() {
-        return getEmote().getGuild();
-    }
-
-
-    @Nonnull
     Emote getEmote();
 
 

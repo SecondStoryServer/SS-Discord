@@ -12,36 +12,8 @@ import java.util.List;
 
 public interface Emote extends IMentionable, IFakeable {
 
-
-    @Nullable
-    Guild getGuild();
-
-
-    @Nonnull
-    List<Role> getRoles();
-
-
-    @Deprecated
-    @DeprecatedSince("3.8.0")
-    @ReplaceWith("canProvideRoles()")
-    default boolean hasRoles() {
-        return canProvideRoles();
-    }
-
-
-    boolean canProvideRoles();
-
-
     @Nonnull
     String getName();
-
-
-    @Nonnull
-    JDA getJDA();
-
-
-    @Nonnull
-    EmoteManager getManager();
 
 
     boolean isAnimated();

@@ -5,15 +5,10 @@ import me.syari.ss.discord.api.entities.ListedEmote;
 import me.syari.ss.discord.api.entities.Role;
 import me.syari.ss.discord.api.entities.User;
 import me.syari.ss.discord.api.managers.EmoteManager;
-import me.syari.ss.discord.api.utils.MiscUtil;
 import me.syari.ss.discord.internal.JDAImpl;
-import me.syari.ss.discord.internal.managers.EmoteManagerImpl;
 import me.syari.ss.discord.internal.utils.cache.SnowflakeReference;
 
 import javax.annotation.Nonnull;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
@@ -54,24 +49,6 @@ public class EmoteImpl implements ListedEmote {
         this.fake = true;
     }
 
-    @Override
-    public GuildImpl getGuild() {
-        return guild == null ? null : (GuildImpl) guild.resolve();
-    }
-
-    @Nonnull
-    @Override
-    public List<Role> getRoles() {
-        if (!canProvideRoles())
-            throw new IllegalStateException("Unable to return roles because this emote is fake. (We do not know the origin Guild of this emote)");
-        return Collections.unmodifiableList(new LinkedList<>(roles));
-    }
-
-    @Override
-    public boolean canProvideRoles() {
-        return roles != null;
-    }
-
     @Nonnull
     @Override
     public String getName() {
@@ -90,12 +67,6 @@ public class EmoteImpl implements ListedEmote {
 
     @Nonnull
     @Override
-    public JDAImpl getJDA() {
-        return api;
-    }
-
-    @Nonnull
-    @Override
     public User getUser() {
         if (!hasUser())
             throw new IllegalStateException("This emote does not have a user");
@@ -105,21 +76,6 @@ public class EmoteImpl implements ListedEmote {
     @Override
     public boolean hasUser() {
         return user != null;
-    }
-
-    @Nonnull
-    @Override
-    public EmoteManager getManager() {
-        EmoteManager m = manager;
-        if (m == null) {
-            m = MiscUtil.locked(mngLock, () ->
-            {
-                if (manager == null)
-                    manager = new EmoteManagerImpl(this);
-                return manager;
-            });
-        }
-        return m;
     }
 
     @Override
@@ -177,13 +133,5 @@ public class EmoteImpl implements ListedEmote {
     @Override
     public String toString() {
         return "E:" + getName() + '(' + getIdLong() + ')';
-    }
-
-    @Override
-    public EmoteImpl clone() {
-        if (isFake()) return null;
-        EmoteImpl copy = new EmoteImpl(id, getGuild()).setUser(user).setManaged(managed).setAnimated(animated).setName(name);
-        copy.roles.addAll(roles);
-        return copy;
     }
 }
