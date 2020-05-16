@@ -6,7 +6,6 @@ import me.syari.ss.discord.api.entities.*;
 import me.syari.ss.discord.api.requests.RestAction;
 import me.syari.ss.discord.api.requests.restaction.ChannelAction;
 import me.syari.ss.discord.api.requests.restaction.InviteAction;
-import me.syari.ss.discord.api.requests.restaction.order.CategoryOrderAction;
 import me.syari.ss.discord.internal.requests.CompletedRestAction;
 import me.syari.ss.discord.internal.utils.Checks;
 
@@ -138,38 +137,6 @@ public class CategoryImpl extends AbstractChannelImpl<Category, CategoryImpl> im
         return Collections.unmodifiableList(getGuild().getVoiceChannels().stream()
                     .filter(channel -> equals(channel.getParent()))
                     .sorted().collect(Collectors.toList()));
-    }
-
-    @Nonnull
-    @Override
-    public ChannelAction<TextChannel> createTextChannel(@Nonnull String name)
-    {
-        ChannelAction<TextChannel> action = getGuild().createTextChannel(name).setParent(this);
-        applyPermission(action);
-        return action;
-    }
-
-    @Nonnull
-    @Override
-    public ChannelAction<VoiceChannel> createVoiceChannel(@Nonnull String name)
-    {
-        ChannelAction<VoiceChannel> action = getGuild().createVoiceChannel(name).setParent(this);
-        applyPermission(action);
-        return action;
-    }
-
-    @Nonnull
-    @Override
-    public CategoryOrderAction modifyTextChannelPositions()
-    {
-        return getGuild().modifyTextChannelPositions(this);
-    }
-
-    @Nonnull
-    @Override
-    public CategoryOrderAction modifyVoiceChannelPositions()
-    {
-        return getGuild().modifyVoiceChannelPositions(this);
     }
 
     @Override

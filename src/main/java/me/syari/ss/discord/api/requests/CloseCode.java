@@ -2,7 +2,6 @@
 
 package me.syari.ss.discord.api.requests;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 

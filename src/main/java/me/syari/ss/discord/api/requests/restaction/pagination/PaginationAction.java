@@ -4,8 +4,6 @@ package me.syari.ss.discord.api.requests.restaction.pagination;
 
 import me.syari.ss.discord.api.requests.RestAction;
 import me.syari.ss.discord.api.utils.Procedure;
-import me.syari.ss.discord.internal.requests.RestActionImpl;
-import me.syari.ss.discord.internal.utils.Checks;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -13,7 +11,6 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
-import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;

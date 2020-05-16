@@ -65,13 +65,6 @@ public interface Emote extends IMentionable, IFakeable
 
 
     @Nonnull
-    default String getImageUrl()
-    {
-        return String.format(ICON_URL, getId(), isAnimated() ? "gif" : "png");
-    }
-
-
-    @Nonnull
     @Override
     default String getAsMention()
     {

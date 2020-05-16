@@ -45,41 +45,6 @@ public interface Guild extends ISnowflake
     String BANNER_URL = "https://cdn.discordapp.com/banners/%s/%s.png";
 
 
-    @Nonnull
-    @CheckReturnValue
-    default RestAction<EnumSet<Region>> retrieveRegions()
-    {
-        return retrieveRegions(true);
-    }
-
-
-    @Nonnull
-    @CheckReturnValue
-    RestAction<EnumSet<Region>> retrieveRegions(boolean includeDeprecated);
-
-
-    @Nonnull
-    @CheckReturnValue
-    MemberAction addMember(@Nonnull String accessToken, @Nonnull String userId);
-
-
-    @Nonnull
-    @CheckReturnValue
-    default MemberAction addMember(@Nonnull String accessToken, @Nonnull User user)
-    {
-        Checks.notNull(user, "User");
-        return addMember(accessToken, user.getId());
-    }
-
-
-    @Nonnull
-    @CheckReturnValue
-    default MemberAction addMember(@Nonnull String accessToken, long userId)
-    {
-        return addMember(accessToken, Long.toUnsignedString(userId));
-    }
-
-
     boolean isLoaded();
 
 
@@ -94,28 +59,12 @@ public interface Guild extends ISnowflake
     String getIconId();
 
 
-    @Nullable
-    default String getIconUrl()
-    {
-        String iconId = getIconId();
-        return iconId == null ? null : String.format(ICON_URL, getId(), iconId, iconId.startsWith("a_") ? "gif" : "png");
-    }
-
-
     @Nonnull
     Set<String> getFeatures();
 
 
     @Nullable
     String getSplashId();
-
-
-    @Nullable
-    default String getSplashUrl()
-    {
-        String splashId = getSplashId();
-        return splashId == null ? null : String.format(SPLASH_URL, getId(), splashId);
-    }
 
 
     @Nonnull
@@ -132,26 +81,11 @@ public interface Guild extends ISnowflake
 
 
     @Nullable
-    default String getVanityUrl()
-    {
-        return getVanityCode() == null ? null : "https://discord.gg/" + getVanityCode();
-    }
-
-
-    @Nullable
     String getDescription();
 
 
     @Nullable
     String getBannerId();
-
-
-    @Nullable
-    default String getBannerUrl()
-    {
-        String bannerId = getBannerId();
-        return bannerId == null ? null : String.format(BANNER_URL, getId(), bannerId);
-    }
 
 
     @Nonnull
@@ -161,21 +95,10 @@ public interface Guild extends ISnowflake
     int getBoostCount();
 
 
-    @Nonnull
-    List<Member> getBoosters();
-
-
     default int getMaxBitrate()
     {
         int maxBitrate = getFeatures().contains("VIP_REGIONS") ? 384000 : 96000;
         return Math.max(maxBitrate, getBoostTier().getMaxBitrate());
-    }
-
-
-    default int getMaxEmotes()
-    {
-        int maxEmotes = getFeatures().contains("MORE_EMOJI") ? 200 : 50;
-        return Math.max(maxEmotes, getBoostTier().getMaxEmotes());
     }
 
 
@@ -247,73 +170,8 @@ public interface Guild extends ISnowflake
     }
 
 
-    @Nullable
-    default Member getMemberByTag(@Nonnull String tag)
-    {
-        User user = getJDA().getUserByTag(tag);
-        return user == null ? null : getMember(user);
-    }
-
-
-    @Nullable
-    default Member getMemberByTag(@Nonnull String username, @Nonnull String discriminator)
-    {
-        User user = getJDA().getUserByTag(username, discriminator);
-        return user == null ? null : getMember(user);
-    }
-
-
-    @Nonnull
-    default List<Member> getMembers()
-    {
-        return getMemberCache().asList();
-    }
-
-
-    @Nonnull
-    default List<Member> getMembersByName(@Nonnull String name, boolean ignoreCase)
-    {
-        return getMemberCache().getElementsByUsername(name, ignoreCase);
-    }
-
-
-    @Nonnull
-    default List<Member> getMembersByNickname(@Nullable String nickname, boolean ignoreCase)
-    {
-        return getMemberCache().getElementsByNickname(nickname, ignoreCase);
-    }
-
-
-    @Nonnull
-    default List<Member> getMembersByEffectiveName(@Nonnull String name, boolean ignoreCase)
-    {
-        return getMemberCache().getElementsByName(name, ignoreCase);
-    }
-
-
-    @Nonnull
-    default List<Member> getMembersWithRoles(@Nonnull Role... roles)
-    {
-        return getMemberCache().getElementsWithRoles(roles);
-    }
-
-
-    @Nonnull
-    default List<Member> getMembersWithRoles(@Nonnull Collection<Role> roles)
-    {
-        return getMemberCache().getElementsWithRoles(roles);
-    }
-
-
     @Nonnull
     MemberCacheView getMemberCache();
-
-
-    @Nullable
-    default GuildChannel getGuildChannelById(@Nonnull String id)
-    {
-        return getGuildChannelById(MiscUtil.parseSnowflake(id));
-    }
 
 
     @Nullable
@@ -327,13 +185,6 @@ public interface Guild extends ISnowflake
         if (channel == null)
             channel = getCategoryById(id);
         return channel;
-    }
-
-
-    @Nullable
-    default GuildChannel getGuildChannelById(@Nonnull ChannelType type, @Nonnull String id)
-    {
-        return getGuildChannelById(type, MiscUtil.parseSnowflake(id));
     }
 
 
@@ -357,13 +208,6 @@ public interface Guild extends ISnowflake
 
 
     @Nullable
-    default Category getCategoryById(@Nonnull String id)
-    {
-        return getCategoryCache().getElementById(id);
-    }
-
-
-    @Nullable
     default Category getCategoryById(long id)
     {
         return getCategoryCache().getElementById(id);
@@ -378,21 +222,7 @@ public interface Guild extends ISnowflake
 
 
     @Nonnull
-    default List<Category> getCategoriesByName(@Nonnull String name, boolean ignoreCase)
-    {
-        return getCategoryCache().getElementsByName(name, ignoreCase);
-    }
-
-
-    @Nonnull
     SortedSnowflakeCacheView<Category> getCategoryCache();
-
-
-    @Nullable
-    default StoreChannel getStoreChannelById(@Nonnull String id)
-    {
-        return getStoreChannelCache().getElementById(id);
-    }
 
 
     @Nullable
@@ -410,21 +240,7 @@ public interface Guild extends ISnowflake
 
 
     @Nonnull
-    default List<StoreChannel> getStoreChannelsByName(@Nonnull String name, boolean ignoreCase)
-    {
-        return getStoreChannelCache().getElementsByName(name, ignoreCase);
-    }
-
-
-    @Nonnull
     SortedSnowflakeCacheView<StoreChannel> getStoreChannelCache();
-
-
-    @Nullable
-    default TextChannel getTextChannelById(@Nonnull String id)
-    {
-        return getTextChannelCache().getElementById(id);
-    }
 
 
     @Nullable
@@ -442,21 +258,7 @@ public interface Guild extends ISnowflake
 
 
     @Nonnull
-    default List<TextChannel> getTextChannelsByName(@Nonnull String name, boolean ignoreCase)
-    {
-        return getTextChannelCache().getElementsByName(name, ignoreCase);
-    }
-
-
-    @Nonnull
     SortedSnowflakeCacheView<TextChannel> getTextChannelCache();
-
-
-    @Nullable
-    default VoiceChannel getVoiceChannelById(@Nonnull String id)
-    {
-        return getVoiceChannelCache().getElementById(id);
-    }
 
 
     @Nullable
@@ -470,13 +272,6 @@ public interface Guild extends ISnowflake
     default List<VoiceChannel> getVoiceChannels()
     {
         return getVoiceChannelCache().asList();
-    }
-
-
-    @Nonnull
-    default List<VoiceChannel> getVoiceChannelsByName(@Nonnull String name, boolean ignoreCase)
-    {
-        return getVoiceChannelCache().getElementsByName(name, ignoreCase);
     }
 
 
@@ -517,13 +312,6 @@ public interface Guild extends ISnowflake
 
 
     @Nonnull
-    default List<Role> getRolesByName(@Nonnull String name, boolean ignoreCase)
-    {
-        return getRoleCache().getElementsByName(name, ignoreCase);
-    }
-
-
-    @Nonnull
     SortedSnowflakeCacheView<Role> getRoleCache();
 
 
@@ -542,26 +330,7 @@ public interface Guild extends ISnowflake
 
 
     @Nonnull
-    default List<Emote> getEmotes()
-    {
-        return getEmoteCache().asList();
-    }
-
-
-    @Nonnull
-    default List<Emote> getEmotesByName(@Nonnull String name, boolean ignoreCase)
-    {
-        return getEmoteCache().getElementsByName(name, ignoreCase);
-    }
-
-
-    @Nonnull
     SnowflakeCacheView<Emote> getEmoteCache();
-
-
-    @Nonnull
-    @CheckReturnValue
-    RestAction<List<ListedEmote>> retrieveEmotes();
 
 
     @Nonnull
@@ -571,91 +340,11 @@ public interface Guild extends ISnowflake
 
     @Nonnull
     @CheckReturnValue
-    default RestAction<ListedEmote> retrieveEmoteById(long id)
-    {
-        return retrieveEmoteById(Long.toUnsignedString(id));
-    }
-
-
-    @Nonnull
-    @CheckReturnValue
-    default RestAction<ListedEmote> retrieveEmote(@Nonnull Emote emote)
-    {
-        Checks.notNull(emote, "Emote");
-        if (emote.getGuild() != null)
-            Checks.check(emote.getGuild().equals(this), "Emote must be from the same Guild!");
-
-        JDA jda = getJDA();
-        return new DeferredRestAction<>(jda, ListedEmote.class,
-        () -> {
-            if (emote instanceof ListedEmote && !emote.isFake())
-            {
-                ListedEmote listedEmote = (ListedEmote) emote;
-                if (listedEmote.hasUser() || !getSelfMember().hasPermission(Permission.MANAGE_EMOTES))
-                    return listedEmote;
-            }
-            return null;
-        }, () -> retrieveEmoteById(emote.getId()));
-    }
-
-
-    @Nonnull
-    @CheckReturnValue
-    RestAction<List<Ban>> retrieveBanList();
-
-
-    @Nonnull
-    @CheckReturnValue
-    default RestAction<Ban> retrieveBanById(long userId)
-    {
-        return retrieveBanById(Long.toUnsignedString(userId));
-    }
-
-
-    @Nonnull
-    @CheckReturnValue
     RestAction<Ban> retrieveBanById(@Nonnull String userId);
 
 
     @Nonnull
-    @CheckReturnValue
-    default RestAction<Ban> retrieveBan(@Nonnull User bannedUser)
-    {
-        Checks.notNull(bannedUser, "bannedUser");
-        return retrieveBanById(bannedUser.getId());
-    }
-
-
-    @Nonnull
-    @CheckReturnValue
-    RestAction<Integer> retrievePrunableMemberCount(int days);
-
-
-    @Nonnull
     Role getPublicRole();
-
-
-    @Nullable
-    TextChannel getDefaultChannel();
-
-
-    @Nonnull
-    GuildManager getManager();
-
-
-    @Nonnull
-    @CheckReturnValue
-    AuditLogPaginationAction retrieveAuditLogs();
-
-
-    @Nonnull
-    @CheckReturnValue
-    RestAction<Void> leave();
-
-
-    @Nonnull
-    @CheckReturnValue
-    RestAction<Void> delete();
 
 
     @Nonnull
@@ -665,20 +354,6 @@ public interface Guild extends ISnowflake
 
     @Nonnull
     JDA getJDA();
-
-
-    @Nonnull
-    @CheckReturnValue
-    RestAction<List<Invite>> retrieveInvites();
-
-
-    @Nonnull
-    @CheckReturnValue
-    RestAction<List<Webhook>> retrieveWebhooks();
-
-
-    @Nonnull
-    List<GuildVoiceState> getVoiceStates();
 
 
     @Nonnull
@@ -708,18 +383,6 @@ public interface Guild extends ISnowflake
 
 
     @Nonnull
-    CompletableFuture<Void> retrieveMembers();
-
-
-    @Nonnull
-    default RestAction<Member> retrieveMember(@Nonnull User user)
-    {
-        Checks.notNull(user, "User");
-        return retrieveMemberById(user.getId());
-    }
-
-
-    @Nonnull
     default RestAction<Member> retrieveMemberById(@Nonnull String id)
     {
         return retrieveMemberById(MiscUtil.parseSnowflake(id));
@@ -729,12 +392,6 @@ public interface Guild extends ISnowflake
     @Nonnull
     RestAction<Member> retrieveMemberById(long id);
 
-
-    @Nonnull
-    default RestAction<Member> retrieveOwner()
-    {
-        return retrieveMemberById(getOwnerIdLong());
-    }
 
     /* From GuildController */
 
@@ -746,20 +403,7 @@ public interface Guild extends ISnowflake
 
     @Nonnull
     @CheckReturnValue
-    default RestAction<Void> kickVoiceMember(@Nonnull Member member)
-    {
-        return moveVoiceMember(member, null);
-    }
-
-
-    @Nonnull
-    @CheckReturnValue
     AuditableRestAction<Void> modifyNickname(@Nonnull Member member, @Nullable String nickname);
-
-
-    @Nonnull
-    @CheckReturnValue
-    AuditableRestAction<Integer> prune(int days);
 
 
     @Nonnull
@@ -777,14 +421,6 @@ public interface Guild extends ISnowflake
     default AuditableRestAction<Void> kick(@Nonnull Member member)
     {
         return kick(member, null);
-    }
-
-
-    @Nonnull
-    @CheckReturnValue
-    default AuditableRestAction<Void> kick(@Nonnull String userId)
-    {
-        return kick(userId, null);
     }
 
 
@@ -814,32 +450,6 @@ public interface Guild extends ISnowflake
     default AuditableRestAction<Void> ban(@Nonnull Member member, int delDays)
     {
         return ban(member, delDays, null);
-    }
-
-
-    @Nonnull
-    @CheckReturnValue
-    default AuditableRestAction<Void> ban(@Nonnull User user, int delDays)
-    {
-        return ban(user, delDays, null);
-    }
-
-
-    @Nonnull
-    @CheckReturnValue
-    default AuditableRestAction<Void> ban(@Nonnull String userId, int delDays)
-    {
-        return ban(userId, delDays, null);
-    }
-
-
-    @Nonnull
-    @CheckReturnValue
-    default AuditableRestAction<Void> unban(@Nonnull User user)
-    {
-        Checks.notNull(user, "User");
-
-        return unban(user.getId());
     }
 
 
@@ -884,14 +494,6 @@ public interface Guild extends ISnowflake
 
     @Nonnull
     @CheckReturnValue
-    default AuditableRestAction<Void> addRoleToMember(@Nonnull String userId, @Nonnull Role role)
-    {
-        return addRoleToMember(MiscUtil.parseSnowflake(userId), role);
-    }
-
-
-    @Nonnull
-    @CheckReturnValue
     AuditableRestAction<Void> removeRoleFromMember(@Nonnull Member member, @Nonnull Role role);
 
 
@@ -916,33 +518,7 @@ public interface Guild extends ISnowflake
 
     @Nonnull
     @CheckReturnValue
-    default AuditableRestAction<Void> removeRoleFromMember(@Nonnull String userId, @Nonnull Role role)
-    {
-        return removeRoleFromMember(MiscUtil.parseSnowflake(userId), role);
-    }
-
-
-    @Nonnull
-    @CheckReturnValue
-    AuditableRestAction<Void> modifyMemberRoles(@Nonnull Member member, @Nullable Collection<Role> rolesToAdd, @Nullable Collection<Role> rolesToRemove);
-
-
-    @Nonnull
-    @CheckReturnValue
-    default AuditableRestAction<Void> modifyMemberRoles(@Nonnull Member member, @Nonnull Role... roles)
-    {
-        return modifyMemberRoles(member, Arrays.asList(roles));
-    }
-
-
-    @Nonnull
-    @CheckReturnValue
     AuditableRestAction<Void> modifyMemberRoles(@Nonnull Member member, @Nonnull Collection<Role> roles);
-
-
-    @Nonnull
-    @CheckReturnValue
-    AuditableRestAction<Void> transferOwnership(@Nonnull Member newOwner);
 
 
     @Nonnull
@@ -962,64 +538,7 @@ public interface Guild extends ISnowflake
 
     @Nonnull
     @CheckReturnValue
-    @SuppressWarnings("unchecked") // we need to do an unchecked cast for the channel type here
-    default <T extends GuildChannel> ChannelAction<T> createCopyOfChannel(@Nonnull T channel)
-    {
-        Checks.notNull(channel, "Channel");
-        return (ChannelAction<T>) channel.createCopy(this);
-    }
-
-
-    @Nonnull
-    @CheckReturnValue
     RoleAction createRole();
-
-
-    @Nonnull
-    @CheckReturnValue
-    default RoleAction createCopyOfRole(@Nonnull Role role)
-    {
-        Checks.notNull(role, "Role");
-        return role.createCopy(this);
-    }
-
-
-    @Nonnull
-    @CheckReturnValue
-    AuditableRestAction<Emote> createEmote(@Nonnull String name, @Nonnull Icon icon, @Nonnull Role... roles);
-
-
-    @Nonnull
-    @CheckReturnValue
-    ChannelOrderAction modifyCategoryPositions();
-
-
-    @Nonnull
-    @CheckReturnValue
-    ChannelOrderAction modifyTextChannelPositions();
-
-
-    @Nonnull
-    @CheckReturnValue
-    ChannelOrderAction modifyVoiceChannelPositions();
-
-
-    @Nonnull
-    @CheckReturnValue
-    CategoryOrderAction modifyTextChannelPositions(@Nonnull Category category);
-
-
-    @Nonnull
-    @CheckReturnValue
-    CategoryOrderAction modifyVoiceChannelPositions(@Nonnull Category category);
-
-
-    @Nonnull
-    @CheckReturnValue
-    default RoleOrderAction modifyRolePositions()
-    {
-        return modifyRolePositions(true);
-    }
 
 
     @Nonnull
@@ -1191,12 +710,6 @@ public interface Guild extends ISnowflake
 
 
         @Nonnull
-        public String getDescription()
-        {
-            return description;
-        }
-
-        @Nonnull
         public static ExplicitContentLevel fromKey(int key)
         {
             for (ExplicitContentLevel level : values())
@@ -1231,12 +744,6 @@ public interface Guild extends ISnowflake
             this.key = key;
             this.maxBitrate = maxBitrate;
             this.maxEmotes = maxEmotes;
-        }
-
-
-        public int getKey()
-        {
-            return key;
         }
 
 
@@ -1276,19 +783,6 @@ public interface Guild extends ISnowflake
             this.reason = reason;
         }
 
-
-        @Nonnull
-        public User getUser()
-        {
-            return user;
-        }
-
-
-        @Nullable
-        public String getReason()
-        {
-            return reason;
-        }
 
         @Override
         public String toString()

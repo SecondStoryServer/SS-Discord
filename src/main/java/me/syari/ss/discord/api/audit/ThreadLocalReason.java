@@ -31,13 +31,6 @@ public final class ThreadLocalReason
     }
 
 
-    public static void resetCurrent()
-    {
-        if (currentReason != null)
-            currentReason.remove();
-    }
-
-
     @Nullable
     public static String getCurrent()
     {

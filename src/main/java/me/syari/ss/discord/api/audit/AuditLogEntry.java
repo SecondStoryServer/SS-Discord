@@ -60,19 +60,6 @@ public class AuditLogEntry implements ISnowflake
     }
 
 
-    public long getTargetIdLong()
-    {
-        return targetId;
-    }
-
-
-    @Nonnull
-    public String getTargetId()
-    {
-        return Long.toUnsignedString(targetId);
-    }
-
-
     @Nullable
     public Webhook getWebhook()
     {
@@ -109,97 +96,11 @@ public class AuditLogEntry implements ISnowflake
 
 
     @Nonnull
-    public Map<String, AuditLogChange> getChanges()
-    {
-        return changes;
-    }
-
-
-    @Nullable
-    public AuditLogChange getChangeByKey(@Nullable final AuditLogKey key)
-    {
-        return key == null ? null : getChangeByKey(key.getKey());
-    }
-
-
-    @Nullable
-    public AuditLogChange getChangeByKey(@Nullable final String key)
-    {
-        return changes.get(key);
-    }
-
-
-    @Nonnull
-    public List<AuditLogChange> getChangesForKeys(@Nonnull AuditLogKey... keys)
-    {
-        Checks.notNull(keys, "Keys");
-        List<AuditLogChange> changes = new ArrayList<>(keys.length);
-        for (AuditLogKey key : keys)
-        {
-            AuditLogChange change = getChangeByKey(key);
-            if (change != null)
-                changes.add(change);
-        }
-        return Collections.unmodifiableList(changes);
-    }
-
-
-    @Nonnull
-    public Map<String, Object> getOptions()
-    {
-        return options;
-    }
-
-
-    @Nullable
-    @SuppressWarnings("unchecked")
-    public <T> T getOptionByName(@Nullable String name)
-    {
-        return (T) options.get(name);
-    }
-
-
-    @Nullable
-    public <T> T getOption(@Nonnull AuditLogOption option)
-    {
-        Checks.notNull(option, "Option");
-        return getOptionByName(option.getKey());
-    }
-
-
-    @Nonnull
-    public List<Object> getOptions(@Nonnull AuditLogOption... options)
-    {
-        Checks.notNull(options, "Options");
-        List<Object> items = new ArrayList<>(options.length);
-        for (AuditLogOption option : options)
-        {
-            Object obj = getOption(option);
-            if (obj != null)
-                items.add(obj);
-        }
-        return Collections.unmodifiableList(items);
-    }
-
-
-    @Nonnull
     public ActionType getType()
     {
         return type;
     }
 
-
-    public int getTypeRaw()
-    {
-        return rawType;
-    }
-
-
-    @Nonnull
-    public TargetType getTargetType()
-    {
-        return type.getTargetType();
-    }
 
     @Override
     public int hashCode()

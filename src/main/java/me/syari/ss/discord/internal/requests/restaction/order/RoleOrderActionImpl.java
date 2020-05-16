@@ -11,7 +11,6 @@ import me.syari.ss.discord.api.requests.restaction.order.RoleOrderAction;
 import me.syari.ss.discord.api.utils.data.DataArray;
 import me.syari.ss.discord.api.utils.data.DataObject;
 import me.syari.ss.discord.internal.requests.Route;
-import me.syari.ss.discord.internal.utils.Checks;
 import okhttp3.RequestBody;
 
 import javax.annotation.Nonnull;
