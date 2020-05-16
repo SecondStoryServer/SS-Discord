@@ -19,10 +19,6 @@ public class EventManagerProxy implements IEventManager {
         this.subject = subject == null ? new InterfacedEventManager() : subject;
     }
 
-    public IEventManager getSubject() {
-        return subject;
-    }
-
     @Override
     public void register(@Nonnull Object listener) {
         this.subject.register(listener);

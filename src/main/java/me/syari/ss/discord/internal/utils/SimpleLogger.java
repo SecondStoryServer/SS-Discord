@@ -125,14 +125,12 @@ class SimpleLogger extends MarkerIgnoringBase {
 
     private static void loadProperties() {
         // Add props from the resource Loggerger.properties
-        InputStream in = AccessController.doPrivileged(new PrivilegedAction<InputStream>() {
-            public InputStream run() {
-                ClassLoader threadCL = Thread.currentThread().getContextClassLoader();
-                if (threadCL != null) {
-                    return threadCL.getResourceAsStream(CONFIGURATION_FILE);
-                } else {
-                    return ClassLoader.getSystemResourceAsStream(CONFIGURATION_FILE);
-                }
+        InputStream in = AccessController.doPrivileged((PrivilegedAction<InputStream>) () -> {
+            ClassLoader threadCL = Thread.currentThread().getContextClassLoader();
+            if (threadCL != null) {
+                return threadCL.getResourceAsStream(CONFIGURATION_FILE);
+            } else {
+                return ClassLoader.getSystemResourceAsStream(CONFIGURATION_FILE);
             }
         });
         if (null != in) {
@@ -145,7 +143,7 @@ class SimpleLogger extends MarkerIgnoringBase {
         }
     }
 
-    protected int currentLogLevel = LOG_LEVEL_INFO;
+    protected int currentLogLevel;
     private transient String shortLogName = null;
 
     SimpleLogger(String name) {

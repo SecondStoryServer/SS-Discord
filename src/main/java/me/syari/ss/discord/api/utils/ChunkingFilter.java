@@ -10,8 +10,6 @@ public interface ChunkingFilter {
 
     ChunkingFilter ALL = (x) -> true;
 
-    ChunkingFilter NONE = (x) -> false;
-
 
     boolean filter(long guildId);
 

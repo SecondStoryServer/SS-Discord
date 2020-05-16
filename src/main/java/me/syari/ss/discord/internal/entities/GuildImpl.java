@@ -44,24 +44,12 @@ public class GuildImpl implements Guild {
 
     private Member owner;
     private String name;
-    private String iconId, splashId;
-    private String region;
-    private String vanityCode;
-    private String description, banner;
-    private int maxPresences, maxMembers;
-    private int boostCount;
     private long ownerId;
     private Set<String> features;
-    private TextChannel systemChannel;
     private Role publicRole;
     private VerificationLevel verificationLevel = VerificationLevel.UNKNOWN;
-    private NotificationLevel defaultNotificationLevel = NotificationLevel.UNKNOWN;
-    private MFALevel mfaLevel = MFALevel.UNKNOWN;
-    private ExplicitContentLevel explicitContentLevel = ExplicitContentLevel.UNKNOWN;
-    private Timeout afkTimeout;
     private BoostTier boostTier = BoostTier.NONE;
     private boolean available;
-    private boolean canSendVerification = false;
     private int memberCount;
 
     public GuildImpl(JDAImpl api, long id) {
@@ -262,11 +250,6 @@ public class GuildImpl implements Guild {
         return id;
     }
 
-    protected void checkPermission() {
-        if (!getSelfMember().hasPermission(Permission.MANAGE_ROLES))
-            throw new InsufficientPermissionException(this, Permission.MANAGE_ROLES);
-    }
-
     // ---- Setters -----
 
     public GuildImpl setAvailable(boolean available) {
@@ -286,7 +269,6 @@ public class GuildImpl implements Guild {
     }
 
     public GuildImpl setIconId(String iconId) {
-        this.iconId = iconId;
         return this;
     }
 
@@ -294,82 +276,12 @@ public class GuildImpl implements Guild {
         this.features = Collections.unmodifiableSet(features);
     }
 
-    public GuildImpl setSplashId(String splashId) {
-        this.splashId = splashId;
-        return this;
-    }
-
-    public GuildImpl setRegion(String region) {
-        this.region = region;
-        return this;
-    }
-
-    public GuildImpl setVanityCode(String code) {
-        this.vanityCode = code;
-        return this;
-    }
-
-    public GuildImpl setDescription(String description) {
-        this.description = description;
-        return this;
-    }
-
-    public GuildImpl setBannerId(String bannerId) {
-        this.banner = bannerId;
-        return this;
-    }
-
-    public GuildImpl setMaxPresences(int maxPresences) {
-        this.maxPresences = maxPresences;
-        return this;
-    }
-
-    public GuildImpl setMaxMembers(int maxMembers) {
-        this.maxMembers = maxMembers;
-        return this;
-    }
-
-    public void setSystemChannel(TextChannel systemChannel) {
-        this.systemChannel = systemChannel;
-    }
-
     public void setPublicRole(Role publicRole) {
         this.publicRole = publicRole;
     }
 
-    public GuildImpl setVerificationLevel(VerificationLevel level) {
-        this.verificationLevel = level;
-        this.canSendVerification = false;   //recalc on next send
-        return this;
-    }
-
-    public GuildImpl setDefaultNotificationLevel(NotificationLevel level) {
-        this.defaultNotificationLevel = level;
-        return this;
-    }
-
-    public GuildImpl setRequiredMFALevel(MFALevel level) {
-        this.mfaLevel = level;
-        return this;
-    }
-
-    public GuildImpl setExplicitContentLevel(ExplicitContentLevel level) {
-        this.explicitContentLevel = level;
-        return this;
-    }
-
-    public GuildImpl setAfkTimeout(Timeout afkTimeout) {
-        this.afkTimeout = afkTimeout;
-        return this;
-    }
-
     public GuildImpl setBoostTier(int tier) {
         this.boostTier = BoostTier.fromKey(tier);
-        return this;
-    }
-
-    public GuildImpl setBoostCount(int count) {
-        this.boostCount = count;
         return this;
     }
 
