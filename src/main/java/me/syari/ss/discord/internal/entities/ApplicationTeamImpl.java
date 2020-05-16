@@ -22,12 +22,6 @@ public class ApplicationTeamImpl implements ApplicationTeam
         this.id = id;
     }
 
-    @Override
-    public String getIconId()
-    {
-        return iconId;
-    }
-
     @Nonnull
     @Override
     public List<TeamMember> getMembers()

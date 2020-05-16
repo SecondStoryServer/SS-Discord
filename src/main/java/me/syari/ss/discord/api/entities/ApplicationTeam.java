@@ -14,10 +14,6 @@ public interface ApplicationTeam extends ISnowflake
 {
 
 
-    @Nullable
-    String getIconId();
-
-
     @Nonnull
     List<TeamMember> getMembers();
 
