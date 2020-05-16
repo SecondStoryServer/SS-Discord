@@ -17,13 +17,11 @@ public abstract class AbstractMessage implements Message
 {
 
     protected final String content;
-    protected final String nonce;
     protected final boolean isTTS;
 
-    public AbstractMessage(String content, String nonce, boolean isTTS)
+    public AbstractMessage(String content, boolean isTTS)
     {
         this.content = content;
-        this.nonce = nonce;
         this.isTTS = isTTS;
     }
 

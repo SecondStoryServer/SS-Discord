@@ -24,7 +24,7 @@ class SimpleLogger extends MarkerIgnoringBase {
     private static final long serialVersionUID = -632788891211436180L;
     private static final String CONFIGURATION_FILE = "Loggerger.properties";
 
-    private static long START_TIME = System.currentTimeMillis();
+    private static final long START_TIME = System.currentTimeMillis();
     private static final Properties SIMPLE_LOGGER_PROPS = new Properties();
 
     private static final int LOG_LEVEL_TRACE = LocationAwareLogger.TRACE_INT;
@@ -66,7 +66,7 @@ class SimpleLogger extends MarkerIgnoringBase {
         try {
             prop = System.getProperty(name);
         } catch (SecurityException e) {
-            ; // Ignore
+            // Ignore
         }
         return (prop == null) ? SIMPLE_LOGGER_PROPS.getProperty(name) : prop;
     }
@@ -117,8 +117,7 @@ class SimpleLogger extends MarkerIgnoringBase {
         } else {
             try {
                 FileOutputStream fos = new FileOutputStream(logFile);
-                PrintStream printStream = new PrintStream(fos);
-                return printStream;
+                return new PrintStream(fos);
             } catch (FileNotFoundException e) {
                 Util.report("Could not open [" + logFile + "]. Defaulting to System.err", e);
                 return System.err;
@@ -172,7 +171,7 @@ class SimpleLogger extends MarkerIgnoringBase {
         while ((levelString == null) && (indexOfLastDot > -1)) {
             tempName = tempName.substring(0, indexOfLastDot);
             levelString = getStringProperty(LOG_KEY_PREFIX + tempName, null);
-            indexOfLastDot = String.valueOf(tempName).lastIndexOf(".");
+            indexOfLastDot = tempName.lastIndexOf(".");
         }
         return levelString;
     }
@@ -204,11 +203,10 @@ class SimpleLogger extends MarkerIgnoringBase {
         if (SHOW_DATE_TIME) {
             if (DATE_FORMATTER != null) {
                 buf.append(getFormattedDate());
-                buf.append(' ');
             } else {
                 buf.append(System.currentTimeMillis() - START_TIME);
-                buf.append(' ');
             }
+            buf.append(' ');
         }
 
         // Append current thread name if so configured
@@ -247,9 +245,9 @@ class SimpleLogger extends MarkerIgnoringBase {
         if (SHOW_SHORT_LOG_NAME) {
             if (shortLogName == null)
                 shortLogName = computeShortName();
-            buf.append(String.valueOf(shortLogName)).append(" - ");
+            buf.append(shortLogName).append(" - ");
         } else if (SHOW_LOG_NAME) {
-            buf.append(String.valueOf(name)).append(" - ");
+            buf.append(name).append(" - ");
         }
 
         // Append the message

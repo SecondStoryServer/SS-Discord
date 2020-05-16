@@ -7,7 +7,6 @@ import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.Permission;
 import me.syari.ss.discord.api.entities.*;
 import me.syari.ss.discord.api.exceptions.InsufficientPermissionException;
-import me.syari.ss.discord.api.managers.ChannelManager;
 import me.syari.ss.discord.api.utils.MiscUtil;
 import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.utils.Checks;
@@ -24,8 +23,6 @@ public abstract class AbstractChannelImpl<T extends GuildChannel, M extends Abst
     protected final JDAImpl api;
 
     protected final TLongObjectMap<PermissionOverride> overrides = MiscUtil.newLongMap();
-
-    protected volatile ChannelManager manager;
 
     protected long parentId;
     protected String name;

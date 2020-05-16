@@ -43,7 +43,7 @@ public abstract class GenericMessageEvent extends Event
 
     public boolean isFromType(@Nonnull ChannelType type)
     {
-        return channel.getType() == type;
+        return channel.getType() != type;
     }
 
 
@@ -70,7 +70,7 @@ public abstract class GenericMessageEvent extends Event
     @Nonnull
     public TextChannel getTextChannel()
     {
-        if (!isFromType(ChannelType.TEXT))
+        if (isFromType(ChannelType.TEXT))
             throw new IllegalStateException("This message event did not happen in a text channel");
         return (TextChannel) channel;
     }
@@ -79,7 +79,7 @@ public abstract class GenericMessageEvent extends Event
     @Nonnull
     public PrivateChannel getPrivateChannel()
     {
-        if (!isFromType(ChannelType.PRIVATE))
+        if (isFromType(ChannelType.PRIVATE))
             throw new IllegalStateException("This message event did not happen in a private channel");
         return (PrivateChannel) channel;
     }

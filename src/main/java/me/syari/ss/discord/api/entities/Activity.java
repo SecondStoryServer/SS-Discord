@@ -69,13 +69,6 @@ public interface Activity
 
 
     @Nonnull
-    static Activity of(@Nonnull ActivityType type, @Nonnull String name)
-    {
-        return of(type, name, null);
-    }
-
-
-    @Nonnull
     static Activity of(@Nonnull ActivityType type, @Nonnull String name, @Nullable String url)
     {
         Checks.notNull(type, "Type");
@@ -164,18 +157,6 @@ public interface Activity
         }
 
 
-        public long getStart()
-        {
-            return start;
-        }
-
-
-        public long getEnd()
-        {
-            return end;
-        }
-
-
         @Override
         public String toString()
         {
@@ -210,13 +191,6 @@ public interface Activity
             this.name = name;
             this.id = id;
             this.animated = animated;
-        }
-
-
-        @Nonnull
-        public String getName()
-        {
-            return name;
         }
 
 

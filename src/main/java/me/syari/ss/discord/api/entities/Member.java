@@ -11,6 +11,7 @@ import java.time.OffsetDateTime;
 import java.util.List;
 
 
+@SuppressWarnings("ALL")
 public interface Member extends IMentionable, IPermissionHolder, IFakeable
 {
 

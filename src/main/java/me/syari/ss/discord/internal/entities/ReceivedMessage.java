@@ -46,7 +46,7 @@ public class ReceivedMessage extends AbstractMessage
             String content, String nonce, User author, Member member,
             List<MessageEmbed> embeds)
     {
-        super(content, nonce, tts);
+        super(content, tts);
         this.id = id;
         this.channel = channel;
         this.type = type;

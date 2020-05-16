@@ -124,7 +124,7 @@ public class EventCache
         USER, MEMBER, GUILD, CHANNEL, ROLE, RELATIONSHIP, CALL
     }
 
-    private class CacheNode
+    private static class CacheNode
     {
         private final long responseTotal;
         private final DataObject event;

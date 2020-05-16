@@ -13,7 +13,6 @@ public class ActivityImpl implements Activity
     protected final String url;
     protected final ActivityType type;
     protected final Timestamps timestamps;
-    protected final Emoji emoji;
 
     protected ActivityImpl(String name, String url, ActivityType type)
     {
@@ -26,7 +25,6 @@ public class ActivityImpl implements Activity
         this.url = url;
         this.type = type;
         this.timestamps = timestamps;
-        this.emoji = emoji;
     }
 
     @Nonnull

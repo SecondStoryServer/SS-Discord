@@ -18,8 +18,8 @@ public class SessionConfig
     private final OkHttpClient httpClient;
     private final WebSocketFactory webSocketFactory;
     private final int largeThreshold;
-    private EnumSet<ConfigFlag> flags;
-    private int maxReconnectDelay;
+    private final EnumSet<ConfigFlag> flags;
+    private final int maxReconnectDelay;
 
     public SessionConfig(
             @Nullable SessionController sessionController, @Nullable OkHttpClient httpClient,

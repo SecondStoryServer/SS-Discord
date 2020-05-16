@@ -4,8 +4,6 @@ package me.syari.ss.discord.internal.utils.cache;
 
 import gnu.trove.map.TLongObjectMap;
 import gnu.trove.map.hash.TLongObjectHashMap;
-import gnu.trove.set.TLongSet;
-import gnu.trove.set.hash.TLongHashSet;
 import me.syari.ss.discord.api.utils.LockIterator;
 import me.syari.ss.discord.api.utils.cache.CacheView;
 import me.syari.ss.discord.internal.utils.Checks;
@@ -26,13 +24,11 @@ public abstract class AbstractCacheView<T> extends ReadWriteLockCache<T> impleme
     protected final TLongObjectMap<T> elements = new TLongObjectHashMap<>();
     protected final T[] emptyArray;
     protected final Function<T, String> nameMapper;
-    protected final Class<T> type;
 
     @SuppressWarnings("unchecked")
     protected AbstractCacheView(Class<T> type, Function<T, String> nameMapper)
     {
         this.nameMapper = nameMapper;
-        this.type = type;
         this.emptyArray = (T[]) Array.newInstance(type, 0);
     }
 
@@ -56,22 +52,6 @@ public abstract class AbstractCacheView<T> extends ReadWriteLockCache<T> impleme
         try (UnlockHook hook = readLock())
         {
             return elements.get(id);
-        }
-    }
-
-    public T remove(long id)
-    {
-        try (UnlockHook hook = writeLock())
-        {
-            return elements.remove(id);
-        }
-    }
-
-    public TLongSet keySet()
-    {
-        try (UnlockHook hook = readLock())
-        {
-            return new TLongHashSet(elements.keySet());
         }
     }
 
