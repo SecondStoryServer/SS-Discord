@@ -59,17 +59,6 @@ public class WebhookImpl implements Webhook {
         return channel;
     }
 
-    @Override
-    public Member getOwner() {
-        return owner;
-    }
-
-    @Nonnull
-    @Override
-    public User getDefaultUser() {
-        return user;
-    }
-
     @Nonnull
     @Override
     public String getName() {

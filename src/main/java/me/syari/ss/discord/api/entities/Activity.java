@@ -1,14 +1,11 @@
 package me.syari.ss.discord.api.entities;
 
 import me.syari.ss.discord.annotations.Incubating;
-import me.syari.ss.discord.internal.entities.EntityBuilder;
-import me.syari.ss.discord.internal.utils.Checks;
 import me.syari.ss.discord.internal.utils.EncodingUtil;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Objects;
-import java.util.regex.Pattern;
 
 
 public interface Activity {

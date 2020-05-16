@@ -5,6 +5,7 @@ import me.syari.ss.discord.api.entities.MessageChannel;
 import me.syari.ss.discord.api.entities.User;
 import me.syari.ss.discord.api.events.message.MessageReceivedEvent;
 import me.syari.ss.discord.api.hooks.ListenerAdapter;
+import org.jetbrains.annotations.NotNull;
 
 import javax.security.auth.login.LoginException;
 
@@ -26,7 +27,7 @@ public class MessageListenerExample extends ListenerAdapter
         }
     }
     @Override
-    public void onMessageReceived(MessageReceivedEvent event)
+    public void onMessageReceived(@NotNull MessageReceivedEvent event)
     {
         MessageChannel channel = event.getChannel();
         User authorUser = event.getAuthor();

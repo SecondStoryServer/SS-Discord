@@ -45,7 +45,9 @@ import org.slf4j.MDC;
 
 import javax.annotation.Nonnull;
 import javax.security.auth.login.LoginException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.*;
 
 public class JDAImpl implements JDA {

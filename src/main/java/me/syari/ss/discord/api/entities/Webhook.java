@@ -27,14 +27,6 @@ public interface Webhook extends ISnowflake, IFakeable {
     TextChannel getChannel();
 
 
-    @Nullable
-    Member getOwner();
-
-
-    @Nonnull
-    User getDefaultUser();
-
-
     @Nonnull
     String getName();
 
