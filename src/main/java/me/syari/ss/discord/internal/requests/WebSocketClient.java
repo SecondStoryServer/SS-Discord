@@ -960,40 +960,40 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
     protected void setupHandlers()
     {
         final SocketHandler.NOPHandler nopHandler = new SocketHandler.NOPHandler(api);
-        handlers.put("CHANNEL_CREATE",              new ChannelCreateHandler(api));
-        handlers.put("CHANNEL_DELETE",              new ChannelDeleteHandler(api));
-        handlers.put("CHANNEL_UPDATE",              new ChannelUpdateHandler(api));
-        handlers.put("GUILD_BAN_ADD",               new GuildBanHandler(api));
-        handlers.put("GUILD_BAN_REMOVE",            new GuildBanHandler(api));
+        handlers.put("CHANNEL_CREATE",              nopHandler);
+        handlers.put("CHANNEL_DELETE",              nopHandler);
+        handlers.put("CHANNEL_UPDATE",              nopHandler);
+        handlers.put("GUILD_BAN_ADD",               nopHandler);
+        handlers.put("GUILD_BAN_REMOVE",            nopHandler);
         handlers.put("GUILD_CREATE",                new GuildCreateHandler(api));
-        handlers.put("GUILD_DELETE",                new GuildDeleteHandler(api));
-        handlers.put("GUILD_EMOJIS_UPDATE",         new GuildEmojisUpdateHandler(api));
-        handlers.put("GUILD_MEMBER_ADD",            new GuildMemberAddHandler(api));
-        handlers.put("GUILD_MEMBER_REMOVE",         new GuildMemberRemoveHandler(api));
-        handlers.put("GUILD_MEMBER_UPDATE",         new GuildMemberUpdateHandler(api));
-        handlers.put("GUILD_MEMBERS_CHUNK",         new GuildMembersChunkHandler(api));
-        handlers.put("GUILD_ROLE_CREATE",           new GuildRoleCreateHandler(api));
-        handlers.put("GUILD_ROLE_DELETE",           new GuildRoleDeleteHandler(api));
-        handlers.put("GUILD_ROLE_UPDATE",           new GuildRoleUpdateHandler(api));
-        handlers.put("GUILD_SYNC",                  new GuildSyncHandler(api));
-        handlers.put("GUILD_UPDATE",                new GuildUpdateHandler(api));
+        handlers.put("GUILD_DELETE",                nopHandler);
+        handlers.put("GUILD_EMOJIS_UPDATE",         nopHandler);
+        handlers.put("GUILD_MEMBER_ADD",            nopHandler);
+        handlers.put("GUILD_MEMBER_REMOVE",         nopHandler);
+        handlers.put("GUILD_MEMBER_UPDATE",         nopHandler);
+        handlers.put("GUILD_MEMBERS_CHUNK",         nopHandler);
+        handlers.put("GUILD_ROLE_CREATE",           nopHandler);
+        handlers.put("GUILD_ROLE_DELETE",           nopHandler);
+        handlers.put("GUILD_ROLE_UPDATE",           nopHandler);
+        handlers.put("GUILD_SYNC",                  nopHandler);
+        handlers.put("GUILD_UPDATE",                nopHandler);
         handlers.put("MESSAGE_CREATE",              new MessageCreateHandler(api));
-        handlers.put("MESSAGE_DELETE",              new MessageDeleteHandler(api));
-        handlers.put("MESSAGE_DELETE_BULK",         new MessageBulkDeleteHandler(api));
-        handlers.put("MESSAGE_REACTION_ADD",        new MessageReactionHandler(api));
-        handlers.put("MESSAGE_REACTION_REMOVE",     new MessageReactionHandler(api));
-        handlers.put("MESSAGE_REACTION_REMOVE_ALL", new MessageReactionBulkRemoveHandler(api));
-        handlers.put("MESSAGE_UPDATE",              new MessageUpdateHandler(api));
+        handlers.put("MESSAGE_DELETE",              nopHandler);
+        handlers.put("MESSAGE_DELETE_BULK",         nopHandler);
+        handlers.put("MESSAGE_REACTION_ADD",        nopHandler);
+        handlers.put("MESSAGE_REACTION_REMOVE",     nopHandler);
+        handlers.put("MESSAGE_REACTION_REMOVE_ALL", nopHandler);
+        handlers.put("MESSAGE_UPDATE",              nopHandler);
         handlers.put("READY",                       new ReadyHandler(api));
-        handlers.put("USER_UPDATE",                 new UserUpdateHandler(api));
-        handlers.put("VOICE_SERVER_UPDATE",         new VoiceServerUpdateHandler(api));
-        handlers.put("VOICE_STATE_UPDATE",          new VoiceStateUpdateHandler(api));
+        handlers.put("USER_UPDATE",                 nopHandler);
+        handlers.put("VOICE_SERVER_UPDATE",         nopHandler);
+        handlers.put("VOICE_STATE_UPDATE",          nopHandler);
 
         if (api.isGuildSubscriptions())
         {
             // These events are not expected if guild subscriptions are disabled
-            handlers.put("PRESENCE_UPDATE", new PresenceUpdateHandler(api));
-            handlers.put("TYPING_START",    new TypingStartHandler(api));
+            handlers.put("PRESENCE_UPDATE", nopHandler);
+            handlers.put("TYPING_START",    nopHandler);
         }
         else
         {
