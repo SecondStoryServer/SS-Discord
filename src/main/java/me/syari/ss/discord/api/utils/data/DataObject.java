@@ -217,20 +217,6 @@ public class DataObject implements SerializableData {
     }
 
 
-    public int getUnsignedInt(@Nonnull String key) {
-        Integer value = get(Integer.class, key, Integer::parseUnsignedInt, Number::intValue);
-        if (value == null)
-            throw valueError(key, "unsigned int");
-        return value;
-    }
-
-
-    public int getUnsignedInt(@Nonnull String key, int defaultValue) {
-        Integer value = get(Integer.class, key, Integer::parseUnsignedInt, Number::intValue);
-        return value == null ? defaultValue : value;
-    }
-
-
     @Nonnull
     public DataObject remove(@Nonnull String key) {
         data.remove(key);

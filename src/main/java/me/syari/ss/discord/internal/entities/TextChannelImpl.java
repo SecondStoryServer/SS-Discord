@@ -21,10 +21,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 public class TextChannelImpl extends AbstractChannelImpl<TextChannel, TextChannelImpl> implements TextChannel {
-    private String topic;
-    private long lastMessageId;
-    private boolean nsfw;
-    private int slowmode;
 
     public TextChannelImpl(long id, GuildImpl guild) {
         super(id, guild);
@@ -266,27 +262,6 @@ public class TextChannelImpl extends AbstractChannelImpl<TextChannel, TextChanne
         return "TC:" + getName() + '(' + id + ')';
     }
 
-    // -- Setters --
-
-    public TextChannelImpl setTopic(String topic) {
-        this.topic = topic;
-        return this;
-    }
-
-    public TextChannelImpl setLastMessageId(long id) {
-        this.lastMessageId = id;
-        return this;
-    }
-
-    public TextChannelImpl setNSFW(boolean nsfw) {
-        this.nsfw = nsfw;
-        return this;
-    }
-
-    public TextChannelImpl setSlowmode(int slowmode) {
-        this.slowmode = slowmode;
-        return this;
-    }
 
     // -- internal --
     private RestActionImpl<Void> deleteMessages0(Collection<String> messageIds) {

@@ -35,7 +35,6 @@ public class MemberImpl implements Member {
         this.api = (JDAImpl) user.getJDA();
         this.guild = new SnowflakeReference<>(guild, api::getGuildById);
         this.user = user;
-        boolean cacheState = api.isCacheFlagSet(CacheFlag.VOICE_STATE) || user.equals(api.getSelfUser());
         boolean cacheOnline = api.isCacheFlagSet(CacheFlag.CLIENT_STATUS);
         this.clientStatus = cacheOnline ? Collections.synchronizedMap(new EnumMap<>(ClientType.class)) : null;
     }
@@ -157,9 +156,8 @@ public class MemberImpl implements Member {
         return user.getIdLong();
     }
 
-    public MemberImpl setNickname(String nickname) {
+    public void setNickname(String nickname) {
         this.nickname = nickname;
-        return this;
     }
 
     public MemberImpl setJoinDate(long joinDate) {
@@ -167,29 +165,25 @@ public class MemberImpl implements Member {
         return this;
     }
 
-    public MemberImpl setBoostDate(long boostDate) {
+    public void setBoostDate(long boostDate) {
         this.boostDate = boostDate;
-        return this;
     }
 
-    public MemberImpl setActivities(List<Activity> activities) {
+    public void setActivities(List<Activity> activities) {
         this.activities = Collections.unmodifiableList(activities);
-        return this;
     }
 
-    public MemberImpl setOnlineStatus(ClientType type, OnlineStatus status) {
+    public void setOnlineStatus(ClientType type, OnlineStatus status) {
         if (this.clientStatus == null || type == ClientType.UNKNOWN || type == null)
-            return this;
+            return;
         if (status == null || status == OnlineStatus.UNKNOWN || status == OnlineStatus.OFFLINE)
             this.clientStatus.remove(type);
         else
             this.clientStatus.put(type, status);
-        return this;
     }
 
-    public MemberImpl setOnlineStatus(OnlineStatus onlineStatus) {
+    public void setOnlineStatus(OnlineStatus onlineStatus) {
         this.onlineStatus = onlineStatus;
-        return this;
     }
 
     public Set<Role> getRoleSet() {

@@ -71,15 +71,9 @@ public interface SessionController {
 
     interface SessionConnectNode {
 
-        boolean isReconnect();
-
 
         @Nonnull
         JDA getJDA();
-
-
-        @Nonnull
-        JDA.ShardInfo getShardInfo();
 
 
         void run(boolean isLast) throws InterruptedException;

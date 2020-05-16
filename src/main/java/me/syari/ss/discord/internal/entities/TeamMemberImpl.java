@@ -8,12 +8,10 @@ import java.util.Objects;
 
 public class TeamMemberImpl implements TeamMember {
     private final User user;
-    private final MembershipState state;
     private final long teamId;
 
     public TeamMemberImpl(User user, MembershipState state, long teamId) {
         this.user = user;
-        this.state = state;
         this.teamId = teamId;
     }
 

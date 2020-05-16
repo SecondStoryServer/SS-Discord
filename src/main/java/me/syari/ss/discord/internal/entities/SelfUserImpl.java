@@ -14,8 +14,6 @@ public class SelfUserImpl extends UserImpl implements SelfUser {
     protected final ReentrantLock mngLock = new ReentrantLock();
     protected volatile AccountManager manager;
 
-    private boolean verified;
-
     public SelfUserImpl(long id, JDAImpl api) {
         super(id, api);
     }
@@ -43,10 +41,5 @@ public class SelfUserImpl extends UserImpl implements SelfUser {
             });
         }
         return mng;
-    }
-
-    public SelfUserImpl setVerified(boolean verified) {
-        this.verified = verified;
-        return this;
     }
 }

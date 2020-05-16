@@ -12,10 +12,6 @@ public class ActivityImpl implements Activity {
     protected final ActivityType type;
     protected final Timestamps timestamps;
 
-    protected ActivityImpl(String name, String url, ActivityType type) {
-        this(name, url, type, null);
-    }
-
     protected ActivityImpl(String name, String url, ActivityType type, RichPresence.Timestamps timestamps) {
         this.name = name;
         this.url = url;

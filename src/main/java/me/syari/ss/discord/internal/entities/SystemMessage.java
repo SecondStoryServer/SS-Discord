@@ -10,7 +10,7 @@ public class SystemMessage extends ReceivedMessage {
             long id, MessageChannel channel, MessageType type,
             boolean fromWebhook, boolean mentionsEveryone, TLongSet mentionedUsers, TLongSet mentionedRoles,
             boolean tts,
-            String content, String nonce, User author, Member member,
+            String content, User author, Member member,
             List<MessageEmbed> embeds) {
         super(id, channel, type, fromWebhook, mentionsEveryone, mentionedUsers, mentionedRoles,
                 tts, content, author, member, embeds);

@@ -111,9 +111,6 @@ public interface JDA {
     Status getStatus();
 
 
-    long getGatewayPing();
-
-
     @Nonnull
     default JDA awaitStatus(@Nonnull JDA.Status status) throws InterruptedException {
         //This is done to retain backwards compatible ABI as it would otherwise change the signature of the method
@@ -156,12 +153,6 @@ public interface JDA {
 
     @Nonnull
     SnowflakeCacheView<User> getUserCache();
-
-
-    @Nullable
-    default User getUserById(@Nonnull String id) {
-        return getUserCache().getElementById(id);
-    }
 
 
     @Nullable
@@ -267,10 +258,6 @@ public interface JDA {
     default Emote getEmoteById(long id) {
         return getEmoteCache().getElementById(id);
     }
-
-
-    @Nonnull
-    IEventManager getEventManager();
 
 
     @Nonnull

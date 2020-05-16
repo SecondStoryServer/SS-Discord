@@ -821,18 +821,9 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
             return api;
         }
 
-        @Nonnull
-        @Override
-        public JDA.ShardInfo getShardInfo() {
-            return api.getShardInfo();
-        }
     }
 
     protected class StartingNode extends ConnectNode {
-        @Override
-        public boolean isReconnect() {
-            return false;
-        }
 
         @Override
         public void run(boolean isLast) throws InterruptedException {
@@ -867,10 +858,6 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
     }
 
     protected class ReconnectNode extends ConnectNode {
-        @Override
-        public boolean isReconnect() {
-            return true;
-        }
 
         @Override
         public void run(boolean isLast) throws InterruptedException {

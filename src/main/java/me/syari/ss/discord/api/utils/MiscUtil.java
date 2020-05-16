@@ -14,7 +14,7 @@ import java.util.function.Supplier;
 
 public class MiscUtil {
     public static <T> TLongObjectMap<T> newLongMap() {
-        return new TSynchronizedLongObjectMap<>(new TLongObjectHashMap<T>(), new Object());
+        return new TSynchronizedLongObjectMap<>(new TLongObjectHashMap<>(), new Object());
     }
 
     public static long parseSnowflake(String input) {

@@ -307,11 +307,6 @@ public class JDAImpl implements JDA {
         return status;
     }
 
-    @Override
-    public long getGatewayPing() {
-        return gatewayPing;
-    }
-
     @Nonnull
     @Override
     public JDA awaitStatus(@Nonnull Status status, @Nonnull Status... failOn) throws InterruptedException {
@@ -483,12 +478,6 @@ public class JDAImpl implements JDA {
     @Override
     public Presence getPresence() {
         return presence;
-    }
-
-    @Nonnull
-    @Override
-    public IEventManager getEventManager() {
-        return eventManager.getSubject();
     }
 
     @Override

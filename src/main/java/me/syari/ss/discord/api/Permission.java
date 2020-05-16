@@ -71,10 +71,6 @@ public enum Permission {
             MESSAGE_HISTORY, MESSAGE_MENTION_EVERYONE);
 
 
-    public static final long ALL_VOICE_PERMISSIONS
-            = Permission.getRaw(VOICE_STREAM, VOICE_CONNECT, VOICE_SPEAK, VOICE_MUTE_OTHERS,
-            VOICE_DEAF_OTHERS, VOICE_MOVE_OTHERS, VOICE_USE_VAD);
-
     private final long raw;
     private final boolean isGuild, isChannel;
     private final String name;
@@ -110,11 +106,6 @@ public enum Permission {
 
     public boolean isText() {
         return (raw & ALL_TEXT_PERMISSIONS) == raw;
-    }
-
-
-    public boolean isVoice() {
-        return (raw & ALL_VOICE_PERMISSIONS) == raw;
     }
 
 

@@ -76,8 +76,7 @@ public class EntityBuilder {
                 userView.getMap().put(selfUser.getIdLong(), selfUser);
         }
 
-        selfUser.setVerified(self.getBoolean("verified"))
-                .setName(self.getString("username"))
+        selfUser.setName(self.getString("username"))
                 .setDiscriminator(self.getString("discriminator"))
                 .setAvatarId(self.getString("avatar", null))
                 .setBot(self.getBoolean("bot"));
@@ -117,8 +116,6 @@ public class EntityBuilder {
         final Optional<DataArray> featuresArray = guildJson.optArray("features");
         final Optional<DataArray> presencesArray = guildJson.optArray("presences");
         final long ownerId = guildJson.getUnsignedLong("owner_id", 0L);
-        final long afkChannelId = guildJson.getUnsignedLong("afk_channel_id", 0L);
-        final long systemChannelId = guildJson.getUnsignedLong("system_channel_id", 0L);
         final int boostCount = guildJson.getInt("premium_subscription_count", 0);
         final int boostTier = guildJson.getInt("premium_tier", 0);
         final int maxMembers = guildJson.getInt("max_members", 0);
@@ -242,7 +239,6 @@ public class EntityBuilder {
                     LOG.error("Received a VoiceState for a unknown Member! GuildId: "
                             + guildObj.getId() + " MemberId: " + voiceStateJson.getString("user_id"));
                 }
-                continue;
             }
         }
     }
@@ -411,7 +407,7 @@ public class EntityBuilder {
         //If newRoles is null that means that we didn't find a role that was in the array and was cached this event
         long responseNumber = getJDA().getResponseTotal();
         if (newRoles != null) {
-            updateMemberRoles(member, newRoles, responseNumber);
+            updateMemberRoles(member, newRoles);
         }
         if (content.hasKey("nick")) {
             String oldNick = member.getNickname();
@@ -433,7 +429,7 @@ public class EntityBuilder {
         }
     }
 
-    private void updateMemberRoles(MemberImpl member, List<Role> newRoles, long responseNumber) {
+    private void updateMemberRoles(MemberImpl member, List<Role> newRoles) {
         Set<Role> currentRoles = member.getRoleSet();
         //Find the roles removed.
         List<Role> removedRoles = new LinkedList<>();
@@ -515,14 +511,7 @@ public class EntityBuilder {
             timestamps = new RichPresence.Timestamps(start, end);
         }
 
-        Activity.Emoji emoji = null;
-        if (!gameJson.isNull("emoji")) {
-            DataObject emojiJson = gameJson.getObject("emoji");
-            String emojiName = emojiJson.getString("name");
-            long emojiId = emojiJson.getUnsignedLong("id", 0);
-            boolean emojiAnimated = emojiJson.getBoolean("animated");
-            emoji = new Activity.Emoji(emojiName, emojiId, emojiAnimated);
-        }
+        gameJson.isNull("emoji");
 
         if (type == Activity.ActivityType.CUSTOM_STATUS) {
             if (gameJson.hasKey("state") && name.equalsIgnoreCase("Custom Status")) {
@@ -570,7 +559,7 @@ public class EntityBuilder {
         }
 
         return new RichPresenceImpl(type, name, url,
-                id, emoji, party, details, state, timestamps, syncId, sessionId, flags,
+                id, party, details, state, timestamps, syncId, sessionId, flags,
                 largeImageKey, largeImageText, smallImageKey, smallImageText);
     }
 
@@ -595,10 +584,6 @@ public class EntityBuilder {
                 .setName(json.getString("name", ""))
                 .setAnimated(json.getBoolean("animated"))
                 .setManaged(json.getBoolean("managed"));
-    }
-
-    public Category createCategory(DataObject json, long guildId) {
-        return createCategory(null, json, guildId);
     }
 
     public Category createCategory(GuildImpl guild, DataObject json, long guildId) {
@@ -631,10 +616,6 @@ public class EntityBuilder {
         if (playbackCache)
             getJDA().getEventCache().playbackCache(EventCache.Type.CHANNEL, id);
         return channel;
-    }
-
-    public StoreChannel createStoreChannel(DataObject json, long guildId) {
-        return createStoreChannel(null, json, guildId);
     }
 
     public StoreChannel createStoreChannel(GuildImpl guild, DataObject json, long guildId) {
@@ -699,14 +680,9 @@ public class EntityBuilder {
             createOverridesPass(channel, overrides);
         }
 
-        channel
-                .setParent(json.getLong("parent_id", 0))
-                .setLastMessageId(json.getLong("last_message_id", 0))
+        channel.setParent(json.getLong("parent_id", 0))
                 .setName(json.getString("name"))
-                .setTopic(json.getString("topic", null))
-                .setPosition(json.getInt("position"))
-                .setNSFW(json.getBoolean("nsfw"))
-                .setSlowmode(json.getInt("rate_limit_per_user", 0));
+                .setPosition(json.getInt("position"));
         if (playbackCache)
             getJDA().getEventCache().playbackCache(EventCache.Type.CHANNEL, id);
         return channel;
@@ -903,7 +879,7 @@ public class EntityBuilder {
             default:
                 message = new SystemMessage(id, chan, type, fromWebhook,
                         mentionsEveryone, mentionedUsers, mentionedRoles, tts,
-                        content, nonce, user, member, embeds);
+                        content, user, member, embeds);
                 break;
         }
 
