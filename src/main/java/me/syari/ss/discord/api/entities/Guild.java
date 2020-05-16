@@ -169,13 +169,6 @@ public interface Guild extends ISnowflake
 
 
     @Nonnull
-    default List<Category> getCategories()
-    {
-        return getCategoryCache().asList();
-    }
-
-
-    @Nonnull
     SortedSnowflakeCacheView<Category> getCategoryCache();
 
 
@@ -183,13 +176,6 @@ public interface Guild extends ISnowflake
     default StoreChannel getStoreChannelById(long id)
     {
         return getStoreChannelCache().getElementById(id);
-    }
-
-
-    @Nonnull
-    default List<StoreChannel> getStoreChannels()
-    {
-        return getStoreChannelCache().asList();
     }
 
 
@@ -315,73 +301,6 @@ public interface Guild extends ISnowflake
 
 
     /* From GuildController */
-
-
-    @Nonnull
-    @CheckReturnValue
-    AuditableRestAction<Void> modifyNickname(@Nonnull Member member, @Nullable String nickname);
-
-
-    @Nonnull
-    @CheckReturnValue
-    AuditableRestAction<Void> kick(@Nonnull Member member, @Nullable String reason);
-
-
-    @Nonnull
-    @CheckReturnValue
-    default AuditableRestAction<Void> kick(@Nonnull Member member)
-    {
-        return kick(member, null);
-    }
-
-
-    @Nonnull
-    @CheckReturnValue
-    AuditableRestAction<Void> ban(@Nonnull User user, int delDays, @Nullable String reason);
-
-
-    @Nonnull
-    @CheckReturnValue
-    default AuditableRestAction<Void> ban(@Nonnull Member member, int delDays, @Nullable String reason)
-    {
-        Checks.notNull(member, "Member");
-        //Don't check if the provided member is from this guild. It doesn't matter if they are or aren't.
-
-        return ban(member.getUser(), delDays, reason);
-    }
-
-
-    @Nonnull
-    @CheckReturnValue
-    default AuditableRestAction<Void> ban(@Nonnull Member member, int delDays)
-    {
-        return ban(member, delDays, null);
-    }
-
-
-    @Nonnull
-    @CheckReturnValue
-    AuditableRestAction<Void> deafen(@Nonnull Member member, boolean deafen);
-
-
-    @Nonnull
-    @CheckReturnValue
-    AuditableRestAction<Void> mute(@Nonnull Member member, boolean mute);
-
-
-    @Nonnull
-    @CheckReturnValue
-    ChannelAction<TextChannel> createTextChannel(@Nonnull String name);
-
-
-    @Nonnull
-    @CheckReturnValue
-    ChannelAction<VoiceChannel> createVoiceChannel(@Nonnull String name);
-
-
-    @Nonnull
-    @CheckReturnValue
-    ChannelAction<Category> createCategory(@Nonnull String name);
 
 
     @Nonnull

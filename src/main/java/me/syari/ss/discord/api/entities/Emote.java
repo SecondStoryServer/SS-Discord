@@ -18,8 +18,6 @@ import java.util.List;
 public interface Emote extends IMentionable, IFakeable
 {
 
-    String ICON_URL = "https://cdn.discordapp.com/emojis/%s.%s";
-
 
     @Nullable
     Guild getGuild();
@@ -72,20 +70,4 @@ public interface Emote extends IMentionable, IFakeable
     }
 
 
-    default boolean canInteract(Member issuer)
-    {
-        return PermissionUtil.canInteract(issuer, this);
-    }
-
-
-    default boolean canInteract(User issuer, MessageChannel channel)
-    {
-        return PermissionUtil.canInteract(issuer, this, channel);
-    }
-
-
-    default boolean canInteract(User issuer, MessageChannel channel, boolean botOverride)
-    {
-        return PermissionUtil.canInteract(issuer, this, channel, botOverride);
-    }
 }

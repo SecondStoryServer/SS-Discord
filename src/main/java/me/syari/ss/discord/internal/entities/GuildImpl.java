@@ -13,7 +13,6 @@ import me.syari.ss.discord.api.exceptions.InsufficientPermissionException;
 import me.syari.ss.discord.api.managers.GuildManager;
 import me.syari.ss.discord.api.requests.RestAction;
 import me.syari.ss.discord.api.requests.restaction.AuditableRestAction;
-import me.syari.ss.discord.api.requests.restaction.ChannelAction;
 import me.syari.ss.discord.api.requests.restaction.RoleAction;
 import me.syari.ss.discord.api.utils.MiscUtil;
 import me.syari.ss.discord.api.utils.cache.MemberCacheView;
@@ -24,7 +23,6 @@ import me.syari.ss.discord.api.utils.data.DataObject;
 import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.requests.*;
 import me.syari.ss.discord.internal.requests.restaction.AuditableRestActionImpl;
-import me.syari.ss.discord.internal.requests.restaction.ChannelActionImpl;
 import me.syari.ss.discord.internal.requests.restaction.RoleActionImpl;
 import me.syari.ss.discord.internal.utils.*;
 import me.syari.ss.discord.internal.utils.cache.MemberCacheViewImpl;
@@ -454,68 +452,12 @@ public class GuildImpl implements Guild
     }
 
     @Nonnull
-    @Override
-    public AuditableRestAction<Void> modifyNickname(@Nonnull Member member, String nickname)
-    {
-        Checks.notNull(member, "Member");
-        checkGuild(member.getGuild(), "Member");
-
-        if (member.equals(getSelfMember()))
-        {
-            if (!member.hasPermission(Permission.NICKNAME_CHANGE) && !member.hasPermission(Permission.NICKNAME_MANAGE))
-                throw new InsufficientPermissionException(this, Permission.NICKNAME_CHANGE, "You neither have NICKNAME_CHANGE nor NICKNAME_MANAGE permission!");
-        }
-        else
-        {
-            checkPermission(Permission.NICKNAME_MANAGE);
-            checkPosition(member);
-        }
-
-        JDAImpl jda = getJDA();
-        return new DeferredRestAction<>(jda, () -> {
-            DataObject body = DataObject.empty().put("nick", nickname == null ? "" : nickname);
-
-            Route.CompiledRoute route;
-            if (member.equals(getSelfMember()))
-                route = Route.Guilds.MODIFY_SELF_NICK.compile(getId());
-            else
-                route = Route.Guilds.MODIFY_MEMBER.compile(getId(), member.getUser().getId());
-
-            return new AuditableRestActionImpl<Void>(jda, route, body);
-        }).setCacheCheck(() -> !Objects.equals(nickname, member.getNickname()));
-    }
-
-    @Nonnull
-    @Override
-    public AuditableRestAction<Void> kick(@Nonnull Member member, String reason)
-    {
-        Checks.notNull(member, "member");
-        checkGuild(member.getGuild(), "member");
-        checkPermission(Permission.KICK_MEMBERS);
-        checkPosition(member);
-        return kick0(member.getUser().getId(), reason);
-    }
-
-    @Nonnull
     private AuditableRestAction<Void> kick0(@Nonnull String userId, @Nullable String reason)
     {
         Route.CompiledRoute route = Route.Guilds.KICK_MEMBER.compile(getId(), userId);
         if (!Helpers.isBlank(reason))
             route = route.withQueryParams("reason", EncodingUtil.encodeUTF8(reason));
         return new AuditableRestActionImpl<>(getJDA(), route);
-    }
-
-    @Nonnull
-    @Override
-    public AuditableRestAction<Void> ban(@Nonnull User user, int delDays, String reason)
-    {
-        Checks.notNull(user, "User");
-        checkPermission(Permission.BAN_MEMBERS);
-
-        if (isMember(user)) // If user is in guild. Check if we are able to ban.
-            checkPosition(getMember(user));
-
-        return ban0(user.getId(), delDays, reason);
     }
 
     @Nonnull
@@ -531,86 +473,6 @@ public class GuildImpl implements Guild
             route = route.withQueryParams("delete-message-days", Integer.toString(delDays));
 
         return new AuditableRestActionImpl<>(getJDA(), route);
-    }
-
-    @Nonnull
-    @Override
-    public AuditableRestAction<Void> deafen(@Nonnull Member member, boolean deafen)
-    {
-        Checks.notNull(member, "Member");
-        checkGuild(member.getGuild(), "Member");
-        checkPermission(Permission.VOICE_DEAF_OTHERS);
-
-        GuildVoiceState voiceState = member.getVoiceState();
-        if (voiceState != null)
-        {
-            if (voiceState.getChannel() == null)
-                throw new IllegalStateException("Can only deafen members who are currently in a voice channel");
-            if (voiceState.isGuildDeafened() == deafen)
-                return new CompletedRestAction<>(getJDA(), null);
-        }
-
-        DataObject body = DataObject.empty().put("deaf", deafen);
-        Route.CompiledRoute route = Route.Guilds.MODIFY_MEMBER.compile(getId(), member.getUser().getId());
-        return new AuditableRestActionImpl<>(getJDA(), route, body);
-    }
-
-    @Nonnull
-    @Override
-    public AuditableRestAction<Void> mute(@Nonnull Member member, boolean mute)
-    {
-        Checks.notNull(member, "Member");
-        checkGuild(member.getGuild(), "Member");
-        checkPermission(Permission.VOICE_MUTE_OTHERS);
-
-        GuildVoiceState voiceState = member.getVoiceState();
-        if (voiceState != null)
-        {
-            if (voiceState.getChannel() == null)
-                throw new IllegalStateException("Can only mute members who are currently in a voice channel");
-            if (voiceState.isGuildMuted() == mute)
-                return new CompletedRestAction<>(getJDA(), null);
-        }
-
-        DataObject body = DataObject.empty().put("mute", mute);
-        Route.CompiledRoute route = Route.Guilds.MODIFY_MEMBER.compile(getId(), member.getUser().getId());
-        return new AuditableRestActionImpl<>(getJDA(), route, body);
-    }
-
-    @Nonnull
-    @Override
-    public ChannelAction<TextChannel> createTextChannel(@Nonnull String name)
-    {
-        checkPermission(Permission.MANAGE_CHANNEL);
-        Checks.notBlank(name, "Name");
-        name = name.trim();
-
-        Checks.check(name.length() > 0 && name.length() <= 100, "Provided name must be 1 - 100 characters in length");
-        return new ChannelActionImpl<>(TextChannel.class, name, this, ChannelType.TEXT);
-    }
-
-    @Nonnull
-    @Override
-    public ChannelAction<VoiceChannel> createVoiceChannel(@Nonnull String name)
-    {
-        checkPermission(Permission.MANAGE_CHANNEL);
-        Checks.notBlank(name, "Name");
-        name = name.trim();
-
-        Checks.check(name.length() > 0 && name.length() <= 100, "Provided name must be 1 - 100 characters in length");
-        return new ChannelActionImpl<>(VoiceChannel.class, name, this, ChannelType.VOICE);
-    }
-
-    @Nonnull
-    @Override
-    public ChannelAction<Category> createCategory(@Nonnull String name)
-    {
-        checkPermission(Permission.MANAGE_CHANNEL);
-        Checks.notBlank(name, "Name");
-        name = name.trim();
-
-        Checks.check(name.length() > 0 && name.length() <= 100, "Provided name must be 1 - 100 characters in length");
-        return new ChannelActionImpl<>(Category.class, name, this, ChannelType.CATEGORY);
     }
 
     @Nonnull
