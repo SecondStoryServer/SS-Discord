@@ -35,7 +35,6 @@ public class GuildImpl implements Guild {
     private String name;
     private long ownerId;
     private Set<String> features;
-    private Role publicRole;
     private final VerificationLevel verificationLevel = VerificationLevel.UNKNOWN;
     private boolean available;
     private int memberCount;
@@ -97,15 +96,6 @@ public class GuildImpl implements Guild {
         return memberCache.get(user.getIdLong()) != null;
     }
 
-    @Nonnull
-    @Override
-    public Member getSelfMember() {
-        Member member = getMember(getJDA().getSelfUser());
-        if (member == null)
-            throw new IllegalStateException("Guild does not have a self member");
-        return member;
-    }
-
     @Override
     public Member getMember(@Nonnull User user) {
         Checks.notNull(user, "User");
@@ -120,12 +110,6 @@ public class GuildImpl implements Guild {
 
     @Nonnull
     @Override
-    public SortedSnowflakeCacheView<TextChannel> getTextChannelCache() {
-        return textChannelCache;
-    }
-
-    @Nonnull
-    @Override
     public SortedSnowflakeCacheView<Role> getRoleCache() {
         return roleCache;
     }
@@ -134,12 +118,6 @@ public class GuildImpl implements Guild {
     @Override
     public SnowflakeCacheView<Emote> getEmoteCache() {
         return emoteCache;
-    }
-
-    @Nonnull
-    @Override
-    public Role getPublicRole() {
-        return publicRole;
     }
 
     @Nonnull
@@ -193,7 +171,6 @@ public class GuildImpl implements Guild {
     }
 
     public void setPublicRole(Role publicRole) {
-        this.publicRole = publicRole;
     }
 
     public GuildImpl setOwnerId(long ownerId) {

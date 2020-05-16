@@ -2,6 +2,7 @@ package me.syari.ss.discord.api;
 
 import me.syari.ss.discord.api.entities.*;
 import me.syari.ss.discord.api.hooks.IEventManager;
+import me.syari.ss.discord.api.hooks.ListenerAdapter;
 import me.syari.ss.discord.api.managers.Presence;
 import me.syari.ss.discord.api.utils.cache.SnowflakeCacheView;
 import me.syari.ss.discord.internal.utils.Checks;
@@ -143,7 +144,7 @@ public interface JDA {
     void setEventManager(@Nullable IEventManager manager);
 
 
-    void addEventListener(@Nonnull Object... listeners);
+    void addEventListener(@Nonnull ListenerAdapter listeners);
 
 
     @Nonnull

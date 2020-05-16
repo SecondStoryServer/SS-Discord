@@ -9,17 +9,14 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.security.auth.login.LoginException;
 
-public class MessageListenerExample extends ListenerAdapter
-{
+public class MessageListenerExample implements ListenerAdapter {
     private static JDA jda;
 
     public static void main(String[] args)
     {
         try
         {
-            jda = new JDABuilder("NjE0NjkwNTIwNDQyMjA4Mjky.Xr6kqg.9dRqzWGH6YcogNG8-BcsYGPYleg")
-                    .addEventListeners(new MessageListenerExample())
-                    .build();
+            jda = new JDABuilder("NjE0NjkwNTIwNDQyMjA4Mjky.Xr6kqg.9dRqzWGH6YcogNG8-BcsYGPYleg", new MessageListenerExample()).build();
             jda.awaitReady();
             System.out.println("Finished Building JDA!");
         }

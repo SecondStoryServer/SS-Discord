@@ -8,6 +8,7 @@ import me.syari.ss.discord.api.events.message.MessageReceivedEvent;
 import me.syari.ss.discord.api.exceptions.RateLimitedException;
 import me.syari.ss.discord.api.hooks.IEventManager;
 import me.syari.ss.discord.api.hooks.InterfacedEventManager;
+import me.syari.ss.discord.api.hooks.ListenerAdapter;
 import me.syari.ss.discord.api.managers.Presence;
 import me.syari.ss.discord.api.requests.Request;
 import me.syari.ss.discord.api.requests.Response;
@@ -457,11 +458,8 @@ public class JDAImpl implements JDA {
     }
 
     @Override
-    public void addEventListener(@Nonnull Object... listeners) {
-        Checks.noneNull(listeners, "listeners");
-
-        for (Object listener : listeners)
-            eventManager.register(listener);
+    public void addEventListener(@Nonnull ListenerAdapter listener) {
+        eventManager.register(listener);
     }
 
     public EntityBuilder getEntityBuilder() {

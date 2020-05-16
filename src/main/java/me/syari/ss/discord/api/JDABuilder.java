@@ -3,6 +3,7 @@ package me.syari.ss.discord.api;
 import com.neovisionaries.ws.client.WebSocketFactory;
 import me.syari.ss.discord.api.entities.Activity;
 import me.syari.ss.discord.api.hooks.IEventManager;
+import me.syari.ss.discord.api.hooks.ListenerAdapter;
 import me.syari.ss.discord.api.utils.ChunkingFilter;
 import me.syari.ss.discord.api.utils.Compression;
 import me.syari.ss.discord.api.utils.SessionController;
@@ -31,7 +32,7 @@ import java.util.concurrent.ScheduledExecutorService;
 
 
 public class JDABuilder {
-    protected final List<Object> listeners = new LinkedList<>();
+    protected final ListenerAdapter listener;
 
     protected ScheduledExecutorService rateLimitPool = null;
     protected boolean shutdownRateLimitPool = true;
@@ -59,27 +60,9 @@ public class JDABuilder {
     protected ChunkingFilter chunkingFilter = ChunkingFilter.ALL;
 
 
-    public JDABuilder(@Nullable String token) {
+    public JDABuilder(@Nullable String token, ListenerAdapter listener) {
         this.token = token;
-    }
-
-
-    @Nonnull
-    @SuppressWarnings("ConstantConditions") // we have to enforce the nonnull at runtime
-    public JDABuilder setStatus(@Nonnull OnlineStatus status) {
-        if (status == null || status == OnlineStatus.UNKNOWN)
-            throw new IllegalArgumentException("OnlineStatus cannot be null or unknown!");
-        this.status = status;
-        return this;
-    }
-
-
-    @Nonnull
-    public JDABuilder addEventListeners(@Nonnull Object... listeners) {
-        Checks.noneNull(listeners, "listeners");
-
-        Collections.addAll(this.listeners, listeners);
-        return this;
+        this.listener = listener;
     }
 
 
@@ -111,7 +94,8 @@ public class JDABuilder {
         if (eventManager != null)
             jda.setEventManager(eventManager);
 
-        listeners.forEach(jda::addEventListener);
+
+        jda.addEventListener(listener);
         jda.setStatus(JDA.Status.INITIALIZED);  //This is already set by JDA internally, but this is to make sure the listeners catch it.
 
         // Set the presence information before connecting to have the correct information ready when sending IDENTIFY

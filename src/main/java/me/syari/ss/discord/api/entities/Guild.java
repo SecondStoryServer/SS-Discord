@@ -12,7 +12,6 @@ import me.syari.ss.discord.api.utils.cache.SortedSnowflakeCacheView;
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.List;
 import java.util.Set;
 
 
@@ -50,10 +49,6 @@ public interface Guild extends ISnowflake {
     boolean isMember(@Nonnull User user);
 
 
-    @Nonnull
-    Member getSelfMember();
-
-
     @Nullable
     Member getMember(@Nonnull User user);
 
@@ -69,28 +64,6 @@ public interface Guild extends ISnowflake {
 
 
     @Nullable
-    default GuildChannel getGuildChannelById(long id) {
-        return getTextChannelById(id);
-    }
-
-
-    @Nullable
-    default TextChannel getTextChannelById(long id) {
-        return getTextChannelCache().getElementById(id);
-    }
-
-
-    @Nonnull
-    default List<TextChannel> getTextChannels() {
-        return getTextChannelCache().asList();
-    }
-
-
-    @Nonnull
-    SortedSnowflakeCacheView<TextChannel> getTextChannelCache();
-
-
-    @Nullable
     default Role getRoleById(@Nonnull String id) {
         return getRoleCache().getElementById(id);
     }
@@ -99,12 +72,6 @@ public interface Guild extends ISnowflake {
     @Nullable
     default Role getRoleById(long id) {
         return getRoleCache().getElementById(id);
-    }
-
-
-    @Nonnull
-    default List<Role> getRoles() {
-        return getRoleCache().asList();
     }
 
 
@@ -120,10 +87,6 @@ public interface Guild extends ISnowflake {
 
     @Nonnull
     SnowflakeCacheView<Emote> getEmoteCache();
-
-
-    @Nonnull
-    Role getPublicRole();
 
 
     @Nonnull
@@ -151,25 +114,15 @@ public interface Guild extends ISnowflake {
 
 
     enum VerificationLevel {
-        NONE(0),
-        LOW(1),
-        MEDIUM(2),
-        HIGH(3),
-        VERY_HIGH(4),
-        UNKNOWN(-1);
+        NONE(),
+        LOW(),
+        MEDIUM(),
+        HIGH(),
+        VERY_HIGH(),
+        UNKNOWN();
 
-        private final int key;
-
-        VerificationLevel(int key) {
-            this.key = key;
+        VerificationLevel() {
         }
-
-
-        public int getKey() {
-            return key;
-        }
-
-
     }
 
 
