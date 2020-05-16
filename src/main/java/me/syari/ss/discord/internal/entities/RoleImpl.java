@@ -115,27 +115,6 @@ public class RoleImpl implements Role
         return Permission.getPermissions(rawPermissions);
     }
 
-    @Nonnull
-    @Override
-    public EnumSet<Permission> getPermissions(@Nonnull GuildChannel channel)
-    {
-        return Permission.getPermissions(PermissionUtil.getEffectivePermission(channel, this));
-    }
-
-    @Nonnull
-    @Override
-    public EnumSet<Permission> getPermissionsExplicit()
-    {
-        return getPermissions();
-    }
-
-    @Nonnull
-    @Override
-    public EnumSet<Permission> getPermissionsExplicit(@Nonnull GuildChannel channel)
-    {
-        return Permission.getPermissions(PermissionUtil.getExplicitPermission(channel, this));
-    }
-
     @Override
     public Color getColor()
     {

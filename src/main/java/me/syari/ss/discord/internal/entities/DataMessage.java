@@ -2,12 +2,10 @@
 
 package me.syari.ss.discord.internal.entities;
 
-import me.syari.ss.discord.api.entities.MessageActivity;
 import me.syari.ss.discord.api.entities.MessageEmbed;
 import me.syari.ss.discord.api.entities.MessageType;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -74,14 +72,6 @@ public class DataMessage extends AbstractMessage
     protected void unsupported()
     {
         throw new UnsupportedOperationException("This operation is not supported for Messages that were created by a MessageBuilder!");
-    }
-
-    @Nullable
-    @Override
-    public MessageActivity getActivity()
-    {
-        unsupported();
-        return null;
     }
 
     @Override

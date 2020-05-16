@@ -14,7 +14,6 @@ import me.syari.ss.discord.internal.utils.cache.SnowflakeReference;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.awt.*;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
@@ -103,26 +102,6 @@ public class MemberImpl implements Member
         return onlineStatus;
     }
 
-    @Nonnull
-    @Override
-    public OnlineStatus getOnlineStatus(@Nonnull ClientType type)
-    {
-        Checks.notNull(type, "Type");
-        if (this.clientStatus == null || this.clientStatus.isEmpty())
-            return OnlineStatus.OFFLINE;
-        OnlineStatus status = this.clientStatus.get(type);
-        return status == null ? OnlineStatus.OFFLINE : status;
-    }
-
-    @Nonnull
-    @Override
-    public EnumSet<ClientType> getActiveClients()
-    {
-        if (clientStatus == null || clientStatus.isEmpty())
-            return EnumSet.noneOf(ClientType.class);
-        return EnumSet.copyOf(clientStatus.keySet());
-    }
-
     @Override
     public String getNickname()
     {
@@ -146,55 +125,11 @@ public class MemberImpl implements Member
         return Collections.unmodifiableList(roleList);
     }
 
-    @Override
-    public Color getColor()
-    {
-        final int raw = getColorRaw();
-        return raw != Role.DEFAULT_COLOR_RAW ? new Color(raw) : null;
-    }
-
-    @Override
-    public int getColorRaw()
-    {
-        for (Role r : getRoles())
-        {
-            final int colorRaw = r.getColorRaw();
-            if (colorRaw != Role.DEFAULT_COLOR_RAW)
-                return colorRaw;
-        }
-        return Role.DEFAULT_COLOR_RAW;
-    }
-
     @Nonnull
     @Override
     public EnumSet<Permission> getPermissions()
     {
         return Permission.getPermissions(PermissionUtil.getEffectivePermission(this));
-    }
-
-    @Nonnull
-    @Override
-    public EnumSet<Permission> getPermissions(@Nonnull GuildChannel channel)
-    {
-        Checks.notNull(channel, "Channel");
-        if (!getGuild().equals(channel.getGuild()))
-            throw new IllegalArgumentException("Provided channel is not in the same guild as this member!");
-
-        return Permission.getPermissions(PermissionUtil.getEffectivePermission(channel, this));
-    }
-
-    @Nonnull
-    @Override
-    public EnumSet<Permission> getPermissionsExplicit()
-    {
-        return Permission.getPermissions(PermissionUtil.getExplicitPermission(this));
-    }
-
-    @Nonnull
-    @Override
-    public EnumSet<Permission> getPermissionsExplicit(@Nonnull GuildChannel channel)
-    {
-        return Permission.getPermissions(PermissionUtil.getExplicitPermission(channel, this));
     }
 
     @Override
@@ -235,12 +170,6 @@ public class MemberImpl implements Member
     public boolean canInteract(@Nonnull Role role)
     {
         return PermissionUtil.canInteract(this, role);
-    }
-
-    @Override
-    public boolean canInteract(@Nonnull Emote emote)
-    {
-        return PermissionUtil.canInteract(this, emote);
     }
 
     @Override
@@ -350,13 +279,4 @@ public class MemberImpl implements Member
         return (nickname == null ? "<@" : "<@!") + user.getId() + '>';
     }
 
-    @Nullable
-    @Override
-    public TextChannel getDefaultChannel()
-    {
-        return getGuild().getTextChannelsView().stream()
-                 .sorted(Comparator.reverseOrder())
-                 .filter(c -> hasPermission(c, Permission.MESSAGE_READ))
-                 .findFirst().orElse(null);
-    }
 }

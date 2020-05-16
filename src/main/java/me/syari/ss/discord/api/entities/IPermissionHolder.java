@@ -19,19 +19,7 @@ public interface IPermissionHolder extends ISnowflake
     @Nonnull
     EnumSet<Permission> getPermissions();
 
-    
-    @Nonnull
-    EnumSet<Permission> getPermissions(@Nonnull GuildChannel channel);
 
-    
-    @Nonnull
-    EnumSet<Permission> getPermissionsExplicit();
-
-    
-    @Nonnull
-    EnumSet<Permission> getPermissionsExplicit(@Nonnull GuildChannel channel);
-
-    
     boolean hasPermission(@Nonnull Permission... permissions);
 
     

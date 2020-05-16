@@ -4,29 +4,13 @@ package me.syari.ss.discord.internal.entities;
 
 import gnu.trove.set.TLongSet;
 import me.syari.ss.discord.api.JDA;
-import me.syari.ss.discord.api.MessageBuilder;
-import me.syari.ss.discord.api.Permission;
 import me.syari.ss.discord.api.entities.*;
-import me.syari.ss.discord.api.exceptions.InsufficientPermissionException;
-import me.syari.ss.discord.api.requests.RestAction;
-import me.syari.ss.discord.api.requests.restaction.AuditableRestAction;
-import me.syari.ss.discord.api.requests.restaction.MessageAction;
-import me.syari.ss.discord.api.requests.restaction.pagination.ReactionPaginationAction;
-import me.syari.ss.discord.api.utils.MarkdownSanitizer;
 import me.syari.ss.discord.api.utils.MiscUtil;
-import me.syari.ss.discord.api.utils.data.DataObject;
 import me.syari.ss.discord.internal.JDAImpl;
-import me.syari.ss.discord.internal.requests.Route;
-import me.syari.ss.discord.internal.requests.restaction.AuditableRestActionImpl;
-import me.syari.ss.discord.internal.requests.restaction.pagination.ReactionPaginationActionImpl;
 import me.syari.ss.discord.internal.utils.Checks;
-import me.syari.ss.discord.internal.utils.EncodingUtil;
-import org.apache.commons.collections4.Bag;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.bag.HashBag;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.function.Function;
@@ -99,147 +83,6 @@ public class ReceivedMessage extends AbstractMessage
         return api;
     }
 
-    @Override
-    public boolean isPinned()
-    {
-        return pinned;
-    }
-
-    @Nonnull
-    @Override
-    public RestAction<Void> pin()
-    {
-        return channel.pinMessageById(getId());
-    }
-
-    @Nonnull
-    @Override
-    public RestAction<Void> unpin()
-    {
-        return channel.unpinMessageById(getId());
-    }
-
-    @Nonnull
-    @Override
-    public RestAction<Void> addReaction(@Nonnull Emote emote)
-    {
-        Checks.notNull(emote, "Emote");
-
-        boolean missingReaction = reactions.stream()
-                   .map(MessageReaction::getReactionEmote)
-                   .filter(MessageReaction.ReactionEmote::isEmote)
-                   .noneMatch(r -> r.getIdLong() == emote.getIdLong());
-
-        if (missingReaction)
-        {
-            Checks.check(emote.canInteract(getJDA().getSelfUser(), channel),
-                         "Cannot react with the provided emote because it is not available in the current channel.");
-        }
-        return channel.addReactionById(getId(), emote);
-    }
-
-    @Nonnull
-    @Override
-    public RestAction<Void> addReaction(@Nonnull String unicode)
-    {
-        return channel.addReactionById(getId(), unicode);
-    }
-
-    @Nonnull
-    @Override
-    public RestAction<Void> clearReactions()
-    {
-        if (!isFromType(ChannelType.TEXT))
-            throw new IllegalStateException("Cannot clear reactions from a message in a Group or PrivateChannel.");
-        return getTextChannel().clearReactionsById(getId());
-    }
-
-    @Nonnull
-    @Override
-    public RestAction<Void> removeReaction(@Nonnull Emote emote)
-    {
-        return channel.removeReactionById(getId(), emote);
-    }
-
-    @Nonnull
-    @Override
-    public RestAction<Void> removeReaction(@Nonnull Emote emote, @Nonnull User user)
-    {
-        return getTextChannel().removeReactionById(getIdLong(), emote, user);
-    }
-
-    @Nonnull
-    @Override
-    public RestAction<Void> removeReaction(@Nonnull String unicode)
-    {
-        return channel.removeReactionById(getId(), unicode);
-    }
-
-    @Nonnull
-    @Override
-    public RestAction<Void> removeReaction(@Nonnull String unicode, @Nonnull User user)
-    {
-        return getTextChannel().removeReactionById(getId(), unicode, user);
-    }
-
-
-    @Nonnull
-    @Override
-    public ReactionPaginationAction retrieveReactionUsers(@Nonnull Emote emote)
-    {
-        Checks.notNull(emote, "Emote");
-
-        MessageReaction reaction = this.reactions.stream()
-            .filter(r -> r.getReactionEmote().isEmote() && r.getReactionEmote().getEmote().equals(emote))
-            .findFirst().orElse(null);
-
-        if (reaction == null)
-            return new ReactionPaginationActionImpl(this, String.format("%s:%s", emote, emote.getId()));
-        return new ReactionPaginationActionImpl(reaction);
-    }
-
-    @Nonnull
-    @Override
-    public ReactionPaginationAction retrieveReactionUsers(@Nonnull String unicode)
-    {
-        Checks.noWhitespace(unicode, "Emoji");
-
-        MessageReaction reaction = this.reactions.stream()
-            .filter(r -> r.getReactionEmote().isEmoji() && r.getReactionEmote().getEmoji().equals(unicode))
-            .findFirst().orElse(null);
-
-        if (reaction == null)
-            return new ReactionPaginationActionImpl(this, EncodingUtil.encodeUTF8(unicode));
-        return new ReactionPaginationActionImpl(reaction);
-    }
-
-    @Override
-    public MessageReaction.ReactionEmote getReactionByUnicode(@Nonnull String unicode)
-    {
-        Checks.noWhitespace(unicode, "Emoji");
-
-        return this.reactions.stream()
-            .map(MessageReaction::getReactionEmote)
-            .filter(r -> r.isEmoji() && r.getEmoji().equals(unicode))
-            .findFirst().orElse(null);
-    }
-
-    @Override
-    public MessageReaction.ReactionEmote getReactionById(@Nonnull String id)
-    {
-        return getReactionById(MiscUtil.parseSnowflake(id));
-    }
-
-    @Override
-    public MessageReaction.ReactionEmote getReactionById(long id)
-    {
-        Checks.notNull(id, "Reaction ID");
-
-        return this.reactions.stream()
-            .map(MessageReaction::getReactionEmote)
-            .filter(r -> r.isEmote() && r.getIdLong() == id)
-            .findFirst().orElse(null);
-    }
 
     @Nonnull
     @Override
@@ -252,13 +95,6 @@ public class ReceivedMessage extends AbstractMessage
     public long getIdLong()
     {
         return id;
-    }
-
-    @Nonnull
-    @Override
-    public String getJumpUrl()
-    {
-        return String.format("https://discordapp.com/channels/%s/%s/%s", isFromGuild() ? getGuild().getId() : "@me", getChannel().getId(), getId());
     }
 
     private User matchUser(Matcher matcher)
@@ -283,13 +119,6 @@ public class ReceivedMessage extends AbstractMessage
         return userMentions;
     }
 
-    @Nonnull
-    @Override
-    public Bag<User> getMentionedUsersBag()
-    {
-        return processMentions(Message.MentionType.USER, new HashBag<>(), false, this::matchUser);
-    }
-
     private TextChannel matchTextChannel(Matcher matcher)
     {
         long channelId = MiscUtil.parseSnowflake(matcher.group(1));
@@ -303,13 +132,6 @@ public class ReceivedMessage extends AbstractMessage
         if (channelMentions == null)
             channelMentions = Collections.unmodifiableList(processMentions(Message.MentionType.CHANNEL, new ArrayList<>(), true, this::matchTextChannel));
         return channelMentions;
-    }
-
-    @Nonnull
-    @Override
-    public Bag<TextChannel> getMentionedChannelsBag()
-    {
-        return processMentions(Message.MentionType.CHANNEL, new HashBag<>(), false, this::matchTextChannel);
     }
 
     private Role matchRole(Matcher matcher)
@@ -330,42 +152,6 @@ public class ReceivedMessage extends AbstractMessage
         if (roleMentions == null)
             roleMentions = Collections.unmodifiableList(processMentions(Message.MentionType.ROLE, new ArrayList<>(), true, this::matchRole));
         return roleMentions;
-    }
-
-    @Nonnull
-    @Override
-    public Bag<Role> getMentionedRolesBag()
-    {
-        return processMentions(Message.MentionType.ROLE, new HashBag<>(), false, this::matchRole);
-    }
-
-    @Nonnull
-    @Override
-    public List<Member> getMentionedMembers(@Nonnull Guild guild)
-    {
-        Checks.notNull(guild, "Guild");
-        if (isFromGuild() && guild.equals(getGuild()) && memberMentions != null)
-            return memberMentions;
-        List<User> mentionedUsers = getMentionedUsers();
-        List<Member> members = new ArrayList<>();
-        for (User user : mentionedUsers)
-        {
-            Member member = guild.getMember(user);
-            if (member != null)
-                members.add(member);
-        }
-
-        return Collections.unmodifiableList(members);
-    }
-
-    @Nonnull
-    @Override
-    public List<Member> getMentionedMembers()
-    {
-        if (isFromType(ChannelType.TEXT))
-            return getMentionedMembers(getGuild());
-        else
-            throw new IllegalStateException("You must specify a Guild for Messages which are not sent from a TextChannel!");
     }
 
     @Nonnull
@@ -509,24 +295,6 @@ public class ReceivedMessage extends AbstractMessage
         return mentionsEveryone && content.contains(s);
     }
 
-    @Override
-    public boolean mentionsEveryone()
-    {
-        return mentionsEveryone;
-    }
-
-    @Override
-    public boolean isEdited()
-    {
-        return editedTime != null;
-    }
-
-    @Override
-    public OffsetDateTime getTimeEdited()
-    {
-        return editedTime;
-    }
-
     @Nonnull
     @Override
     public User getAuthor()
@@ -538,20 +306,6 @@ public class ReceivedMessage extends AbstractMessage
     public Member getMember()
     {
         return member;
-    }
-
-    @Nonnull
-    @Override
-    public String getContentStripped()
-    {
-        if (strippedContent != null)
-            return strippedContent;
-        synchronized (mutex)
-        {
-            if (strippedContent != null)
-                return strippedContent;
-            return strippedContent = MarkdownSanitizer.sanitize(getContentDisplay());
-        }
     }
 
     @Nonnull
@@ -597,30 +351,6 @@ public class ReceivedMessage extends AbstractMessage
         return content;
     }
 
-    @Nonnull
-    @Override
-    public List<String> getInvites()
-    {
-        if (invites != null)
-            return invites;
-        synchronized (mutex)
-        {
-            if (invites != null)
-                return invites;
-            invites = new ArrayList<>();
-            Matcher m = Message.INVITE_PATTERN.matcher(getContentRaw());
-            while (m.find())
-                invites.add(m.group(1));
-            return invites = Collections.unmodifiableList(invites);
-        }
-    }
-
-    @Override
-    public String getNonce()
-    {
-        return nonce;
-    }
-
     @Override
     public boolean isFromType(@Nonnull ChannelType type)
     {
@@ -659,24 +389,11 @@ public class ReceivedMessage extends AbstractMessage
         return (TextChannel) channel;
     }
 
-    @Override
-    public Category getCategory()
-    {
-        return isFromType(ChannelType.TEXT) ? getTextChannel().getParent() : null;
-    }
-
     @Nonnull
     @Override
     public Guild getGuild()
     {
         return getTextChannel().getGuild();
-    }
-
-    @Nonnull
-    @Override
-    public List<Message.Attachment> getAttachments()
-    {
-        return attachments;
     }
 
     @Nonnull
@@ -706,20 +423,6 @@ public class ReceivedMessage extends AbstractMessage
         return emoteMentions;
     }
 
-    @Nonnull
-    @Override
-    public Bag<Emote> getEmotesBag()
-    {
-        return processMentions(Message.MentionType.EMOTE, new HashBag<>(), false, this::matchEmote);
-    }
-
-    @Nonnull
-    @Override
-    public List<MessageReaction> getReactions()
-    {
-        return reactions;
-    }
-
     @Override
     public boolean isWebhookMessage()
     {
@@ -730,88 +433,6 @@ public class ReceivedMessage extends AbstractMessage
     public boolean isTTS()
     {
         return isTTS;
-    }
-
-    @Nullable
-    @Override
-    public MessageActivity getActivity()
-    {
-        return activity;
-    }
-
-    @Nonnull
-    @Override
-    public MessageAction editMessage(@Nonnull CharSequence newContent)
-    {
-        return editMessage(new MessageBuilder().append(newContent).build());
-    }
-
-    @Nonnull
-    @Override
-    public MessageAction editMessage(@Nonnull MessageEmbed newContent)
-    {
-        return editMessage(new MessageBuilder().setEmbed(newContent).build());
-    }
-
-    @Nonnull
-    @Override
-    public MessageAction editMessageFormat(@Nonnull String format, @Nonnull Object... args)
-    {
-        Checks.notBlank(format, "Format String");
-        return editMessage(new MessageBuilder().appendFormat(format, args).build());
-    }
-
-    @Nonnull
-    @Override
-    public MessageAction editMessage(@Nonnull Message newContent)
-    {
-        if (!getJDA().getSelfUser().equals(getAuthor()))
-            throw new IllegalStateException("Attempted to update message that was not sent by this account. You cannot modify other User's messages!");
-
-        return getChannel().editMessageById(getIdLong(), newContent);
-    }
-
-    @Nonnull
-    @Override
-    public AuditableRestAction<Void> delete()
-    {
-        if (!getJDA().getSelfUser().equals(getAuthor()))
-        {
-            if (isFromType(ChannelType.PRIVATE))
-                throw new IllegalStateException("Cannot delete another User's messages in a PrivateChannel.");
-            else if (!getGuild().getSelfMember()
-                    .hasPermission((TextChannel) getChannel(), Permission.MESSAGE_MANAGE))
-                throw new InsufficientPermissionException(getTextChannel(), Permission.MESSAGE_MANAGE);
-        }
-        return channel.deleteMessageById(getIdLong());
-    }
-
-    @Nonnull
-    @Override
-    public AuditableRestAction<Void> suppressEmbeds(boolean suppressed)
-    {
-        JDAImpl jda = (JDAImpl) getJDA();
-        Route.CompiledRoute route = Route.Messages.EDIT_MESSAGE.compile(getChannel().getId(), getId());
-        int newFlags = flags;
-        int suppressionValue = Message.MessageFlag.EMBEDS_SUPPRESSED.getValue();
-        if (suppressed)
-            newFlags |= suppressionValue;
-        else
-            newFlags &= ~suppressionValue;
-        return new AuditableRestActionImpl<>(jda, route, DataObject.empty().put("flags", newFlags));
-    }
-
-    @Override
-    public boolean isSuppressedEmbeds()
-    {
-        return (this.flags & Message.MessageFlag.EMBEDS_SUPPRESSED.getValue()) > 0;
-    }
-
-    @Nonnull
-    @Override
-    public EnumSet<Message.MessageFlag> getFlags()
-    {
-        return Message.MessageFlag.fromBitField(flags);
     }
 
     @Override

@@ -4,18 +4,11 @@ package me.syari.ss.discord.internal.entities;
 
 import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.entities.*;
-import me.syari.ss.discord.api.requests.RestAction;
-import me.syari.ss.discord.api.requests.restaction.AuditableRestAction;
-import me.syari.ss.discord.api.requests.restaction.MessageAction;
-import me.syari.ss.discord.api.requests.restaction.pagination.ReactionPaginationAction;
 import me.syari.ss.discord.internal.utils.Helpers;
-import org.apache.commons.collections4.Bag;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.time.OffsetDateTime;
-import java.util.EnumSet;
 import java.util.FormattableFlags;
 import java.util.Formatter;
 import java.util.List;
@@ -40,12 +33,6 @@ public abstract class AbstractMessage implements Message
     public String getContentRaw()
     {
         return content;
-    }
-
-    @Override
-    public String getNonce()
-    {
-        return nonce;
     }
 
     @Override
@@ -94,30 +81,6 @@ public abstract class AbstractMessage implements Message
 
     @Nonnull
     @Override
-    public Bag<User> getMentionedUsersBag()
-    {
-        unsupported();
-        return null;
-    }
-
-    @Nonnull
-    @Override
-    public Bag<TextChannel> getMentionedChannelsBag()
-    {
-        unsupported();
-        return null;
-    }
-
-    @Nonnull
-    @Override
-    public Bag<Role> getMentionedRolesBag()
-    {
-        unsupported();
-        return null;
-    }
-
-    @Nonnull
-    @Override
     public List<User> getMentionedUsers()
     {
         unsupported();
@@ -142,22 +105,6 @@ public abstract class AbstractMessage implements Message
 
     @Nonnull
     @Override
-    public List<Member> getMentionedMembers(@Nonnull Guild guild)
-    {
-        unsupported();
-        return null;
-    }
-
-    @Nonnull
-    @Override
-    public List<Member> getMentionedMembers()
-    {
-        unsupported();
-        return null;
-    }
-
-    @Nonnull
-    @Override
     public List<IMentionable> getMentions(@Nonnull MentionType... types)
     {
         unsupported();
@@ -169,27 +116,6 @@ public abstract class AbstractMessage implements Message
     {
         unsupported();
         return false;
-    }
-
-    @Override
-    public boolean mentionsEveryone()
-    {
-        unsupported();
-        return false;
-    }
-
-    @Override
-    public boolean isEdited()
-    {
-        unsupported();
-        return false;
-    }
-
-    @Override
-    public OffsetDateTime getTimeEdited()
-    {
-        unsupported();
-        return null;
     }
 
     @Nonnull
@@ -209,31 +135,7 @@ public abstract class AbstractMessage implements Message
 
     @Nonnull
     @Override
-    public String getJumpUrl()
-    {
-        unsupported();
-        return null;
-    }
-
-    @Nonnull
-    @Override
     public String getContentDisplay()
-    {
-        unsupported();
-        return null;
-    }
-
-    @Nonnull
-    @Override
-    public String getContentStripped()
-    {
-        unsupported();
-        return null;
-    }
-
-    @Nonnull
-    @Override
-    public List<String> getInvites()
     {
         unsupported();
         return null;
@@ -285,24 +187,9 @@ public abstract class AbstractMessage implements Message
         return null;
     }
 
-    @Override
-    public Category getCategory()
-    {
-        unsupported();
-        return null;
-    }
-
     @Nonnull
     @Override
     public Guild getGuild()
-    {
-        unsupported();
-        return null;
-    }
-
-    @Nonnull
-    @Override
-    public List<Attachment> getAttachments()
     {
         unsupported();
         return null;
@@ -326,202 +213,7 @@ public abstract class AbstractMessage implements Message
 
     @Nonnull
     @Override
-    public Bag<Emote> getEmotesBag()
-    {
-        unsupported();
-        return null;
-    }
-
-    @Nonnull
-    @Override
-    public List<MessageReaction> getReactions()
-    {
-        unsupported();
-        return null;
-    }
-
-    @Nonnull
-    @Override
-    public MessageAction editMessage(@Nonnull CharSequence newContent)
-    {
-        unsupported();
-        return null;
-    }
-
-    @Nonnull
-    @Override
-    public MessageAction editMessage(@Nonnull MessageEmbed newContent)
-    {
-        unsupported();
-        return null;
-    }
-
-    @Nonnull
-    @Override
-    public MessageAction editMessageFormat(@Nonnull String format, @Nonnull Object... args)
-    {
-        unsupported();
-        return null;
-    }
-
-    @Nonnull
-    @Override
-    public MessageAction editMessage(@Nonnull Message newContent)
-    {
-        unsupported();
-        return null;
-    }
-
-    @Nonnull
-    @Override
-    public AuditableRestAction<Void> delete()
-    {
-        unsupported();
-        return null;
-    }
-
-    @Nonnull
-    @Override
     public JDA getJDA()
-    {
-        unsupported();
-        return null;
-    }
-
-    @Override
-    public boolean isPinned()
-    {
-        unsupported();
-        return false;
-    }
-
-    @Nonnull
-    @Override
-    public RestAction<Void> pin()
-    {
-        unsupported();
-        return null;
-    }
-
-    @Nonnull
-    @Override
-    public RestAction<Void> unpin()
-    {
-        unsupported();
-        return null;
-    }
-
-    @Nonnull
-    @Override
-    public RestAction<Void> addReaction(@Nonnull Emote emote)
-    {
-        unsupported();
-        return null;
-    }
-
-    @Nonnull
-    @Override
-    public RestAction<Void> addReaction(@Nonnull String unicode)
-    {
-        unsupported();
-        return null;
-    }
-
-    @Nonnull
-    @Override
-    public RestAction<Void> clearReactions()
-    {
-        unsupported();
-        return null;
-    }
-
-    @Nonnull
-    @Override
-    public RestAction<Void> removeReaction(@Nonnull Emote emote)
-    {
-        unsupported();
-        return null;
-    }
-
-    @Nonnull
-    @Override
-    public RestAction<Void> removeReaction(@Nonnull Emote emote, @Nonnull User user)
-    {
-        unsupported();
-        return null;
-    }
-
-    @Nonnull
-    @Override
-    public RestAction<Void> removeReaction(@Nonnull String unicode)
-    {
-        unsupported();
-        return null;
-    }
-
-    @Nonnull
-    @Override
-    public RestAction<Void> removeReaction(@Nonnull String unicode, @Nonnull User user)
-    {
-        unsupported();
-        return null;
-    }
-
-    @Nonnull
-    @Override
-    public ReactionPaginationAction retrieveReactionUsers(@Nonnull Emote emote)
-    {
-        unsupported();
-        return null;
-    }
-
-    @Nonnull
-    @Override
-    public ReactionPaginationAction retrieveReactionUsers(@Nonnull String unicode)
-    {
-        unsupported();
-        return null;
-    }
-
-    @Override
-    public MessageReaction.ReactionEmote getReactionByUnicode(@Nonnull String unicode)
-    {
-        unsupported();
-        return null;
-    }
-
-    @Override
-    public MessageReaction.ReactionEmote getReactionById(@Nonnull String id)
-    {
-        unsupported();
-        return null;
-    }
-
-    @Override
-    public MessageReaction.ReactionEmote getReactionById(long id)
-    {
-        unsupported();
-        return null;
-    }
-
-    @Nonnull
-    @Override
-    public AuditableRestAction<Void> suppressEmbeds(boolean suppressed)
-    {
-        unsupported();
-        return null;
-    }
-
-    @Override
-    public boolean isSuppressedEmbeds()
-    {
-        unsupported();
-        return false;
-    }
-
-    @Nonnull
-    @Override
-    public EnumSet<MessageFlag> getFlags()
     {
         unsupported();
         return null;

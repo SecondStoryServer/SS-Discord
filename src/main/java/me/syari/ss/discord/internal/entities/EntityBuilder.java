@@ -1276,7 +1276,7 @@ public class EntityBuilder
         final String proxyUrl = jsonObject.getString("proxy_url");
         final String filename = jsonObject.getString("filename");
         final long id = jsonObject.getLong("id");
-        return new Message.Attachment(id, url, proxyUrl, filename, size, height, width, getJDA());
+        return new Message.Attachment(id);
     }
 
     public MessageEmbed createMessageEmbed(DataObject content)
