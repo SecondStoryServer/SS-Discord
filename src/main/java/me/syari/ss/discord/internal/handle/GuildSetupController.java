@@ -38,7 +38,7 @@ public class GuildSetupController {
 
     private Future<?> timeoutHandle;
 
-    protected StatusListener listener = (id, oldStatus, newStatus) -> log.trace("[{}] Updated status {}->{}", id, oldStatus, newStatus);
+    protected final StatusListener listener = (id, oldStatus, newStatus) -> log.trace("[{}] Updated status {}->{}", id, oldStatus, newStatus);
 
     public GuildSetupController(JDAImpl api) {
         this.api = api;

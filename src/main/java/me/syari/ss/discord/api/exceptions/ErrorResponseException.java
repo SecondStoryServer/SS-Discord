@@ -8,13 +8,11 @@ import java.util.Optional;
 
 
 public class ErrorResponseException extends RuntimeException {
-    private final Response response;
 
 
     private ErrorResponseException(Response response, int code, String meaning) {
         super(code + ": " + meaning);
 
-        this.response = response;
         if (response != null && response.getException() != null)
             initCause(response.getException());
     }

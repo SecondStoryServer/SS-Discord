@@ -28,31 +28,31 @@ import java.util.concurrent.ScheduledExecutorService;
 
 
 public class JDABuilder {
-    protected String token;
+    protected final String token;
     protected final ListenerAdapter listener;
-    protected ScheduledExecutorService rateLimitPool = null;
-    protected boolean shutdownRateLimitPool = true;
-    protected ScheduledExecutorService mainWsPool = null;
-    protected boolean shutdownMainWsPool = true;
-    protected ExecutorService callbackPool = null;
-    protected boolean shutdownCallbackPool = true;
-    protected EnumSet<CacheFlag> cacheFlags = EnumSet.allOf(CacheFlag.class);
-    protected ConcurrentMap<String, String> contextMap = null;
+    protected final ScheduledExecutorService rateLimitPool = null;
+    protected final boolean shutdownRateLimitPool = true;
+    protected final ScheduledExecutorService mainWsPool = null;
+    protected final boolean shutdownMainWsPool = true;
+    protected final ExecutorService callbackPool = null;
+    protected final boolean shutdownCallbackPool = true;
+    protected final EnumSet<CacheFlag> cacheFlags = EnumSet.allOf(CacheFlag.class);
+    protected final ConcurrentMap<String, String> contextMap = null;
     protected SessionController controller = null;
     protected OkHttpClient.Builder httpClientBuilder = null;
-    protected OkHttpClient httpClient = null;
-    protected WebSocketFactory wsFactory = null;
-    protected IEventManager eventManager = null;
-    protected JDA.ShardInfo shardInfo = null;
-    protected Compression compression = Compression.ZLIB;
-    protected Activity activity = null;
-    protected OnlineStatus status = OnlineStatus.ONLINE;
-    protected boolean idle = false;
-    protected int maxReconnectDelay = 900;
-    protected int largeThreshold = 250;
-    protected int maxBufferSize = 2048;
-    protected EnumSet<ConfigFlag> flags = ConfigFlag.getDefault();
-    protected ChunkingFilter chunkingFilter = ChunkingFilter.ALL;
+    protected final OkHttpClient httpClient = null;
+    protected final WebSocketFactory wsFactory = null;
+    protected final IEventManager eventManager = null;
+    protected final JDA.ShardInfo shardInfo = null;
+    protected final Compression compression = Compression.ZLIB;
+    protected final Activity activity = null;
+    protected final OnlineStatus status = OnlineStatus.ONLINE;
+    protected final boolean idle = false;
+    protected final int maxReconnectDelay = 900;
+    protected final int largeThreshold = 250;
+    protected final int maxBufferSize = 2048;
+    protected final EnumSet<ConfigFlag> flags = ConfigFlag.getDefault();
+    protected final ChunkingFilter chunkingFilter = ChunkingFilter.ALL;
 
 
     public JDABuilder(@Nullable String token, ListenerAdapter listener) {

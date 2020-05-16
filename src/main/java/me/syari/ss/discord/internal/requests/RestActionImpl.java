@@ -38,7 +38,7 @@ public class RestActionImpl<T> implements RestAction<T> {
         }
     };
 
-    protected static boolean passContext = true;
+    protected static final boolean passContext = true;
 
     protected final JDAImpl api;
 

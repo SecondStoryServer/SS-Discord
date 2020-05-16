@@ -16,7 +16,6 @@ public abstract class ReadWriteLockCache<T> {
             throw new IllegalStateException("Unable to acquire write-lock while holding read-lock!");
         ReentrantReadWriteLock.WriteLock writeLock = lock.writeLock();
         writeLock.lock();
-        onAcquireWriteLock();
         clearCachedLists();
         return new UnlockHook(writeLock);
     }
@@ -24,18 +23,11 @@ public abstract class ReadWriteLockCache<T> {
     public UnlockHook readLock() {
         ReentrantReadWriteLock.ReadLock readLock = lock.readLock();
         readLock.lock();
-        onAcquireReadLock();
         return new UnlockHook(readLock);
     }
 
     public void clearCachedLists() {
         cachedList = null;
-    }
-
-    protected void onAcquireWriteLock() {
-    }
-
-    protected void onAcquireReadLock() {
     }
 
     protected List<T> getCachedList() {

@@ -2,12 +2,8 @@ package me.syari.ss.discord.internal.entities;
 
 import me.syari.ss.discord.api.entities.ListedEmote;
 import me.syari.ss.discord.api.entities.Role;
-import me.syari.ss.discord.api.entities.User;
-
 import javax.annotation.Nonnull;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-
 
 public class EmoteImpl implements ListedEmote {
     private final long id;
@@ -15,11 +11,6 @@ public class EmoteImpl implements ListedEmote {
 
     private boolean animated = false;
     private String name;
-
-    public EmoteImpl(long id, boolean fake) {
-        this.id = id;
-        this.roles = ConcurrentHashMap.newKeySet();
-    }
 
     public EmoteImpl(long id) {
         this.id = id;
@@ -51,10 +42,6 @@ public class EmoteImpl implements ListedEmote {
 
     public EmoteImpl setAnimated(boolean animated) {
         this.animated = animated;
-        return this;
-    }
-
-    public EmoteImpl setUser(User user) {
         return this;
     }
 

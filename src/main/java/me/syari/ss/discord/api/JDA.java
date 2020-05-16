@@ -66,8 +66,8 @@ public interface JDA {
 
         public static final ShardInfo SINGLE = new ShardInfo(0, 1);
 
-        int shardId;
-        int shardTotal;
+        final int shardId;
+        final int shardTotal;
 
         public ShardInfo(int shardId, int shardTotal) {
             this.shardId = shardId;

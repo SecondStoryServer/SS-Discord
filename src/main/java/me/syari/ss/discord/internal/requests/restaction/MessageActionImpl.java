@@ -33,7 +33,7 @@ public class MessageActionImpl extends RestActionImpl<Message> implements Messag
     protected final StringBuilder content;
     protected final MessageChannel channel;
     protected MessageEmbed embed = null;
-    protected String nonce = null;
+    protected final String nonce = null;
     protected boolean tts = false, override = false;
 
     public MessageActionImpl(JDA api, Route.CompiledRoute route, MessageChannel channel) {

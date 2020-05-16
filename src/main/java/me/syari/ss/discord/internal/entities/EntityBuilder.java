@@ -52,7 +52,7 @@ public class EntityBuilder {
                     continue;
                 }
                 final long emoteId = object.getLong("id");
-                emoteMap.put(emoteId, createEmote(guildObj, object, false));
+                emoteMap.put(emoteId, createEmote(guildObj, object));
             }
         }
     }
@@ -290,13 +290,13 @@ public class EntityBuilder {
             currentRoles.addAll(newRoles);
     }
 
-    public EmoteImpl createEmote(GuildImpl guildObj, DataObject json, boolean fake) {
+    public EmoteImpl createEmote(GuildImpl guildObj, DataObject json) {
         DataArray emoteRoles = json.optArray("roles").orElseGet(DataArray::empty);
         final long emoteId = json.getLong("id");
         final User user = json.isNull("user") ? null : createFakeUser(json.getObject("user"), false);
         EmoteImpl emoteObj = (EmoteImpl) guildObj.getEmoteById(emoteId);
         if (emoteObj == null)
-            emoteObj = new EmoteImpl(emoteId, fake);
+            emoteObj = new EmoteImpl(emoteId);
         Set<Role> roleSet = emoteObj.getRoleSet();
 
         roleSet.clear();
@@ -305,8 +305,6 @@ public class EntityBuilder {
             if (role != null)
                 roleSet.add(role);
         }
-        if (user != null)
-            emoteObj.setUser(user);
         return emoteObj
                 .setName(json.getString("name", ""))
                 .setAnimated(json.getBoolean("animated"));

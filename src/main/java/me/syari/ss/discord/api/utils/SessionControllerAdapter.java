@@ -21,8 +21,8 @@ import java.util.concurrent.atomic.AtomicLong;
 public class SessionControllerAdapter implements SessionController {
     protected static final Logger log = JDALogger.getLog(SessionControllerAdapter.class);
     protected final Object lock = new Object();
-    protected Queue<SessionConnectNode> connectQueue;
-    protected AtomicLong globalRatelimit;
+    protected final Queue<SessionConnectNode> connectQueue;
+    protected final AtomicLong globalRatelimit;
     protected Thread workerHandle;
     protected long lastConnect = 0;
 
@@ -59,12 +59,6 @@ public class SessionControllerAdapter implements SessionController {
         Route.CompiledRoute route = Route.Misc.GATEWAY.compile();
         return new RestActionImpl<String>(api, route,
                 (response, request) -> response.getObject().getString("url")).complete();
-    }
-
-    @Nonnull
-    private ShardedGateway getShardedGateway(@Nonnull JDA api) {
-        return new RestActionImpl<ShardedGateway>(api, Route.Misc.GATEWAY_BOT.compile()) {
-        }.complete();
     }
 
     protected void runWorker() {

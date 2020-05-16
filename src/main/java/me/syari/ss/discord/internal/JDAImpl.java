@@ -72,7 +72,7 @@ public class JDAImpl implements JDA {
     protected final MetaConfig metaConfig;
 
     protected WebSocketClient client;
-    protected Requester requester;
+    protected final Requester requester;
     protected Status status = Status.INITIALIZING;
     protected ShardInfo shardInfo;
     protected long responseTotal;

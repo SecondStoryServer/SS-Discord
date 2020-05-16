@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
 
 public class Message {
 
-    public static int MAX_CONTENT_LENGTH = 2000;
+    public static final int MAX_CONTENT_LENGTH = 2000;
 
     private final Object mutex = new Object();
 

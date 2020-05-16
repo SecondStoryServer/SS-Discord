@@ -10,7 +10,7 @@ import javax.annotation.Nullable;
 
 
 public class MessageReceivedEvent {
-    protected MessageChannel channel;
+    protected final MessageChannel channel;
     private final Message message;
 
     public MessageReceivedEvent(@Nonnull Message message) {

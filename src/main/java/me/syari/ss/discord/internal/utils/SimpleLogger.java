@@ -143,7 +143,7 @@ class SimpleLogger extends MarkerIgnoringBase {
         }
     }
 
-    protected int currentLogLevel;
+    protected final int currentLogLevel;
     private transient String shortLogName = null;
 
     SimpleLogger(String name) {
