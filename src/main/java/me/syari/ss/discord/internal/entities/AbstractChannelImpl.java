@@ -52,11 +52,6 @@ public abstract class AbstractChannelImpl<T extends GuildChannel, M extends Abst
     }
 
     @Override
-    public Category getParent() {
-        return getGuild().getCategoriesView().get(parentId);
-    }
-
-    @Override
     public int getPositionRaw() {
         return rawPosition;
     }

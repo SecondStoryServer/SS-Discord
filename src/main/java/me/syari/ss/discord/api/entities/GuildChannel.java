@@ -21,10 +21,6 @@ public interface GuildChannel extends ISnowflake, Comparable<GuildChannel> {
     Guild getGuild();
 
 
-    @Nullable
-    Category getParent();
-
-
     @Nonnull
     List<Member> getMembers();
 

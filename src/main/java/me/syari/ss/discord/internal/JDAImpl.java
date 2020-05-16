@@ -53,7 +53,6 @@ public class JDAImpl implements JDA {
 
     protected final SnowflakeCacheViewImpl<User> userCache = new SnowflakeCacheViewImpl<>(User.class, User::getName);
     protected final SnowflakeCacheViewImpl<Guild> guildCache = new SnowflakeCacheViewImpl<>(Guild.class, Guild::getName);
-    protected final SnowflakeCacheViewImpl<Category> categories = new SnowflakeCacheViewImpl<>(Category.class, GuildChannel::getName);
     protected final SnowflakeCacheViewImpl<TextChannel> textChannelCache = new SnowflakeCacheViewImpl<>(TextChannel.class, GuildChannel::getName);
     protected final SnowflakeCacheViewImpl<PrivateChannel> privateChannelCache = new SnowflakeCacheViewImpl<>(PrivateChannel.class, MessageChannel::getName);
 
@@ -373,13 +372,6 @@ public class JDAImpl implements JDA {
 
     @Nonnull
     @Override
-    public SnowflakeCacheView<Category> getCategoryCache() {
-        return categories;
-    }
-
-
-    @Nonnull
-    @Override
     public SnowflakeCacheView<TextChannel> getTextChannelCache() {
         return textChannelCache;
     }
@@ -510,10 +502,6 @@ public class JDAImpl implements JDA {
 
     public SnowflakeCacheViewImpl<Guild> getGuildsView() {
         return guildCache;
-    }
-
-    public SnowflakeCacheViewImpl<Category> getCategoriesView() {
-        return categories;
     }
 
     public SnowflakeCacheViewImpl<TextChannel> getTextChannelsView() {

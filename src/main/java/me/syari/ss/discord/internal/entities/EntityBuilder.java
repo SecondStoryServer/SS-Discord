@@ -182,15 +182,10 @@ public class EntityBuilder {
 
     private void createGuildChannel(GuildImpl guildObj, DataObject channelData) {
         final ChannelType channelType = ChannelType.fromId(channelData.getInt("type"));
-        switch (channelType) {
-            case TEXT:
-                createTextChannel(guildObj, channelData, guildObj.getIdLong());
-                break;
-            case CATEGORY:
-                createCategory(guildObj, channelData, guildObj.getIdLong());
-                break;
-            default:
-                LOG.debug("Cannot create channel for type " + channelData.getInt("type"));
+        if (channelType == ChannelType.TEXT) {
+            createTextChannel(guildObj, channelData, guildObj.getIdLong());
+        } else {
+            LOG.debug("Cannot create channel for type " + channelData.getInt("type"));
         }
     }
 
@@ -450,37 +445,6 @@ public class EntityBuilder {
                 .setName(json.getString("name", ""))
                 .setAnimated(json.getBoolean("animated"))
                 .setManaged(json.getBoolean("managed"));
-    }
-
-    public void createCategory(GuildImpl guild, DataObject json, long guildId) {
-        boolean playbackCache = false;
-        final long id = json.getLong("id");
-        CategoryImpl channel = (CategoryImpl) getJDA().getCategoriesView().get(id);
-        if (channel == null) {
-            if (guild == null)
-                guild = (GuildImpl) getJDA().getGuildsView().get(guildId);
-            SnowflakeCacheViewImpl<Category>
-                    guildCategoryView = guild.getCategoriesView(),
-                    categoryView = getJDA().getCategoriesView();
-            try (
-                    UnlockHook glock = guildCategoryView.writeLock();
-                    UnlockHook jlock = categoryView.writeLock()) {
-                channel = new CategoryImpl(id, guild);
-                guildCategoryView.getMap().put(id, channel);
-                playbackCache = categoryView.getMap().put(id, channel) == null;
-            }
-        }
-
-        if (!json.isNull("permission_overwrites")) {
-            DataArray overrides = json.getArray("permission_overwrites");
-            createOverridesPass(channel, overrides);
-        }
-
-        channel
-                .setName(json.getString("name"))
-                .setPosition(json.getInt("position"));
-        if (playbackCache)
-            getJDA().getEventCache().playbackCache(EventCache.Type.CHANNEL, id);
     }
 
 

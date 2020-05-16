@@ -10,8 +10,6 @@ public enum ChannelType {
 
     GROUP(3, -1),
 
-    CATEGORY(4, 2, true),
-
     UNKNOWN(-1, -2);
 
     private final int sortBucket;
@@ -31,11 +29,6 @@ public enum ChannelType {
 
     public int getSortBucket() {
         return sortBucket;
-    }
-
-
-    public int getId() {
-        return id;
     }
 
 

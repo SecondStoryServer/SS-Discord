@@ -30,7 +30,6 @@ public class GuildImpl implements Guild {
     private final long id;
     private final JDAImpl api;
 
-    private final SortedSnowflakeCacheViewImpl<Category> categoryCache = new SortedSnowflakeCacheViewImpl<>(Category.class, GuildChannel::getName, Comparator.naturalOrder());
     private final SortedSnowflakeCacheViewImpl<TextChannel> textChannelCache = new SortedSnowflakeCacheViewImpl<>(TextChannel.class, GuildChannel::getName, Comparator.naturalOrder());
     private final SortedSnowflakeCacheViewImpl<Role> roleCache = new SortedSnowflakeCacheViewImpl<>(Role.class, Role::getName, Comparator.reverseOrder());
     private final SnowflakeCacheViewImpl<Emote> emoteCache = new SnowflakeCacheViewImpl<>(Emote.class, Emote::getName);
@@ -132,12 +131,6 @@ public class GuildImpl implements Guild {
 
     @Nonnull
     @Override
-    public SortedSnowflakeCacheView<Category> getCategoryCache() {
-        return categoryCache;
-    }
-
-    @Nonnull
-    @Override
     public SortedSnowflakeCacheView<TextChannel> getTextChannelCache() {
         return textChannelCache;
     }
@@ -161,37 +154,17 @@ public class GuildImpl implements Guild {
         Predicate<GuildChannel> filterHidden = it -> self.hasPermission(it, Permission.VIEW_CHANNEL);
 
         List<GuildChannel> channels;
-        SnowflakeCacheViewImpl<Category> categoryView = getCategoriesView();
         SnowflakeCacheViewImpl<TextChannel> textView = getTextChannelsView();
         List<TextChannel> textChannels;
-        List<Category> categories;
-        try (UnlockHook categoryHook = categoryView.readLock();
-             UnlockHook textHook = textView.readLock()) {
+        try (UnlockHook textHook = textView.readLock()) {
             if (includeHidden) {
                 textChannels = textView.asList();
             } else {
                 textChannels = textView.stream().filter(filterHidden).collect(Collectors.toList());
             }
-            categories = categoryView.asList(); // we filter categories out when they are empty (no visible channels inside)
-            channels = new ArrayList<>((int) categoryView.size() + textChannels.size());
+            channels = new ArrayList<>(textChannels.size());
         }
-
-        textChannels.stream().filter(it -> it.getParent() == null).forEach(channels::add);
         Collections.sort(channels);
-
-        for (Category category : categories) {
-            List<GuildChannel> children;
-            if (includeHidden) {
-                children = category.getChannels();
-            } else {
-                children = category.getChannels().stream().filter(filterHidden).collect(Collectors.toList());
-                if (children.isEmpty())
-                    continue;
-            }
-
-            channels.add(category);
-            channels.addAll(children);
-        }
 
         return Collections.unmodifiableList(channels);
     }
@@ -275,10 +248,6 @@ public class GuildImpl implements Guild {
     }
 
     // -- Map getters --
-
-    public SortedSnowflakeCacheViewImpl<Category> getCategoriesView() {
-        return categoryCache;
-    }
 
     public SortedSnowflakeCacheViewImpl<TextChannel> getTextChannelsView() {
         return textChannelCache;

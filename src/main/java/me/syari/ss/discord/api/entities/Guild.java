@@ -70,21 +70,8 @@ public interface Guild extends ISnowflake {
 
     @Nullable
     default GuildChannel getGuildChannelById(long id) {
-        GuildChannel channel = getTextChannelById(id);
-        if (channel == null)
-            channel = getCategoryById(id);
-        return channel;
+        return getTextChannelById(id);
     }
-
-
-    @Nullable
-    default Category getCategoryById(long id) {
-        return getCategoryCache().getElementById(id);
-    }
-
-
-    @Nonnull
-    SortedSnowflakeCacheView<Category> getCategoryCache();
 
 
     @Nullable

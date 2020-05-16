@@ -194,23 +194,10 @@ public interface JDA {
     @Nullable
     default GuildChannel getGuildChannelById(@Nonnull ChannelType type, long id) {
         Checks.notNull(type, "ChannelType");
-        switch (type) {
-            case TEXT:
-                return getTextChannelById(id);
-            case CATEGORY:
-                return getCategoryById(id);
+        if (type == ChannelType.TEXT) {
+            return getTextChannelById(id);
         }
         return null;
-    }
-
-
-    @Nonnull
-    SnowflakeCacheView<Category> getCategoryCache();
-
-
-    @Nullable
-    default Category getCategoryById(long id) {
-        return getCategoryCache().getElementById(id);
     }
 
 
