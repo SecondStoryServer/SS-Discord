@@ -37,9 +37,7 @@ public class GuildImpl implements Guild {
     }
 
     public boolean isLoaded() {
-        // Only works with guild subscriptions
-        return getJDA().isGuildSubscriptions()
-                && (long) getMemberCount() <= getMemberCache().size();
+        return getJDA().isGuildSubscriptions() && (long) getMemberCount() <= getMemberCache().size();
     }
 
     private int getMemberCount() {
@@ -103,7 +101,6 @@ public class GuildImpl implements Guild {
     // ---- Setters -----
 
     public void setOwner(Member owner) {
-        // Only cache owner if user cache is enabled
         if (getJDA().isGuildSubscriptions())
             this.owner = owner;
     }

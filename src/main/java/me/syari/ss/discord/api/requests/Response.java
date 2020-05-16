@@ -13,7 +13,6 @@ import java.util.stream.Collectors;
 
 public class Response implements Closeable {
     public static final int ERROR_CODE = -1;
-    public static final String ERROR_MESSAGE = "ERROR";
     public static final IOFunction<BufferedReader, DataObject> JSON_SERIALIZE_OBJECT = DataObject::fromJson;
 
     public final int code;

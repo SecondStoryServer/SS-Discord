@@ -457,17 +457,13 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
                 .put("v", DISCORD_GATEWAY_VERSION)
                 .put("guild_subscriptions", api.isGuildSubscriptions())
                 .put("large_threshold", api.getLargeThreshold());
-        //Used to make the READY event be given
-        // as compressed binary data when over a certain size. TY @ShadowLordAlpha
-        //.put("compress", true);
         DataObject identify = DataObject.empty()
                 .put("op", WebSocketCode.IDENTIFY)
                 .put("d", payload);
         if (shardInfo != null) {
-            payload
-                    .put("shard", DataArray.empty()
-                            .add(shardInfo.getShardId())
-                            .add(shardInfo.getShardTotal()));
+            payload.put("shard", DataArray.empty()
+                    .add(shardInfo.getShardId())
+                    .add(shardInfo.getShardTotal()));
         }
         send(identify.toString(), true);
         handleIdentifyRateLimit = true;
@@ -483,9 +479,9 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
                 .put("d", DataObject.empty()
                         .put("session_id", sessionId)
                         .put("token", getToken())
-                        .put("seq", api.getResponseTotal()));
+                        .put("seq", api.getResponseTotal())
+                );
         send(resume.toString(), true);
-        //sentAuthInfo = true; set on RESUMED response as this could fail
         api.setStatus(JDA.Status.AWAITING_LOGIN_CONFIRMATION);
     }
 

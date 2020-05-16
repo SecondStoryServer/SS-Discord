@@ -18,7 +18,6 @@ public class ReadyHandler extends SocketHandler {
     protected Long handleInternally(DataObject content) {
         System.out.println(">> ReadyHandler");
         DataArray guilds = content.getArray("guilds");
-        //Make sure we don't have any duplicates here!
         TLongObjectMap<DataObject> distinctGuilds = new TLongObjectHashMap<>();
         for (int i = 0; i < guilds.length(); i++) {
             DataObject guild = guilds.getObject(i);

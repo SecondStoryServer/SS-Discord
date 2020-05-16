@@ -215,7 +215,7 @@ public class BotRateLimiter extends RateLimiter {
     }
 
     @SuppressWarnings("rawtypes")
-    private class Bucket implements IBucket, Runnable {
+    private class Bucket implements Runnable {
         private final String bucketId;
         private final Queue<Request> requests = new ConcurrentLinkedQueue<>();
 

@@ -270,10 +270,6 @@ public class JDAImpl implements JDA {
         return userResponse;
     }
 
-    public AuthorizationConfig getAuthorizationConfig() {
-        return authConfig;
-    }
-
     @Nonnull
     public String getToken() {
         return authConfig.getToken();

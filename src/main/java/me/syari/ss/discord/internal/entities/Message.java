@@ -30,7 +30,6 @@ public class Message {
     protected final String content;
     protected final boolean isTTS;
 
-    // LAZY EVALUATED
     protected String altContent = null;
 
     protected List<User> userMentions = null;
