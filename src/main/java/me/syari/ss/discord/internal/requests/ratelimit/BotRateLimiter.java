@@ -352,11 +352,6 @@ public class BotRateLimiter extends RateLimiter {
         }
 
         @Override
-        public Queue<Request> getRequests() {
-            return requests;
-        }
-
-        @Override
         public String toString() {
             return bucketId;
         }

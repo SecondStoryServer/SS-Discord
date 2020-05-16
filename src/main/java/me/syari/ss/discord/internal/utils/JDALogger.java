@@ -48,15 +48,6 @@ public class JDALogger {
     }
 
 
-    public static Logger getLog(String name) {
-        synchronized (LOGS) {
-            if (SLF4J_ENABLED)
-                return LoggerFactory.getLogger(name);
-            return LOGS.computeIfAbsent(name, SimpleLogger::new);
-        }
-    }
-
-
     public static Logger getLog(Class<?> clazz) {
         synchronized (LOGS) {
             if (SLF4J_ENABLED)

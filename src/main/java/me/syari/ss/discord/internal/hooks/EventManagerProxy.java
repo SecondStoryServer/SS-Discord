@@ -6,7 +6,6 @@ import me.syari.ss.discord.api.hooks.InterfacedEventManager;
 import me.syari.ss.discord.internal.JDAImpl;
 
 import javax.annotation.Nonnull;
-import java.util.List;
 
 public class EventManagerProxy implements IEventManager {
     private IEventManager subject;
@@ -25,11 +24,6 @@ public class EventManagerProxy implements IEventManager {
     }
 
     @Override
-    public void unregister(@Nonnull Object listener) {
-        this.subject.unregister(listener);
-    }
-
-    @Override
     public void handle(@Nonnull MessageReceivedEvent event) {
         // don't allow mere exceptions to obstruct the socket handler
         try {
@@ -39,9 +33,4 @@ public class EventManagerProxy implements IEventManager {
         }
     }
 
-    @Nonnull
-    @Override
-    public List<Object> getRegisteredListeners() {
-        return subject.getRegisteredListeners();
-    }
 }

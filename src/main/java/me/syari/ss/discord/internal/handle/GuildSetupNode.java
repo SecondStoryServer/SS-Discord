@@ -37,14 +37,6 @@ public class GuildSetupNode {
         this.sync = false;
     }
 
-    public long getIdLong() {
-        return id;
-    }
-
-    public String getId() {
-        return Long.toUnsignedString(id);
-    }
-
     public int getExpectedMemberCount() {
         return expectedMemberCount;
     }
@@ -53,10 +45,6 @@ public class GuildSetupNode {
         TLongHashSet knownMembers = new TLongHashSet(members.keySet());
         knownMembers.removeAll(removedMembers);
         return knownMembers.size();
-    }
-
-    public Type getType() {
-        return type;
     }
 
     public boolean isJoin() {

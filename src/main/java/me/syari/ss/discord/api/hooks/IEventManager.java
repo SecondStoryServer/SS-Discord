@@ -11,12 +11,7 @@ public interface IEventManager {
     void register(@Nonnull Object listener);
 
 
-    void unregister(@Nonnull Object listener);
-
-
     void handle(@Nonnull MessageReceivedEvent event);
 
 
-    @Nonnull
-    List<Object> getRegisteredListeners();
 }

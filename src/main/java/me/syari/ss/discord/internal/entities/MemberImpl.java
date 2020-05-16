@@ -9,7 +9,6 @@ import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.utils.cache.SnowflakeReference;
 
 import javax.annotation.Nonnull;
-import java.time.ZoneOffset;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -55,11 +54,6 @@ public class MemberImpl implements Member {
     @Override
     public String getDisplayName() {
         return nickname != null ? nickname : getUser().getName();
-    }
-
-    @Override
-    public boolean isFake() {
-        return getGuild().getMemberById(getIdLong()) == null;
     }
 
     @Override

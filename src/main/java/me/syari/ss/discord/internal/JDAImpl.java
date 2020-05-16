@@ -80,10 +80,6 @@ public class JDAImpl implements JDA {
     protected String gatewayUrl;
     protected ChunkingFilter chunkingFilter;
 
-    public JDAImpl(AuthorizationConfig authConfig) {
-        this(authConfig, null, null, null);
-    }
-
     public JDAImpl(
             AuthorizationConfig authConfig, SessionConfig sessionConfig,
             ThreadingConfig threadConfig, MetaConfig metaConfig) {
@@ -279,19 +275,16 @@ public class JDAImpl implements JDA {
     }
 
     @Nonnull
-    @Override
     public String getToken() {
         return authConfig.getToken();
     }
 
 
-    @Override
     public boolean isAutoReconnect() {
         return sessionConfig.isAutoReconnect();
     }
 
     @Nonnull
-    @Override
     public Status getStatus() {
         return status;
     }
@@ -315,25 +308,21 @@ public class JDAImpl implements JDA {
     }
 
     @Nonnull
-    @Override
     public ScheduledExecutorService getRateLimitPool() {
         return threadConfig.getRateLimitPool();
     }
 
     @Nonnull
-    @Override
     public ScheduledExecutorService getGatewayPool() {
         return threadConfig.getGatewayPool();
     }
 
     @Nonnull
-    @Override
     public ExecutorService getCallbackPool() {
         return threadConfig.getCallbackPool();
     }
 
     @Nonnull
-    @Override
     @SuppressWarnings("ConstantConditions") // this can't really happen unless you pass bad configs
     public OkHttpClient getHttpClient() {
         return sessionConfig.getHttpClient();
@@ -345,7 +334,6 @@ public class JDAImpl implements JDA {
         return guildCache;
     }
 
-    @Override
     public boolean isUnavailable(long guildId) {
         return guildSetupController.isUnavailable(guildId);
     }
@@ -375,14 +363,12 @@ public class JDAImpl implements JDA {
         return userCache;
     }
 
-    @Override
-    public synchronized void shutdownNow() {
+    private synchronized void shutdownNow() {
         shutdown();
         threadConfig.shutdownNow();
     }
 
-    @Override
-    public synchronized void shutdown() {
+    private synchronized void shutdown() {
         if (status == Status.SHUTDOWN || status == Status.SHUTTING_DOWN)
             return;
 
@@ -416,34 +402,28 @@ public class JDAImpl implements JDA {
         setStatus(Status.SHUTDOWN);
     }
 
-    @Override
     public long getResponseTotal() {
         return responseTotal;
     }
 
-    @Override
     public int getMaxReconnectDelay() {
         return sessionConfig.getMaxReconnectDelay();
     }
 
     @Nonnull
-    @Override
     public ShardInfo getShardInfo() {
         return shardInfo == null ? ShardInfo.SINGLE : shardInfo;
     }
 
     @Nonnull
-    @Override
     public Presence getPresence() {
         return presence;
     }
 
-    @Override
     public void setEventManager(IEventManager eventManager) {
         this.eventManager.setSubject(eventManager);
     }
 
-    @Override
     public void setEventListener(@Nonnull ListenerAdapter listener) {
         eventManager.register(listener);
     }

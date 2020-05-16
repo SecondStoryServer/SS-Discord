@@ -44,9 +44,7 @@ public interface JDA {
 
         SHUTTING_DOWN,
 
-        SHUTDOWN,
-
-        FAILED_TO_LOGIN;
+        SHUTDOWN;
 
         private final boolean isInit;
 
@@ -107,10 +105,6 @@ public interface JDA {
     }
 
 
-    @Nonnull
-    Status getStatus();
-
-
     default void awaitStatus(@Nonnull Status status) throws InterruptedException {
         awaitStatus(status, new Status[0]);
     }
@@ -122,28 +116,6 @@ public interface JDA {
     default void awaitReady() throws InterruptedException {
         awaitStatus(Status.CONNECTED);
     }
-
-
-    @Nonnull
-    ScheduledExecutorService getRateLimitPool();
-
-
-    @Nonnull
-    ScheduledExecutorService getGatewayPool();
-
-
-    @Nonnull
-    ExecutorService getCallbackPool();
-
-
-    @Nonnull
-    OkHttpClient getHttpClient();
-
-
-    void setEventManager(@Nullable IEventManager manager);
-
-
-    void setEventListener(@Nonnull ListenerAdapter listeners);
 
 
     @Nonnull
@@ -170,9 +142,6 @@ public interface JDA {
     default Guild getGuildById(long id) {
         return getGuildCache().getElementById(id);
     }
-
-
-    boolean isUnavailable(long guildId);
 
 
     @Nonnull
@@ -205,29 +174,4 @@ public interface JDA {
     }
 
 
-    @Nonnull
-    Presence getPresence();
-
-
-    @Nonnull
-    ShardInfo getShardInfo();
-
-
-    @Nonnull
-    String getToken();
-
-
-    long getResponseTotal();
-
-
-    int getMaxReconnectDelay();
-
-
-    boolean isAutoReconnect();
-
-
-    void shutdown();
-
-
-    void shutdownNow();
 }

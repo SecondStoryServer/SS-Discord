@@ -12,22 +12,18 @@ import java.util.concurrent.ConcurrentHashMap;
 public class EmoteImpl implements ListedEmote {
     private final long id;
     private final Set<Role> roles;
-    private final boolean fake;
 
     private boolean animated = false;
     private String name;
-    private User user;
 
     public EmoteImpl(long id, boolean fake) {
         this.id = id;
         this.roles = ConcurrentHashMap.newKeySet();
-        this.fake = fake;
     }
 
     public EmoteImpl(long id) {
         this.id = id;
         this.roles = null;
-        this.fake = true;
     }
 
     @Nonnull
@@ -37,26 +33,8 @@ public class EmoteImpl implements ListedEmote {
     }
 
     @Override
-    public boolean isFake() {
-        return fake;
-    }
-
-    @Override
     public long getIdLong() {
         return id;
-    }
-
-    @Nonnull
-    @Override
-    public User getUser() {
-        if (!hasUser())
-            throw new IllegalStateException("This emote does not have a user");
-        return user;
-    }
-
-    @Override
-    public boolean hasUser() {
-        return user != null;
     }
 
     @Override
@@ -77,7 +55,6 @@ public class EmoteImpl implements ListedEmote {
     }
 
     public EmoteImpl setUser(User user) {
-        this.user = user;
         return this;
     }
 

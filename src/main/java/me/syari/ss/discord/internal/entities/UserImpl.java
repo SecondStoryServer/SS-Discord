@@ -63,7 +63,6 @@ public class UserImpl implements User {
         return id;
     }
 
-    @Override
     public boolean isFake() {
         return fake;
     }
