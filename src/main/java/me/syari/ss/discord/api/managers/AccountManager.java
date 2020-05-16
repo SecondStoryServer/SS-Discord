@@ -36,13 +36,6 @@ public interface AccountManager extends Manager<AccountManager> {
 
     @Nonnull
     @CheckReturnValue
-    default AccountManager setName(@Nonnull String name) {
-        return setName(name, null);
-    }
-
-
-    @Nonnull
-    @CheckReturnValue
     AccountManager setName(@Nonnull String name, @Nullable String currentPassword);
 
 

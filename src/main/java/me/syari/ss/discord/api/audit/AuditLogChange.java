@@ -17,20 +17,6 @@ public class AuditLogChange {
     }
 
 
-    @SuppressWarnings("unchecked")
-    @Nullable
-    public <T> T getOldValue() {
-        return (T) oldValue;
-    }
-
-
-    @SuppressWarnings("unchecked")
-    @Nullable
-    public <T> T getNewValue() {
-        return (T) newValue;
-    }
-
-
     @Nonnull
     public String getKey() {
         return key;

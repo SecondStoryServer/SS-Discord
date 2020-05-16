@@ -37,12 +37,6 @@ public class DeferredRestAction<T, R extends RestAction<T>> implements Auditable
 
     @Nonnull
     @Override
-    public AuditableRestAction<T> reason(String reason) {
-        return this;
-    }
-
-    @Nonnull
-    @Override
     public AuditableRestAction<T> setCheck(BooleanSupplier checks) {
         this.transitiveChecks = checks;
         return this;

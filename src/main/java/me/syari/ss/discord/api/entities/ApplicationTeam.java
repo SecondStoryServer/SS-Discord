@@ -23,12 +23,6 @@ public interface ApplicationTeam extends ISnowflake {
 
 
     @Nullable
-    default TeamMember getMemberById(@Nonnull String userId) {
-        return getMemberById(MiscUtil.parseSnowflake(userId));
-    }
-
-
-    @Nullable
     default TeamMember getMemberById(long userId) {
         for (TeamMember member : getMembers()) {
             if (member.getUser().getIdLong() == userId)

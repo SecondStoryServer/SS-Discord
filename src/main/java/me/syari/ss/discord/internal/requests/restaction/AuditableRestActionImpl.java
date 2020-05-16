@@ -2,20 +2,13 @@ package me.syari.ss.discord.internal.requests.restaction;
 
 import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.audit.ThreadLocalReason;
-import me.syari.ss.discord.api.requests.Request;
-import me.syari.ss.discord.api.requests.Response;
 import me.syari.ss.discord.api.requests.restaction.AuditableRestAction;
-import me.syari.ss.discord.api.utils.data.DataObject;
 import me.syari.ss.discord.internal.requests.RestActionImpl;
 import me.syari.ss.discord.internal.requests.Route;
 import me.syari.ss.discord.internal.utils.EncodingUtil;
-import okhttp3.RequestBody;
 import org.apache.commons.collections4.map.CaseInsensitiveMap;
 
-import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.function.BiFunction;
 import java.util.function.BooleanSupplier;
 
 public class AuditableRestActionImpl<T> extends RestActionImpl<T> implements AuditableRestAction<T> {
@@ -25,38 +18,11 @@ public class AuditableRestActionImpl<T> extends RestActionImpl<T> implements Aud
         super(api, route);
     }
 
-    public AuditableRestActionImpl(JDA api, Route.CompiledRoute route, RequestBody data) {
-        super(api, route, data);
-    }
-
-    public AuditableRestActionImpl(JDA api, Route.CompiledRoute route, DataObject data) {
-        super(api, route, data);
-    }
-
-    public AuditableRestActionImpl(JDA api, Route.CompiledRoute route, BiFunction<Response, Request<T>, T> handler) {
-        super(api, route, handler);
-    }
-
-    public AuditableRestActionImpl(JDA api, Route.CompiledRoute route, DataObject data, BiFunction<Response, Request<T>, T> handler) {
-        super(api, route, data, handler);
-    }
-
-    public AuditableRestActionImpl(JDA api, Route.CompiledRoute route, RequestBody data, BiFunction<Response, Request<T>, T> handler) {
-        super(api, route, data, handler);
-    }
-
     @Nonnull
     @Override
     @SuppressWarnings("unchecked")
     public AuditableRestAction<T> setCheck(BooleanSupplier checks) {
         return (AuditableRestActionImpl) super.setCheck(checks);
-    }
-
-    @Nonnull
-    @CheckReturnValue
-    public AuditableRestActionImpl<T> reason(@Nullable String reason) {
-        this.reason = reason;
-        return this;
     }
 
     @Override

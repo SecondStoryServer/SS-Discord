@@ -13,10 +13,10 @@ public class ActivityImpl implements Activity {
     protected final Timestamps timestamps;
 
     protected ActivityImpl(String name, String url, ActivityType type) {
-        this(name, url, type, null, null);
+        this(name, url, type, null);
     }
 
-    protected ActivityImpl(String name, String url, ActivityType type, RichPresence.Timestamps timestamps, Emoji emoji) {
+    protected ActivityImpl(String name, String url, ActivityType type, RichPresence.Timestamps timestamps) {
         this.name = name;
         this.url = url;
         this.type = type;

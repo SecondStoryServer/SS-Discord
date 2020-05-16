@@ -623,7 +623,7 @@ public class EntityBuilder {
         }
 
         if (!CollectionUtils.containsAny(gameJson.keys(), richGameFields))
-            return new ActivityImpl(name, url, type, timestamps, emoji);
+            return new ActivityImpl(name, url, type, timestamps);
 
         // data for spotify
         long id = gameJson.getLong("application_id", 0L);
@@ -1355,7 +1355,7 @@ public class EntityBuilder {
         CaseInsensitiveMap<String, Object> optionMap = options != null
                 ? new CaseInsensitiveMap<>(options.toMap()) : null;
 
-        return new AuditLogEntry(type, typeKey, id, targetId, guild, user, webhook, reason, changeMap, optionMap);
+        return new AuditLogEntry(type, id, targetId, guild, user, webhook, reason, changeMap, optionMap);
     }
 
     public AuditLogChange createAuditLogChange(DataObject change) {

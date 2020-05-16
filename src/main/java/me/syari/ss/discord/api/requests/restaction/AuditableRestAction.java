@@ -8,11 +8,6 @@ import java.util.function.BooleanSupplier;
 
 
 public interface AuditableRestAction<T> extends RestAction<T> {
-
-    @Nonnull
-    AuditableRestAction<T> reason(@Nullable String reason);
-
-
     @Nonnull
     @Override
     AuditableRestAction<T> setCheck(@Nullable BooleanSupplier checks);

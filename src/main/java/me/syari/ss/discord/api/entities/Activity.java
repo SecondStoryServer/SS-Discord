@@ -62,24 +62,6 @@ public interface Activity {
     }
 
 
-    @Nonnull
-    static Activity of(@Nonnull ActivityType type, @Nonnull String name, @Nullable String url) {
-        Checks.notNull(type, "Type");
-        switch (type) {
-            case DEFAULT:
-                return playing(name);
-            case STREAMING:
-                return streaming(name, url);
-            case LISTENING:
-                return listening(name);
-            case WATCHING:
-                return watching(name);
-            default:
-                throw new IllegalArgumentException("ActivityType " + type + " is not supported!");
-        }
-    }
-
-
     static boolean isValidStreamingUrl(@Nullable String url) {
         return url != null && STREAMING_URL.matcher(url).matches();
     }
