@@ -12,12 +12,6 @@ import javax.annotation.Nullable;
 
 public interface WebhookManager extends Manager<WebhookManager> {
 
-    long NAME = 0x1;
-
-    long CHANNEL = 0x2;
-
-    long AVATAR = 0x4;
-
 
     @Nonnull
     @Override
@@ -48,11 +42,6 @@ public interface WebhookManager extends Manager<WebhookManager> {
     @Nonnull
     @CheckReturnValue
     WebhookManager setName(@Nonnull String name);
-
-
-    @Nonnull
-    @CheckReturnValue
-    WebhookManager setAvatar(@Nullable Icon icon);
 
 
     @Nonnull

@@ -84,11 +84,6 @@ public class EmoteImpl implements ListedEmote {
     }
 
     @Override
-    public boolean isManaged() {
-        return managed;
-    }
-
-    @Override
     public boolean isFake() {
         return fake;
     }

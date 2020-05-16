@@ -12,15 +12,10 @@ import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
 public abstract class ManagerBase<M extends Manager<M>> extends AuditableRestActionImpl<Void> implements Manager<M> {
-    private static boolean enablePermissionChecks = true;
     protected long set = 0;
 
-    public static void setPermissionChecksEnabled(boolean enable) {
-        enablePermissionChecks = enable;
-    }
-
     public static boolean isPermissionChecksEnabled() {
-        return enablePermissionChecks;
+        return true;
     }
 
     protected ManagerBase(JDA api, Route.CompiledRoute route) {
@@ -92,7 +87,7 @@ public abstract class ManagerBase<M extends Manager<M>> extends AuditableRestAct
 
     @Override
     protected BooleanSupplier finalizeChecks() {
-        return enablePermissionChecks ? this::checkPermissions : super.finalizeChecks();
+        return this::checkPermissions;
     }
 
     protected boolean shouldUpdate() {

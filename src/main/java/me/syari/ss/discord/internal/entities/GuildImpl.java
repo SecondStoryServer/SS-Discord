@@ -96,12 +96,6 @@ public class GuildImpl implements Guild {
                 (response, request) -> response.getObject().getString("code"));
     }
 
-    @Nonnull
-    @Override
-    public BoostTier getBoostTier() {
-        return boostTier;
-    }
-
     @Override
     public Member getOwner() {
         return owner;

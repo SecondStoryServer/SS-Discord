@@ -38,9 +38,6 @@ public interface Emote extends IMentionable, IFakeable {
     String getName();
 
 
-    boolean isManaged();
-
-
     @Nonnull
     JDA getJDA();
 

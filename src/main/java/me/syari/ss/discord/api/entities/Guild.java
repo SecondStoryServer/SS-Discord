@@ -40,16 +40,6 @@ public interface Guild extends ISnowflake {
     RestAction<String> retrieveVanityUrl();
 
 
-    @Nonnull
-    BoostTier getBoostTier();
-
-
-    default int getMaxBitrate() {
-        int maxBitrate = getFeatures().contains("VIP_REGIONS") ? 384000 : 96000;
-        return Math.max(maxBitrate, getBoostTier().getMaxBitrate());
-    }
-
-
     @Nullable
     Member getOwner();
 
@@ -195,36 +185,6 @@ public interface Guild extends ISnowflake {
     //////////////////////////
 
 
-    enum Timeout {
-        SECONDS_60(60),
-        SECONDS_300(300),
-        SECONDS_900(900),
-        SECONDS_1800(1800),
-        SECONDS_3600(3600);
-
-        private final int seconds;
-
-        Timeout(int seconds) {
-            this.seconds = seconds;
-        }
-
-
-        public int getSeconds() {
-            return seconds;
-        }
-
-
-        @Nonnull
-        public static Timeout fromKey(int seconds) {
-            for (Timeout t : values()) {
-                if (t.getSeconds() == seconds)
-                    return t;
-            }
-            throw new IllegalArgumentException("Provided key was not recognized. Seconds: " + seconds);
-        }
-    }
-
-
     enum VerificationLevel {
         NONE(0),
         LOW(1),
@@ -245,126 +205,25 @@ public interface Guild extends ISnowflake {
         }
 
 
-        @Nonnull
-        public static VerificationLevel fromKey(int key) {
-            for (VerificationLevel level : VerificationLevel.values()) {
-                if (level.getKey() == key)
-                    return level;
-            }
-            return UNKNOWN;
-        }
-    }
-
-
-    enum NotificationLevel {
-        ALL_MESSAGES(0),
-        MENTIONS_ONLY(1),
-        UNKNOWN(-1);
-
-        private final int key;
-
-        NotificationLevel(int key) {
-            this.key = key;
-        }
-
-
-        public int getKey() {
-            return key;
-        }
-
-
-        @Nonnull
-        public static NotificationLevel fromKey(int key) {
-            for (NotificationLevel level : values()) {
-                if (level.getKey() == key)
-                    return level;
-            }
-            return UNKNOWN;
-        }
-    }
-
-
-    enum MFALevel {
-        NONE(0),
-        TWO_FACTOR_AUTH(1),
-        UNKNOWN(-1);
-
-        private final int key;
-
-        MFALevel(int key) {
-            this.key = key;
-        }
-
-
-        public int getKey() {
-            return key;
-        }
-
-
-        @Nonnull
-        public static MFALevel fromKey(int key) {
-            for (MFALevel level : values()) {
-                if (level.getKey() == key)
-                    return level;
-            }
-            return UNKNOWN;
-        }
-    }
-
-
-    enum ExplicitContentLevel {
-        OFF(0),
-        NO_ROLE(1),
-        ALL(2),
-
-        UNKNOWN(-1);
-
-        private final int key;
-
-        ExplicitContentLevel(int key) {
-            this.key = key;
-        }
-
-
-        public int getKey() {
-            return key;
-        }
-
-
-        @Nonnull
-        public static ExplicitContentLevel fromKey(int key) {
-            for (ExplicitContentLevel level : values()) {
-                if (level.key == key)
-                    return level;
-            }
-            return UNKNOWN;
-        }
     }
 
 
     enum BoostTier {
 
-        NONE(0, 96000),
+        NONE(0),
 
-        TIER_1(1, 128000),
+        TIER_1(1),
 
-        TIER_2(2, 256000),
+        TIER_2(2),
 
-        TIER_3(3, 384000),
+        TIER_3(3),
 
-        UNKNOWN(-1, Integer.MAX_VALUE);
+        UNKNOWN(-1);
 
         private final int key;
-        private final int maxBitrate;
 
-        BoostTier(int key, int maxBitrate) {
+        BoostTier(int key) {
             this.key = key;
-            this.maxBitrate = maxBitrate;
-        }
-
-
-        public int getMaxBitrate() {
-            return maxBitrate;
         }
 
 
