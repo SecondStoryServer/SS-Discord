@@ -708,20 +708,13 @@ public class EntityBuilder {
         });
 
         MessageType type = MessageType.fromId(jsonObject.getInt("type"));
-        ReceivedMessage message;
-        switch (type) {
-            case DEFAULT:
-                message = new ReceivedMessage(id, chan, type, fromWebhook,
-                        mentionsEveryone, mentionedUsers, mentionedRoles, tts,
-                        content, user, member, embeds);
-                break;
-            case UNKNOWN:
-                throw new IllegalArgumentException(UNKNOWN_MESSAGE_TYPE);
-            default:
-                message = new SystemMessage(id, chan, type, fromWebhook,
-                        mentionsEveryone, mentionedUsers, mentionedRoles, tts,
-                        content, user, member, embeds);
-                break;
+        Message message;
+        if (type == MessageType.DEFAULT) {
+            message = new Message(id, chan, type, fromWebhook,
+                    mentionsEveryone, mentionedUsers, mentionedRoles, tts,
+                    content, user, member, embeds);
+        } else {
+            throw new IllegalArgumentException(UNKNOWN_MESSAGE_TYPE);
         }
 
         if (!message.isFromGuild())

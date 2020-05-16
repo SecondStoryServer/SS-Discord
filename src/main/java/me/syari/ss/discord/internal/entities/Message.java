@@ -6,15 +6,22 @@ import me.syari.ss.discord.api.entities.*;
 import me.syari.ss.discord.api.utils.MiscUtil;
 import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.utils.Checks;
+import me.syari.ss.discord.internal.utils.Helpers;
 import org.apache.commons.collections4.CollectionUtils;
 
 import javax.annotation.Nonnull;
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.*;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class ReceivedMessage extends AbstractMessage {
+public class Message {
+    public static int MAX_FILE_AMOUNT = 10;
+
+    public static int MAX_CONTENT_LENGTH = 2000;
+
     private final Object mutex = new Object();
 
     protected final JDAImpl api;
@@ -28,6 +35,8 @@ public class ReceivedMessage extends AbstractMessage {
     protected final List<MessageEmbed> embeds;
     protected final TLongSet mentionedUsers;
     protected final TLongSet mentionedRoles;
+    protected final String content;
+    protected final boolean isTTS;
 
     // LAZY EVALUATED
     protected String altContent = null;
@@ -37,12 +46,13 @@ public class ReceivedMessage extends AbstractMessage {
     protected List<Role> roleMentions = null;
     protected List<TextChannel> channelMentions = null;
 
-    public ReceivedMessage(
+    public Message(
             long id, MessageChannel channel, MessageType type,
             boolean fromWebhook, boolean mentionsEveryone, TLongSet mentionedUsers, TLongSet mentionedRoles, boolean tts,
             String content, User author, Member member,
             List<MessageEmbed> embeds) {
-        super(content, tts);
+        this.content = content;
+        this.isTTS = tts;
         this.id = id;
         this.channel = channel;
         this.type = type;
@@ -57,19 +67,16 @@ public class ReceivedMessage extends AbstractMessage {
     }
 
     @Nonnull
-    @Override
     public JDA getJDA() {
         return api;
     }
 
 
     @Nonnull
-    @Override
     public MessageType getType() {
         return type;
     }
 
-    @Override
     public long getIdLong() {
         return id;
     }
@@ -87,7 +94,6 @@ public class ReceivedMessage extends AbstractMessage {
     }
 
     @Nonnull
-    @Override
     public synchronized List<User> getMentionedUsers() {
         if (userMentions == null)
             userMentions = Collections.unmodifiableList(processMentions(Message.MentionType.USER, new ArrayList<>(), this::matchUser));
@@ -100,7 +106,6 @@ public class ReceivedMessage extends AbstractMessage {
     }
 
     @Nonnull
-    @Override
     public synchronized List<TextChannel> getMentionedChannels() {
         if (channelMentions == null)
             channelMentions = Collections.unmodifiableList(processMentions(Message.MentionType.CHANNEL, new ArrayList<>(), this::matchTextChannel));
@@ -118,7 +123,6 @@ public class ReceivedMessage extends AbstractMessage {
     }
 
     @Nonnull
-    @Override
     public synchronized List<Role> getMentionedRoles() {
         if (roleMentions == null)
             roleMentions = Collections.unmodifiableList(processMentions(Message.MentionType.ROLE, new ArrayList<>(), this::matchRole));
@@ -126,7 +130,6 @@ public class ReceivedMessage extends AbstractMessage {
     }
 
     @Nonnull
-    @Override
     public List<IMentionable> getMentions(@Nonnull Message.MentionType... types) {
         if (types.length == 0)
             return getMentions(Message.MentionType.values());
@@ -167,7 +170,6 @@ public class ReceivedMessage extends AbstractMessage {
         return Collections.unmodifiableList(mentions);
     }
 
-    @Override
     public boolean isMentioned(@Nonnull IMentionable mentionable, @Nonnull Message.MentionType... types) {
         Checks.notNull(types, "Mention Types");
         if (types.length == 0)
@@ -243,18 +245,15 @@ public class ReceivedMessage extends AbstractMessage {
     }
 
     @Nonnull
-    @Override
     public User getAuthor() {
         return author;
     }
 
-    @Override
     public Member getMember() {
         return member;
     }
 
     @Nonnull
-    @Override
     public String getContentDisplay() {
         if (altContent != null)
             return altContent;
@@ -284,30 +283,25 @@ public class ReceivedMessage extends AbstractMessage {
     }
 
     @Nonnull
-    @Override
     public String getContentRaw() {
         return content;
     }
 
-    @Override
     public boolean isFromType(@Nonnull ChannelType type) {
         return getChannelType() == type;
     }
 
     @Nonnull
-    @Override
     public ChannelType getChannelType() {
         return channel.getType();
     }
 
     @Nonnull
-    @Override
     public MessageChannel getChannel() {
         return channel;
     }
 
     @Nonnull
-    @Override
     public TextChannel getTextChannel() {
         if (!isFromType(ChannelType.TEXT))
             throw new IllegalStateException("This message was not sent in a text channel");
@@ -315,13 +309,11 @@ public class ReceivedMessage extends AbstractMessage {
     }
 
     @Nonnull
-    @Override
     public Guild getGuild() {
         return getTextChannel().getGuild();
     }
 
     @Nonnull
-    @Override
     public List<MessageEmbed> getEmbeds() {
         return embeds;
     }
@@ -337,14 +329,12 @@ public class ReceivedMessage extends AbstractMessage {
     }
 
     @Nonnull
-    @Override
     public synchronized List<Emote> getEmotes() {
         if (this.emoteMentions == null)
             emoteMentions = Collections.unmodifiableList(processMentions(Message.MentionType.EMOTE, new ArrayList<>(), this::matchEmote));
         return emoteMentions;
     }
 
-    @Override
     public boolean isTTS() {
         return isTTS;
     }
@@ -353,9 +343,9 @@ public class ReceivedMessage extends AbstractMessage {
     public boolean equals(Object o) {
         if (o == this)
             return true;
-        if (!(o instanceof ReceivedMessage))
+        if (!(o instanceof Message))
             return false;
-        ReceivedMessage oMsg = (ReceivedMessage) o;
+        Message oMsg = (Message) o;
         return this.id == oMsg.id;
     }
 
@@ -367,16 +357,14 @@ public class ReceivedMessage extends AbstractMessage {
     @Override
     public String toString() {
         return author != null
-                ? String.format("M:%#s:%.20s(%s)", author, this, getId())
+                ? String.format("M:%#s:%.20s(%s)", author, this, id)
                 : String.format("M:%.20s", this); // this message was made using MessageBuilder
     }
 
-    @Override
     protected void unsupported() {
         throw new UnsupportedOperationException("This operation is not supported on received messages!");
     }
 
-    @Override
     public void formatTo(Formatter formatter, int flags, int width, int precision) {
         boolean upper = (flags & FormattableFlags.UPPERCASE) == FormattableFlags.UPPERCASE;
         boolean leftJustified = (flags & FormattableFlags.LEFT_JUSTIFY) == FormattableFlags.LEFT_JUSTIFY;
@@ -417,4 +405,51 @@ public class ReceivedMessage extends AbstractMessage {
         return collection;
     }
 
+    boolean isFromGuild() {
+        return getChannelType().isGuild();
+    }
+
+    protected void appendFormat(Formatter formatter, int width, int precision, boolean leftJustified, String out) {
+        try {
+            Appendable appendable = formatter.out();
+            if (precision > -1 && out.length() > precision) {
+                appendable.append(Helpers.truncate(out, precision - 3)).append("...");
+                return;
+            }
+
+            if (leftJustified)
+                appendable.append(Helpers.rightPad(out, width));
+            else
+                appendable.append(Helpers.leftPad(out, width));
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
+
+    enum MentionType {
+
+        USER("<@!?(\\d+)>"),
+
+        ROLE("<@&(\\d+)>"),
+
+        CHANNEL("<#(\\d+)>"),
+
+        EMOTE("<a?:([a-zA-Z0-9_]+):([0-9]+)>"),
+
+        HERE("@here"),
+
+        EVERYONE("@everyone");
+
+        private final Pattern pattern;
+
+        MentionType(String regex) {
+            this.pattern = Pattern.compile(regex);
+        }
+
+        @Nonnull
+        public Pattern getPattern() {
+            return pattern;
+        }
+    }
 }

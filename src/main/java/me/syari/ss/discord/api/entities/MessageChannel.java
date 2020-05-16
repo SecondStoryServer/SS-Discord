@@ -9,6 +9,7 @@ import me.syari.ss.discord.api.utils.MiscUtil;
 import me.syari.ss.discord.api.utils.data.DataArray;
 import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.entities.EntityBuilder;
+import me.syari.ss.discord.internal.entities.Message;
 import me.syari.ss.discord.internal.requests.RestActionImpl;
 import me.syari.ss.discord.internal.requests.Route;
 import me.syari.ss.discord.internal.requests.restaction.AuditableRestActionImpl;

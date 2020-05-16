@@ -9,6 +9,7 @@ import me.syari.ss.discord.api.requests.Response;
 import me.syari.ss.discord.api.requests.restaction.MessageAction;
 import me.syari.ss.discord.api.utils.AttachmentOption;
 import me.syari.ss.discord.api.utils.data.DataObject;
+import me.syari.ss.discord.internal.entities.Message;
 import me.syari.ss.discord.internal.requests.Method;
 import me.syari.ss.discord.internal.requests.Requester;
 import me.syari.ss.discord.internal.requests.RestActionImpl;
