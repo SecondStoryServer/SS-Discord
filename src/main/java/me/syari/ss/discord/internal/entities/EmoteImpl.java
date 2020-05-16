@@ -1,50 +1,31 @@
 package me.syari.ss.discord.internal.entities;
 
-import me.syari.ss.discord.api.entities.Guild;
 import me.syari.ss.discord.api.entities.ListedEmote;
 import me.syari.ss.discord.api.entities.Role;
 import me.syari.ss.discord.api.entities.User;
-import me.syari.ss.discord.api.managers.EmoteManager;
-import me.syari.ss.discord.internal.JDAImpl;
-import me.syari.ss.discord.internal.utils.cache.SnowflakeReference;
 
 import javax.annotation.Nonnull;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.locks.ReentrantLock;
 
 
 public class EmoteImpl implements ListedEmote {
     private final long id;
-    private final SnowflakeReference<Guild> guild;
-    private final JDAImpl api;
     private final Set<Role> roles;
     private final boolean fake;
 
-    private final ReentrantLock mngLock = new ReentrantLock();
-    private volatile EmoteManager manager = null;
-
-    private boolean managed = false;
     private boolean animated = false;
     private String name;
     private User user;
 
-    public EmoteImpl(long id, GuildImpl guild) {
-        this(id, guild, false);
-    }
-
-    public EmoteImpl(long id, GuildImpl guild, boolean fake) {
+    public EmoteImpl(long id, boolean fake) {
         this.id = id;
-        this.api = guild.getJDA();
-        this.guild = new SnowflakeReference<>(guild, api::getGuildById);
         this.roles = ConcurrentHashMap.newKeySet();
         this.fake = fake;
     }
 
-    public EmoteImpl(long id, JDAImpl api) {
+    public EmoteImpl(long id) {
         this.id = id;
-        this.api = api;
-        this.guild = null;
         this.roles = null;
         this.fake = true;
     }
@@ -92,11 +73,6 @@ public class EmoteImpl implements ListedEmote {
 
     public EmoteImpl setAnimated(boolean animated) {
         this.animated = animated;
-        return this;
-    }
-
-    public EmoteImpl setManaged(boolean val) {
-        this.managed = val;
         return this;
     }
 

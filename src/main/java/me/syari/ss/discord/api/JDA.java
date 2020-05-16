@@ -179,12 +179,6 @@ public interface JDA {
     SnowflakeCacheView<Role> getRoleCache();
 
 
-    @Nonnull
-    default List<Role> getRoles() {
-        return getRoleCache().asList();
-    }
-
-
     @Nullable
     default Role getRoleById(long id) {
         return getRoleCache().getElementById(id);

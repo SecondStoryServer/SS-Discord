@@ -8,7 +8,6 @@ import me.syari.ss.discord.api.requests.Request;
 import me.syari.ss.discord.api.requests.Response;
 import me.syari.ss.discord.api.requests.RestAction;
 import me.syari.ss.discord.api.requests.RestFuture;
-import me.syari.ss.discord.api.utils.data.DataObject;
 import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.utils.Checks;
 import me.syari.ss.discord.internal.utils.JDALogger;
@@ -47,7 +46,6 @@ public class RestActionImpl<T> implements RestAction<T> {
     private final RequestBody data;
     private final BiFunction<Response, Request<T>, T> handler;
 
-    private Object rawData;
     private BooleanSupplier checks;
 
     public static boolean isPassContext() {
@@ -63,24 +61,11 @@ public class RestActionImpl<T> implements RestAction<T> {
     }
 
     public RestActionImpl(JDA api, Route.CompiledRoute route) {
-        this(api, route, (RequestBody) null, null);
-    }
-
-    public RestActionImpl(JDA api, Route.CompiledRoute route, DataObject data) {
-        this(api, route, data, null);
-    }
-
-    public RestActionImpl(JDA api, Route.CompiledRoute route, RequestBody data) {
-        this(api, route, data, null);
+        this(api, route, null, null);
     }
 
     public RestActionImpl(JDA api, Route.CompiledRoute route, BiFunction<Response, Request<T>, T> handler) {
-        this(api, route, (RequestBody) null, handler);
-    }
-
-    public RestActionImpl(JDA api, Route.CompiledRoute route, DataObject data, BiFunction<Response, Request<T>, T> handler) {
-        this(api, route, data == null ? null : RequestBody.create(Requester.MEDIA_TYPE_JSON, data.toString()), handler);
-        this.rawData = data;
+        this(api, route, null, handler);
     }
 
     public RestActionImpl(JDA api, Route.CompiledRoute route, RequestBody data, BiFunction<Response, Request<T>, T> handler) {
@@ -115,7 +100,7 @@ public class RestActionImpl<T> implements RestAction<T> {
             success = DEFAULT_SUCCESS;
         if (failure == null)
             failure = DEFAULT_FAILURE;
-        api.getRequester().request(new Request<>(this, success, failure, finisher, true, data, rawData, route, headers));
+        api.getRequester().request(new Request<>(this, success, failure, finisher, true, data, route, headers));
     }
 
     @Nonnull
@@ -126,7 +111,7 @@ public class RestActionImpl<T> implements RestAction<T> {
         RequestBody data = finalizeData();
         CaseInsensitiveMap<String, String> headers = finalizeHeaders();
         BooleanSupplier finisher = getFinisher();
-        return new RestFuture<>(this, shouldQueue, finisher, data, rawData, route, headers);
+        return new RestFuture<>(this, shouldQueue, finisher, data, route, headers);
     }
 
     @Override
@@ -163,12 +148,6 @@ public class RestActionImpl<T> implements RestAction<T> {
 
     protected BooleanSupplier finalizeChecks() {
         return null;
-    }
-
-    protected RequestBody getRequestBody(DataObject object) {
-        this.rawData = object;
-
-        return object == null ? null : RequestBody.create(Requester.MEDIA_TYPE_JSON, object.toString());
     }
 
     private CheckWrapper getFinisher() {

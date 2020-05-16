@@ -72,12 +72,6 @@ public interface RestAction<T> {
 
 
     @Nonnull
-    default CompletableFuture<T> submit() {
-        return submit(true);
-    }
-
-
-    @Nonnull
     CompletableFuture<T> submit(boolean shouldQueue);
 
 

@@ -96,16 +96,6 @@ public class EventCache {
         eventCache.clear();
     }
 
-    public synchronized void clear(Type type, long id) {
-        TLongObjectMap<List<CacheNode>> typeCache = this.eventCache.get(type);
-        if (typeCache == null)
-            return;
-
-        List<CacheNode> events = typeCache.remove(id);
-        if (events != null)
-            LOG.debug("Clearing cache for type {} with ID {} (Size: {})", type, id, events.size());
-    }
-
     public enum Type {
         USER, MEMBER, GUILD, CHANNEL, ROLE, RELATIONSHIP, CALL
     }

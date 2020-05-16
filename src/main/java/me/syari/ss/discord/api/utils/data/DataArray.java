@@ -47,12 +47,6 @@ public class DataArray implements Iterable<Object> {
 
 
     @Nonnull
-    public static DataArray fromCollection(@Nonnull Collection<?> col) {
-        return empty().addAll(col);
-    }
-
-
-    @Nonnull
     public static DataArray fromJson(@Nonnull Reader json) {
         try {
             return new DataArray(mapper.readValue(json, listType));
@@ -127,13 +121,6 @@ public class DataArray implements Iterable<Object> {
             data.add(((DataArray) value).data);
         else
             data.add(value);
-        return this;
-    }
-
-
-    @Nonnull
-    public DataArray addAll(@Nonnull Collection<?> values) {
-        values.forEach(this::add);
         return this;
     }
 

@@ -5,7 +5,6 @@ public final class WebSocketCode {
     public static final int DISPATCH = 0;
     public static final int HEARTBEAT = 1;
     public static final int IDENTIFY = 2;
-    public static final int PRESENCE = 3;
     public static final int RESUME = 6;
     public static final int RECONNECT = 7;
     public static final int MEMBER_CHUNK_REQUEST = 8;

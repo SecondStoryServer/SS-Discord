@@ -45,10 +45,6 @@ public class GuildSetupNode {
         return Long.toUnsignedString(id);
     }
 
-    public GuildSetupController.Status getStatus() {
-        return status;
-    }
-
     public int getExpectedMemberCount() {
         return expectedMemberCount;
     }
@@ -65,12 +61,6 @@ public class GuildSetupNode {
 
     public boolean isJoin() {
         return type == Type.JOIN;
-    }
-
-    public boolean containsMember(long userId) {
-        if (members == null || members.isEmpty())
-            return false;
-        return members.containsKey(userId);
     }
 
     @Override

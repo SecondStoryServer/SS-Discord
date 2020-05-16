@@ -25,7 +25,6 @@ public class Request<T> {
     private final boolean shouldQueue;
     private final Route.CompiledRoute route;
     private final RequestBody body;
-    private final Object rawBody;
     private final CaseInsensitiveMap<String, String> headers;
 
     private final String localReason;
@@ -34,7 +33,7 @@ public class Request<T> {
 
     public Request(
             RestActionImpl<T> restAction, Consumer<? super T> onSuccess, Consumer<? super Throwable> onFailure,
-            BooleanSupplier checks, boolean shouldQueue, RequestBody body, Object rawBody,
+            BooleanSupplier checks, boolean shouldQueue, RequestBody body,
             Route.CompiledRoute route, CaseInsensitiveMap<String, String> headers) {
         this.restAction = restAction;
         this.onSuccess = onSuccess;
@@ -47,7 +46,6 @@ public class Request<T> {
         this.checks = checks;
         this.shouldQueue = shouldQueue;
         this.body = body;
-        this.rawBody = rawBody;
         this.route = route;
         this.headers = headers;
 
@@ -110,11 +108,6 @@ public class Request<T> {
     @Nullable
     public RequestBody getBody() {
         return body;
-    }
-
-    @Nullable
-    public Object getRawBody() {
-        return rawBody;
     }
 
     public boolean shouldQueue() {

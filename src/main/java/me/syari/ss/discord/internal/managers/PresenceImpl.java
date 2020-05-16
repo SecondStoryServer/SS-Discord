@@ -6,8 +6,6 @@ import me.syari.ss.discord.api.entities.Activity;
 import me.syari.ss.discord.api.managers.Presence;
 import me.syari.ss.discord.api.utils.data.DataObject;
 import me.syari.ss.discord.internal.JDAImpl;
-import me.syari.ss.discord.internal.requests.WebSocketCode;
-import me.syari.ss.discord.internal.utils.Checks;
 
 import javax.annotation.Nonnull;
 
@@ -26,7 +24,6 @@ public class PresenceImpl implements Presence {
 
     /* -- Public Getters -- */
 
-
     @Nonnull
     @Override
     public JDA getJDA() {
@@ -39,39 +36,7 @@ public class PresenceImpl implements Presence {
         return status;
     }
 
-
-    /* -- Public Setters -- */
-
-
-    @Override
-    public void setStatus(OnlineStatus status) {
-        setPresence(status, activity, idle);
-    }
-
-    @Override
-    public void setPresence(OnlineStatus status, Activity activity, boolean idle) {
-        DataObject gameObj = getGameJson(activity);
-
-        Checks.check(status != OnlineStatus.UNKNOWN,
-                "Cannot set the presence status to an unknown OnlineStatus!");
-        if (status == OnlineStatus.OFFLINE || status == null)
-            status = OnlineStatus.INVISIBLE;
-
-        DataObject object = DataObject.empty();
-
-        object.put("game", gameObj);
-        object.put("afk", idle);
-        object.put("status", status.getKey());
-        object.put("since", System.currentTimeMillis());
-        update(object);
-        this.idle = idle;
-        this.status = status;
-        this.activity = gameObj == null ? null : activity;
-    }
-
-
     /* -- Impl Setters -- */
-
 
     public void setCacheStatus(OnlineStatus status) {
         if (status == null)
@@ -93,7 +58,6 @@ public class PresenceImpl implements Presence {
 
 
     /* -- Internal Methods -- */
-
 
     public DataObject getFullPresence() {
         DataObject activity = getGameJson(this.activity);
@@ -118,18 +82,4 @@ public class PresenceImpl implements Presence {
 
         return gameObj;
     }
-
-
-    /* -- Terminal -- */
-
-
-    protected void update(DataObject data) {
-        JDA.Status status = api.getStatus();
-        if (status == JDA.Status.RECONNECT_QUEUED || status == JDA.Status.SHUTDOWN || status == JDA.Status.SHUTTING_DOWN)
-            return;
-        api.getClient().send(DataObject.empty()
-                .put("d", data)
-                .put("op", WebSocketCode.PRESENCE).toString());
-    }
-
 }

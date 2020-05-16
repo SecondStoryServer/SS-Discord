@@ -26,12 +26,4 @@ public enum OnlineStatus {
     }
 
 
-    public static OnlineStatus fromKey(String key) {
-        for (OnlineStatus onlineStatus : values()) {
-            if (onlineStatus.key.equalsIgnoreCase(key)) {
-                return onlineStatus;
-            }
-        }
-        return UNKNOWN;
-    }
 }

@@ -65,10 +65,6 @@ public class SessionConfig {
         return largeThreshold;
     }
 
-    public EnumSet<ConfigFlag> getFlags() {
-        return flags;
-    }
-
     @Nonnull
     public static SessionConfig getDefault() {
         return new SessionConfig(null, new OkHttpClient(), null, ConfigFlag.getDefault(), 900, 250);

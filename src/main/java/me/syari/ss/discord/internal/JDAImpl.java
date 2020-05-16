@@ -171,7 +171,6 @@ public class JDAImpl implements JDA {
             // set MDC metadata for build thread
             previousContext = MDC.getCopyOfContextMap();
             contextMap.forEach(MDC::put);
-            requester.setContextReady(true);
         }
         if (validateToken) {
             verifyToken();
@@ -200,10 +199,6 @@ public class JDAImpl implements JDA {
     public void setContext() {
         if (metaConfig.getMdcContextMap() != null)
             metaConfig.getMdcContextMap().forEach(MDC::put);
-    }
-
-    public void setToken(String token) {
-        this.authConfig.setToken(token);
     }
 
     public void setStatus(Status status) {

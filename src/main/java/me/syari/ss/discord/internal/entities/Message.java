@@ -6,12 +6,9 @@ import me.syari.ss.discord.api.entities.*;
 import me.syari.ss.discord.api.utils.MiscUtil;
 import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.utils.Checks;
-import me.syari.ss.discord.internal.utils.Helpers;
 import org.apache.commons.collections4.CollectionUtils;
 
 import javax.annotation.Nonnull;
-import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.util.*;
 import java.util.function.Function;
 import java.util.regex.Matcher;
@@ -324,7 +321,7 @@ public class Message {
         boolean animated = m.group(0).startsWith("<a:");
         Emote emote = getJDA().getEmoteById(emoteId);
         if (emote == null)
-            emote = new EmoteImpl(emoteId, api).setName(name).setAnimated(animated);
+            emote = new EmoteImpl(emoteId).setName(name).setAnimated(animated);
         return emote;
     }
 
@@ -390,23 +387,6 @@ public class Message {
 
     boolean isFromGuild() {
         return getChannelType().isGuild();
-    }
-
-    protected void appendFormat(Formatter formatter, int width, int precision, boolean leftJustified, String out) {
-        try {
-            Appendable appendable = formatter.out();
-            if (precision > -1 && out.length() > precision) {
-                appendable.append(Helpers.truncate(out, precision - 3)).append("...");
-                return;
-            }
-
-            if (leftJustified)
-                appendable.append(Helpers.rightPad(out, width));
-            else
-                appendable.append(Helpers.leftPad(out, width));
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
     }
 
 

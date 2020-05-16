@@ -30,20 +30,6 @@ public class EntityBuilder {
     public static final String MISSING_CHANNEL = "MISSING_CHANNEL";
     public static final String MISSING_USER = "MISSING_USER";
     public static final String UNKNOWN_MESSAGE_TYPE = "UNKNOWN_MESSAGE_TYPE";
-    private static final Set<String> richGameFields;
-
-    static {
-        Set<String> tmp = new HashSet<>();
-        tmp.add("application_id");
-        tmp.add("assets");
-        tmp.add("details");
-        tmp.add("flags");
-        tmp.add("party");
-        tmp.add("session_id");
-        tmp.add("state");
-        tmp.add("sync_id");
-        richGameFields = Collections.unmodifiableSet(tmp);
-    }
 
     protected final JDAImpl api;
 
@@ -96,20 +82,16 @@ public class EntityBuilder {
     public GuildImpl createGuild(long guildId, DataObject guildJson, TLongObjectMap<DataObject> members, int memberCount) {
         final GuildImpl guildObj = new GuildImpl(getJDA(), guildId);
         final String name = guildJson.getString("name", "");
-        final String iconId = guildJson.getString("icon", null);
         final DataArray roleArray = guildJson.getArray("roles");
         final DataArray channelArray = guildJson.getArray("channels");
         final DataArray emotesArray = guildJson.getArray("emojis");
         final DataArray voiceStateArray = guildJson.getArray("voice_states");
         final Optional<DataArray> featuresArray = guildJson.optArray("features");
         final long ownerId = guildJson.getUnsignedLong("owner_id", 0L);
-        final int boostTier = guildJson.getInt("premium_tier", 0);
 
         guildObj.setAvailable(true)
                 .setName(name)
-                .setIconId(iconId)
                 .setOwnerId(ownerId)
-                .setBoostTier(boostTier)
                 .setMemberCount(memberCount);
 
         SnowflakeCacheViewImpl<Guild> guildView = getJDA().getGuildsView();
@@ -380,7 +362,7 @@ public class EntityBuilder {
         final User user = json.isNull("user") ? null : createFakeUser(json.getObject("user"), false);
         EmoteImpl emoteObj = (EmoteImpl) guildObj.getEmoteById(emoteId);
         if (emoteObj == null)
-            emoteObj = new EmoteImpl(emoteId, guildObj, fake);
+            emoteObj = new EmoteImpl(emoteId, fake);
         Set<Role> roleSet = emoteObj.getRoleSet();
 
         roleSet.clear();
@@ -393,8 +375,7 @@ public class EntityBuilder {
             emoteObj.setUser(user);
         return emoteObj
                 .setName(json.getString("name", ""))
-                .setAnimated(json.getBoolean("animated"))
-                .setManaged(json.getBoolean("managed"));
+                .setAnimated(json.getBoolean("animated"));
     }
 
 

@@ -2,7 +2,6 @@ package me.syari.ss.discord.internal.handle;
 
 import gnu.trove.iterator.TLongIterator;
 import gnu.trove.iterator.TLongLongIterator;
-import gnu.trove.iterator.TLongObjectIterator;
 import gnu.trove.map.TLongLongMap;
 import gnu.trove.map.TLongObjectMap;
 import gnu.trove.map.hash.TLongLongHashMap;
@@ -17,7 +16,6 @@ import me.syari.ss.discord.internal.requests.WebSocketCode;
 import me.syari.ss.discord.internal.utils.JDALogger;
 import org.slf4j.Logger;
 
-import javax.annotation.Nullable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Future;
@@ -182,16 +180,6 @@ public class GuildSetupController {
     public void close() {
         if (timeoutHandle != null)
             timeoutHandle.cancel(false);
-    }
-
-    public boolean containsMember(long userId, @Nullable GuildSetupNode excludedNode) {
-        for (TLongObjectIterator<GuildSetupNode> it = setupNodes.iterator(); it.hasNext(); ) {
-            it.advance();
-            GuildSetupNode node = it.value();
-            if (node != excludedNode && node.containsMember(userId))
-                return true;
-        }
-        return false;
     }
 
     // Chunking

@@ -232,16 +232,6 @@ public class MessageActionImpl extends RestActionImpl<Message> implements Messag
         return obj;
     }
 
-    protected void checkFileAmount() {
-        if (files.size() >= Message.MAX_FILE_AMOUNT)
-            throw new IllegalStateException("Cannot add more than " + Message.MAX_FILE_AMOUNT + " files!");
-    }
-
-    protected void checkEdit() {
-        if (isEdit())
-            throw new IllegalStateException("Cannot add files to an existing message! Edit-Message does not support this operation!");
-    }
-
     @Override
     protected RequestBody finalizeData() {
         if (!files.isEmpty())

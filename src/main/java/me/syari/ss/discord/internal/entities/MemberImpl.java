@@ -5,7 +5,6 @@ import me.syari.ss.discord.api.entities.Guild;
 import me.syari.ss.discord.api.entities.Member;
 import me.syari.ss.discord.api.entities.Role;
 import me.syari.ss.discord.api.entities.User;
-import me.syari.ss.discord.api.utils.cache.CacheFlag;
 import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.utils.cache.SnowflakeReference;
 
@@ -30,7 +29,6 @@ public class MemberImpl implements Member {
         this.api = (JDAImpl) user.getJDA();
         this.guild = new SnowflakeReference<>(guild, api::getGuildById);
         this.user = user;
-        boolean cacheOnline = api.isCacheFlagSet(CacheFlag.CLIENT_STATUS);
     }
 
     @Nonnull

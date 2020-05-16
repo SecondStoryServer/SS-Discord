@@ -10,11 +10,6 @@ public class TimeUtil {
     public static final long TIMESTAMP_OFFSET = 22;
 
 
-    public static long getDiscordTimestamp(long millisTimestamp) {
-        return (millisTimestamp - DISCORD_EPOCH) << TIMESTAMP_OFFSET;
-    }
-
-
     @Nonnull
     public static OffsetDateTime getTimeCreated(long entityId) {
         long timestamp = (entityId >>> TIMESTAMP_OFFSET) + DISCORD_EPOCH;

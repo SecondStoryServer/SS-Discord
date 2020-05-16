@@ -83,10 +83,6 @@ public abstract class AbstractChannelImpl<T extends GuildChannel, M extends Abst
         return channel.getIdLong() == getIdLong();
     }
 
-    public TLongObjectMap<PermissionOverride> getOverrideMap() {
-        return overrides;
-    }
-
     @SuppressWarnings("unchecked")
     public M setName(String name) {
         this.name = name;

@@ -135,12 +135,8 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
         events.forEach(this::onDispatch);
     }
 
-    public void send(String message) {
-        locked("Interrupted while trying to add request to queue", () -> ratelimitQueue.add(message));
-    }
-
     public void chunkOrSyncRequest(DataObject request) {
-        locked("Interrupted while trying to add chunk request", () -> chunkSyncQueue.add(request.toString()));
+        locked(() -> chunkSyncQueue.add(request.toString()));
     }
 
     protected boolean send(String message, boolean skipQueue) {
@@ -749,12 +745,12 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
         }
     }
 
-    protected <T> void locked(String comment, Supplier<T> task) {
+    protected <T> void locked(Supplier<T> task) {
         try {
             queueLock.lockInterruptibly();
             task.get();
         } catch (InterruptedException e) {
-            LOG.error(comment, e);
+            LOG.error("Interrupted while trying to add chunk request", e);
         } finally {
             maybeUnlock();
         }

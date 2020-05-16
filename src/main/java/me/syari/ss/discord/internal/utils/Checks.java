@@ -1,14 +1,6 @@
 package me.syari.ss.discord.internal.utils;
 
-import java.util.Collection;
-
 public class Checks {
-
-    public static void isSnowflake(final String snowflake, final String message) {
-        notNull(snowflake, message);
-        if (snowflake.length() > 20 || !Helpers.isNumeric(snowflake))
-            throw new IllegalArgumentException(message + " is not a valid snowflake value!");
-    }
 
     public static void check(final boolean expression, final String message) {
         if (!expression)
@@ -36,21 +28,10 @@ public class Checks {
             throw new IllegalArgumentException(name + " may not be empty");
     }
 
-    public static void notBlank(final CharSequence argument, final String name) {
-        notNull(argument, name);
-        if (Helpers.isBlank(argument))
-            throw new IllegalArgumentException(name + " may not be blank");
-    }
-
     public static void noWhitespace(final CharSequence argument, final String name) {
         notNull(argument, name);
         if (Helpers.containsWhitespace(argument))
             throw new IllegalArgumentException(name + " may not contain blanks");
-    }
-
-    public static void noneNull(final Collection<?> argument, final String name) {
-        notNull(argument, name);
-        argument.forEach(it -> notNull(it, name));
     }
 
     public static void noneNull(final Object[] argument, final String name) {

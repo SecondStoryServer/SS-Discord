@@ -21,7 +21,6 @@ import java.net.SocketTimeoutException;
 import java.util.LinkedHashSet;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.concurrent.ConcurrentMap;
 
 public class Requester {
     public static final Logger LOG = JDALogger.getLog(Requester.class);
@@ -36,10 +35,6 @@ public class Requester {
     private final RateLimiter rateLimiter;
 
     private final OkHttpClient httpClient;
-
-    //when we actually set the shard info we can also set the mdc context map, before it makes no sense
-    private boolean isContextReady = false;
-    private ConcurrentMap<String, String> contextMap = null;
 
     private volatile boolean retryOnTimeout = false;
 
@@ -56,10 +51,6 @@ public class Requester {
         rateLimiter = new BotRateLimiter(this);
 
         this.httpClient = this.api.getHttpClient();
-    }
-
-    public void setContextReady(boolean ready) {
-        this.isContextReady = ready;
     }
 
     public JDAImpl getJDA() {

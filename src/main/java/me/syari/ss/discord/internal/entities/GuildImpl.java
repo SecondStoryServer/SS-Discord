@@ -1,13 +1,10 @@
 package me.syari.ss.discord.internal.entities;
 
-import gnu.trove.map.TLongObjectMap;
 import me.syari.ss.discord.api.entities.*;
 import me.syari.ss.discord.api.requests.RestAction;
-import me.syari.ss.discord.api.utils.MiscUtil;
 import me.syari.ss.discord.api.utils.cache.MemberCacheView;
 import me.syari.ss.discord.api.utils.cache.SnowflakeCacheView;
 import me.syari.ss.discord.api.utils.cache.SortedSnowflakeCacheView;
-import me.syari.ss.discord.api.utils.data.DataObject;
 import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.requests.RestActionImpl;
 import me.syari.ss.discord.internal.requests.Route;
@@ -31,9 +28,6 @@ public class GuildImpl implements Guild {
     private final SortedSnowflakeCacheViewImpl<Role> roleCache = new SortedSnowflakeCacheViewImpl<>(Role.class, Role::getName, Comparator.reverseOrder());
     private final SnowflakeCacheViewImpl<Emote> emoteCache = new SnowflakeCacheViewImpl<>(Emote.class, Emote::getName);
     private final MemberCacheViewImpl memberCache = new MemberCacheViewImpl();
-
-    // user -> channel -> override
-    private final TLongObjectMap<TLongObjectMap<DataObject>> overrideMap = MiscUtil.newLongMap();
 
     private final CompletableFuture<Void> chunkingCallback = new CompletableFuture<>();
 
@@ -194,21 +188,12 @@ public class GuildImpl implements Guild {
         return this;
     }
 
-    public GuildImpl setIconId(String iconId) {
-        return this;
-    }
-
     public void setFeatures(Set<String> features) {
         this.features = Collections.unmodifiableSet(features);
     }
 
     public void setPublicRole(Role publicRole) {
         this.publicRole = publicRole;
-    }
-
-    public GuildImpl setBoostTier(int tier) {
-        BoostTier boostTier = BoostTier.fromKey(tier);
-        return this;
     }
 
     public GuildImpl setOwnerId(long ownerId) {
@@ -239,20 +224,6 @@ public class GuildImpl implements Guild {
     }
 
     // -- Member Tracking --
-
-    public TLongObjectMap<DataObject> removeOverrideMap(long userId) {
-        return overrideMap.remove(userId);
-    }
-
-    public void cacheOverride(long userId, long channelId, DataObject obj) {
-        if (!getJDA().isGuildSubscriptions())
-            return;
-        EntityBuilder.LOG.debug("Caching permission override of unloaded member {}", obj);
-        TLongObjectMap<DataObject> channelMap = overrideMap.get(userId);
-        if (channelMap == null)
-            overrideMap.put(userId, channelMap = MiscUtil.newLongMap());
-        channelMap.put(channelId, obj);
-    }
 
     public void acknowledgeMembers() {
         if (memberCache.size() == memberCount && !chunkingCallback.isDone()) {

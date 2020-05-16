@@ -75,16 +75,6 @@ public final class Helpers {
         return out.append(input).toString();
     }
 
-    public static boolean isNumeric(final String input) {
-        if (isEmpty(input))
-            return false;
-        for (char c : input.toCharArray()) {
-            if (!Character.isDigit(c))
-                return false;
-        }
-        return true;
-    }
-
     // ## CollectionUtils ##
 
     public static boolean deepEquals(Collection<?> first, Collection<?> second) {
