@@ -67,7 +67,7 @@ public class MemberImpl implements Member {
 
     @Nonnull
     @Override
-    public String getEffectiveName() {
+    public String getDisplayName() {
         return nickname != null ? nickname : getUser().getName();
     }
 
@@ -184,7 +184,7 @@ public class MemberImpl implements Member {
 
     @Override
     public String toString() {
-        return "MB:" + getEffectiveName() + '(' + getUser().toString() + " / " + getGuild().toString() + ')';
+        return "MB:" + getDisplayName() + '(' + getUser().toString() + " / " + getGuild().toString() + ')';
     }
 
     @Nonnull

@@ -65,9 +65,4 @@ public class Checks {
             throw new IllegalArgumentException(name + " may not be negative");
     }
 
-    public static void notNegative(final long n, final String name) {
-        if (n < 0)
-            throw new IllegalArgumentException(name + " may not be negative");
-    }
-
 }

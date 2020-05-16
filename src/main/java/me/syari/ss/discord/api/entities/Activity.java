@@ -1,7 +1,6 @@
 package me.syari.ss.discord.api.entities;
 
 import me.syari.ss.discord.annotations.Incubating;
-import me.syari.ss.discord.internal.utils.EncodingUtil;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -99,78 +98,4 @@ public interface Activity {
     }
 
 
-    class Emoji implements ISnowflake, IMentionable {
-        private final String name;
-        private final long id;
-        private final boolean animated;
-
-        public Emoji(String name, long id, boolean animated) {
-            this.name = name;
-            this.id = id;
-            this.animated = animated;
-        }
-
-
-        @Nonnull
-        public String getAsCodepoints() {
-            if (!isEmoji())
-                throw new IllegalStateException("Cannot convert custom emote to codepoints");
-            return EncodingUtil.encodeCodepoints(name);
-        }
-
-
-        @Override
-        public long getIdLong() {
-            if (!isEmote())
-                throw new IllegalStateException("Cannot get id for unicode emoji");
-            return id;
-        }
-
-
-        public boolean isAnimated() {
-            return animated;
-        }
-
-
-        public boolean isEmoji() {
-            return id == 0;
-        }
-
-
-        public boolean isEmote() {
-            return id != 0;
-        }
-
-        @Nonnull
-        @Override
-        public String getAsMention() {
-            if (isEmoji())
-                return name; // unicode name
-            // custom emoji format (for messages)
-            return String.format("<%s:%s:%s>", isAnimated() ? "a" : "", name, getId());
-        }
-
-        @Override
-        public int hashCode() {
-            return id == 0 ? name.hashCode() : Long.hashCode(id);
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (obj == this)
-                return true;
-            if (!(obj instanceof Emoji))
-                return false;
-            Emoji other = (Emoji) obj;
-            return id == 0 ? other.name.equals(this.name)
-                    : other.id == this.id;
-        }
-
-        @Override
-        public String toString() {
-            if (isEmoji())
-                return "ActivityEmoji(" + getAsCodepoints() + ')';
-            return "ActivityEmoji(" + Long.toUnsignedString(id) + " / " + name + ')';
-        }
-    }
 }

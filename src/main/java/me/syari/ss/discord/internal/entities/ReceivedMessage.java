@@ -265,7 +265,7 @@ public class ReceivedMessage extends AbstractMessage {
             for (User user : getMentionedUsers()) {
                 String name;
                 if (isFromType(ChannelType.TEXT) && getGuild().isMember(user))
-                    name = getGuild().getMember(user).getEffectiveName();
+                    name = getGuild().getMember(user).getDisplayName();
                 else
                     name = user.getName();
                 tmp = tmp.replaceAll("<@!?" + Pattern.quote(user.getId()) + '>', '@' + Matcher.quoteReplacement(name));

@@ -1,7 +1,6 @@
 package me.syari.ss.discord.internal.handle;
 
 import gnu.trove.iterator.TLongIterator;
-import gnu.trove.iterator.TLongObjectIterator;
 import gnu.trove.map.TLongObjectMap;
 import gnu.trove.map.hash.TLongObjectHashMap;
 import gnu.trove.set.TLongSet;
@@ -13,7 +12,6 @@ import me.syari.ss.discord.internal.entities.GuildImpl;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 
 public class GuildSetupNode {
     private final long id;
@@ -116,19 +114,6 @@ public class GuildSetupNode {
         this.status = status;
     }
 
-    void reset() {
-        updateStatus(GuildSetupController.Status.UNAVAILABLE);
-        expectedMemberCount = 1;
-        partialGuild = null;
-        requestedChunk = false;
-        requestedSync = false;
-        if (members != null)
-            members.clear();
-        if (removedMembers != null)
-            removedMembers.clear();
-        cachedEvents.clear();
-    }
-
     void handleReady(DataObject obj) {
         if (!sync)
             return;
@@ -171,21 +156,6 @@ public class GuildSetupNode {
         ensureMembers();
     }
 
-    void handleSync(DataObject obj) {
-        if (partialGuild == null) {
-            //In this case we received a GUILD_DELETE with unavailable = true while syncing
-            // however we have to wait for the GUILD_CREATE with unavailable = false before
-            // requesting new chunks
-            GuildSetupController.log.debug("Dropping sync update due to unavailable guild");
-            return;
-        }
-        for (String key : obj.keys()) {
-            partialGuild.put(key, obj.opt(key).orElse(null));
-        }
-
-        ensureMembers();
-    }
-
     boolean handleMemberChunk(DataArray arr) {
         if (partialGuild == null) {
             //In this case we received a GUILD_DELETE with unavailable = true while chunking
@@ -207,27 +177,6 @@ public class GuildSetupNode {
         return true;
     }
 
-    void handleAddMember(DataObject member) {
-        if (members == null || removedMembers == null)
-            return;
-        expectedMemberCount++;
-        long userId = member.getObject("user").getLong("id");
-        members.put(userId, member);
-        removedMembers.remove(userId);
-    }
-
-    void handleRemoveMember(DataObject member) {
-        if (members == null || removedMembers == null)
-            return;
-        expectedMemberCount--;
-        long userId = member.getObject("user").getLong("id");
-        members.remove(userId);
-        removedMembers.add(userId);
-        EventCache eventCache = getController().getJDA().getEventCache();
-        if (!getController().containsMember(userId, this)) // if no other setup node contains this userId we clear it here
-            eventCache.clear(EventCache.Type.USER, userId);
-    }
-
     void cacheEvent(DataObject event) {
         GuildSetupController.log.trace("Caching {} event during init. GuildId: {}", event.getString("t"), id);
         cachedEvents.add(event);
@@ -245,41 +194,6 @@ public class GuildSetupNode {
             if (status == GuildSetupController.Status.CHUNKING) {
                 GuildSetupController.log.debug("Forcing new chunk request for guild: {}", id);
                 controller.sendChunkRequest(id);
-            }
-        }
-    }
-
-    void cleanup() {
-        updateStatus(GuildSetupController.Status.REMOVED);
-        EventCache eventCache = getController().getJDA().getEventCache();
-        eventCache.clear(EventCache.Type.GUILD, id);
-        if (partialGuild == null)
-            return;
-
-        Optional<DataArray> channels = partialGuild.optArray("channels");
-        Optional<DataArray> roles = partialGuild.optArray("roles");
-        channels.ifPresent((arr) -> {
-            for (int i = 0; i < arr.length(); i++) {
-                DataObject json = arr.getObject(i);
-                long id = json.getLong("id");
-                eventCache.clear(EventCache.Type.CHANNEL, id);
-            }
-        });
-
-        roles.ifPresent((arr) -> {
-            for (int i = 0; i < arr.length(); i++) {
-                DataObject json = arr.getObject(i);
-                long id = json.getLong("id");
-                eventCache.clear(EventCache.Type.ROLE, id);
-            }
-        });
-
-        if (members != null) {
-            for (TLongObjectIterator<DataObject> it = members.iterator(); it.hasNext(); ) {
-                it.advance();
-                long userId = it.key();
-                if (!getController().containsMember(userId, this)) // if no other setup node contains this userId we clear it here
-                    eventCache.clear(EventCache.Type.USER, userId);
             }
         }
     }

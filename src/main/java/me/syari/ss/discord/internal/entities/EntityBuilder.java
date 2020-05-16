@@ -15,7 +15,6 @@ import me.syari.ss.discord.internal.utils.JDALogger;
 import me.syari.ss.discord.internal.utils.UnlockHook;
 import me.syari.ss.discord.internal.utils.cache.MemberCacheViewImpl;
 import me.syari.ss.discord.internal.utils.cache.SnowflakeCacheViewImpl;
-import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 
 import java.time.Instant;
@@ -99,11 +98,6 @@ public class EntityBuilder {
         final GuildImpl guildObj = new GuildImpl(getJDA(), guildId);
         final String name = guildJson.getString("name", "");
         final String iconId = guildJson.getString("icon", null);
-        final String splashId = guildJson.getString("splash", null);
-        final String region = guildJson.getString("region", null);
-        final String description = guildJson.getString("description", null);
-        final String vanityCode = guildJson.getString("vanity_url_code", null);
-        final String bannerId = guildJson.getString("banner", null);
         final DataArray roleArray = guildJson.getArray("roles");
         final DataArray channelArray = guildJson.getArray("channels");
         final DataArray emotesArray = guildJson.getArray("emojis");
@@ -111,15 +105,7 @@ public class EntityBuilder {
         final Optional<DataArray> featuresArray = guildJson.optArray("features");
         final Optional<DataArray> presencesArray = guildJson.optArray("presences");
         final long ownerId = guildJson.getUnsignedLong("owner_id", 0L);
-        final int boostCount = guildJson.getInt("premium_subscription_count", 0);
         final int boostTier = guildJson.getInt("premium_tier", 0);
-        final int maxMembers = guildJson.getInt("max_members", 0);
-        final int maxPresences = guildJson.getInt("max_presences", 5000);
-        final int mfaLevel = guildJson.getInt("mfa_level", 0);
-        final int afkTimeout = guildJson.getInt("afk_timeout", 0);
-        final int verificationLevel = guildJson.getInt("verification_level", 0);
-        final int notificationLevel = guildJson.getInt("default_message_notifications", 0);
-        final int explicitContentLevel = guildJson.getInt("explicit_content_filter", 0);
 
         guildObj.setAvailable(true)
                 .setName(name)
@@ -434,27 +420,9 @@ public class EntityBuilder {
     public void createPresence(MemberImpl member, DataObject presenceJson) {
         if (member == null)
             throw new NullPointerException("Provided member was null!");
-        boolean cacheGame = getJDA().isCacheFlagSet(CacheFlag.ACTIVITY);
         boolean cacheStatus = getJDA().isCacheFlagSet(CacheFlag.CLIENT_STATUS);
 
-        DataArray activityArray = !cacheGame || presenceJson.isNull("activities") ? null : presenceJson.getArray("activities");
         DataObject clientStatusJson = !cacheStatus || presenceJson.isNull("client_status") ? null : presenceJson.getObject("client_status");
-        List<Activity> activities = new ArrayList<>();
-
-        if (cacheGame && activityArray != null) {
-            for (int i = 0; i < activityArray.length(); i++) {
-                try {
-                    activities.add(createActivity(activityArray.getObject(i)));
-                } catch (Exception ex) {
-                    String userId;
-                    userId = member.getUser().getId();
-                    if (LOG.isDebugEnabled())
-                        LOG.warn("Encountered exception trying to parse a presence! UserId: {} JSON: {}", userId, activityArray, ex);
-                    else
-                        LOG.warn("Encountered exception trying to parse a presence! UserId: {} Message: {} Enable debug for details", userId, ex.getMessage());
-                }
-            }
-        }
         if (clientStatusJson != null) {
             for (String key : clientStatusJson.keys()) {
                 ClientType type = ClientType.fromKey(key);
@@ -462,79 +430,6 @@ public class EntityBuilder {
                 member.setOnlineStatus(type, status);
             }
         }
-    }
-
-    public static Activity createActivity(DataObject gameJson) {
-        String name = String.valueOf(gameJson.get("name"));
-        String url = gameJson.isNull("url") ? null : String.valueOf(gameJson.get("url"));
-        Activity.ActivityType type;
-        try {
-            type = gameJson.isNull("type")
-                    ? Activity.ActivityType.DEFAULT
-                    : Activity.ActivityType.fromKey(Integer.parseInt(gameJson.get("type").toString()));
-        } catch (NumberFormatException e) {
-            type = Activity.ActivityType.DEFAULT;
-        }
-
-        RichPresence.Timestamps timestamps = null;
-        if (!gameJson.isNull("timestamps")) {
-            DataObject obj = gameJson.getObject("timestamps");
-            long start, end;
-            start = obj.getLong("start", 0L);
-            end = obj.getLong("end", 0L);
-            timestamps = new RichPresence.Timestamps(start, end);
-        }
-
-        gameJson.isNull("emoji");
-
-        if (type == Activity.ActivityType.CUSTOM_STATUS) {
-            if (gameJson.hasKey("state") && name.equalsIgnoreCase("Custom Status")) {
-                name = gameJson.getString("state", "");
-                gameJson = gameJson.remove("state");
-            }
-        }
-
-        if (!CollectionUtils.containsAny(gameJson.keys(), richGameFields))
-            return new ActivityImpl(name, url, type, timestamps);
-
-        // data for spotify
-        long id = gameJson.getLong("application_id", 0L);
-        String sessionId = gameJson.getString("session_id", null);
-        String syncId = gameJson.getString("sync_id", null);
-        int flags = gameJson.getInt("flags", 0);
-        String details = gameJson.isNull("details") ? null : String.valueOf(gameJson.get("details"));
-        String state = gameJson.isNull("state") ? null : String.valueOf(gameJson.get("state"));
-
-        RichPresence.Party party = null;
-        if (!gameJson.isNull("party")) {
-            DataObject obj = gameJson.getObject("party");
-            String partyId = obj.isNull("id") ? null : obj.getString("id");
-            DataArray sizeArr = obj.isNull("size") ? null : obj.getArray("size");
-            long size = 0, max = 0;
-            if (sizeArr != null && sizeArr.length() > 0) {
-                size = sizeArr.getLong(0);
-                max = sizeArr.length() < 2 ? 0 : sizeArr.getLong(1);
-            }
-            party = new RichPresence.Party(partyId, size, max);
-        }
-
-        String smallImageKey = null, smallImageText = null;
-        String largeImageKey = null, largeImageText = null;
-        if (!gameJson.isNull("assets")) {
-            DataObject assets = gameJson.getObject("assets");
-            if (!assets.isNull("small_image")) {
-                smallImageKey = String.valueOf(assets.get("small_image"));
-                smallImageText = assets.isNull("small_text") ? null : String.valueOf(assets.get("small_text"));
-            }
-            if (!assets.isNull("large_image")) {
-                largeImageKey = String.valueOf(assets.get("large_image"));
-                largeImageText = assets.isNull("large_text") ? null : String.valueOf(assets.get("large_text"));
-            }
-        }
-
-        return new RichPresenceImpl(type, name, url,
-                id, party, details, state, timestamps, syncId, sessionId, flags,
-                largeImageKey, largeImageText, smallImageKey, smallImageText);
     }
 
     public EmoteImpl createEmote(GuildImpl guildObj, DataObject json, boolean fake) {
@@ -623,7 +518,7 @@ public class EntityBuilder {
             getJDA().getEventCache().playbackCache(EventCache.Type.CHANNEL, id);
     }
 
-    public TextChannel createTextChannel(GuildImpl guildObj, DataObject json, long guildId) {
+    public void createTextChannel(GuildImpl guildObj, DataObject json, long guildId) {
         boolean playbackCache = false;
         final long id = json.getLong("id");
         TextChannelImpl channel = (TextChannelImpl) getJDA().getTextChannelsView().get(id);
@@ -652,7 +547,6 @@ public class EntityBuilder {
                 .setPosition(json.getInt("position"));
         if (playbackCache)
             getJDA().getEventCache().playbackCache(EventCache.Type.CHANNEL, id);
-        return channel;
     }
 
     public void createPrivateChannel(DataObject json) {
@@ -723,7 +617,6 @@ public class EntityBuilder {
                 playbackCache = roleView.getMap().put(id, role) == null;
             }
         }
-        final int color = roleJson.getInt("color");
         role.setName(roleJson.getString("name"))
                 .setRawPosition(roleJson.getInt("position"))
                 .setRawPermissions(roleJson.getLong("permissions"))

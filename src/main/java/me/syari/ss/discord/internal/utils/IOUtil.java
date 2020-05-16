@@ -85,13 +85,6 @@ public class IOUtil {
                 | (arr[offset] & 0xFF) << 24;
     }
 
-    public static void setIntBigEndian(byte[] arr, int offset, int it) {
-        arr[offset] = (byte) ((it >>> 24) & 0xFF);
-        arr[offset + 1] = (byte) ((it >>> 16) & 0xFF);
-        arr[offset + 2] = (byte) ((it >>> 8) & 0xFF);
-        arr[offset + 3] = (byte) (it & 0xFF);
-    }
-
     public static ByteBuffer reallocate(ByteBuffer original, int length) {
         ByteBuffer buffer = ByteBuffer.allocate(length);
         buffer.put(original);

@@ -10,7 +10,7 @@ import javax.annotation.Nonnull;
 
 public interface Role extends IMentionable, IPermissionHolder, Comparable<Role> {
 
-    int DEFAULT_COLOR_RAW = 0x1FFFFFFF; // java.awt.Color fills the MSB with FF, we just use 1F to provide better consistency
+    int DEFAULT_COLOR_RAW = 0x1FFFFFFF;
 
 
     int getPosition();

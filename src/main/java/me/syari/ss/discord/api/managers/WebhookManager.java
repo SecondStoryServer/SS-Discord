@@ -1,13 +1,11 @@
 package me.syari.ss.discord.api.managers;
 
 import me.syari.ss.discord.api.entities.Guild;
-import me.syari.ss.discord.api.entities.Icon;
 import me.syari.ss.discord.api.entities.TextChannel;
 import me.syari.ss.discord.api.entities.Webhook;
 
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 
 public interface WebhookManager extends Manager<WebhookManager> {

@@ -8,7 +8,6 @@ import me.syari.ss.discord.api.requests.Request;
 import me.syari.ss.discord.api.requests.Response;
 import me.syari.ss.discord.api.requests.RestAction;
 import me.syari.ss.discord.api.requests.RestFuture;
-import me.syari.ss.discord.api.utils.data.DataArray;
 import me.syari.ss.discord.api.utils.data.DataObject;
 import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.utils.Checks;
@@ -170,12 +169,6 @@ public class RestActionImpl<T> implements RestAction<T> {
         this.rawData = object;
 
         return object == null ? null : RequestBody.create(Requester.MEDIA_TYPE_JSON, object.toString());
-    }
-
-    protected RequestBody getRequestBody(DataArray array) {
-        this.rawData = array;
-
-        return array == null ? null : RequestBody.create(Requester.MEDIA_TYPE_JSON, array.toString());
     }
 
     private CheckWrapper getFinisher() {

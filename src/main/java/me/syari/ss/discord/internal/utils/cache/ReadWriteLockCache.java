@@ -46,10 +46,6 @@ public abstract class ReadWriteLockCache<T> {
         return cachedList == null ? null : cachedList.get();
     }
 
-    protected Set<T> getCachedSet() {
-        return cachedSet == null ? null : cachedSet.get();
-    }
-
     protected List<T> cache(List<T> list) {
         list = Collections.unmodifiableList(list);
         cachedList = new WeakReference<>(list);

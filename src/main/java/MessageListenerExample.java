@@ -32,21 +32,16 @@ public class MessageListenerExample extends ListenerAdapter
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event)
     {
-        MessageChannel channel = event.getChannel();
         User authorUser = event.getAuthor();
         if (!authorUser.isBot()) {
-            String name = authorUser.getName();
             Member authorMember = event.getMember();
-            if(authorMember != null){
-                String nickName = authorMember.getNickname();
-                if(nickName != null){
-                    name = nickName;
-                }
-            }
+            if(authorMember == null) return;
+            String name = authorMember.getDisplayName();
             String message = event.getMessage().getContentDisplay();
-                        channel.sendMessage("Chat -> " + name + ": " + message + "\r\n" +
-                                "GetTextChannel -> " + (jda.getTextChannelById(710828174686027790L) != null)
-                        ).queue();
+            MessageChannel channel = event.getChannel();
+            channel.sendMessage("Chat -> " + name + ": " + message + "\r\n" +
+                            "GetTextChannel -> " + (jda.getTextChannelById(710828174686027790L) != null)
+            ).queue();
         }
     }
 }

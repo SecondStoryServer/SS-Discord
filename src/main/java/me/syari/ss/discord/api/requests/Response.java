@@ -10,7 +10,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.*;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public class Response implements Closeable {
@@ -24,24 +23,22 @@ public class Response implements Closeable {
     public final long retryAfter;
     private final InputStream body;
     private final okhttp3.Response rawResponse;
-    private final Set<String> cfRays;
     private String fallbackString;
     private Object object;
     private boolean attemptedParsing = false;
     private Exception exception;
 
-    public Response(@Nullable final okhttp3.Response response, @Nonnull final Exception exception, @Nonnull final Set<String> cfRays) {
-        this(response, response != null ? response.code() : ERROR_CODE, ERROR_MESSAGE, -1, cfRays);
+    public Response(@Nullable final okhttp3.Response response, @Nonnull final Exception exception) {
+        this(response, response != null ? response.code() : ERROR_CODE, ERROR_MESSAGE, -1);
         this.exception = exception;
     }
 
-    public Response(@Nullable final okhttp3.Response response, final int code, @Nonnull final String message, final long retryAfter, @Nonnull final Set<String> cfRays) {
+    public Response(@Nullable final okhttp3.Response response, final int code, @Nonnull final String message, final long retryAfter) {
         this.rawResponse = response;
         this.code = code;
         this.message = message;
         this.exception = null;
         this.retryAfter = retryAfter;
-        this.cfRays = cfRays;
 
         if (response == null) {
             this.body = null;
@@ -53,12 +50,12 @@ public class Response implements Closeable {
             }
     }
 
-    public Response(final long retryAfter, @Nonnull final Set<String> cfRays) {
-        this(null, 429, "TOO MANY REQUESTS", retryAfter, cfRays);
+    public Response(final long retryAfter) {
+        this(null, 429, "TOO MANY REQUESTS", retryAfter);
     }
 
-    public Response(@Nonnull final okhttp3.Response response, final long retryAfter, @Nonnull final Set<String> cfRays) {
-        this(response, response.code(), response.message(), retryAfter, cfRays);
+    public Response(@Nonnull final okhttp3.Response response, final long retryAfter) {
+        this(response, response.code(), response.message(), retryAfter);
     }
 
     @Nonnull

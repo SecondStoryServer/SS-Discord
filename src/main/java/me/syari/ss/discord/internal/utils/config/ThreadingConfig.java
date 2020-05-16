@@ -86,18 +86,6 @@ public class ThreadingConfig {
         return callbackPool;
     }
 
-    public boolean isShutdownRateLimitPool() {
-        return shutdownRateLimitPool;
-    }
-
-    public boolean isShutdownGatewayPool() {
-        return shutdownGatewayPool;
-    }
-
-    public boolean isShutdownCallbackPool() {
-        return shutdownCallbackPool;
-    }
-
     @Nonnull
     public static ScheduledThreadPoolExecutor newScheduler(int coreSize, Supplier<String> identifier, String baseName) {
         return new ScheduledThreadPoolExecutor(coreSize, new CountingThreadFactory(identifier, baseName));

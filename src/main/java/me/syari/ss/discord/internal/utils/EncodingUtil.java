@@ -2,7 +2,6 @@ package me.syari.ss.discord.internal.utils;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.stream.Collectors;
 
 public class EncodingUtil {
     public static String encodeUTF8(String chars) {
@@ -24,12 +23,6 @@ public class EncodingUtil {
             encoded.append(urlEncoded);
         }
         return encoded.toString();
-    }
-
-    public static String encodeCodepoints(String unicode) {
-        return unicode.codePoints()
-                .mapToObj(code -> "U+" + Integer.toHexString(code))
-                .collect(Collectors.joining());
     }
 
     private static String decodeCodepoint(String hex) {

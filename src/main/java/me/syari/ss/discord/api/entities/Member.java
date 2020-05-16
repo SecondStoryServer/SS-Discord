@@ -31,7 +31,7 @@ public interface Member extends IMentionable, IPermissionHolder, IFakeable {
 
 
     @Nonnull
-    String getEffectiveName();
+    String getDisplayName();
 
 
     @Nonnull
@@ -42,6 +42,4 @@ public interface Member extends IMentionable, IPermissionHolder, IFakeable {
 
 
     boolean isOwner();
-
-
 }

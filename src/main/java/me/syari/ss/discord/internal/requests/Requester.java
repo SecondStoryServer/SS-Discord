@@ -14,12 +14,10 @@ import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
 import okhttp3.internal.http.HttpMethod;
 import org.slf4j.Logger;
-import org.slf4j.MDC;
 
 import javax.net.ssl.SSLPeerUnverifiedException;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
-import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -64,14 +62,6 @@ public class Requester {
         this.isContextReady = ready;
     }
 
-    public void setContext() {
-        if (!isContextReady)
-            return;
-        if (contextMap == null)
-            contextMap = api.getContextMap();
-        contextMap.forEach(MDC::put);
-    }
-
     public JDAImpl getJDA() {
         return api;
     }
@@ -106,7 +96,7 @@ public class Requester {
         Long retryAfter = rateLimiter.getRateLimit(route);
         if (retryAfter != null && retryAfter > 0) {
             if (handleOnRatelimit)
-                apiRequest.handleResponse(new Response(retryAfter, Collections.emptySet()));
+                apiRequest.handleResponse(new Response(retryAfter));
             return retryAfter;
         }
 
@@ -177,7 +167,7 @@ public class Requester {
 
             if (lastResponse.code() >= 500) {
                 //Epic failure from other end. Attempted 4 times.
-                Response response = new Response(lastResponse, -1, rays);
+                Response response = new Response(lastResponse, -1);
                 apiRequest.handleResponse(response);
                 return null;
             }
@@ -187,22 +177,22 @@ public class Requester {
                 LOG.debug("Received response with following cf-rays: {}", rays);
 
             if (retryAfter == null)
-                apiRequest.handleResponse(new Response(lastResponse, -1, rays));
+                apiRequest.handleResponse(new Response(lastResponse, -1));
             else if (handleOnRatelimit)
-                apiRequest.handleResponse(new Response(lastResponse, retryAfter, rays));
+                apiRequest.handleResponse(new Response(lastResponse, retryAfter));
 
             return retryAfter;
         } catch (SocketTimeoutException e) {
             if (retryOnTimeout && !retried)
                 return execute(apiRequest, true, handleOnRatelimit);
             LOG.error("Requester timed out while executing a request", e);
-            apiRequest.handleResponse(new Response(lastResponse, e, rays));
+            apiRequest.handleResponse(new Response(lastResponse, e));
             return null;
         } catch (Exception e) {
             if (retryOnTimeout && !retried && isRetry(e))
                 return execute(apiRequest, true, handleOnRatelimit);
             LOG.error("There was an exception while executing a REST request", e); //This originally only printed on DEBUG in 2.x
-            apiRequest.handleResponse(new Response(lastResponse, e, rays));
+            apiRequest.handleResponse(new Response(lastResponse, e));
             return null;
         } finally {
             for (okhttp3.Response r : responses) {

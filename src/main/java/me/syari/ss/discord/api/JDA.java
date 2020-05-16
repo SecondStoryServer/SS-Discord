@@ -111,21 +111,16 @@ public interface JDA {
     Status getStatus();
 
 
-    @Nonnull
-    default JDA awaitStatus(@Nonnull JDA.Status status) throws InterruptedException {
-        //This is done to retain backwards compatible ABI as it would otherwise change the signature of the method
-        // which would require recompilation for all users (including extension libraries)
-        return awaitStatus(status, new JDA.Status[0]);
+    default void awaitStatus(@Nonnull Status status) throws InterruptedException {
+        awaitStatus(status, new Status[0]);
     }
 
 
-    @Nonnull
-    JDA awaitStatus(@Nonnull JDA.Status status, @Nonnull JDA.Status... failOn) throws InterruptedException;
+    void awaitStatus(@Nonnull Status status, @Nonnull Status... failOn) throws InterruptedException;
 
 
-    @Nonnull
-    default JDA awaitReady() throws InterruptedException {
-        return awaitStatus(Status.CONNECTED);
+    default void awaitReady() throws InterruptedException {
+        awaitStatus(Status.CONNECTED);
     }
 
 

@@ -9,7 +9,6 @@ import gnu.trove.map.hash.TLongLongHashMap;
 import gnu.trove.map.hash.TLongObjectHashMap;
 import gnu.trove.set.TLongSet;
 import gnu.trove.set.hash.TLongHashSet;
-import me.syari.ss.discord.api.utils.MiscUtil;
 import me.syari.ss.discord.api.utils.data.DataArray;
 import me.syari.ss.discord.api.utils.data.DataObject;
 import me.syari.ss.discord.internal.JDAImpl;
@@ -19,10 +18,10 @@ import me.syari.ss.discord.internal.utils.JDALogger;
 import org.slf4j.Logger;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 @SuppressWarnings("WeakerAccess")
 public class GuildSetupController {
@@ -153,96 +152,12 @@ public class GuildSetupController {
         node.handleCreate(obj);
     }
 
-    public boolean onDelete(long id, DataObject obj) {
-        boolean available = obj.isNull("unavailable") || !obj.getBoolean("unavailable");
-        if (isUnavailable(id) && available) {
-            log.debug("Leaving unavailable guild with id {}", id);
-            remove(id);
-            return true;
-        }
-
-        GuildSetupNode node = setupNodes.get(id);
-        if (node == null)
-            return false;
-        log.debug("Received guild delete for id: {} available: {}", id, available);
-        if (!available) {
-            // The guild is currently unavailable and should be ignored for chunking requests
-            if (!node.markedUnavailable) {
-                node.markedUnavailable = true; // this prevents repeated decrements from duplicate events
-                if (node.sync && !node.requestedChunk) {
-                    // If this node is chunking then it is already synced
-                    syncingGuilds.remove(id);
-                    syncingCount--;
-                    trySyncing();
-                }
-                if (incompleteCount > 0) {
-                    // Allow other guilds to start chunking
-                    chunkingGuilds.remove(id);
-                    synchronized (pendingChunks) {
-                        pendingChunks.remove(id);
-                    }
-                    incompleteCount--;
-                    tryChunking();
-                }
-            }
-            node.reset();
-        } else {
-            // This guild was deleted
-            node.cleanup(); // clear EventCache
-            if (node.isJoin() && !node.requestedChunk)
-                remove(id);
-            else
-                ready(id);
-        }
-        log.debug("Updated incompleteCount to {} and syncCount to {}", incompleteCount, syncingCount);
-        return true;
-    }
-
-    public void onMemberChunk(long id, DataArray chunk) {
-        log.debug("Received member chunk for guild id: {} size: {}", id, chunk.length());
-        synchronized (pendingChunks) {
-            pendingChunks.remove(id);
-        }
-        GuildSetupNode node = setupNodes.get(id);
-        if (node != null)
-            node.handleMemberChunk(chunk);
-    }
-
-    public boolean onAddMember(long id, DataObject member) {
-        GuildSetupNode node = setupNodes.get(id);
-        if (node == null)
-            return false;
-        log.debug("Received GUILD_MEMBER_ADD during setup, adding member to guild. GuildID: {}", id);
-        node.handleAddMember(member);
-        return true;
-    }
-
-    public boolean onRemoveMember(long id, DataObject member) {
-        GuildSetupNode node = setupNodes.get(id);
-        if (node == null)
-            return false;
-        log.debug("Received GUILD_MEMBER_REMOVE during setup, removing member from guild. GuildID: {}", id);
-        node.handleRemoveMember(member);
-        return true;
-    }
-
-    public void onSync(long id, DataObject obj) {
-        GuildSetupNode node = setupNodes.get(id);
-        if (node != null)
-            node.handleSync(obj);
-    }
-
     public boolean isLocked(long id) {
         return setupNodes.containsKey(id);
     }
 
     public boolean isUnavailable(long id) {
         return unavailableGuilds.contains(id);
-    }
-
-    public boolean isKnown(long id) {
-        // Whether we know this guild at all
-        return isLocked(id) || isUnavailable(id);
     }
 
     public void cacheEvent(long guildId, DataObject event) {
@@ -277,30 +192,6 @@ public class GuildSetupController {
                 return true;
         }
         return false;
-    }
-
-    public TLongSet getUnavailableGuilds() {
-        return unavailableGuilds;
-    }
-
-    public Set<GuildSetupNode> getSetupNodes() {
-        return new HashSet<>(setupNodes.valueCollection());
-    }
-
-    public Set<GuildSetupNode> getSetupNodes(Status status) {
-        return getSetupNodes().stream().filter((node) -> node.status == status).collect(Collectors.toSet());
-    }
-
-    public GuildSetupNode getSetupNodeById(long id) {
-        return setupNodes.get(id);
-    }
-
-    public GuildSetupNode getSetupNodeById(String id) {
-        return getSetupNodeById(MiscUtil.parseSnowflake(id));
-    }
-
-    public void setStatusListener(StatusListener listener) {
-        this.listener = Objects.requireNonNull(listener);
     }
 
     // Chunking
@@ -394,11 +285,6 @@ public class GuildSetupController {
             sendSyncRequest(array);
             syncingCount = 0;
         }
-    }
-
-    public void onUnavailable(long id) {
-        unavailableGuilds.add(id);
-        log.debug("Guild with id {} is now marked unavailable. Total: {}", id, unavailableGuilds.size());
     }
 
     public enum Status {

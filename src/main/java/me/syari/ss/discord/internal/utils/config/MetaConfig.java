@@ -13,7 +13,6 @@ public class MetaConfig {
     private static final MetaConfig defaultConfig = new MetaConfig(2048, null, EnumSet.allOf(CacheFlag.class), ConfigFlag.getDefault());
     private final ConcurrentMap<String, String> mdcContextMap;
     private final EnumSet<CacheFlag> cacheFlags;
-    private final boolean enableMDC;
     private final boolean useShutdownHook;
     private final boolean guildSubscriptions;
     private final int maxBufferSize;
@@ -24,7 +23,7 @@ public class MetaConfig {
             @Nullable EnumSet<CacheFlag> cacheFlags, EnumSet<ConfigFlag> flags) {
         this.maxBufferSize = maxBufferSize;
         this.cacheFlags = cacheFlags == null ? EnumSet.allOf(CacheFlag.class) : cacheFlags;
-        this.enableMDC = flags.contains(ConfigFlag.MDC_CONTEXT);
+        boolean enableMDC = flags.contains(ConfigFlag.MDC_CONTEXT);
         if (enableMDC)
             this.mdcContextMap = mdcContextMap == null ? new ConcurrentHashMap<>() : null;
         else
@@ -41,10 +40,6 @@ public class MetaConfig {
     @Nonnull
     public EnumSet<CacheFlag> getCacheFlags() {
         return cacheFlags;
-    }
-
-    public boolean isEnableMDC() {
-        return enableMDC;
     }
 
     public boolean isUseShutdownHook() {

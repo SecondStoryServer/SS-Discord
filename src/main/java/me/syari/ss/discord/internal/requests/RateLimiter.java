@@ -1,22 +1,17 @@
 package me.syari.ss.discord.internal.requests;
 
 import me.syari.ss.discord.api.requests.Request;
-import me.syari.ss.discord.internal.requests.ratelimit.IBucket;
 import me.syari.ss.discord.internal.utils.JDALogger;
 import org.slf4j.Logger;
 
 import java.util.Iterator;
 import java.util.concurrent.CancellationException;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 public abstract class RateLimiter {
     //Implementations of this class exist in the me.syari.ss.discord.api.requests.ratelimit package.
     protected static final Logger log = JDALogger.getLog(RateLimiter.class);
     protected final Requester requester;
     protected volatile boolean isShutdown = false;
-    protected final ConcurrentHashMap<String, IBucket> buckets = new ConcurrentHashMap<>();
-    protected final ConcurrentLinkedQueue<IBucket> submittedBuckets = new ConcurrentLinkedQueue<>();
 
     protected RateLimiter(Requester requester) {
         this.requester = requester;
