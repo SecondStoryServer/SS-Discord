@@ -4,16 +4,9 @@ package me.syari.ss.discord.api.exceptions;
 
 import me.syari.ss.discord.api.requests.ErrorResponse;
 import me.syari.ss.discord.api.requests.Response;
-import me.syari.ss.discord.api.requests.RestAction;
 import me.syari.ss.discord.api.utils.data.DataObject;
-import me.syari.ss.discord.internal.utils.Checks;
-import me.syari.ss.discord.internal.utils.JDALogger;
 
-import javax.annotation.Nonnull;
-import java.util.Collection;
-import java.util.EnumSet;
 import java.util.Optional;
-import java.util.function.Consumer;
 
 
 public class ErrorResponseException extends RuntimeException

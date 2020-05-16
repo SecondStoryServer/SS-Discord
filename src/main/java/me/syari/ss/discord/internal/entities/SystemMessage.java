@@ -5,7 +5,6 @@ package me.syari.ss.discord.internal.entities;
 import gnu.trove.set.TLongSet;
 import me.syari.ss.discord.api.entities.*;
 
-import java.time.OffsetDateTime;
 import java.util.List;
 
 public class SystemMessage extends ReceivedMessage
