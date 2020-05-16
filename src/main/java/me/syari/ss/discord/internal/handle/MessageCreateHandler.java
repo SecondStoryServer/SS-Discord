@@ -56,7 +56,7 @@ public class MessageCreateHandler extends SocketHandler {
             }
         }
 
-        jda.handleEvent(new MessageReceivedEvent(jda, responseNumber, message));
+        jda.handleEvent(new MessageReceivedEvent(message));
         return null;
     }
 }

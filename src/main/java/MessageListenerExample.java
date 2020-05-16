@@ -11,11 +11,13 @@ import javax.security.auth.login.LoginException;
 
 public class MessageListenerExample extends ListenerAdapter
 {
+    private static JDA jda;
+
     public static void main(String[] args)
     {
         try
         {
-            JDA jda = new JDABuilder("NjE0NjkwNTIwNDQyMjA4Mjky.Xr6kqg.9dRqzWGH6YcogNG8-BcsYGPYleg")
+            jda = new JDABuilder("NjE0NjkwNTIwNDQyMjA4Mjky.Xr6kqg.9dRqzWGH6YcogNG8-BcsYGPYleg")
                     .addEventListeners(new MessageListenerExample())
                     .build();
             jda.awaitReady();
@@ -43,7 +45,7 @@ public class MessageListenerExample extends ListenerAdapter
             }
             String message = event.getMessage().getContentDisplay();
                         channel.sendMessage("Chat -> " + name + ": " + message + "\r\n" +
-                                "GetTextChannel -> " + (event.getJDA().getTextChannelById(710828174686027790L) != null)
+                                "GetTextChannel -> " + (jda.getTextChannelById(710828174686027790L) != null)
                         ).queue();
         }
     }

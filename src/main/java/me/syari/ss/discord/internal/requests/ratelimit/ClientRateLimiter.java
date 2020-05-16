@@ -2,7 +2,6 @@ package me.syari.ss.discord.internal.requests.ratelimit;
 
 import me.syari.ss.discord.api.requests.Request;
 import me.syari.ss.discord.api.utils.data.DataObject;
-import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.requests.RateLimiter;
 import me.syari.ss.discord.internal.requests.Requester;
 import me.syari.ss.discord.internal.requests.Route;
