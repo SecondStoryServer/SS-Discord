@@ -1,11 +1,9 @@
-
 package me.syari.ss.discord.api.entities;
 
 import javax.annotation.Nonnull;
 
 
-public enum MessageType
-{
+public enum MessageType {
 
     DEFAULT(0),
 
@@ -50,23 +48,19 @@ public enum MessageType
 
     protected final int id;
 
-    MessageType(int id)
-    {
+    MessageType(int id) {
         this.id = id;
     }
 
 
-    public int getId()
-    {
+    public int getId() {
         return id;
     }
 
 
     @Nonnull
-    public static MessageType fromId(int id)
-    {
-        for (MessageType type : values())
-        {
+    public static MessageType fromId(int id) {
+        for (MessageType type : values()) {
             if (type.id == id)
                 return type;
         }

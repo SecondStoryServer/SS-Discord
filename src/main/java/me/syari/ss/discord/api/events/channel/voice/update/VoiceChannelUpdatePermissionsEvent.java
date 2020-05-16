@@ -1,4 +1,3 @@
-
 package me.syari.ss.discord.api.events.channel.voice.update;
 
 import me.syari.ss.discord.api.JDA;
@@ -13,27 +12,23 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 
-public class VoiceChannelUpdatePermissionsEvent extends GenericVoiceChannelEvent
-{
+public class VoiceChannelUpdatePermissionsEvent extends GenericVoiceChannelEvent {
     private final List<IPermissionHolder> changedPermHolders;
 
-    public VoiceChannelUpdatePermissionsEvent(@Nonnull JDA api, long responseNumber, @Nonnull VoiceChannel channel, @Nonnull List<IPermissionHolder> changed)
-    {
+    public VoiceChannelUpdatePermissionsEvent(@Nonnull JDA api, long responseNumber, @Nonnull VoiceChannel channel, @Nonnull List<IPermissionHolder> changed) {
         super(api, responseNumber, channel);
         this.changedPermHolders = changed;
     }
 
 
     @Nonnull
-    public List<IPermissionHolder> getChangedPermissionHolders()
-    {
+    public List<IPermissionHolder> getChangedPermissionHolders() {
         return changedPermHolders;
     }
 
 
     @Nonnull
-    public List<Role> getChangedRoles()
-    {
+    public List<Role> getChangedRoles() {
         return changedPermHolders.stream()
                 .filter(p -> p instanceof Role)
                 .map(Role.class::cast)
@@ -42,8 +37,7 @@ public class VoiceChannelUpdatePermissionsEvent extends GenericVoiceChannelEvent
 
 
     @Nonnull
-    public List<Member> getChangedMembers()
-    {
+    public List<Member> getChangedMembers() {
         return changedPermHolders.stream()
                 .filter(p -> p instanceof Member)
                 .map(Member.class::cast)

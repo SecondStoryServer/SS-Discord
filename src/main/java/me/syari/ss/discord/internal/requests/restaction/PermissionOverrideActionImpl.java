@@ -1,5 +1,3 @@
-
-
 package me.syari.ss.discord.internal.requests.restaction;
 
 import me.syari.ss.discord.api.JDA;
@@ -20,9 +18,8 @@ import javax.annotation.Nonnull;
 import java.util.function.BooleanSupplier;
 
 public class PermissionOverrideActionImpl
-    extends AuditableRestActionImpl<PermissionOverride>
-    implements PermissionOverrideAction
-{
+        extends AuditableRestActionImpl<PermissionOverride>
+        implements PermissionOverrideAction {
     private boolean isOverride = true;
     private boolean allowSet = false;
     private boolean denySet = false;
@@ -32,28 +29,24 @@ public class PermissionOverrideActionImpl
     private final GuildChannel channel;
     private final IPermissionHolder permissionHolder;
 
-    public PermissionOverrideActionImpl(PermissionOverride override)
-    {
+    public PermissionOverrideActionImpl(PermissionOverride override) {
         this(override.getJDA(), override.getChannel(), override.isRoleOverride() ? override.getRole() : override.getMember());
     }
 
-    public PermissionOverrideActionImpl(JDA api, GuildChannel channel, IPermissionHolder permissionHolder)
-    {
+    public PermissionOverrideActionImpl(JDA api, GuildChannel channel, IPermissionHolder permissionHolder) {
         super(api, Route.Channels.CREATE_PERM_OVERRIDE.compile(channel.getId(), permissionHolder.getId()));
         this.channel = channel;
         this.permissionHolder = permissionHolder;
     }
 
     // Whether to keep original value of the current override or not - by default we override the value
-    public PermissionOverrideActionImpl setOverride(boolean override)
-    {
+    public PermissionOverrideActionImpl setOverride(boolean override) {
         isOverride = override;
         return this;
     }
 
     @Override
-    protected BooleanSupplier finalizeChecks()
-    {
+    protected BooleanSupplier finalizeChecks() {
         return () -> {
             if (!getGuild().getSelfMember().hasPermission(channel, Permission.MANAGE_PERMISSIONS))
                 throw new InsufficientPermissionException(channel, Permission.MANAGE_PERMISSIONS);
@@ -63,15 +56,13 @@ public class PermissionOverrideActionImpl
 
     @Nonnull
     @Override
-    public PermissionOverrideActionImpl setCheck(BooleanSupplier checks)
-    {
+    public PermissionOverrideActionImpl setCheck(BooleanSupplier checks) {
         return (PermissionOverrideActionImpl) super.setCheck(checks);
     }
 
     @Nonnull
     @Override
-    public PermissionOverrideAction resetAllow()
-    {
+    public PermissionOverrideAction resetAllow() {
         allow = getCurrentAllow();
         allowSet = false;
         return this;
@@ -79,8 +70,7 @@ public class PermissionOverrideActionImpl
 
     @Nonnull
     @Override
-    public PermissionOverrideAction resetDeny()
-    {
+    public PermissionOverrideAction resetDeny() {
         deny = getCurrentDeny();
         denySet = false;
         return this;
@@ -88,58 +78,49 @@ public class PermissionOverrideActionImpl
 
     @Nonnull
     @Override
-    public GuildChannel getChannel()
-    {
+    public GuildChannel getChannel() {
         return channel;
     }
 
     @Override
-    public Role getRole()
-    {
+    public Role getRole() {
         return isRole() ? (Role) permissionHolder : null;
     }
 
     @Override
-    public Member getMember()
-    {
+    public Member getMember() {
         return isMember() ? (Member) permissionHolder : null;
     }
 
     @Override
-    public long getAllow()
-    {
+    public long getAllow() {
         return allow;
     }
 
     @Override
-    public long getDeny()
-    {
+    public long getDeny() {
         return deny;
     }
 
     @Override
-    public long getInherited()
-    {
+    public long getInherited() {
         return ~allow & ~deny;
     }
 
     @Override
-    public boolean isMember()
-    {
+    public boolean isMember() {
         return permissionHolder instanceof Member;
     }
 
     @Override
-    public boolean isRole()
-    {
+    public boolean isRole() {
         return permissionHolder instanceof Role;
     }
 
     @Nonnull
     @Override
     @CheckReturnValue
-    public PermissionOverrideActionImpl setAllow(long allowBits)
-    {
+    public PermissionOverrideActionImpl setAllow(long allowBits) {
         Checks.notNegative(allowBits, "Granted permissions value");
         Checks.check(allowBits <= Permission.ALL_PERMISSIONS, "Specified allow value may not be greater than a full permission set");
         this.allow = allowBits;
@@ -151,8 +132,7 @@ public class PermissionOverrideActionImpl
     @Nonnull
     @Override
     @CheckReturnValue
-    public PermissionOverrideActionImpl setDeny(long denyBits)
-    {
+    public PermissionOverrideActionImpl setDeny(long denyBits) {
         Checks.notNegative(denyBits, "Denied permissions value");
         Checks.check(denyBits <= Permission.ALL_PERMISSIONS, "Specified deny value may not be greater than a full permission set");
         this.deny = denyBits;
@@ -164,21 +144,18 @@ public class PermissionOverrideActionImpl
     @Nonnull
     @Override
     @CheckReturnValue
-    public PermissionOverrideActionImpl setPermissions(long allowBits, long denyBits)
-    {
+    public PermissionOverrideActionImpl setPermissions(long allowBits, long denyBits) {
         return setAllow(allowBits).setDeny(denyBits);
     }
 
-    private long getCurrentAllow()
-    {
+    private long getCurrentAllow() {
         if (isOverride)
             return 0;
         PermissionOverride override = channel.getPermissionOverride(permissionHolder);
         return override == null ? 0 : override.getAllowedRaw();
     }
 
-    private long getCurrentDeny()
-    {
+    private long getCurrentDeny() {
         if (isOverride)
             return 0;
         PermissionOverride override = channel.getPermissionOverride(permissionHolder);
@@ -186,8 +163,7 @@ public class PermissionOverrideActionImpl
     }
 
     @Override
-    protected RequestBody finalizeData()
-    {
+    protected RequestBody finalizeData() {
         DataObject object = DataObject.empty();
         object.put("type", isRole() ? "role" : "member");
         object.put("allow", allowSet ? allow : getCurrentAllow());
@@ -197,8 +173,7 @@ public class PermissionOverrideActionImpl
     }
 
     @Override
-    protected void handleSuccess(Response response, Request<PermissionOverride> request)
-    {
+    protected void handleSuccess(Response response, Request<PermissionOverride> request) {
         long id = permissionHolder.getIdLong();
         DataObject object = (DataObject) request.getRawBody();
         PermissionOverrideImpl override = new PermissionOverrideImpl(channel, permissionHolder);

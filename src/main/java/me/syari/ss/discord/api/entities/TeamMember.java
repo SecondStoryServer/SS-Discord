@@ -1,12 +1,9 @@
-
-
 package me.syari.ss.discord.api.entities;
 
 import javax.annotation.Nonnull;
 
 
-public interface TeamMember
-{
+public interface TeamMember {
 
     @Nonnull
     User getUser();
@@ -17,8 +14,7 @@ public interface TeamMember
 
 
     @Nonnull
-    default String getTeamId()
-    {
+    default String getTeamId() {
         return Long.toUnsignedString(getTeamIdLong());
     }
 
@@ -26,8 +22,7 @@ public interface TeamMember
     long getTeamIdLong();
 
 
-    enum MembershipState
-    {
+    enum MembershipState {
 
         INVITED(1),
 
@@ -37,23 +32,19 @@ public interface TeamMember
 
         private final int key;
 
-        MembershipState(int key)
-        {
+        MembershipState(int key) {
             this.key = key;
         }
 
 
-        public int getKey()
-        {
+        public int getKey() {
             return key;
         }
 
 
         @Nonnull
-        public static MembershipState fromKey(int key)
-        {
-            for (MembershipState state : values())
-            {
+        public static MembershipState fromKey(int key) {
+            for (MembershipState state : values()) {
                 if (state.key == key)
                     return state;
             }

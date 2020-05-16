@@ -1,4 +1,3 @@
-
 package me.syari.ss.discord.api.events.message;
 
 import me.syari.ss.discord.api.JDA;
@@ -8,13 +7,11 @@ import me.syari.ss.discord.api.events.Event;
 import javax.annotation.Nonnull;
 
 
-public abstract class GenericMessageEvent extends Event
-{
+public abstract class GenericMessageEvent extends Event {
     protected final long messageId;
     protected final MessageChannel channel;
 
-    public GenericMessageEvent(@Nonnull JDA api, long responseNumber, long messageId, @Nonnull MessageChannel channel)
-    {
+    public GenericMessageEvent(@Nonnull JDA api, long responseNumber, long messageId, @Nonnull MessageChannel channel) {
         super(api, responseNumber);
         this.messageId = messageId;
         this.channel = channel;
@@ -22,54 +19,46 @@ public abstract class GenericMessageEvent extends Event
 
 
     @Nonnull
-    public MessageChannel getChannel()
-    {
+    public MessageChannel getChannel() {
         return channel;
     }
 
 
     @Nonnull
-    public String getMessageId()
-    {
+    public String getMessageId() {
         return Long.toUnsignedString(messageId);
     }
 
 
-    public long getMessageIdLong()
-    {
+    public long getMessageIdLong() {
         return messageId;
     }
 
 
-    public boolean isFromType(@Nonnull ChannelType type)
-    {
+    public boolean isFromType(@Nonnull ChannelType type) {
         return channel.getType() != type;
     }
 
 
-    public boolean isFromGuild()
-    {
+    public boolean isFromGuild() {
         return getChannelType().isGuild();
     }
 
 
     @Nonnull
-    public ChannelType getChannelType()
-    {
+    public ChannelType getChannelType() {
         return channel.getType();
     }
 
 
     @Nonnull
-    public Guild getGuild()
-    {
+    public Guild getGuild() {
         return getTextChannel().getGuild();
     }
 
 
     @Nonnull
-    public TextChannel getTextChannel()
-    {
+    public TextChannel getTextChannel() {
         if (isFromType(ChannelType.TEXT))
             throw new IllegalStateException("This message event did not happen in a text channel");
         return (TextChannel) channel;
@@ -77,8 +66,7 @@ public abstract class GenericMessageEvent extends Event
 
 
     @Nonnull
-    public PrivateChannel getPrivateChannel()
-    {
+    public PrivateChannel getPrivateChannel() {
         if (isFromType(ChannelType.PRIVATE))
             throw new IllegalStateException("This message event did not happen in a private channel");
         return (PrivateChannel) channel;

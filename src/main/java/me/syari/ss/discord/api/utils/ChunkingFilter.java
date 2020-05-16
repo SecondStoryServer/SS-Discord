@@ -1,5 +1,3 @@
-
-
 package me.syari.ss.discord.api.utils;
 
 import me.syari.ss.discord.internal.utils.Checks;
@@ -8,8 +6,7 @@ import javax.annotation.Nonnull;
 
 
 @FunctionalInterface
-public interface ChunkingFilter
-{
+public interface ChunkingFilter {
 
     ChunkingFilter ALL = (x) -> true;
 
@@ -20,12 +17,10 @@ public interface ChunkingFilter
 
 
     @Nonnull
-    static ChunkingFilter include(@Nonnull long... ids)
-    {
+    static ChunkingFilter include(@Nonnull long... ids) {
         Checks.notNull(ids, "ID array");
         return (guild) -> {
-            for (long id : ids)
-            {
+            for (long id : ids) {
                 if (id == guild)
                     return true;
             }
@@ -35,12 +30,10 @@ public interface ChunkingFilter
 
 
     @Nonnull
-    static ChunkingFilter exclude(@Nonnull long... ids)
-    {
+    static ChunkingFilter exclude(@Nonnull long... ids) {
         Checks.notNull(ids, "ID array");
         return (guild) -> {
-            for (long id : ids)
-            {
+            for (long id : ids) {
                 if (id == guild)
                     return false;
             }

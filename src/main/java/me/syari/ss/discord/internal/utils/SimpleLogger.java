@@ -1,5 +1,3 @@
-
-
 package me.syari.ss.discord.internal.utils;
 
 import org.slf4j.helpers.FormattingTuple;

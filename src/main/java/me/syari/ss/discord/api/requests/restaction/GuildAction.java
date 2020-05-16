@@ -1,5 +1,3 @@
-
-
 package me.syari.ss.discord.api.requests.restaction;
 
 import me.syari.ss.discord.api.Permission;
@@ -24,8 +22,7 @@ import java.util.Set;
 import java.util.function.BooleanSupplier;
 
 
-public interface GuildAction extends RestAction<Void>
-{
+public interface GuildAction extends RestAction<Void> {
     @Nonnull
     @Override
     GuildAction setCheck(@Nullable BooleanSupplier checks);
@@ -101,8 +98,7 @@ public interface GuildAction extends RestAction<Void>
     RoleData newRole();
 
 
-    class RoleData implements SerializableData
-    {
+    class RoleData implements SerializableData {
         protected final long id;
         protected final boolean isPublicRole;
 
@@ -112,18 +108,15 @@ public interface GuildAction extends RestAction<Void>
         protected Integer position;
         protected Boolean mentionable, hoisted;
 
-        public RoleData(long id)
-        {
+        public RoleData(long id) {
             this.id = id;
             this.isPublicRole = id == 0;
         }
 
 
         @Nonnull
-        public RoleData setPermissionsRaw(@Nullable Long rawPermissions)
-        {
-            if (rawPermissions != null)
-            {
+        public RoleData setPermissionsRaw(@Nullable Long rawPermissions) {
+            if (rawPermissions != null) {
                 Checks.notNegative(rawPermissions, "Raw Permissions");
                 Checks.check(rawPermissions <= Permission.ALL_PERMISSIONS, "Provided permissions may not be greater than a full permission set!");
             }
@@ -133,8 +126,7 @@ public interface GuildAction extends RestAction<Void>
 
 
         @Nonnull
-        public RoleData addPermissions(@Nonnull Permission... permissions)
-        {
+        public RoleData addPermissions(@Nonnull Permission... permissions) {
             Checks.notNull(permissions, "Permissions");
             for (Permission perm : permissions)
                 Checks.notNull(perm, "Permissions");
@@ -146,8 +138,7 @@ public interface GuildAction extends RestAction<Void>
 
 
         @Nonnull
-        public RoleData addPermissions(@Nonnull Collection<Permission> permissions)
-        {
+        public RoleData addPermissions(@Nonnull Collection<Permission> permissions) {
             Checks.noneNull(permissions, "Permissions");
             if (this.permissions == null)
                 this.permissions = 0L;
@@ -157,8 +148,7 @@ public interface GuildAction extends RestAction<Void>
 
 
         @Nonnull
-        public RoleData setName(@Nullable String name)
-        {
+        public RoleData setName(@Nullable String name) {
             checkPublic("name");
             this.name = name;
             return this;
@@ -166,8 +156,7 @@ public interface GuildAction extends RestAction<Void>
 
 
         @Nonnull
-        public RoleData setColor(@Nullable Color color)
-        {
+        public RoleData setColor(@Nullable Color color) {
             checkPublic("color");
             this.color = color == null ? null : color.getRGB();
             return this;
@@ -175,8 +164,7 @@ public interface GuildAction extends RestAction<Void>
 
 
         @Nonnull
-        public RoleData setColor(@Nullable Integer color)
-        {
+        public RoleData setColor(@Nullable Integer color) {
             checkPublic("color");
             this.color = color;
             return this;
@@ -184,8 +172,7 @@ public interface GuildAction extends RestAction<Void>
 
 
         @Nonnull
-        public RoleData setPosition(@Nullable Integer position)
-        {
+        public RoleData setPosition(@Nullable Integer position) {
             checkPublic("position");
             this.position = position;
             return this;
@@ -193,8 +180,7 @@ public interface GuildAction extends RestAction<Void>
 
 
         @Nonnull
-        public RoleData setMentionable(@Nullable Boolean mentionable)
-        {
+        public RoleData setMentionable(@Nullable Boolean mentionable) {
             checkPublic("mentionable");
             this.mentionable = mentionable;
             return this;
@@ -202,8 +188,7 @@ public interface GuildAction extends RestAction<Void>
 
 
         @Nonnull
-        public RoleData setHoisted(@Nullable Boolean hoisted)
-        {
+        public RoleData setHoisted(@Nullable Boolean hoisted) {
             checkPublic("hoisted");
             this.hoisted = hoisted;
             return this;
@@ -211,8 +196,7 @@ public interface GuildAction extends RestAction<Void>
 
         @Nonnull
         @Override
-        public DataObject toData()
-        {
+        public DataObject toData() {
             final DataObject o = DataObject.empty().put("id", Long.toUnsignedString(id));
             if (permissions != null)
                 o.put("permissions", permissions);
@@ -229,16 +213,14 @@ public interface GuildAction extends RestAction<Void>
             return o;
         }
 
-        protected void checkPublic(String comment)
-        {
+        protected void checkPublic(String comment) {
             if (isPublicRole)
                 throw new IllegalStateException("Cannot modify " + comment + " for the public role!");
         }
     }
 
 
-    class ChannelData implements SerializableData
-    {
+    class ChannelData implements SerializableData {
         protected final ChannelType type;
         protected final String name;
 
@@ -253,8 +235,7 @@ public interface GuildAction extends RestAction<Void>
         protected Integer bitrate, userlimit;
 
 
-        public ChannelData(ChannelType type, String name)
-        {
+        public ChannelData(ChannelType type, String name) {
             Checks.notBlank(name, "Name");
             Checks.check(type == ChannelType.TEXT || type == ChannelType.VOICE, "Can only create channels of type TEXT or VOICE in GuildAction!");
             Checks.check(name.length() >= 2 && name.length() <= 100, "Channel name has to be between 2-100 characters long!");
@@ -266,8 +247,7 @@ public interface GuildAction extends RestAction<Void>
 
 
         @Nonnull
-        public ChannelData setTopic(@Nullable String topic)
-        {
+        public ChannelData setTopic(@Nullable String topic) {
             if (topic != null && topic.length() > 1024)
                 throw new IllegalArgumentException("Channel Topic must not be greater than 1024 in length!");
             this.topic = topic;
@@ -276,18 +256,15 @@ public interface GuildAction extends RestAction<Void>
 
 
         @Nonnull
-        public ChannelData setNSFW(@Nullable Boolean nsfw)
-        {
+        public ChannelData setNSFW(@Nullable Boolean nsfw) {
             this.nsfw = nsfw;
             return this;
         }
 
 
         @Nonnull
-        public ChannelData setBitrate(@Nullable Integer bitrate)
-        {
-            if (bitrate != null)
-            {
+        public ChannelData setBitrate(@Nullable Integer bitrate) {
+            if (bitrate != null) {
                 Checks.check(bitrate >= 8000, "Bitrate must be greater than 8000.");
                 Checks.check(bitrate <= 96000, "Bitrate must be less than 96000.");
             }
@@ -297,8 +274,7 @@ public interface GuildAction extends RestAction<Void>
 
 
         @Nonnull
-        public ChannelData setUserlimit(@Nullable Integer userlimit)
-        {
+        public ChannelData setUserlimit(@Nullable Integer userlimit) {
             if (userlimit != null && (userlimit < 0 || userlimit > 99))
                 throw new IllegalArgumentException("Userlimit must be between 0-99!");
             this.userlimit = userlimit;
@@ -307,38 +283,33 @@ public interface GuildAction extends RestAction<Void>
 
 
         @Nonnull
-        public ChannelData setPosition(@Nullable Integer position)
-        {
+        public ChannelData setPosition(@Nullable Integer position) {
             this.position = position;
             return this;
         }
 
 
         @Nonnull
-        public ChannelData addPermissionOverride(@Nonnull GuildActionImpl.RoleData role, long allow, long deny)
-        {
+        public ChannelData addPermissionOverride(@Nonnull GuildActionImpl.RoleData role, long allow, long deny) {
             Checks.notNull(role, "Role");
             Checks.notNegative(allow, "Granted permissions value");
             Checks.notNegative(deny, "Denied permissions value");
             Checks.check(allow <= Permission.ALL_PERMISSIONS, "Specified allow value may not be greater than a full permission set");
-            Checks.check(deny <= Permission.ALL_PERMISSIONS,  "Specified deny value may not be greater than a full permission set");
+            Checks.check(deny <= Permission.ALL_PERMISSIONS, "Specified deny value may not be greater than a full permission set");
             this.overrides.add(new PermOverrideData(PermOverrideData.ROLE_TYPE, role.id, allow, deny));
             return this;
         }
 
 
         @Nonnull
-        public ChannelData addPermissionOverride(@Nonnull GuildActionImpl.RoleData role, @Nullable Collection<Permission> allow, @Nullable Collection<Permission> deny)
-        {
+        public ChannelData addPermissionOverride(@Nonnull GuildActionImpl.RoleData role, @Nullable Collection<Permission> allow, @Nullable Collection<Permission> deny) {
             long allowRaw = 0;
             long denyRaw = 0;
-            if (allow != null)
-            {
+            if (allow != null) {
                 Checks.noneNull(allow, "Granted Permissions");
                 allowRaw = Permission.getRaw(allow);
             }
-            if (deny != null)
-            {
+            if (deny != null) {
                 Checks.noneNull(deny, "Denied Permissions");
                 denyRaw = Permission.getRaw(deny);
             }
@@ -347,8 +318,7 @@ public interface GuildAction extends RestAction<Void>
 
         @Nonnull
         @Override
-        public DataObject toData()
-        {
+        public DataObject toData() {
             final DataObject o = DataObject.empty();
             o.put("name", name);
             o.put("type", type.getId());

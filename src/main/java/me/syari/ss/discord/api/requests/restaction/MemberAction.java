@@ -1,5 +1,3 @@
-
-
 package me.syari.ss.discord.api.requests.restaction;
 
 import me.syari.ss.discord.api.entities.Guild;
@@ -14,8 +12,7 @@ import java.util.Collection;
 import java.util.function.BooleanSupplier;
 
 
-public interface MemberAction extends RestAction<Void>
-{
+public interface MemberAction extends RestAction<Void> {
     @Nonnull
     @Override
     MemberAction setCheck(@Nullable BooleanSupplier checks);

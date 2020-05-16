@@ -1,9 +1,6 @@
-
-
 package me.syari.ss.discord.api.utils;
 
-public enum AttachmentOption
-{
+public enum AttachmentOption {
 
     SPOILER
 }

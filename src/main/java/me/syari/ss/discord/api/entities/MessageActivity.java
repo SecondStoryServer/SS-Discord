@@ -1,37 +1,30 @@
-
 package me.syari.ss.discord.api.entities;
 
 import javax.annotation.Nonnull;
 
 
-public class MessageActivity
-{
+public class MessageActivity {
 
-    public MessageActivity()
-    {
+    public MessageActivity() {
     }
 
 
-    public static class Application implements ISnowflake
-    {
+    public static class Application implements ISnowflake {
         private final long id;
 
-        public Application(long id)
-        {
+        public Application(long id) {
             this.id = id;
         }
 
 
         @Override
-        public long getIdLong()
-        {
+        public long getIdLong() {
             return id;
         }
     }
 
 
-    public enum ActivityType
-    {
+    public enum ActivityType {
 
         JOIN(1),
 
@@ -45,17 +38,14 @@ public class MessageActivity
 
         private final int id;
 
-        ActivityType(int id)
-        {
+        ActivityType(int id) {
             this.id = id;
         }
 
 
         @Nonnull
-        public static ActivityType fromId(int id)
-        {
-            for (ActivityType activityType : values())
-            {
+        public static ActivityType fromId(int id) {
+            for (ActivityType activityType : values()) {
                 if (activityType.id == id)
                     return activityType;
             }

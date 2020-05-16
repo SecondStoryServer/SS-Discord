@@ -1,5 +1,3 @@
-
-
 package me.syari.ss.discord.api.managers;
 
 import me.syari.ss.discord.api.entities.Emote;
@@ -12,8 +10,7 @@ import javax.annotation.Nullable;
 import java.util.Set;
 
 
-public interface EmoteManager extends Manager<EmoteManager>
-{
+public interface EmoteManager extends Manager<EmoteManager> {
 
     long NAME = 0x1;
 
@@ -31,8 +28,7 @@ public interface EmoteManager extends Manager<EmoteManager>
 
 
     @Nonnull
-    default Guild getGuild()
-    {
+    default Guild getGuild() {
         return getEmote().getGuild();
     }
 

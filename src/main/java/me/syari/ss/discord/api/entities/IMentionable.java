@@ -1,5 +1,3 @@
-
-
 package me.syari.ss.discord.api.entities;
 
 import me.syari.ss.discord.api.utils.MiscUtil;
@@ -10,15 +8,13 @@ import java.util.FormattableFlags;
 import java.util.Formatter;
 
 
-public interface IMentionable extends Formattable, ISnowflake
-{
+public interface IMentionable extends Formattable, ISnowflake {
 
     @Nonnull
     String getAsMention();
 
     @Override
-    default void formatTo(Formatter formatter, int flags, int width, int precision)
-    {
+    default void formatTo(Formatter formatter, int flags, int width, int precision) {
         boolean leftJustified = (flags & FormattableFlags.LEFT_JUSTIFY) == FormattableFlags.LEFT_JUSTIFY;
         boolean upper = (flags & FormattableFlags.UPPERCASE) == FormattableFlags.UPPERCASE;
         String out = upper ? getAsMention().toUpperCase(formatter.locale()) : getAsMention();

@@ -1,5 +1,3 @@
-
-
 package me.syari.ss.discord.internal.requests.restaction.pagination;
 
 import me.syari.ss.discord.api.entities.Message;
@@ -20,45 +18,39 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class ReactionPaginationActionImpl
-    extends PaginationActionImpl<User, ReactionPaginationAction>
-    implements ReactionPaginationAction
-{
+        extends PaginationActionImpl<User, ReactionPaginationAction>
+        implements ReactionPaginationAction {
     protected final MessageReaction reaction;
 
-    
-    public ReactionPaginationActionImpl(MessageReaction reaction)
-    {
+
+    public ReactionPaginationActionImpl(MessageReaction reaction) {
         super(reaction.getJDA(), Route.Messages.GET_REACTION_USERS.compile(reaction.getChannel().getId(), reaction.getMessageId(), getCode(reaction)), 1, 100, 100);
         this.reaction = reaction;
     }
 
-    public ReactionPaginationActionImpl(Message message, String code)
-    {
+    public ReactionPaginationActionImpl(Message message, String code) {
         super(message.getJDA(), Route.Messages.GET_REACTION_USERS.compile(message.getChannel().getId(), message.getId(), code), 1, 100, 100);
         this.reaction = null;
     }
 
-    protected static String getCode(MessageReaction reaction)
-    {
+    protected static String getCode(MessageReaction reaction) {
         MessageReaction.ReactionEmote emote = reaction.getReactionEmote();
 
         return emote.isEmote()
-            ? emote.getName() + ":" + emote.getId()
-            : EncodingUtil.encodeUTF8(emote.getName());
+                ? emote.getName() + ":" + emote.getId()
+                : EncodingUtil.encodeUTF8(emote.getName());
     }
 
     @Nonnull
     @Override
-    public MessageReaction getReaction()
-    {
+    public MessageReaction getReaction() {
         if (reaction == null)
             throw new IllegalStateException("Cannot get reaction for this action");
         return reaction;
     }
 
     @Override
-    protected Route.CompiledRoute finalizeRoute()
-    {
+    protected Route.CompiledRoute finalizeRoute() {
         Route.CompiledRoute route = super.finalizeRoute();
 
         String after = null;
@@ -76,24 +68,19 @@ public class ReactionPaginationActionImpl
     }
 
     @Override
-    protected void handleSuccess(Response response, Request<List<User>> request)
-    {
+    protected void handleSuccess(Response response, Request<List<User>> request) {
         final EntityBuilder builder = api.getEntityBuilder();
         final DataArray array = response.getArray();
         final List<User> users = new LinkedList<>();
-        for (int i = 0; i < array.length(); i++)
-        {
-            try
-            {
+        for (int i = 0; i < array.length(); i++) {
+            try {
                 final User user = builder.createFakeUser(array.getObject(i), false);
                 users.add(user);
                 if (useCache)
                     cached.add(user);
                 last = user;
                 lastKey = last.getIdLong();
-            }
-            catch (ParsingException | NullPointerException e)
-            {
+            } catch (ParsingException | NullPointerException e) {
                 RestActionImpl.LOG.warn("Encountered exception in ReactionPagination", e);
             }
         }
@@ -102,8 +89,7 @@ public class ReactionPaginationActionImpl
     }
 
     @Override
-    protected long getKey(User it)
-    {
+    protected long getKey(User it) {
         return it.getIdLong();
     }
 }

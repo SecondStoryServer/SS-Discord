@@ -1,4 +1,3 @@
-
 package me.syari.ss.discord.api.entities;
 
 import me.syari.ss.discord.api.JDA;
@@ -12,8 +11,7 @@ import javax.annotation.Nullable;
 import java.util.EnumSet;
 
 
-public interface PermissionOverride extends ISnowflake
-{
+public interface PermissionOverride extends ISnowflake {
 
     long getAllowedRaw();
 

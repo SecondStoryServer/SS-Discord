@@ -1,5 +1,3 @@
-
-
 package me.syari.ss.discord.internal.managers;
 
 import me.syari.ss.discord.api.Permission;
@@ -16,16 +14,14 @@ import okhttp3.RequestBody;
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 
-public class WebhookManagerImpl extends ManagerBase<WebhookManager> implements WebhookManager
-{
+public class WebhookManagerImpl extends ManagerBase<WebhookManager> implements WebhookManager {
     protected final Webhook webhook;
     protected String name;
     protected String channel;
     protected Icon avatar;
 
-    
-    public WebhookManagerImpl(Webhook webhook)
-    {
+
+    public WebhookManagerImpl(Webhook webhook) {
         super(webhook.getJDA(), Route.Webhooks.MODIFY_WEBHOOK.compile(webhook.getId()));
         this.webhook = webhook;
         if (isPermissionChecksEnabled())
@@ -34,16 +30,14 @@ public class WebhookManagerImpl extends ManagerBase<WebhookManager> implements W
 
     @Nonnull
     @Override
-    public Webhook getWebhook()
-    {
+    public Webhook getWebhook() {
         return webhook;
     }
 
     @Nonnull
     @Override
     @CheckReturnValue
-    public WebhookManagerImpl reset(long fields)
-    {
+    public WebhookManagerImpl reset(long fields) {
         super.reset(fields);
         if ((fields & NAME) == NAME)
             this.name = null;
@@ -57,8 +51,7 @@ public class WebhookManagerImpl extends ManagerBase<WebhookManager> implements W
     @Nonnull
     @Override
     @CheckReturnValue
-    public WebhookManagerImpl reset(long... fields)
-    {
+    public WebhookManagerImpl reset(long... fields) {
         super.reset(fields);
         return this;
     }
@@ -66,8 +59,7 @@ public class WebhookManagerImpl extends ManagerBase<WebhookManager> implements W
     @Nonnull
     @Override
     @CheckReturnValue
-    public WebhookManagerImpl reset()
-    {
+    public WebhookManagerImpl reset() {
         super.reset();
         this.name = null;
         this.channel = null;
@@ -78,8 +70,7 @@ public class WebhookManagerImpl extends ManagerBase<WebhookManager> implements W
     @Nonnull
     @Override
     @CheckReturnValue
-    public WebhookManagerImpl setName(@Nonnull String name)
-    {
+    public WebhookManagerImpl setName(@Nonnull String name) {
         Checks.notBlank(name, "Name");
         this.name = name;
         set |= NAME;
@@ -89,8 +80,7 @@ public class WebhookManagerImpl extends ManagerBase<WebhookManager> implements W
     @Nonnull
     @Override
     @CheckReturnValue
-    public WebhookManagerImpl setAvatar(Icon icon)
-    {
+    public WebhookManagerImpl setAvatar(Icon icon) {
         this.avatar = icon;
         set |= AVATAR;
         return this;
@@ -99,8 +89,7 @@ public class WebhookManagerImpl extends ManagerBase<WebhookManager> implements W
     @Nonnull
     @Override
     @CheckReturnValue
-    public WebhookManagerImpl setChannel(@Nonnull TextChannel channel)
-    {
+    public WebhookManagerImpl setChannel(@Nonnull TextChannel channel) {
         Checks.notNull(channel, "Channel");
         Checks.check(channel.getGuild().equals(getGuild()), "Channel is not from the same guild");
         this.channel = channel.getId();
@@ -109,8 +98,7 @@ public class WebhookManagerImpl extends ManagerBase<WebhookManager> implements W
     }
 
     @Override
-    protected RequestBody finalizeData()
-    {
+    protected RequestBody finalizeData() {
         DataObject data = DataObject.empty();
         if (shouldUpdate(NAME))
             data.put("name", name);
@@ -123,8 +111,7 @@ public class WebhookManagerImpl extends ManagerBase<WebhookManager> implements W
     }
 
     @Override
-    protected boolean checkPermissions()
-    {
+    protected boolean checkPermissions() {
         if (!getGuild().getSelfMember().hasPermission(getChannel(), Permission.MANAGE_WEBHOOKS))
             throw new InsufficientPermissionException(getChannel(), Permission.MANAGE_WEBHOOKS);
         return super.checkPermissions();

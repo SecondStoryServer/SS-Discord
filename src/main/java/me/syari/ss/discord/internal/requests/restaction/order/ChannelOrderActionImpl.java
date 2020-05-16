@@ -1,5 +1,3 @@
-
-
 package me.syari.ss.discord.internal.requests.restaction.order;
 
 import me.syari.ss.discord.api.Permission;
@@ -19,29 +17,26 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 
 public class ChannelOrderActionImpl
-    extends OrderActionImpl<GuildChannel, ChannelOrderAction>
-    implements ChannelOrderAction
-{
+        extends OrderActionImpl<GuildChannel, ChannelOrderAction>
+        implements ChannelOrderAction {
     protected final Guild guild;
     protected final int bucket;
 
 
-    public ChannelOrderActionImpl(Guild guild, int bucket)
-    {
+    public ChannelOrderActionImpl(Guild guild, int bucket) {
         this(guild, bucket, getChannelsOfType(guild, bucket));
     }
 
 
-    public ChannelOrderActionImpl(Guild guild, int bucket, Collection<? extends GuildChannel> channels)
-    {
+    public ChannelOrderActionImpl(Guild guild, int bucket, Collection<? extends GuildChannel> channels) {
         super(guild.getJDA(), Route.Guilds.MODIFY_CHANNELS.compile(guild.getId()));
 
         Checks.notNull(channels, "Channels to order");
         Checks.notEmpty(channels, "Channels to order");
         Checks.check(channels.stream().allMatch(c -> guild.equals(c.getGuild())),
-            "One or more channels are not from the correct guild");
+                "One or more channels are not from the correct guild");
         Checks.check(channels.stream().allMatch(c -> c.getType().getSortBucket() == bucket),
-            "One or more channels did not match the expected bucket " + bucket);
+                "One or more channels did not match the expected bucket " + bucket);
 
         this.guild = guild;
         this.bucket = bucket;
@@ -50,20 +45,17 @@ public class ChannelOrderActionImpl
 
     @Nonnull
     @Override
-    public Guild getGuild()
-    {
+    public Guild getGuild() {
         return guild;
     }
 
     @Override
-    protected RequestBody finalizeData()
-    {
+    protected RequestBody finalizeData() {
         final Member self = guild.getSelfMember();
         if (!self.hasPermission(Permission.MANAGE_CHANNEL))
             throw new InsufficientPermissionException(guild, Permission.MANAGE_CHANNEL);
         DataArray array = DataArray.empty();
-        for (int i = 0; i < orderList.size(); i++)
-        {
+        for (int i = 0; i < orderList.size(); i++) {
             GuildChannel chan = orderList.get(i);
             array.add(DataObject.empty()
                     .put("id", chan.getId())
@@ -73,11 +65,10 @@ public class ChannelOrderActionImpl
         return getRequestBody(array);
     }
 
-    protected static Collection<GuildChannel> getChannelsOfType(Guild guild, int bucket)
-    {
+    protected static Collection<GuildChannel> getChannelsOfType(Guild guild, int bucket) {
         return guild.getChannels().stream()
-            .filter(it -> it.getType().getSortBucket() == bucket)
-            .sorted()
-            .collect(Collectors.toList());
+                .filter(it -> it.getType().getSortBucket() == bucket)
+                .sorted()
+                .collect(Collectors.toList());
     }
 }

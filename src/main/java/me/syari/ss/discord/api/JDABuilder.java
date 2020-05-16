@@ -1,4 +1,3 @@
-
 package me.syari.ss.discord.api;
 
 import com.neovisionaries.ws.client.WebSocketFactory;
@@ -32,8 +31,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 
 
-public class JDABuilder
-{
+public class JDABuilder {
     protected final List<Object> listeners;
     protected final AccountType accountType;
 
@@ -63,22 +61,19 @@ public class JDABuilder
     protected ChunkingFilter chunkingFilter = ChunkingFilter.ALL;
 
 
-    public JDABuilder()
-    {
+    public JDABuilder() {
         this(AccountType.BOT);
     }
 
 
-    public JDABuilder(@Nullable String token)
-    {
+    public JDABuilder(@Nullable String token) {
         this();
         setToken(token);
     }
 
 
     @Incubating
-    public JDABuilder(@Nonnull AccountType accountType)
-    {
+    public JDABuilder(@Nonnull AccountType accountType) {
         Checks.notNull(accountType, "accountType");
 
         this.accountType = accountType;
@@ -87,16 +82,14 @@ public class JDABuilder
 
 
     @Nonnull
-    public JDABuilder setToken(@Nullable String token)
-    {
+    public JDABuilder setToken(@Nullable String token) {
         this.token = token;
         return this;
     }
 
 
     @Nonnull
-    public JDABuilder setActivity(@Nullable Activity activity)
-    {
+    public JDABuilder setActivity(@Nullable Activity activity) {
         this.activity = activity;
         return this;
     }
@@ -104,8 +97,7 @@ public class JDABuilder
 
     @Nonnull
     @SuppressWarnings("ConstantConditions") // we have to enforce the nonnull at runtime
-    public JDABuilder setStatus(@Nonnull OnlineStatus status)
-    {
+    public JDABuilder setStatus(@Nonnull OnlineStatus status) {
         if (status == null || status == OnlineStatus.UNKNOWN)
             throw new IllegalArgumentException("OnlineStatus cannot be null or unknown!");
         this.status = status;
@@ -114,8 +106,7 @@ public class JDABuilder
 
 
     @Nonnull
-    public JDABuilder addEventListeners(@Nonnull Object... listeners)
-    {
+    public JDABuilder addEventListeners(@Nonnull Object... listeners) {
         Checks.noneNull(listeners, "listeners");
 
         Collections.addAll(this.listeners, listeners);
@@ -124,11 +115,9 @@ public class JDABuilder
 
 
     @Nonnull
-    public JDA build() throws LoginException
-    {
+    public JDA build() throws LoginException {
         OkHttpClient httpClient = this.httpClient;
-        if (httpClient == null)
-        {
+        if (httpClient == null) {
             if (this.httpClientBuilder == null)
                 this.httpClientBuilder = new OkHttpClient.Builder();
             httpClient = this.httpClientBuilder.build();

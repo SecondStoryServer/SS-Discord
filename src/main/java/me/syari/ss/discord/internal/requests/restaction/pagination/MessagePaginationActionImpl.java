@@ -1,5 +1,3 @@
-
-
 package me.syari.ss.discord.internal.requests.restaction.pagination;
 
 import me.syari.ss.discord.api.Permission;
@@ -21,17 +19,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MessagePaginationActionImpl
-    extends PaginationActionImpl<Message, MessagePaginationAction>
-    implements MessagePaginationAction
-{
+        extends PaginationActionImpl<Message, MessagePaginationAction>
+        implements MessagePaginationAction {
     private final MessageChannel channel;
 
-    public MessagePaginationActionImpl(MessageChannel channel)
-    {
+    public MessagePaginationActionImpl(MessageChannel channel) {
         super(channel.getJDA(), Route.Messages.GET_MESSAGE_HISTORY.compile(channel.getId()), 1, 100, 100);
 
-        if (channel.getType() == ChannelType.TEXT)
-        {
+        if (channel.getType() == ChannelType.TEXT) {
             TextChannel textChannel = (TextChannel) channel;
             if (!textChannel.getGuild().getSelfMember().hasPermission(textChannel, Permission.MESSAGE_HISTORY))
                 throw new InsufficientPermissionException(textChannel, Permission.MESSAGE_HISTORY);
@@ -42,14 +37,12 @@ public class MessagePaginationActionImpl
 
     @Nonnull
     @Override
-    public MessageChannel getChannel()
-    {
+    public MessageChannel getChannel() {
         return channel;
     }
 
     @Override
-    protected Route.CompiledRoute finalizeRoute()
-    {
+    protected Route.CompiledRoute finalizeRoute() {
         Route.CompiledRoute route = super.finalizeRoute();
 
         final String limit = String.valueOf(this.getLimit());
@@ -64,28 +57,21 @@ public class MessagePaginationActionImpl
     }
 
     @Override
-    protected void handleSuccess(Response response, Request<List<Message>> request)
-    {
+    protected void handleSuccess(Response response, Request<List<Message>> request) {
         DataArray array = response.getArray();
         List<Message> messages = new ArrayList<>(array.length());
         EntityBuilder builder = api.getEntityBuilder();
-        for (int i = 0; i < array.length(); i++)
-        {
-            try
-            {
+        for (int i = 0; i < array.length(); i++) {
+            try {
                 Message msg = builder.createMessage(array.getObject(i), channel, false);
                 messages.add(msg);
                 if (useCache)
                     cached.add(msg);
                 last = msg;
                 lastKey = last.getIdLong();
-            }
-            catch (ParsingException | NullPointerException e)
-            {
+            } catch (ParsingException | NullPointerException e) {
                 LOG.warn("Encountered an exception in MessagePagination", e);
-            }
-            catch (IllegalArgumentException e)
-            {
+            } catch (IllegalArgumentException e) {
                 if (EntityBuilder.UNKNOWN_MESSAGE_TYPE.equals(e.getMessage()))
                     LOG.warn("Skipping unknown message type during pagination", e);
                 else
@@ -97,8 +83,7 @@ public class MessagePaginationActionImpl
     }
 
     @Override
-    protected long getKey(Message it)
-    {
+    protected long getKey(Message it) {
         return it.getIdLong();
     }
 }

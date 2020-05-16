@@ -1,5 +1,3 @@
-
-
 package me.syari.ss.discord.internal.entities;
 
 import me.syari.ss.discord.api.JDA;
@@ -19,8 +17,7 @@ import javax.annotation.Nonnull;
 import java.util.concurrent.locks.ReentrantLock;
 
 
-public class WebhookImpl implements Webhook
-{
+public class WebhookImpl implements Webhook {
     protected volatile WebhookManager manager = null;
 
     private final ReentrantLock mngLock = new ReentrantLock();
@@ -32,8 +29,7 @@ public class WebhookImpl implements Webhook
     private User user;
     private String token;
 
-    public WebhookImpl(TextChannel channel, long id, WebhookType type)
-    {
+    public WebhookImpl(TextChannel channel, long id, WebhookType type) {
         this.channel = channel;
         this.id = id;
         this.type = type;
@@ -41,69 +37,59 @@ public class WebhookImpl implements Webhook
 
     @Nonnull
     @Override
-    public WebhookType getType()
-    {
+    public WebhookType getType() {
         return type;
     }
 
     @Nonnull
     @Override
-    public JDA getJDA()
-    {
+    public JDA getJDA() {
         return channel.getJDA();
     }
 
     @Nonnull
     @Override
-    public Guild getGuild()
-    {
+    public Guild getGuild() {
         return channel.getGuild();
     }
 
     @Nonnull
     @Override
-    public TextChannel getChannel()
-    {
+    public TextChannel getChannel() {
         return channel;
     }
 
     @Override
-    public Member getOwner()
-    {
+    public Member getOwner() {
         return owner;
     }
 
     @Nonnull
     @Override
-    public User getDefaultUser()
-    {
+    public User getDefaultUser() {
         return user;
     }
 
     @Nonnull
     @Override
-    public String getName()
-    {
+    public String getName() {
         return user.getName();
     }
 
     @Override
-    public String getToken()
-    {
+    public String getToken() {
         return token;
     }
 
     @Nonnull
     @Override
-    public String getUrl()
-    {
+    public String getUrl() {
         return Requester.DISCORD_API_PREFIX + "webhooks/" + getId() + (getToken() == null ? "" : "/" + getToken());
     }
 
     @Nonnull
     @Override
-    public AuditableRestAction<Void> delete()
-    {
+    public AuditableRestAction<Void> delete() {
         if (token != null)
             return delete(token);
 
@@ -116,8 +102,7 @@ public class WebhookImpl implements Webhook
 
     @Nonnull
     @Override
-    public AuditableRestAction<Void> delete(@Nonnull String token)
-    {
+    public AuditableRestAction<Void> delete(@Nonnull String token) {
         Checks.notNull(token, "Token");
         Route.CompiledRoute route = Route.Webhooks.DELETE_TOKEN_WEBHOOK.compile(getId(), token);
         return new AuditableRestActionImpl<>(getJDA(), route);
@@ -125,11 +110,9 @@ public class WebhookImpl implements Webhook
 
     @Nonnull
     @Override
-    public WebhookManager getManager()
-    {
+    public WebhookManager getManager() {
         WebhookManager mng = manager;
-        if (mng == null)
-        {
+        if (mng == null) {
             mng = MiscUtil.locked(mngLock, () ->
             {
                 if (manager == null)
@@ -141,33 +124,28 @@ public class WebhookImpl implements Webhook
     }
 
     @Override
-    public long getIdLong()
-    {
+    public long getIdLong() {
         return id;
     }
 
     @Override
-    public boolean isFake()
-    {
+    public boolean isFake() {
         return token == null;
     }
 
     /* -- Impl Setters -- */
 
-    public WebhookImpl setOwner(Member member)
-    {
+    public WebhookImpl setOwner(Member member) {
         this.owner = member;
         return this;
     }
 
-    public WebhookImpl setToken(String token)
-    {
+    public WebhookImpl setToken(String token) {
         this.token = token;
         return this;
     }
 
-    public WebhookImpl setUser(User user)
-    {
+    public WebhookImpl setUser(User user) {
         this.user = user;
         return this;
     }
@@ -175,14 +153,12 @@ public class WebhookImpl implements Webhook
     /* -- Object Overrides -- */
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return Long.hashCode(id);
     }
 
     @Override
-    public boolean equals(Object obj)
-    {
+    public boolean equals(Object obj) {
         if (obj == this)
             return true;
         if (!(obj instanceof WebhookImpl))
@@ -192,8 +168,7 @@ public class WebhookImpl implements Webhook
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "WH:" + getName() + "(" + id + ")";
     }
 }

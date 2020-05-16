@@ -1,5 +1,3 @@
-
-
 package me.syari.ss.discord.internal.requests;
 
 import me.syari.ss.discord.internal.JDAImpl;
@@ -12,8 +10,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
 //Helper class delegated to WebSocketClient
-class WebSocketSendingThread implements Runnable
-{
+class WebSocketSendingThread implements Runnable {
     private static final Logger LOG = WebSocketClient.LOG;
 
     private final WebSocketClient client;
@@ -28,8 +25,7 @@ class WebSocketSendingThread implements Runnable
     private boolean attemptedToSend = false;
     private boolean shutdown = false;
 
-    WebSocketSendingThread(WebSocketClient client)
-    {
+    WebSocketSendingThread(WebSocketClient client) {
         this.client = client;
         this.api = client.api;
         this.queueLock = client.queueLock;
@@ -38,52 +34,44 @@ class WebSocketSendingThread implements Runnable
         this.executor = client.executor;
     }
 
-    public void shutdown()
-    {
+    public void shutdown() {
         shutdown = true;
         if (handle != null)
             handle.cancel(false);
     }
 
-    public void start()
-    {
+    public void start() {
         shutdown = false;
         handle = executor.submit(this);
     }
 
-    private void scheduleIdle()
-    {
+    private void scheduleIdle() {
         if (shutdown)
             return;
         handle = executor.schedule(this, 500, TimeUnit.MILLISECONDS);
     }
 
-    private void scheduleSentMessage()
-    {
+    private void scheduleSentMessage() {
         if (shutdown)
             return;
         handle = executor.schedule(this, 10, TimeUnit.MILLISECONDS);
     }
 
-    private void scheduleRateLimit()
-    {
+    private void scheduleRateLimit() {
         if (shutdown)
             return;
         handle = executor.schedule(this, 1, TimeUnit.MINUTES);
     }
 
     @Override
-    public void run()
-    {
+    public void run() {
         //Make sure that we don't send any packets before sending auth info.
-        if (!client.sentAuthInfo)
-        {
+        if (!client.sentAuthInfo) {
             scheduleIdle();
             return;
         }
 
-        try
-        {
+        try {
             api.setContext();
             attemptedToSend = false;
             needRateLimit = false;
@@ -101,30 +89,23 @@ class WebSocketSendingThread implements Runnable
                 scheduleIdle();
             else
                 scheduleSentMessage();
-        }
-        catch (InterruptedException ignored)
-        {
+        } catch (InterruptedException ignored) {
             LOG.debug("Main WS send thread interrupted. Most likely JDA is disconnecting the websocket.");
-        }
-        finally
-        {
+        } finally {
             // on any exception that might cause this lock to not release
             client.maybeUnlock();
         }
     }
 
-    private void handleChunkSync(String chunkOrSyncRequest)
-    {
+    private void handleChunkSync(String chunkOrSyncRequest) {
         LOG.debug("Sending chunk/sync request {}", chunkOrSyncRequest);
         if (send(chunkOrSyncRequest))
             chunkSyncQueue.remove();
     }
 
-    private void handleNormalRequest()
-    {
+    private void handleNormalRequest() {
         String message = ratelimitQueue.peek();
-        if (message != null)
-        {
+        if (message != null) {
             LOG.debug("Sending normal message {}", message);
             if (send(message))
                 ratelimitQueue.remove();
@@ -132,8 +113,7 @@ class WebSocketSendingThread implements Runnable
     }
 
     //returns true if send was successful
-    private boolean send(String request)
-    {
+    private boolean send(String request) {
         needRateLimit = !client.send(request, false);
         attemptedToSend = true;
         return !needRateLimit;

@@ -1,4 +1,3 @@
-
 package me.syari.ss.discord.api.events.message.guild;
 
 import me.syari.ss.discord.api.JDA;
@@ -10,34 +9,29 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 
-public class GuildMessageUpdateEvent extends GenericGuildMessageEvent
-{
+public class GuildMessageUpdateEvent extends GenericGuildMessageEvent {
     private final Message message;
 
-    public GuildMessageUpdateEvent(@Nonnull JDA api, long responseNumber, @Nonnull Message message)
-    {
+    public GuildMessageUpdateEvent(@Nonnull JDA api, long responseNumber, @Nonnull Message message) {
         super(api, responseNumber, message.getIdLong(), message.getTextChannel());
         this.message = message;
     }
 
 
     @Nonnull
-    public Message getMessage()
-    {
+    public Message getMessage() {
         return message;
     }
 
 
     @Nonnull
-    public User getAuthor()
-    {
+    public User getAuthor() {
         return message.getAuthor();
     }
 
 
     @Nullable
-    public Member getMember()
-    {
+    public Member getMember() {
         return message.getMember();
     }
 }

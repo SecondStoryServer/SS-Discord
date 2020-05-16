@@ -1,5 +1,3 @@
-
-
 package me.syari.ss.discord.internal.utils;
 
 import org.apache.commons.collections4.map.CaseInsensitiveMap;
@@ -12,33 +10,26 @@ import java.util.Map;
 import java.util.ServiceLoader;
 
 
-public class JDALogger
-{
+public class JDALogger {
 
     public static final boolean SLF4J_ENABLED;
-    static
-    {
+
+    static {
         boolean tmp = false;
 
-        try
-        {
+        try {
             Class.forName("org.slf4j.impl.StaticLoggerBinder");
 
             tmp = true;
-        }
-        catch (ClassNotFoundException eStatic)
-        {
+        } catch (ClassNotFoundException eStatic) {
             // there was no static logger binder (SLF4J pre-1.8.x)
 
-            try
-            {
+            try {
                 Class<?> serviceProviderInterface = Class.forName("org.slf4j.spi.SLF4JServiceProvider");
 
                 // check if there is a service implementation for the service, indicating a provider for SLF4J 1.8.x+ is installed
                 tmp = ServiceLoader.load(serviceProviderInterface).iterator().hasNext();
-            }
-            catch (ClassNotFoundException eService)
-            {
+            } catch (ClassNotFoundException eService) {
                 // there was no service provider interface (SLF4J 1.8.x+)
 
                 //prints warning of missing implementation
@@ -53,13 +44,12 @@ public class JDALogger
 
     private static final Map<String, Logger> LOGS = new CaseInsensitiveMap<>();
 
-    private JDALogger() {}
+    private JDALogger() {
+    }
 
 
-    public static Logger getLog(String name)
-    {
-        synchronized (LOGS)
-        {
+    public static Logger getLog(String name) {
+        synchronized (LOGS) {
             if (SLF4J_ENABLED)
                 return LoggerFactory.getLogger(name);
             return LOGS.computeIfAbsent(name, SimpleLogger::new);
@@ -67,10 +57,8 @@ public class JDALogger
     }
 
 
-    public static Logger getLog(Class<?> clazz)
-    {
-        synchronized (LOGS)
-        {
+    public static Logger getLog(Class<?> clazz) {
+        synchronized (LOGS) {
             if (SLF4J_ENABLED)
                 return LoggerFactory.getLogger(clazz);
             return LOGS.computeIfAbsent(clazz.getName(), (n) -> new SimpleLogger(clazz.getSimpleName()));
@@ -78,19 +66,13 @@ public class JDALogger
     }
 
 
-    public static Object getLazyString(LazyEvaluation lazyLambda)
-    {
-        return new Object()
-        {
+    public static Object getLazyString(LazyEvaluation lazyLambda) {
+        return new Object() {
             @Override
-            public String toString()
-            {
-                try
-                {
+            public String toString() {
+                try {
                     return lazyLambda.getString();
-                }
-                catch (Exception ex)
-                {
+                } catch (Exception ex) {
                     StringWriter sw = new StringWriter();
                     ex.printStackTrace(new PrintWriter(sw));
                     return "Error while evaluating lazy String... " + sw.toString();
@@ -101,8 +83,7 @@ public class JDALogger
 
 
     @FunctionalInterface
-    public interface LazyEvaluation
-    {
+    public interface LazyEvaluation {
 
         String getString() throws Exception;
     }

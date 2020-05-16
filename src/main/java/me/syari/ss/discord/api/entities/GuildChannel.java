@@ -1,4 +1,3 @@
-
 package me.syari.ss.discord.api.entities;
 
 import me.syari.ss.discord.api.JDA;
@@ -8,8 +7,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 
-public interface GuildChannel extends ISnowflake, Comparable<GuildChannel>
-{
+public interface GuildChannel extends ISnowflake, Comparable<GuildChannel> {
 
     @Nonnull
     ChannelType getType();

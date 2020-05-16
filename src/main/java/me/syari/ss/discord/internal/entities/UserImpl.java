@@ -1,5 +1,3 @@
-
-
 package me.syari.ss.discord.internal.entities;
 
 import me.syari.ss.discord.api.entities.Guild;
@@ -18,8 +16,7 @@ import java.util.FormattableFlags;
 import java.util.Formatter;
 import java.util.List;
 
-public class UserImpl implements User
-{
+public class UserImpl implements User {
     protected final long id;
     protected final JDAImpl api;
 
@@ -30,56 +27,48 @@ public class UserImpl implements User
     protected boolean bot;
     protected boolean fake = false;
 
-    public UserImpl(long id, JDAImpl api)
-    {
+    public UserImpl(long id, JDAImpl api) {
         this.id = id;
         this.api = api;
     }
 
     @Nonnull
     @Override
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
     @Nonnull
     @Override
-    public String getDiscriminator()
-    {
+    public String getDiscriminator() {
         return String.format("%04d", discriminator);
     }
 
     @Override
-    public String getAvatarId()
-    {
+    public String getAvatarId() {
         return avatarId;
     }
 
     @Nonnull
     @Override
-    public String getDefaultAvatarId()
-    {
+    public String getDefaultAvatarId() {
         return String.valueOf(discriminator % 5);
     }
 
     @Nonnull
     @Override
-    public String getAsTag()
-    {
+    public String getAsTag() {
         return getName() + '#' + getDiscriminator();
     }
 
     @Override
-    public boolean hasPrivateChannel()
-    {
+    public boolean hasPrivateChannel() {
         return privateChannel != null;
     }
 
     @Nonnull
     @Override
-    public RestAction<PrivateChannel> openPrivateChannel()
-    {
+    public RestAction<PrivateChannel> openPrivateChannel() {
         return new DeferredRestAction<>(getJDA(), PrivateChannel.class, () -> privateChannel, () -> {
             Route.CompiledRoute route = Route.Self.CREATE_PRIVATE_CHANNEL.compile();
             DataObject body = DataObject.empty().put("recipient_id", getId());
@@ -94,13 +83,11 @@ public class UserImpl implements User
 
     @Nonnull
     @Override
-    public List<Guild> getMutualGuilds()
-    {
+    public List<Guild> getMutualGuilds() {
         return getJDA().getMutualGuilds(this);
     }
 
-    public PrivateChannel getPrivateChannel()
-    {
+    public PrivateChannel getPrivateChannel() {
         if (!hasPrivateChannel())
             throw new IllegalStateException("There is no PrivateChannel for this user yet! Use User#openPrivateChannel() first!");
 
@@ -108,40 +95,34 @@ public class UserImpl implements User
     }
 
     @Override
-    public boolean isBot()
-    {
+    public boolean isBot() {
         return bot;
     }
 
     @Nonnull
     @Override
-    public JDAImpl getJDA()
-    {
+    public JDAImpl getJDA() {
         return api;
     }
 
     @Nonnull
     @Override
-    public String getAsMention()
-    {
+    public String getAsMention() {
         return "<@" + getId() + '>';
     }
 
     @Override
-    public long getIdLong()
-    {
+    public long getIdLong() {
         return id;
     }
 
     @Override
-    public boolean isFake()
-    {
+    public boolean isFake() {
         return fake;
     }
 
     @Override
-    public boolean equals(Object o)
-    {
+    public boolean equals(Object o) {
         if (o == this)
             return true;
         if (!(o instanceof UserImpl))
@@ -151,58 +132,49 @@ public class UserImpl implements User
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return Long.hashCode(id);
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "U:" + getName() + '(' + id + ')';
     }
 
     // -- Setters --
 
-    public UserImpl setName(String name)
-    {
+    public UserImpl setName(String name) {
         this.name = name;
         return this;
     }
 
-    public UserImpl setDiscriminator(String discriminator)
-    {
+    public UserImpl setDiscriminator(String discriminator) {
         this.discriminator = Short.parseShort(discriminator);
         return this;
     }
 
-    public UserImpl setAvatarId(String avatarId)
-    {
+    public UserImpl setAvatarId(String avatarId) {
         this.avatarId = avatarId;
         return this;
     }
 
-    public UserImpl setPrivateChannel(PrivateChannel privateChannel)
-    {
+    public UserImpl setPrivateChannel(PrivateChannel privateChannel) {
         this.privateChannel = privateChannel;
         return this;
     }
 
-    public UserImpl setBot(boolean bot)
-    {
+    public UserImpl setBot(boolean bot) {
         this.bot = bot;
         return this;
     }
 
-    public UserImpl setFake(boolean fake)
-    {
+    public UserImpl setFake(boolean fake) {
         this.fake = fake;
         return this;
     }
 
     @Override
-    public void formatTo(Formatter formatter, int flags, int width, int precision)
-    {
+    public void formatTo(Formatter formatter, int flags, int width, int precision) {
         boolean alt = (flags & FormattableFlags.ALTERNATE) == FormattableFlags.ALTERNATE;
         boolean upper = (flags & FormattableFlags.UPPERCASE) == FormattableFlags.UPPERCASE;
         boolean leftJustified = (flags & FormattableFlags.LEFT_JUSTIFY) == FormattableFlags.LEFT_JUSTIFY;

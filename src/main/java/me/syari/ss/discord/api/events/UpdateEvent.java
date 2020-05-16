@@ -1,18 +1,14 @@
-
-
 package me.syari.ss.discord.api.events;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 
-public interface UpdateEvent<E, T> extends GenericEvent
-{
+public interface UpdateEvent<E, T> extends GenericEvent {
 
     @Nonnull
     @SuppressWarnings("unchecked")
-    default Class<E> getEntityType()
-    {
+    default Class<E> getEntityType() {
         return (Class<E>) getEntity().getClass();
     }
 

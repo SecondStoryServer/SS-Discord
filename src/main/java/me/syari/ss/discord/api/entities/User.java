@@ -1,4 +1,3 @@
-
 package me.syari.ss.discord.api.entities;
 
 
@@ -12,8 +11,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 
-public interface User extends IMentionable, IFakeable
-{
+public interface User extends IMentionable, IFakeable {
 
     Pattern USER_TAG = Pattern.compile("(.{2,32})#(\\d{4})");
 
@@ -36,8 +34,7 @@ public interface User extends IMentionable, IFakeable
 
 
     @Nullable
-    default String getAvatarUrl()
-    {
+    default String getAvatarUrl() {
         String avatarId = getAvatarId();
         return avatarId == null ? null : String.format(AVATAR_URL, getId(), avatarId, avatarId.startsWith("a_") ? "gif" : "png");
     }
@@ -48,15 +45,13 @@ public interface User extends IMentionable, IFakeable
 
 
     @Nonnull
-    default String getDefaultAvatarUrl()
-    {
+    default String getDefaultAvatarUrl() {
         return String.format(DEFAULT_AVATAR_URL, getDefaultAvatarId());
     }
 
 
     @Nonnull
-    default String getEffectiveAvatarUrl()
-    {
+    default String getEffectiveAvatarUrl() {
         String avatarUrl = getAvatarUrl();
         return avatarUrl == null ? getDefaultAvatarUrl() : avatarUrl;
     }

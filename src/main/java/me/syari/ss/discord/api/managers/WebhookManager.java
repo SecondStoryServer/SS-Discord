@@ -1,5 +1,3 @@
-
-
 package me.syari.ss.discord.api.managers;
 
 import me.syari.ss.discord.api.entities.Guild;
@@ -12,14 +10,13 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 
-public interface WebhookManager extends Manager<WebhookManager>
-{
+public interface WebhookManager extends Manager<WebhookManager> {
 
-    long NAME    = 0x1;
+    long NAME = 0x1;
 
     long CHANNEL = 0x2;
 
-    long AVATAR  = 0x4;
+    long AVATAR = 0x4;
 
 
     @Nonnull
@@ -37,15 +34,13 @@ public interface WebhookManager extends Manager<WebhookManager>
 
 
     @Nonnull
-    default TextChannel getChannel()
-    {
+    default TextChannel getChannel() {
         return getWebhook().getChannel();
     }
 
 
     @Nonnull
-    default Guild getGuild()
-    {
+    default Guild getGuild() {
         return getWebhook().getGuild();
     }
 

@@ -1,9 +1,6 @@
-
-
 package me.syari.ss.discord.api.utils;
 
-public enum Compression
-{
+public enum Compression {
 
     NONE(""),
 
@@ -11,14 +8,12 @@ public enum Compression
 
     private final String key;
 
-    Compression(String key)
-    {
+    Compression(String key) {
         this.key = key;
     }
 
 
-    public String getKey()
-    {
+    public String getKey() {
         return key;
     }
 }

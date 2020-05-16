@@ -1,8 +1,6 @@
-
 package me.syari.ss.discord.api;
 
-public enum OnlineStatus
-{
+public enum OnlineStatus {
 
     ONLINE("online"),
 
@@ -18,24 +16,19 @@ public enum OnlineStatus
 
     private final String key;
 
-    OnlineStatus(String key)
-    {
+    OnlineStatus(String key) {
         this.key = key;
     }
 
 
-    public String getKey()
-    {
+    public String getKey() {
         return key;
     }
 
 
-    public static OnlineStatus fromKey(String key)
-    {
-        for (OnlineStatus onlineStatus : values())
-        {
-            if (onlineStatus.key.equalsIgnoreCase(key))
-            {
+    public static OnlineStatus fromKey(String key) {
+        for (OnlineStatus onlineStatus : values()) {
+            if (onlineStatus.key.equalsIgnoreCase(key)) {
                 return onlineStatus;
             }
         }

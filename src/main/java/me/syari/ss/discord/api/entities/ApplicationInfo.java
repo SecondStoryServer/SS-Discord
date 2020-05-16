@@ -1,9 +1,6 @@
-
-
 package me.syari.ss.discord.api.entities;
 
-public interface ApplicationInfo extends ISnowflake
-{
+public interface ApplicationInfo extends ISnowflake {
 
 
 }

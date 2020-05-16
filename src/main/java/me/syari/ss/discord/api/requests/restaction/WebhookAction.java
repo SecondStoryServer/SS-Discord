@@ -1,5 +1,3 @@
-
-
 package me.syari.ss.discord.api.requests.restaction;
 
 import me.syari.ss.discord.api.entities.Guild;
@@ -13,20 +11,18 @@ import javax.annotation.Nullable;
 import java.util.function.BooleanSupplier;
 
 
-public interface WebhookAction extends AuditableRestAction<Webhook>
-{
+public interface WebhookAction extends AuditableRestAction<Webhook> {
     @Nonnull
     @Override
     WebhookAction setCheck(@Nullable BooleanSupplier checks);
 
-    
+
     @Nonnull
     TextChannel getChannel();
 
 
     @Nonnull
-    default Guild getGuild()
-    {
+    default Guild getGuild() {
         return getChannel().getGuild();
     }
 

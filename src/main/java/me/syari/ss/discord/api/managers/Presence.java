@@ -1,5 +1,3 @@
-
-
 package me.syari.ss.discord.api.managers;
 
 import me.syari.ss.discord.api.JDA;
@@ -10,8 +8,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 
-public interface Presence
-{
+public interface Presence {
 
     @Nonnull
     JDA getJDA();

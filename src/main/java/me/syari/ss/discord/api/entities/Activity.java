@@ -1,4 +1,3 @@
-
 package me.syari.ss.discord.api.entities;
 
 import me.syari.ss.discord.annotations.Incubating;
@@ -12,8 +11,7 @@ import java.util.Objects;
 import java.util.regex.Pattern;
 
 
-public interface Activity
-{
+public interface Activity {
 
     Pattern STREAMING_URL = Pattern.compile("https?://(www\\.)?(twitch\\.tv/|youtube\\.com/watch\\?v=).+", Pattern.CASE_INSENSITIVE);
 
@@ -31,16 +29,14 @@ public interface Activity
 
 
     @Nonnull
-    static Activity playing(@Nonnull String name)
-    {
+    static Activity playing(@Nonnull String name) {
         Checks.notBlank(name, "Name");
         return EntityBuilder.createActivity(name, null, ActivityType.DEFAULT);
     }
 
 
     @Nonnull
-    static Activity streaming(@Nonnull String name, @Nullable String url)
-    {
+    static Activity streaming(@Nonnull String name, @Nullable String url) {
         Checks.notEmpty(name, "Provided game name");
         ActivityType type;
         if (isValidStreamingUrl(url))
@@ -52,8 +48,7 @@ public interface Activity
 
 
     @Nonnull
-    static Activity listening(@Nonnull String name)
-    {
+    static Activity listening(@Nonnull String name) {
         Checks.notBlank(name, "Name");
         return EntityBuilder.createActivity(name, null, ActivityType.LISTENING);
     }
@@ -61,19 +56,16 @@ public interface Activity
 
     @Nonnull
     @Incubating
-    static Activity watching(@Nonnull String name)
-    {
+    static Activity watching(@Nonnull String name) {
         Checks.notBlank(name, "Name");
         return EntityBuilder.createActivity(name, null, ActivityType.WATCHING);
     }
 
 
     @Nonnull
-    static Activity of(@Nonnull ActivityType type, @Nonnull String name, @Nullable String url)
-    {
+    static Activity of(@Nonnull ActivityType type, @Nonnull String name, @Nullable String url) {
         Checks.notNull(type, "Type");
-        switch (type)
-        {
+        switch (type) {
             case DEFAULT:
                 return playing(name);
             case STREAMING:
@@ -88,14 +80,12 @@ public interface Activity
     }
 
 
-    static boolean isValidStreamingUrl(@Nullable String url)
-    {
+    static boolean isValidStreamingUrl(@Nullable String url) {
         return url != null && STREAMING_URL.matcher(url).matches();
     }
 
 
-    enum ActivityType
-    {
+    enum ActivityType {
 
         DEFAULT(0),
 
@@ -111,23 +101,19 @@ public interface Activity
 
         private final int key;
 
-        ActivityType(int key)
-        {
+        ActivityType(int key) {
             this.key = key;
         }
 
 
-        public int getKey()
-        {
+        public int getKey() {
             return key;
         }
 
 
         @Nonnull
-        public static ActivityType fromKey(int key)
-        {
-            switch (key)
-            {
+        public static ActivityType fromKey(int key) {
+            switch (key) {
                 case 0:
                 default:
                     return DEFAULT;
@@ -144,28 +130,24 @@ public interface Activity
     }
 
 
-    class Timestamps
-    {
+    class Timestamps {
         protected final long start;
 
         protected final long end;
 
-        public Timestamps(long start, long end)
-        {
+        public Timestamps(long start, long end) {
             this.start = start;
             this.end = end;
         }
 
 
         @Override
-        public String toString()
-        {
+        public String toString() {
             return String.format("RichPresenceTimestamp(%d-%d)", start, end);
         }
 
         @Override
-        public boolean equals(Object obj)
-        {
+        public boolean equals(Object obj) {
             if (!(obj instanceof Timestamps))
                 return false;
             Timestamps t = (Timestamps) obj;
@@ -173,21 +155,18 @@ public interface Activity
         }
 
         @Override
-        public int hashCode()
-        {
+        public int hashCode() {
             return Objects.hash(start, end);
         }
     }
 
 
-    class Emoji implements ISnowflake, IMentionable
-    {
+    class Emoji implements ISnowflake, IMentionable {
         private final String name;
         private final long id;
         private final boolean animated;
 
-        public Emoji(String name, long id, boolean animated)
-        {
+        public Emoji(String name, long id, boolean animated) {
             this.name = name;
             this.id = id;
             this.animated = animated;
@@ -195,8 +174,7 @@ public interface Activity
 
 
         @Nonnull
-        public String getAsCodepoints()
-        {
+        public String getAsCodepoints() {
             if (!isEmoji())
                 throw new IllegalStateException("Cannot convert custom emote to codepoints");
             return EncodingUtil.encodeCodepoints(name);
@@ -204,35 +182,30 @@ public interface Activity
 
 
         @Override
-        public long getIdLong()
-        {
+        public long getIdLong() {
             if (!isEmote())
                 throw new IllegalStateException("Cannot get id for unicode emoji");
             return id;
         }
 
 
-        public boolean isAnimated()
-        {
+        public boolean isAnimated() {
             return animated;
         }
 
 
-        public boolean isEmoji()
-        {
+        public boolean isEmoji() {
             return id == 0;
         }
 
 
-        public boolean isEmote()
-        {
+        public boolean isEmote() {
             return id != 0;
         }
 
         @Nonnull
         @Override
-        public String getAsMention()
-        {
+        public String getAsMention() {
             if (isEmoji())
                 return name; // unicode name
             // custom emoji format (for messages)
@@ -240,26 +213,23 @@ public interface Activity
         }
 
         @Override
-        public int hashCode()
-        {
+        public int hashCode() {
             return id == 0 ? name.hashCode() : Long.hashCode(id);
         }
 
         @Override
-        public boolean equals(Object obj)
-        {
+        public boolean equals(Object obj) {
             if (obj == this)
                 return true;
             if (!(obj instanceof Emoji))
                 return false;
             Emoji other = (Emoji) obj;
             return id == 0 ? other.name.equals(this.name)
-                           : other.id == this.id;
+                    : other.id == this.id;
         }
 
         @Override
-        public String toString()
-        {
+        public String toString() {
             if (isEmoji())
                 return "ActivityEmoji(" + getAsCodepoints() + ')';
             return "ActivityEmoji(" + Long.toUnsignedString(id) + " / " + name + ')';

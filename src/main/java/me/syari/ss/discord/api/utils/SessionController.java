@@ -1,5 +1,3 @@
-
-
 package me.syari.ss.discord.api.utils;
 
 import me.syari.ss.discord.annotations.DeprecatedSince;
@@ -11,8 +9,7 @@ import me.syari.ss.discord.internal.utils.tuple.Pair;
 import javax.annotation.Nonnull;
 
 
-public interface SessionController
-{
+public interface SessionController {
 
     int IDENTIFY_DELAY = 5;
 
@@ -44,41 +41,35 @@ public interface SessionController
 
     @Nonnull
     @SuppressWarnings({"deprecation", "RedundantSuppression"})
-    default ShardedGateway getShardedGateway(@Nonnull JDA api)
-    {
+    default ShardedGateway getShardedGateway(@Nonnull JDA api) {
         Pair<String, Integer> tuple = getGatewayBot(api);
         return new ShardedGateway(tuple.getLeft(), tuple.getRight());
     }
 
 
-    class ShardedGateway
-    {
+    class ShardedGateway {
         private final String url;
         private final int shardTotal;
 
 
-        public ShardedGateway(String url, int shardTotal)
-        {
+        public ShardedGateway(String url, int shardTotal) {
             this.url = url;
             this.shardTotal = shardTotal;
         }
 
 
-        public String getUrl()
-        {
+        public String getUrl() {
             return url;
         }
 
 
-        public int getShardTotal()
-        {
+        public int getShardTotal() {
             return shardTotal;
         }
     }
 
 
-    interface SessionConnectNode
-    {
+    interface SessionConnectNode {
 
         boolean isReconnect();
 

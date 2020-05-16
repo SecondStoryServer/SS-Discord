@@ -1,5 +1,3 @@
-
-
 package me.syari.ss.discord.api;
 
 import me.syari.ss.discord.annotations.DeprecatedSince;
@@ -24,11 +22,9 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.regex.Matcher;
 
 
-public interface JDA
-{
+public interface JDA {
 
-    enum Status
-    {
+    enum Status {
 
         INITIALIZING(true),
 
@@ -62,64 +58,54 @@ public interface JDA
 
         private final boolean isInit;
 
-        Status(boolean isInit)
-        {
+        Status(boolean isInit) {
             this.isInit = isInit;
         }
 
-        Status()
-        {
+        Status() {
             this.isInit = false;
         }
 
-        public boolean isInit()
-        {
+        public boolean isInit() {
             return isInit;
         }
     }
 
 
-    class ShardInfo
-    {
+    class ShardInfo {
 
         public static final ShardInfo SINGLE = new ShardInfo(0, 1);
 
         int shardId;
         int shardTotal;
 
-        public ShardInfo(int shardId, int shardTotal)
-        {
+        public ShardInfo(int shardId, int shardTotal) {
             this.shardId = shardId;
             this.shardTotal = shardTotal;
         }
 
 
-        public int getShardId()
-        {
+        public int getShardId() {
             return shardId;
         }
 
 
-        public int getShardTotal()
-        {
+        public int getShardTotal() {
             return shardTotal;
         }
 
 
-        public String getShardString()
-        {
+        public String getShardString() {
             return "[" + shardId + " / " + shardTotal + "]";
         }
 
         @Override
-        public String toString()
-        {
+        public String toString() {
             return "Shard " + getShardString();
         }
 
         @Override
-        public boolean equals(Object o)
-        {
+        public boolean equals(Object o) {
             if (!(o instanceof ShardInfo))
                 return false;
 
@@ -137,8 +123,7 @@ public interface JDA
 
 
     @Nonnull
-    default JDA awaitStatus(@Nonnull JDA.Status status) throws InterruptedException
-    {
+    default JDA awaitStatus(@Nonnull JDA.Status status) throws InterruptedException {
         //This is done to retain backwards compatible ABI as it would otherwise change the signature of the method
         // which would require recompilation for all users (including extension libraries)
         return awaitStatus(status, new JDA.Status[0]);
@@ -150,8 +135,7 @@ public interface JDA
 
 
     @Nonnull
-    default JDA awaitReady() throws InterruptedException
-    {
+    default JDA awaitReady() throws InterruptedException {
         return awaitStatus(Status.CONNECTED);
     }
 
@@ -183,29 +167,25 @@ public interface JDA
 
 
     @Nonnull
-    default List<User> getUsers()
-    {
+    default List<User> getUsers() {
         return getUserCache().asList();
     }
 
 
     @Nullable
-    default User getUserById(@Nonnull String id)
-    {
+    default User getUserById(@Nonnull String id) {
         return getUserCache().getElementById(id);
     }
 
 
     @Nullable
-    default User getUserById(long id)
-    {
+    default User getUserById(long id) {
         return getUserCache().getElementById(id);
     }
 
 
     @Nullable
-    default User getUserByTag(@Nonnull String tag)
-    {
+    default User getUserByTag(@Nonnull String tag) {
         Checks.notNull(tag, "Tag");
         Matcher matcher = User.USER_TAG.matcher(tag);
         Checks.check(matcher.matches(), "Invalid tag format!");
@@ -216,17 +196,16 @@ public interface JDA
 
 
     @Nullable
-    default User getUserByTag(@Nonnull String username, @Nonnull String discriminator)
-    {
+    default User getUserByTag(@Nonnull String username, @Nonnull String discriminator) {
         Checks.notNull(username, "Username");
         Checks.notNull(discriminator, "Discriminator");
         Checks.check(discriminator.length() == 4 && Helpers.isNumeric(discriminator), "Invalid format for discriminator!");
         Checks.check(username.length() >= 2 && username.length() <= 32, "Username must be between 2 and 32 characters in length!");
         return getUserCache().applyStream(stream ->
-            stream.filter(it -> it.getDiscriminator().equals(discriminator))
-                  .filter(it -> it.getName().equals(username))
-                  .findFirst()
-                  .orElse(null)
+                stream.filter(it -> it.getDiscriminator().equals(discriminator))
+                        .filter(it -> it.getName().equals(username))
+                        .findFirst()
+                        .orElse(null)
         );
     }
 
@@ -244,22 +223,19 @@ public interface JDA
 
 
     @Nonnull
-    default List<Guild> getGuilds()
-    {
+    default List<Guild> getGuilds() {
         return getGuildCache().asList();
     }
 
 
     @Nullable
-    default Guild getGuildById(@Nonnull String id)
-    {
+    default Guild getGuildById(@Nonnull String id) {
         return getGuildCache().getElementById(id);
     }
 
 
     @Nullable
-    default Guild getGuildById(long id)
-    {
+    default Guild getGuildById(long id) {
         return getGuildCache().getElementById(id);
     }
 
@@ -272,32 +248,27 @@ public interface JDA
 
 
     @Nonnull
-    default List<Role> getRoles()
-    {
+    default List<Role> getRoles() {
         return getRoleCache().asList();
     }
 
 
     @Nullable
-    default Role getRoleById(@Nonnull String id)
-    {
+    default Role getRoleById(@Nonnull String id) {
         return getRoleCache().getElementById(id);
     }
 
 
     @Nullable
-    default Role getRoleById(long id)
-    {
+    default Role getRoleById(long id) {
         return getRoleCache().getElementById(id);
     }
 
 
     @Nullable
-    default GuildChannel getGuildChannelById(@Nonnull ChannelType type, long id)
-    {
+    default GuildChannel getGuildChannelById(@Nonnull ChannelType type, long id) {
         Checks.notNull(type, "ChannelType");
-        switch (type)
-        {
+        switch (type) {
             case TEXT:
                 return getTextChannelById(id);
             case VOICE:
@@ -316,8 +287,7 @@ public interface JDA
 
 
     @Nullable
-    default Category getCategoryById(long id)
-    {
+    default Category getCategoryById(long id) {
         return getCategoryCache().getElementById(id);
     }
 
@@ -327,8 +297,7 @@ public interface JDA
 
 
     @Nullable
-    default StoreChannel getStoreChannelById(long id)
-    {
+    default StoreChannel getStoreChannelById(long id) {
         return getStoreChannelCache().getElementById(id);
     }
 
@@ -338,15 +307,13 @@ public interface JDA
 
 
     @Nullable
-    default TextChannel getTextChannelById(@Nonnull String id)
-    {
+    default TextChannel getTextChannelById(@Nonnull String id) {
         return getTextChannelCache().getElementById(id);
     }
 
 
     @Nullable
-    default TextChannel getTextChannelById(long id)
-    {
+    default TextChannel getTextChannelById(long id) {
         return getTextChannelCache().getElementById(id);
     }
 
@@ -356,8 +323,7 @@ public interface JDA
 
 
     @Nullable
-    default VoiceChannel getVoiceChannelById(long id)
-    {
+    default VoiceChannel getVoiceChannelById(long id) {
         return getVoiceChannelCache().getElementById(id);
     }
 
@@ -367,15 +333,13 @@ public interface JDA
     @ForRemoval
     @DeprecatedSince("4.0.0")
     @ReplaceWith("jda.getVoiceChannelsByName(name, ignoreCase)")
-    default List<VoiceChannel> getVoiceChannelByName(@Nonnull String name, boolean ignoreCase)
-    {
+    default List<VoiceChannel> getVoiceChannelByName(@Nonnull String name, boolean ignoreCase) {
         return getVoiceChannelsByName(name, ignoreCase);
     }
 
 
     @Nonnull
-    default List<VoiceChannel> getVoiceChannelsByName(@Nonnull String name, boolean ignoreCase)
-    {
+    default List<VoiceChannel> getVoiceChannelsByName(@Nonnull String name, boolean ignoreCase) {
         return getVoiceChannelCache().getElementsByName(name, ignoreCase);
     }
 
@@ -385,8 +349,7 @@ public interface JDA
 
 
     @Nullable
-    default PrivateChannel getPrivateChannelById(long id)
-    {
+    default PrivateChannel getPrivateChannelById(long id) {
         return getPrivateChannelCache().getElementById(id);
     }
 
@@ -396,8 +359,7 @@ public interface JDA
 
 
     @Nullable
-    default Emote getEmoteById(long id)
-    {
+    default Emote getEmoteById(long id) {
         return getEmoteCache().getElementById(id);
     }
 

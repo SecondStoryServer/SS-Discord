@@ -1,5 +1,3 @@
-
-
 package me.syari.ss.discord.api.requests.restaction.pagination;
 
 import me.syari.ss.discord.api.requests.RestAction;
@@ -16,8 +14,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 
-public interface PaginationAction<T, M extends PaginationAction<T, M>> extends RestAction<List<T>>, Iterable<T>
-{
+public interface PaginationAction<T, M extends PaginationAction<T, M>> extends RestAction<List<T>>, Iterable<T> {
 
 
     @Nonnull
@@ -50,7 +47,6 @@ public interface PaginationAction<T, M extends PaginationAction<T, M>> extends R
     int getLimit();
 
 
-
     @Nonnull
     CompletableFuture<?> forEachAsync(@Nonnull final Procedure<? super T> action, @Nonnull final Consumer<? super Throwable> failure);
 
@@ -60,15 +56,13 @@ public interface PaginationAction<T, M extends PaginationAction<T, M>> extends R
 
 
     @Override
-    default Spliterator<T> spliterator()
-    {
+    default Spliterator<T> spliterator() {
         return Spliterators.spliteratorUnknownSize(iterator(), Spliterator.IMMUTABLE);
     }
 
 
     @Nonnull
-    default Stream<T> stream()
-    {
+    default Stream<T> stream() {
         return StreamSupport.stream(spliterator(), false);
     }
 
@@ -78,20 +72,17 @@ public interface PaginationAction<T, M extends PaginationAction<T, M>> extends R
     PaginationIterator<T> iterator();
 
 
-    class PaginationIterator<E> implements Iterator<E>
-    {
+    class PaginationIterator<E> implements Iterator<E> {
         protected Queue<E> items;
         protected final Supplier<List<E>> supply;
 
-        public PaginationIterator(Collection<E> queue, Supplier<List<E>> supply)
-        {
+        public PaginationIterator(Collection<E> queue, Supplier<List<E>> supply) {
             this.items = new LinkedList<>(queue);
             this.supply = supply;
         }
 
         @Override
-        public boolean hasNext()
-        {
+        public boolean hasNext() {
             if (items == null)
                 return false;
             if (!hitEnd())
@@ -106,15 +97,13 @@ public interface PaginationAction<T, M extends PaginationAction<T, M>> extends R
         }
 
         @Override
-        public E next()
-        {
+        public E next() {
             if (!hasNext())
                 throw new NoSuchElementException("Reached End of pagination task!");
             return items.poll();
         }
 
-        protected boolean hitEnd()
-        {
+        protected boolean hitEnd() {
             return items.isEmpty();
         }
     }

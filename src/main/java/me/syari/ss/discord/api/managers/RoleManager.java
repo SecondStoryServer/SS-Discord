@@ -1,5 +1,3 @@
-
-
 package me.syari.ss.discord.api.managers;
 
 import me.syari.ss.discord.api.Permission;
@@ -15,16 +13,15 @@ import java.util.Arrays;
 import java.util.Collection;
 
 
-public interface RoleManager extends Manager<RoleManager>
-{
+public interface RoleManager extends Manager<RoleManager> {
 
-    long NAME        = 0x1;
+    long NAME = 0x1;
 
-    long COLOR       = 0x2;
+    long COLOR = 0x2;
 
-    long PERMISSION  = 0x4;
+    long PERMISSION = 0x4;
 
-    long HOIST       = 0x8;
+    long HOIST = 0x8;
 
     long MENTIONABLE = 0x10;
 
@@ -44,8 +41,7 @@ public interface RoleManager extends Manager<RoleManager>
 
 
     @Nonnull
-    default Guild getGuild()
-    {
+    default Guild getGuild() {
         return getRole().getGuild();
     }
 
@@ -62,8 +58,7 @@ public interface RoleManager extends Manager<RoleManager>
 
     @Nonnull
     @CheckReturnValue
-    default RoleManager setPermissions(@Nonnull Permission... permissions)
-    {
+    default RoleManager setPermissions(@Nonnull Permission... permissions) {
         Checks.notNull(permissions, "Permissions");
         return setPermissions(Arrays.asList(permissions));
     }
@@ -71,8 +66,7 @@ public interface RoleManager extends Manager<RoleManager>
 
     @Nonnull
     @CheckReturnValue
-    default RoleManager setPermissions(@Nonnull Collection<Permission> permissions)
-    {
+    default RoleManager setPermissions(@Nonnull Collection<Permission> permissions) {
         Checks.noneNull(permissions, "Permissions");
         return setPermissions(Permission.getRaw(permissions));
     }
@@ -80,8 +74,7 @@ public interface RoleManager extends Manager<RoleManager>
 
     @Nonnull
     @CheckReturnValue
-    default RoleManager setColor(@Nullable Color color)
-    {
+    default RoleManager setColor(@Nullable Color color) {
         return setColor(color == null ? Role.DEFAULT_COLOR_RAW : color.getRGB());
     }
 
@@ -103,8 +96,7 @@ public interface RoleManager extends Manager<RoleManager>
 
     @Nonnull
     @CheckReturnValue
-    default RoleManager givePermissions(@Nonnull Permission... perms)
-    {
+    default RoleManager givePermissions(@Nonnull Permission... perms) {
         Checks.notNull(perms, "Permissions");
         return givePermissions(Arrays.asList(perms));
     }
@@ -117,8 +109,7 @@ public interface RoleManager extends Manager<RoleManager>
 
     @Nonnull
     @CheckReturnValue
-    default RoleManager revokePermissions(@Nonnull Permission... perms)
-    {
+    default RoleManager revokePermissions(@Nonnull Permission... perms) {
         Checks.notNull(perms, "Permissions");
         return revokePermissions(Arrays.asList(perms));
     }

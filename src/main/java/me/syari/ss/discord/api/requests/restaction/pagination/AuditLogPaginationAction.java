@@ -1,5 +1,3 @@
-
-
 package me.syari.ss.discord.api.requests.restaction.pagination;
 
 import me.syari.ss.discord.api.audit.ActionType;
@@ -11,12 +9,11 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 
-public interface AuditLogPaginationAction extends PaginationAction<AuditLogEntry, AuditLogPaginationAction>
-{
+public interface AuditLogPaginationAction extends PaginationAction<AuditLogEntry, AuditLogPaginationAction> {
 
     @Nonnull
     Guild getGuild();
-    
+
 
     @Nonnull
     AuditLogPaginationAction type(@Nullable ActionType type);

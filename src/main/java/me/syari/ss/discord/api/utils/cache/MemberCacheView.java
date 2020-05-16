@@ -1,5 +1,3 @@
-
-
 package me.syari.ss.discord.api.utils.cache;
 
 import me.syari.ss.discord.api.entities.Member;
@@ -12,16 +10,14 @@ import java.util.Collection;
 import java.util.List;
 
 
-public interface MemberCacheView extends SnowflakeCacheView<Member>
-{
+public interface MemberCacheView extends SnowflakeCacheView<Member> {
 
     @Nullable
     Member getElementById(long id);
 
 
     @Nullable
-    default Member getElementById(@Nonnull String id)
-    {
+    default Member getElementById(@Nonnull String id) {
         return getElementById(MiscUtil.parseSnowflake(id));
     }
 
@@ -31,8 +27,7 @@ public interface MemberCacheView extends SnowflakeCacheView<Member>
 
 
     @Nonnull
-    default List<Member> getElementsByUsername(@Nonnull String name)
-    {
+    default List<Member> getElementsByUsername(@Nonnull String name) {
         return getElementsByUsername(name, false);
     }
 
@@ -42,8 +37,7 @@ public interface MemberCacheView extends SnowflakeCacheView<Member>
 
 
     @Nonnull
-    default List<Member> getElementsByNickname(@Nullable String name)
-    {
+    default List<Member> getElementsByNickname(@Nullable String name) {
         return getElementsByNickname(name, false);
     }
 

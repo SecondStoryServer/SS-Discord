@@ -1,5 +1,3 @@
-
-
 package me.syari.ss.discord.api.events.role;
 
 import me.syari.ss.discord.api.JDA;
@@ -10,27 +8,23 @@ import me.syari.ss.discord.api.events.Event;
 import javax.annotation.Nonnull;
 
 
-public abstract class GenericRoleEvent extends Event
-{
+public abstract class GenericRoleEvent extends Event {
     protected final Role role;
 
-    public GenericRoleEvent(@Nonnull JDA api, long responseNumber, @Nonnull Role role)
-    {
+    public GenericRoleEvent(@Nonnull JDA api, long responseNumber, @Nonnull Role role) {
         super(api, responseNumber);
         this.role = role;
     }
 
 
     @Nonnull
-    public Role getRole()
-    {
+    public Role getRole() {
         return role;
     }
 
 
     @Nonnull
-    public Guild getGuild()
-    {
+    public Guild getGuild() {
         return role.getGuild();
     }
 }

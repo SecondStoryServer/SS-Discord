@@ -1,5 +1,3 @@
-
-
 package me.syari.ss.discord.api.events.http;
 
 import me.syari.ss.discord.api.events.Event;
@@ -18,13 +16,11 @@ import javax.annotation.Nullable;
 import java.util.Set;
 
 
-public class HttpRequestEvent extends Event
-{
+public class HttpRequestEvent extends Event {
     private final Request<?> request;
     private final Response response;
 
-    public HttpRequestEvent(@Nonnull final Request<?> request, @Nonnull final Response response)
-    {
+    public HttpRequestEvent(@Nonnull final Request<?> request, @Nonnull final Response response) {
         super(request.getJDA());
 
         this.request = request;
@@ -32,97 +28,81 @@ public class HttpRequestEvent extends Event
     }
 
     @Nonnull
-    public Request<?> getRequest()
-    {
+    public Request<?> getRequest() {
         return this.request;
     }
 
     @Nullable
-    public RequestBody getRequestBody()
-    {
+    public RequestBody getRequestBody() {
         return this.request.getBody();
     }
 
     @Nullable
-    public Object getRequestBodyRaw()
-    {
+    public Object getRequestBodyRaw() {
         return this.request.getRawBody();
     }
 
     @Nullable
-    public Headers getRequestHeaders()
-    {
+    public Headers getRequestHeaders() {
         return this.response.getRawResponse() == null ? null : this.response.getRawResponse().request().headers();
     }
 
     @Nullable
-    public okhttp3.Request getRequestRaw()
-    {
+    public okhttp3.Request getRequestRaw() {
         return this.response.getRawResponse() == null ? null : this.response.getRawResponse().request();
     }
 
     @Nullable
-    public Response getResponse()
-    {
+    public Response getResponse() {
         return this.response;
     }
 
     @Nullable
-    public ResponseBody getResponseBody()
-    {
+    public ResponseBody getResponseBody() {
         return this.response.getRawResponse() == null ? null : this.response.getRawResponse().body();
     }
 
     @Nullable
-    public DataArray getResponseBodyAsArray()
-    {
+    public DataArray getResponseBodyAsArray() {
         return this.response.getArray();
     }
 
     @Nullable
-    public DataObject getResponseBodyAsObject()
-    {
+    public DataObject getResponseBodyAsObject() {
         return this.response.getObject();
     }
 
     @Nullable
-    public String getResponseBodyAsString()
-    {
+    public String getResponseBodyAsString() {
         return this.response.getString();
     }
 
     @Nullable
-    public Headers getResponseHeaders()
-    {
+    public Headers getResponseHeaders() {
         return this.response.getRawResponse() == null ? null : this.response.getRawResponse().headers();
     }
 
     @Nullable
-    public okhttp3.Response getResponseRaw()
-    {
+    public okhttp3.Response getResponseRaw() {
         return this.response.getRawResponse();
     }
 
     @Nonnull
-    public Set<String> getCFRays()
-    {
+    public Set<String> getCFRays() {
         return this.response.getCFRays();
     }
 
     @Nonnull
-    public RestAction<?> getRestAction()
-    {
+    public RestAction<?> getRestAction() {
         return this.request.getRestAction();
     }
 
     @Nonnull
-    public CompiledRoute getRoute()
-    {
+    public CompiledRoute getRoute() {
         return this.request.getRoute();
     }
 
-    public boolean isRateLimit()
-    {
+    public boolean isRateLimit() {
         return this.response.isRateLimit();
     }
 

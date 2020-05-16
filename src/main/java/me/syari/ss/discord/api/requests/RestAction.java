@@ -1,5 +1,3 @@
-
-
 package me.syari.ss.discord.api.requests;
 
 import me.syari.ss.discord.api.JDA;
@@ -17,26 +15,22 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 
-public interface RestAction<T>
-{
+public interface RestAction<T> {
 
 
-    static boolean isPassContext()
-    {
+    static boolean isPassContext() {
         return RestActionImpl.isPassContext();
     }
 
 
     @Nonnull
-    static Consumer<? super Throwable> getDefaultFailure()
-    {
+    static Consumer<? super Throwable> getDefaultFailure() {
         return RestActionImpl.getDefaultFailure();
     }
 
 
     @Nonnull
-    static Consumer<Object> getDefaultSuccess()
-    {
+    static Consumer<Object> getDefaultSuccess() {
         return RestActionImpl.getDefaultSuccess();
     }
 
@@ -49,14 +43,12 @@ public interface RestAction<T>
     RestAction<T> setCheck(@Nullable BooleanSupplier checks);
 
 
-    default void queue()
-    {
+    default void queue() {
         queue(null);
     }
 
 
-    default void queue(@Nullable Consumer<? super T> success)
-    {
+    default void queue(@Nullable Consumer<? super T> success) {
         queue(success, null);
     }
 
@@ -64,14 +56,10 @@ public interface RestAction<T>
     void queue(@Nullable Consumer<? super T> success, @Nullable Consumer<? super Throwable> failure);
 
 
-    default T complete()
-    {
-        try
-        {
+    default T complete() {
+        try {
             return complete(true);
-        }
-        catch (RateLimitedException e)
-        {
+        } catch (RateLimitedException e) {
             //This is so beyond impossible, but on the off chance that the laws of nature are rewritten
             // after the writing of this code, I'm placing this here.
             //Better safe than sorry?
@@ -84,8 +72,7 @@ public interface RestAction<T>
 
 
     @Nonnull
-    default CompletableFuture<T> submit()
-    {
+    default CompletableFuture<T> submit() {
         return submit(true);
     }
 
@@ -96,8 +83,7 @@ public interface RestAction<T>
 
     @Nonnull
     @CheckReturnValue
-    default <O> RestAction<O> map(@Nonnull Function<? super T, ? extends O> map)
-    {
+    default <O> RestAction<O> map(@Nonnull Function<? super T, ? extends O> map) {
         Checks.notNull(map, "Function");
         return new MapRestAction<>(this, map);
     }

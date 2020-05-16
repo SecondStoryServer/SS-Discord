@@ -1,5 +1,3 @@
-
-
 package me.syari.ss.discord.api.requests.restaction;
 
 import me.syari.ss.discord.api.Permission;
@@ -15,8 +13,7 @@ import java.util.Collection;
 import java.util.function.BooleanSupplier;
 
 
-public interface RoleAction extends AuditableRestAction<Role>
-{
+public interface RoleAction extends AuditableRestAction<Role> {
     @Nonnull
     @Override
     RoleAction setCheck(@Nullable BooleanSupplier checks);
@@ -43,8 +40,7 @@ public interface RoleAction extends AuditableRestAction<Role>
 
     @Nonnull
     @CheckReturnValue
-    default RoleAction setColor(@Nullable Color color)
-    {
+    default RoleAction setColor(@Nullable Color color) {
         return this.setColor(color != null ? color.getRGB() : null);
     }
 
@@ -56,8 +52,7 @@ public interface RoleAction extends AuditableRestAction<Role>
 
     @Nonnull
     @CheckReturnValue
-    default RoleAction setPermissions(@Nullable Permission... permissions)
-    {
+    default RoleAction setPermissions(@Nullable Permission... permissions) {
         if (permissions != null)
             Checks.noneNull(permissions, "Permissions");
 
@@ -67,8 +62,7 @@ public interface RoleAction extends AuditableRestAction<Role>
 
     @Nonnull
     @CheckReturnValue
-    default RoleAction setPermissions(@Nullable Collection<Permission> permissions)
-    {
+    default RoleAction setPermissions(@Nullable Collection<Permission> permissions) {
         if (permissions != null)
             Checks.noneNull(permissions, "Permissions");
 

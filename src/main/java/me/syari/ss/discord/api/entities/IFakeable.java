@@ -1,10 +1,7 @@
-
-
 package me.syari.ss.discord.api.entities;
 
 
-public interface IFakeable
-{
+public interface IFakeable {
 
     boolean isFake();
 }

@@ -1,5 +1,3 @@
-
-
 package me.syari.ss.discord.api.managers;
 
 import me.syari.ss.discord.api.entities.SelfUser;
@@ -9,8 +7,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 
-public interface AccountManager extends Manager<AccountManager>
-{
+public interface AccountManager extends Manager<AccountManager> {
 
     long NAME = 0x1;
 
@@ -39,8 +36,7 @@ public interface AccountManager extends Manager<AccountManager>
 
     @Nonnull
     @CheckReturnValue
-    default AccountManager setName(@Nonnull String name)
-    {
+    default AccountManager setName(@Nonnull String name) {
         return setName(name, null);
     }
 

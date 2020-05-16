@@ -1,9 +1,6 @@
-
-
 package me.syari.ss.discord.internal.requests;
 
-public enum Method
-{
+public enum Method {
     DELETE,
     GET,
     HEAD,

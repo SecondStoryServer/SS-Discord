@@ -1,5 +1,3 @@
-
-
 package me.syari.ss.discord.internal.entities;
 
 import me.syari.ss.discord.api.JDA;
@@ -13,36 +11,31 @@ import java.util.FormattableFlags;
 import java.util.Formatter;
 import java.util.List;
 
-public abstract class AbstractMessage implements Message
-{
+public abstract class AbstractMessage implements Message {
 
     protected final String content;
     protected final boolean isTTS;
 
-    public AbstractMessage(String content, boolean isTTS)
-    {
+    public AbstractMessage(String content, boolean isTTS) {
         this.content = content;
         this.isTTS = isTTS;
     }
 
     @Nonnull
     @Override
-    public String getContentRaw()
-    {
+    public String getContentRaw() {
         return content;
     }
 
     @Override
-    public boolean isTTS()
-    {
+    public boolean isTTS() {
         return isTTS;
     }
 
     protected abstract void unsupported();
 
     @Override
-    public void formatTo(Formatter formatter, int flags, int width, int precision)
-    {
+    public void formatTo(Formatter formatter, int flags, int width, int precision) {
         boolean upper = (flags & FormattableFlags.UPPERCASE) == FormattableFlags.UPPERCASE;
         boolean leftJustified = (flags & FormattableFlags.LEFT_JUSTIFY) == FormattableFlags.LEFT_JUSTIFY;
 
@@ -54,13 +47,10 @@ public abstract class AbstractMessage implements Message
         appendFormat(formatter, width, precision, leftJustified, out);
     }
 
-    protected void appendFormat(Formatter formatter, int width, int precision, boolean leftJustified, String out)
-    {
-        try
-        {
+    protected void appendFormat(Formatter formatter, int width, int precision, boolean leftJustified, String out) {
+        try {
             Appendable appendable = formatter.out();
-            if (precision > -1 && out.length() > precision)
-            {
+            if (precision > -1 && out.length() > precision) {
                 appendable.append(Helpers.truncate(out, precision - 3)).append("...");
                 return;
             }
@@ -69,157 +59,136 @@ public abstract class AbstractMessage implements Message
                 appendable.append(Helpers.rightPad(out, width));
             else
                 appendable.append(Helpers.leftPad(out, width));
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
     }
 
     @Nonnull
     @Override
-    public List<User> getMentionedUsers()
-    {
+    public List<User> getMentionedUsers() {
         unsupported();
         return null;
     }
 
     @Nonnull
     @Override
-    public List<TextChannel> getMentionedChannels()
-    {
+    public List<TextChannel> getMentionedChannels() {
         unsupported();
         return null;
     }
 
     @Nonnull
     @Override
-    public List<Role> getMentionedRoles()
-    {
+    public List<Role> getMentionedRoles() {
         unsupported();
         return null;
     }
 
     @Nonnull
     @Override
-    public List<IMentionable> getMentions(@Nonnull MentionType... types)
-    {
+    public List<IMentionable> getMentions(@Nonnull MentionType... types) {
         unsupported();
         return null;
     }
 
     @Override
-    public boolean isMentioned(@Nonnull IMentionable mentionable, @Nonnull MentionType... types)
-    {
+    public boolean isMentioned(@Nonnull IMentionable mentionable, @Nonnull MentionType... types) {
         unsupported();
         return false;
     }
 
     @Nonnull
     @Override
-    public User getAuthor()
-    {
+    public User getAuthor() {
         unsupported();
         return null;
     }
 
     @Override
-    public Member getMember()
-    {
+    public Member getMember() {
         unsupported();
         return null;
     }
 
     @Nonnull
     @Override
-    public String getContentDisplay()
-    {
+    public String getContentDisplay() {
         unsupported();
         return null;
     }
 
     @Override
-    public boolean isFromType(@Nonnull ChannelType type)
-    {
+    public boolean isFromType(@Nonnull ChannelType type) {
         unsupported();
         return false;
     }
 
     @Nonnull
     @Override
-    public ChannelType getChannelType()
-    {
+    public ChannelType getChannelType() {
         unsupported();
         return null;
     }
 
     @Override
-    public boolean isWebhookMessage()
-    {
+    public boolean isWebhookMessage() {
         unsupported();
         return false;
     }
 
     @Nonnull
     @Override
-    public MessageChannel getChannel()
-    {
+    public MessageChannel getChannel() {
         unsupported();
         return null;
     }
 
     @Nonnull
     @Override
-    public PrivateChannel getPrivateChannel()
-    {
+    public PrivateChannel getPrivateChannel() {
         unsupported();
         return null;
     }
 
     @Nonnull
     @Override
-    public TextChannel getTextChannel()
-    {
+    public TextChannel getTextChannel() {
         unsupported();
         return null;
     }
 
     @Nonnull
     @Override
-    public Guild getGuild()
-    {
+    public Guild getGuild() {
         unsupported();
         return null;
     }
 
     @Nonnull
     @Override
-    public List<MessageEmbed> getEmbeds()
-    {
+    public List<MessageEmbed> getEmbeds() {
         unsupported();
         return null;
     }
 
     @Nonnull
     @Override
-    public List<Emote> getEmotes()
-    {
+    public List<Emote> getEmotes() {
         unsupported();
         return null;
     }
 
     @Nonnull
     @Override
-    public JDA getJDA()
-    {
+    public JDA getJDA() {
         unsupported();
         return null;
     }
 
     @Nonnull
     @Override
-    public MessageType getType()
-    {
+    public MessageType getType() {
         unsupported();
         return null;
     }

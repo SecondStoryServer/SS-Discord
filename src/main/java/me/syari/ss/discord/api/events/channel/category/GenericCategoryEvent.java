@@ -1,5 +1,3 @@
-
-
 package me.syari.ss.discord.api.events.channel.category;
 
 import me.syari.ss.discord.api.JDA;
@@ -10,40 +8,34 @@ import me.syari.ss.discord.api.events.Event;
 import javax.annotation.Nonnull;
 
 
-public abstract class GenericCategoryEvent extends Event
-{
+public abstract class GenericCategoryEvent extends Event {
     protected final Category category;
 
-    public GenericCategoryEvent(@Nonnull JDA api, long responseNumber, @Nonnull Category category)
-    {
+    public GenericCategoryEvent(@Nonnull JDA api, long responseNumber, @Nonnull Category category) {
         super(api, responseNumber);
         this.category = category;
     }
 
 
     @Nonnull
-    public Category getCategory()
-    {
+    public Category getCategory() {
         return category;
     }
 
 
     @Nonnull
-    public String getId()
-    {
+    public String getId() {
         return Long.toUnsignedString(getIdLong());
     }
 
 
-    public long getIdLong()
-    {
+    public long getIdLong() {
         return category.getIdLong();
     }
 
 
     @Nonnull
-    public Guild getGuild()
-    {
+    public Guild getGuild() {
         return category.getGuild();
     }
 }

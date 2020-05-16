@@ -1,4 +1,3 @@
-
 package me.syari.ss.discord.api.entities;
 
 import me.syari.ss.discord.annotations.DeprecatedSince;
@@ -19,8 +18,7 @@ import java.util.List;
 import java.util.Set;
 
 
-public interface Guild extends ISnowflake
-{
+public interface Guild extends ISnowflake {
 
     String ICON_URL = "https://cdn.discordapp.com/icons/%s/%s.%s";
 
@@ -79,8 +77,7 @@ public interface Guild extends ISnowflake
     int getBoostCount();
 
 
-    default int getMaxBitrate()
-    {
+    default int getMaxBitrate() {
         int maxBitrate = getFeatures().contains("VIP_REGIONS") ? 384000 : 96000;
         return Math.max(maxBitrate, getBoostTier().getMaxBitrate());
     }
@@ -112,8 +109,7 @@ public interface Guild extends ISnowflake
 
 
     @Nonnull
-    default Region getRegion()
-    {
+    default Region getRegion() {
         return Region.fromKey(getRegionRaw());
     }
 
@@ -134,8 +130,7 @@ public interface Guild extends ISnowflake
 
 
     @Nullable
-    default Member getMemberById(long userId)
-    {
+    default Member getMemberById(long userId) {
         return getMemberCache().getElementById(userId);
     }
 
@@ -145,8 +140,7 @@ public interface Guild extends ISnowflake
 
 
     @Nullable
-    default GuildChannel getGuildChannelById(long id)
-    {
+    default GuildChannel getGuildChannelById(long id) {
         GuildChannel channel = getTextChannelById(id);
         if (channel == null)
             channel = getVoiceChannelById(id);
@@ -159,8 +153,7 @@ public interface Guild extends ISnowflake
 
 
     @Nullable
-    default Category getCategoryById(long id)
-    {
+    default Category getCategoryById(long id) {
         return getCategoryCache().getElementById(id);
     }
 
@@ -170,8 +163,7 @@ public interface Guild extends ISnowflake
 
 
     @Nullable
-    default StoreChannel getStoreChannelById(long id)
-    {
+    default StoreChannel getStoreChannelById(long id) {
         return getStoreChannelCache().getElementById(id);
     }
 
@@ -181,15 +173,13 @@ public interface Guild extends ISnowflake
 
 
     @Nullable
-    default TextChannel getTextChannelById(long id)
-    {
+    default TextChannel getTextChannelById(long id) {
         return getTextChannelCache().getElementById(id);
     }
 
 
     @Nonnull
-    default List<TextChannel> getTextChannels()
-    {
+    default List<TextChannel> getTextChannels() {
         return getTextChannelCache().asList();
     }
 
@@ -199,15 +189,13 @@ public interface Guild extends ISnowflake
 
 
     @Nullable
-    default VoiceChannel getVoiceChannelById(long id)
-    {
+    default VoiceChannel getVoiceChannelById(long id) {
         return getVoiceChannelCache().getElementById(id);
     }
 
 
     @Nonnull
-    default List<VoiceChannel> getVoiceChannels()
-    {
+    default List<VoiceChannel> getVoiceChannels() {
         return getVoiceChannelCache().asList();
     }
 
@@ -217,8 +205,7 @@ public interface Guild extends ISnowflake
 
 
     @Nonnull
-    default List<GuildChannel> getChannels()
-    {
+    default List<GuildChannel> getChannels() {
         return getChannels(true);
     }
 
@@ -228,22 +215,19 @@ public interface Guild extends ISnowflake
 
 
     @Nullable
-    default Role getRoleById(@Nonnull String id)
-    {
+    default Role getRoleById(@Nonnull String id) {
         return getRoleCache().getElementById(id);
     }
 
 
     @Nullable
-    default Role getRoleById(long id)
-    {
+    default Role getRoleById(long id) {
         return getRoleCache().getElementById(id);
     }
 
 
     @Nonnull
-    default List<Role> getRoles()
-    {
+    default List<Role> getRoles() {
         return getRoleCache().asList();
     }
 
@@ -253,8 +237,7 @@ public interface Guild extends ISnowflake
 
 
     @Nullable
-    default Emote getEmoteById(long id)
-    {
+    default Emote getEmoteById(long id) {
         return getEmoteCache().getElementById(id);
     }
 
@@ -308,8 +291,7 @@ public interface Guild extends ISnowflake
     //////////////////////////
 
 
-    enum Timeout
-    {
+    enum Timeout {
         SECONDS_60(60),
         SECONDS_300(300),
         SECONDS_900(900),
@@ -318,23 +300,19 @@ public interface Guild extends ISnowflake
 
         private final int seconds;
 
-        Timeout(int seconds)
-        {
+        Timeout(int seconds) {
             this.seconds = seconds;
         }
 
 
-        public int getSeconds()
-        {
+        public int getSeconds() {
             return seconds;
         }
 
 
         @Nonnull
-        public static Timeout fromKey(int seconds)
-        {
-            for (Timeout t : values())
-            {
+        public static Timeout fromKey(int seconds) {
+            for (Timeout t : values()) {
                 if (t.getSeconds() == seconds)
                     return t;
             }
@@ -343,8 +321,7 @@ public interface Guild extends ISnowflake
     }
 
 
-    enum VerificationLevel
-    {
+    enum VerificationLevel {
         NONE(0),
         LOW(1),
         MEDIUM(2),
@@ -354,24 +331,20 @@ public interface Guild extends ISnowflake
 
         private final int key;
 
-        VerificationLevel(int key)
-        {
+        VerificationLevel(int key) {
             this.key = key;
         }
 
 
-        public int getKey()
-        {
+        public int getKey() {
             return key;
         }
 
 
         @Nonnull
-        public static VerificationLevel fromKey(int key)
-        {
-            for (VerificationLevel level : VerificationLevel.values())
-            {
-                if(level.getKey() == key)
+        public static VerificationLevel fromKey(int key) {
+            for (VerificationLevel level : VerificationLevel.values()) {
+                if (level.getKey() == key)
                     return level;
             }
             return UNKNOWN;
@@ -379,31 +352,26 @@ public interface Guild extends ISnowflake
     }
 
 
-    enum NotificationLevel
-    {
+    enum NotificationLevel {
         ALL_MESSAGES(0),
         MENTIONS_ONLY(1),
         UNKNOWN(-1);
 
         private final int key;
 
-        NotificationLevel(int key)
-        {
+        NotificationLevel(int key) {
             this.key = key;
         }
 
 
-        public int getKey()
-        {
+        public int getKey() {
             return key;
         }
 
 
         @Nonnull
-        public static NotificationLevel fromKey(int key)
-        {
-            for (NotificationLevel level : values())
-            {
+        public static NotificationLevel fromKey(int key) {
+            for (NotificationLevel level : values()) {
                 if (level.getKey() == key)
                     return level;
             }
@@ -412,31 +380,26 @@ public interface Guild extends ISnowflake
     }
 
 
-    enum MFALevel
-    {
+    enum MFALevel {
         NONE(0),
         TWO_FACTOR_AUTH(1),
         UNKNOWN(-1);
 
         private final int key;
 
-        MFALevel(int key)
-        {
+        MFALevel(int key) {
             this.key = key;
         }
 
 
-        public int getKey()
-        {
+        public int getKey() {
             return key;
         }
 
 
         @Nonnull
-        public static MFALevel fromKey(int key)
-        {
-            for (MFALevel level : values())
-            {
+        public static MFALevel fromKey(int key) {
+            for (MFALevel level : values()) {
                 if (level.getKey() == key)
                     return level;
             }
@@ -445,8 +408,7 @@ public interface Guild extends ISnowflake
     }
 
 
-    enum ExplicitContentLevel
-    {
+    enum ExplicitContentLevel {
         OFF(0),
         NO_ROLE(1),
         ALL(2),
@@ -455,23 +417,19 @@ public interface Guild extends ISnowflake
 
         private final int key;
 
-        ExplicitContentLevel(int key)
-        {
+        ExplicitContentLevel(int key) {
             this.key = key;
         }
 
 
-        public int getKey()
-        {
+        public int getKey() {
             return key;
         }
 
 
         @Nonnull
-        public static ExplicitContentLevel fromKey(int key)
-        {
-            for (ExplicitContentLevel level : values())
-            {
+        public static ExplicitContentLevel fromKey(int key) {
+            for (ExplicitContentLevel level : values()) {
                 if (level.key == key)
                     return level;
             }
@@ -480,8 +438,7 @@ public interface Guild extends ISnowflake
     }
 
 
-    enum BoostTier
-    {
+    enum BoostTier {
 
         NONE(0, 96000),
 
@@ -496,24 +453,20 @@ public interface Guild extends ISnowflake
         private final int key;
         private final int maxBitrate;
 
-        BoostTier(int key, int maxBitrate)
-        {
+        BoostTier(int key, int maxBitrate) {
             this.key = key;
             this.maxBitrate = maxBitrate;
         }
 
 
-        public int getMaxBitrate()
-        {
+        public int getMaxBitrate() {
             return maxBitrate;
         }
 
 
         @Nonnull
-        public static BoostTier fromKey(int key)
-        {
-            for (BoostTier tier : values())
-            {
+        public static BoostTier fromKey(int key) {
+            for (BoostTier tier : values()) {
                 if (tier.key == key)
                     return tier;
             }

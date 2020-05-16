@@ -1,4 +1,3 @@
-
 package me.syari.ss.discord.internal.utils;
 
 import me.syari.ss.discord.api.Permission;
@@ -9,20 +8,18 @@ import org.apache.commons.collections4.CollectionUtils;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
-public class PermissionUtil
-{
+public class PermissionUtil {
 
-    public static boolean canInteract(Member issuer, Member target)
-    {
+    public static boolean canInteract(Member issuer, Member target) {
         Checks.notNull(issuer, "Issuer Member");
         Checks.notNull(target, "Target Member");
 
         Guild guild = issuer.getGuild();
         if (!guild.equals(target.getGuild()))
             throw new IllegalArgumentException("Provided members must both be Member objects of the same Guild!");
-        if(issuer.isOwner())
+        if (issuer.isOwner())
             return true;
-        if(target.isOwner())
+        if (target.isOwner())
             return false;
         List<Role> issuerRoles = issuer.getRoles();
         List<Role> targetRoles = target.getRoles();
@@ -30,65 +27,59 @@ public class PermissionUtil
     }
 
 
-    public static boolean canInteract(Member issuer, Role target)
-    {
+    public static boolean canInteract(Member issuer, Role target) {
         Checks.notNull(issuer, "Issuer Member");
         Checks.notNull(target, "Target Role");
 
         Guild guild = issuer.getGuild();
         if (!guild.equals(target.getGuild()))
             throw new IllegalArgumentException("Provided Member issuer and Role target must be from the same Guild!");
-        if(issuer.isOwner())
+        if (issuer.isOwner())
             return true;
         List<Role> issuerRoles = issuer.getRoles();
         return !issuerRoles.isEmpty() && canInteract(issuerRoles.get(0), target);
     }
 
 
-    public static boolean canInteract(Role issuer, Role target)
-    {
+    public static boolean canInteract(Role issuer, Role target) {
         Checks.notNull(issuer, "Issuer Role");
         Checks.notNull(target, "Target Role");
 
-        if(!issuer.getGuild().equals(target.getGuild()))
+        if (!issuer.getGuild().equals(target.getGuild()))
             throw new IllegalArgumentException("The 2 Roles are not from same Guild!");
         return target.getPosition() < issuer.getPosition();
     }
 
 
-    public static boolean canInteract(Member issuer, Emote emote)
-    {
+    public static boolean canInteract(Member issuer, Emote emote) {
         Checks.notNull(issuer, "Issuer Member");
-        Checks.notNull(emote,  "Target Emote");
+        Checks.notNull(emote, "Target Emote");
 
         if (!issuer.getGuild().equals(emote.getGuild()))
             throw new IllegalArgumentException("The issuer and target are not in the same Guild");
 
         // We don't need to check based on the fact it is animated if it's a BOT account
         // because BOT accounts cannot have nitro, and have access to animated Emotes naturally.
-        if (emote.isAnimated() && !issuer.getUser().isBot())
-        {
+        if (emote.isAnimated() && !issuer.getUser().isBot()) {
             // This is a currently logged in client, meaning we can check if they have nitro or not.
             // If this isn't the currently logged in account, we just check it like a normal emote,
             // since there is no way to verify if they have nitro or not.
-            if (issuer.getUser() instanceof SelfUser)
-            {
+            if (issuer.getUser() instanceof SelfUser) {
                 // If they don't have nitro, we immediately return
                 // false, otherwise we proceed with the remaining checks.
-                if (!((SelfUser)issuer.getUser()).isNitro())
+                if (!((SelfUser) issuer.getUser()).isNitro())
                     return false;
             }
         }
 
         return emote.canProvideRoles() && (emote.getRoles().isEmpty() // Emote restricted to roles -> check if the issuer has them
-            || CollectionUtils.containsAny(issuer.getRoles(), emote.getRoles()));
+                || CollectionUtils.containsAny(issuer.getRoles(), emote.getRoles()));
     }
 
 
-    public static boolean canInteract(User issuer, Emote emote, MessageChannel channel, boolean botOverride)
-    {
-        Checks.notNull(issuer,  "Issuer Member");
-        Checks.notNull(emote,   "Target Emote");
+    public static boolean canInteract(User issuer, Emote emote, MessageChannel channel, boolean botOverride) {
+        Checks.notNull(issuer, "Issuer Member");
+        Checks.notNull(emote, "Target Emote");
         Checks.notNull(channel, "Target Channel");
 
         if (emote.getGuild() == null || !emote.getGuild().isMember(issuer))
@@ -108,20 +99,17 @@ public class PermissionUtil
         return external; // In Group or Private it only needs to be external
     }
 
-    private static boolean isNitro(User issuer)
-    {
+    private static boolean isNitro(User issuer) {
         return issuer instanceof SelfUser && ((SelfUser) issuer).isNitro();
     }
 
 
-    public static boolean canInteract(User issuer, Emote emote, MessageChannel channel)
-    {
+    public static boolean canInteract(User issuer, Emote emote, MessageChannel channel) {
         return canInteract(issuer, emote, channel, true);
     }
 
 
-    public static boolean checkPermission(Member member, Permission... permissions)
-    {
+    public static boolean checkPermission(Member member, Permission... permissions) {
         Checks.notNull(member, "Member");
         Checks.notNull(permissions, "Permissions");
 
@@ -131,8 +119,7 @@ public class PermissionUtil
     }
 
 
-    public static boolean checkPermission(GuildChannel channel, Member member, Permission... permissions)
-    {
+    public static boolean checkPermission(GuildChannel channel, Member member, Permission... permissions) {
         Checks.notNull(channel, "Channel");
         Checks.notNull(member, "Member");
         Checks.notNull(permissions, "Permissions");
@@ -145,16 +132,14 @@ public class PermissionUtil
     }
 
 
-    public static long getEffectivePermission(Member member)
-    {
+    public static long getEffectivePermission(Member member) {
         Checks.notNull(member, "Member");
 
         if (member.isOwner())
             return Permission.ALL_PERMISSIONS;
         //Default to binary OR of all global permissions in this guild
         long permission = member.getGuild().getPublicRole().getPermissionsRaw();
-        for (Role role : member.getRoles())
-        {
+        for (Role role : member.getRoles()) {
             permission |= role.getPermissionsRaw();
             if (isApplied(permission, Permission.ADMINISTRATOR.getRawValue()))
                 return Permission.ALL_PERMISSIONS;
@@ -164,15 +149,13 @@ public class PermissionUtil
     }
 
 
-    public static long getEffectivePermission(GuildChannel channel, Member member)
-    {
+    public static long getEffectivePermission(GuildChannel channel, Member member) {
         Checks.notNull(channel, "Channel");
         Checks.notNull(member, "Member");
 
         Checks.check(channel.getGuild().equals(member.getGuild()), "Provided channel and provided member are not of the same guild!");
 
-        if (member.isOwner())
-        {
+        if (member.isOwner()) {
             // Owner effectively has all permissions
             return Permission.ALL_PERMISSIONS;
         }
@@ -210,8 +193,7 @@ public class PermissionUtil
     }
 
 
-    public static long getEffectivePermission(GuildChannel channel, Role role)
-    {
+    public static long getEffectivePermission(GuildChannel channel, Role role) {
         Checks.notNull(channel, "Channel");
         Checks.notNull(role, "Role");
 
@@ -228,8 +210,7 @@ public class PermissionUtil
     }
 
 
-    public static long getExplicitPermission(Member member)
-    {
+    public static long getExplicitPermission(Member member) {
         Checks.notNull(member, "Member");
 
         final Guild guild = member.getGuild();
@@ -242,8 +223,7 @@ public class PermissionUtil
     }
 
 
-    public static long getExplicitPermission(GuildChannel channel, Member member)
-    {
+    public static long getExplicitPermission(GuildChannel channel, Member member) {
         Checks.notNull(channel, "Channel");
         Checks.notNull(member, "Member");
 
@@ -262,8 +242,7 @@ public class PermissionUtil
     }
 
 
-    public static long getExplicitPermission(GuildChannel channel, Role role)
-    {
+    public static long getExplicitPermission(GuildChannel channel, Role role) {
         Checks.notNull(channel, "Channel");
         Checks.notNull(role, "Role");
 
@@ -280,17 +259,15 @@ public class PermissionUtil
         override = channel.getPermissionOverride(role);
 
         return override == null
-            ? permission
-            : apply(permission, override.getAllowedRaw(), override.getDeniedRaw());
+                ? permission
+                : apply(permission, override.getAllowedRaw(), override.getDeniedRaw());
     }
 
-    private static void getExplicitOverrides(GuildChannel channel, Member member, AtomicLong allow, AtomicLong deny)
-    {
+    private static void getExplicitOverrides(GuildChannel channel, Member member, AtomicLong allow, AtomicLong deny) {
         PermissionOverride override = channel.getPermissionOverride(member.getGuild().getPublicRole());
         long allowRaw = 0;
         long denyRaw = 0;
-        if (override != null)
-        {
+        if (override != null) {
             denyRaw = override.getDeniedRaw();
             allowRaw = override.getAllowedRaw();
         }
@@ -298,11 +275,9 @@ public class PermissionUtil
         long allowRole = 0;
         long denyRole = 0;
         // create temporary bit containers for role cascade
-        for (Role role : member.getRoles())
-        {
+        for (Role role : member.getRoles()) {
             override = channel.getPermissionOverride(role);
-            if (override != null)
-            {
+            if (override != null) {
                 // important to update role cascade not others
                 denyRole |= override.getDeniedRaw();
                 allowRole |= override.getAllowedRaw();
@@ -313,8 +288,7 @@ public class PermissionUtil
         denyRaw = (denyRaw & ~allowRole) | denyRole;
 
         override = channel.getPermissionOverride(member);
-        if (override != null)
-        {
+        if (override != null) {
             // finally override the role cascade with member overrides
             final long oDeny = override.getDeniedRaw();
             final long oAllow = override.getAllowedRaw();
@@ -330,22 +304,19 @@ public class PermissionUtil
     /*
      * Check whether the specified permission is applied in the bits
      */
-    private static boolean isApplied(long permissions, long perms)
-    {
+    private static boolean isApplied(long permissions, long perms) {
         return (permissions & perms) == perms;
     }
 
-    private static long apply(long permission, long allow, long deny)
-    {
+    private static long apply(long permission, long allow, long deny) {
         permission &= ~deny;  //Deny everything that the cascade of roles denied.
         permission |= allow;  //Allow all the things that the cascade of roles allowed
-                              // The allowed bits override the denied ones!
+        // The allowed bits override the denied ones!
         return permission;
     }
 
-    private static void checkGuild(Guild o1, Guild o2, String name)
-    {
+    private static void checkGuild(Guild o1, Guild o2, String name) {
         Checks.check(o1.equals(o2),
-            "Specified %s is not in the same guild! (%s / %s)", name, o1, o2);
+                "Specified %s is not in the same guild! (%s / %s)", name, o1, o2);
     }
 }

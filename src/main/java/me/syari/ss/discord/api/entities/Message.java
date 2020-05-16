@@ -1,4 +1,3 @@
-
 package me.syari.ss.discord.api.entities;
 
 import me.syari.ss.discord.api.JDA;
@@ -10,8 +9,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 
-public interface Message extends ISnowflake, Formattable
-{
+public interface Message extends ISnowflake, Formattable {
 
     int MAX_FILE_SIZE = 8 << 20;
 
@@ -63,8 +61,7 @@ public interface Message extends ISnowflake, Formattable
     boolean isFromType(@Nonnull ChannelType type);
 
 
-    default boolean isFromGuild()
-    {
+    default boolean isFromGuild() {
         return getChannelType().isGuild();
     }
 
@@ -111,8 +108,7 @@ public interface Message extends ISnowflake, Formattable
     MessageType getType();
 
 
-    enum MentionType
-    {
+    enum MentionType {
 
         USER("<@!?(\\d+)>"),
 
@@ -128,32 +124,27 @@ public interface Message extends ISnowflake, Formattable
 
         private final Pattern pattern;
 
-        MentionType(String regex)
-        {
+        MentionType(String regex) {
             this.pattern = Pattern.compile(regex);
         }
 
         @Nonnull
-        public Pattern getPattern()
-        {
+        public Pattern getPattern() {
             return pattern;
         }
     }
 
 
-    class Attachment implements ISnowflake
-    {
+    class Attachment implements ISnowflake {
         private final long id;
 
-        public Attachment(long id)
-        {
+        public Attachment(long id) {
             this.id = id;
         }
 
 
         @Override
-        public long getIdLong()
-        {
+        public long getIdLong() {
             return id;
         }
 

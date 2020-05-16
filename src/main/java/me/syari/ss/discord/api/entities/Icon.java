@@ -1,5 +1,3 @@
-
-
 package me.syari.ss.discord.api.entities;
 
 import me.syari.ss.discord.internal.utils.Checks;
@@ -13,27 +11,23 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 
-public class Icon
-{
+public class Icon {
     protected final String encoding;
 
-    protected Icon(@Nonnull IconType type, @Nonnull String base64Encoding)
-    {
+    protected Icon(@Nonnull IconType type, @Nonnull String base64Encoding) {
         //Note: the usage of `image/jpeg` does not mean png/gif are not supported!
         this.encoding = type.getHeader() + base64Encoding;
     }
 
 
     @Nonnull
-    public String getEncoding()
-    {
+    public String getEncoding() {
         return encoding;
     }
 
 
     @Nonnull
-    public static Icon from(@Nonnull File file) throws IOException
-    {
+    public static Icon from(@Nonnull File file) throws IOException {
         Checks.notNull(file, "Provided File");
         Checks.check(file.exists(), "Provided file does not exist!");
         int index = file.getName().lastIndexOf('.');
@@ -46,22 +40,19 @@ public class Icon
 
 
     @Nonnull
-    public static Icon from(@Nonnull InputStream stream) throws IOException
-    {
+    public static Icon from(@Nonnull InputStream stream) throws IOException {
         return from(stream, IconType.JPEG);
     }
 
 
     @Nonnull
-    public static Icon from(@Nonnull byte[] data)
-    {
+    public static Icon from(@Nonnull byte[] data) {
         return from(data, IconType.JPEG);
     }
 
 
     @Nonnull
-    public static Icon from(@Nonnull File file, @Nonnull IconType type) throws IOException
-    {
+    public static Icon from(@Nonnull File file, @Nonnull IconType type) throws IOException {
         Checks.notNull(file, "Provided File");
         Checks.notNull(type, "IconType");
         Checks.check(file.exists(), "Provided file does not exist!");
@@ -71,8 +62,7 @@ public class Icon
 
 
     @Nonnull
-    public static Icon from(@Nonnull InputStream stream, @Nonnull IconType type) throws IOException
-    {
+    public static Icon from(@Nonnull InputStream stream, @Nonnull IconType type) throws IOException {
         Checks.notNull(stream, "InputStream");
         Checks.notNull(type, "IconType");
 
@@ -81,8 +71,7 @@ public class Icon
 
 
     @Nonnull
-    public static Icon from(@Nonnull byte[] data, @Nonnull IconType type)
-    {
+    public static Icon from(@Nonnull byte[] data, @Nonnull IconType type) {
         Checks.notNull(data, "Provided byte[]");
         Checks.notNull(type, "IconType");
 
@@ -90,8 +79,7 @@ public class Icon
     }
 
 
-    public enum IconType
-    {
+    public enum IconType {
 
         JPEG("image/jpeg"),
 
@@ -106,25 +94,21 @@ public class Icon
 
         private final String header;
 
-        IconType(@Nonnull String mime)
-        {
+        IconType(@Nonnull String mime) {
             this.header = "data:" + mime + ";base64,";
         }
 
 
         @Nonnull
-        public String getHeader()
-        {
+        public String getHeader() {
             return header;
         }
 
 
         @Nonnull
-        public static IconType fromExtension(@Nonnull String extension)
-        {
+        public static IconType fromExtension(@Nonnull String extension) {
             Checks.notNull(extension, "Extension Type");
-            switch (extension.toLowerCase())
-            {
+            switch (extension.toLowerCase()) {
                 case "jpe":
                 case "jif":
                 case "jfif":

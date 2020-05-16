@@ -1,5 +1,3 @@
-
-
 package me.syari.ss.discord.api.entities;
 
 import me.syari.ss.discord.api.JDA;
@@ -11,8 +9,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 
-public interface Webhook extends ISnowflake, IFakeable
-{
+public interface Webhook extends ISnowflake, IFakeable {
 
     @Nonnull
     JDA getJDA();

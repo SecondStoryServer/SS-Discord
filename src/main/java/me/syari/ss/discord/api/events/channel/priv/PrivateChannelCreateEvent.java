@@ -1,4 +1,3 @@
-
 package me.syari.ss.discord.api.events.channel.priv;
 
 import me.syari.ss.discord.api.JDA;
@@ -9,27 +8,23 @@ import me.syari.ss.discord.api.events.Event;
 import javax.annotation.Nonnull;
 
 
-public class PrivateChannelCreateEvent extends Event
-{
+public class PrivateChannelCreateEvent extends Event {
     private final PrivateChannel channel;
 
-    public PrivateChannelCreateEvent(@Nonnull JDA api, long responseNumber, @Nonnull PrivateChannel channel)
-    {
+    public PrivateChannelCreateEvent(@Nonnull JDA api, long responseNumber, @Nonnull PrivateChannel channel) {
         super(api, responseNumber);
         this.channel = channel;
     }
 
 
     @Nonnull
-    public User getUser()
-    {
+    public User getUser() {
         return channel.getUser();
     }
 
 
     @Nonnull
-    public PrivateChannel getChannel()
-    {
+    public PrivateChannel getChannel() {
         return channel;
     }
 }

@@ -1,4 +1,3 @@
-
 package me.syari.ss.discord.api.entities;
 
 import me.syari.ss.discord.api.JDA;
@@ -12,8 +11,7 @@ import javax.annotation.Nullable;
 import java.awt.*;
 
 
-public interface Role extends IMentionable, IPermissionHolder, Comparable<Role>
-{
+public interface Role extends IMentionable, IPermissionHolder, Comparable<Role> {
 
     int DEFAULT_COLOR_RAW = 0x1FFFFFFF; // java.awt.Color fills the MSB with FF, we just use 1F to provide better consistency
 
@@ -64,8 +62,7 @@ public interface Role extends IMentionable, IPermissionHolder, Comparable<Role>
 
     @Nonnull
     @CheckReturnValue
-    default RoleAction createCopy()
-    {
+    default RoleAction createCopy() {
         return createCopy(getGuild());
     }
 

@@ -1,4 +1,3 @@
-
 package me.syari.ss.discord.api.entities;
 
 import me.syari.ss.discord.api.requests.RestAction;
@@ -16,8 +15,7 @@ import java.util.Formatter;
 import java.util.List;
 
 
-public interface TextChannel extends GuildChannel, MessageChannel, IMentionable
-{
+public interface TextChannel extends GuildChannel, MessageChannel, IMentionable {
 
     int MAX_SLOWMODE = 21600;
 
@@ -64,8 +62,7 @@ public interface TextChannel extends GuildChannel, MessageChannel, IMentionable
 
     @Nonnull
     @CheckReturnValue
-    default RestAction<Void> clearReactionsById(long messageId)
-    {
+    default RestAction<Void> clearReactionsById(long messageId) {
         return clearReactionsById(Long.toUnsignedString(messageId));
     }
 
@@ -77,16 +74,14 @@ public interface TextChannel extends GuildChannel, MessageChannel, IMentionable
 
     @Nonnull
     @CheckReturnValue
-    default RestAction<Void> removeReactionById(long messageId, @Nonnull String unicode, @Nonnull User user)
-    {
+    default RestAction<Void> removeReactionById(long messageId, @Nonnull String unicode, @Nonnull User user) {
         return removeReactionById(Long.toUnsignedString(messageId), unicode, user);
     }
 
 
     @Nonnull
     @CheckReturnValue
-    default RestAction<Void> removeReactionById(@Nonnull String messageId, @Nonnull Emote emote, @Nonnull User user)
-    {
+    default RestAction<Void> removeReactionById(@Nonnull String messageId, @Nonnull Emote emote, @Nonnull User user) {
         Checks.notNull(emote, "Emote");
         return removeReactionById(messageId, emote.getName() + ":" + emote.getId(), user);
     }
@@ -94,8 +89,7 @@ public interface TextChannel extends GuildChannel, MessageChannel, IMentionable
 
     @Nonnull
     @CheckReturnValue
-    default RestAction<Void> removeReactionById(long messageId, @Nonnull Emote emote, @Nonnull User user)
-    {
+    default RestAction<Void> removeReactionById(long messageId, @Nonnull Emote emote, @Nonnull User user) {
         return removeReactionById(Long.toUnsignedString(messageId), emote, user);
     }
 
@@ -106,15 +100,14 @@ public interface TextChannel extends GuildChannel, MessageChannel, IMentionable
     boolean canTalk(@Nonnull Member member);
 
     @Override
-    default void formatTo(Formatter formatter, int flags, int width, int precision)
-    {
+    default void formatTo(Formatter formatter, int flags, int width, int precision) {
         boolean leftJustified = (flags & FormattableFlags.LEFT_JUSTIFY) == FormattableFlags.LEFT_JUSTIFY;
         boolean upper = (flags & FormattableFlags.UPPERCASE) == FormattableFlags.UPPERCASE;
         boolean alt = (flags & FormattableFlags.ALTERNATE) == FormattableFlags.ALTERNATE;
         String out;
 
         if (alt)
-            out = "#" + (upper ?  getName().toUpperCase(formatter.locale()) : getName());
+            out = "#" + (upper ? getName().toUpperCase(formatter.locale()) : getName());
         else
             out = getAsMention();
 

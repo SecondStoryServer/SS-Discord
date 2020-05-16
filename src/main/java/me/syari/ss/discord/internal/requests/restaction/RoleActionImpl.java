@@ -1,5 +1,3 @@
-
-
 package me.syari.ss.discord.internal.requests.restaction;
 
 import me.syari.ss.discord.api.Permission;
@@ -19,8 +17,7 @@ import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import java.util.function.BooleanSupplier;
 
-public class RoleActionImpl extends AuditableRestActionImpl<Role> implements RoleAction
-{
+public class RoleActionImpl extends AuditableRestActionImpl<Role> implements RoleAction {
     protected final Guild guild;
     protected Long permissions;
     protected String name = null;
@@ -29,31 +26,27 @@ public class RoleActionImpl extends AuditableRestActionImpl<Role> implements Rol
     protected Boolean mentionable = null;
 
 
-    public RoleActionImpl(Guild guild)
-    {
+    public RoleActionImpl(Guild guild) {
         super(guild.getJDA(), Route.Roles.CREATE_ROLE.compile(guild.getId()));
         this.guild = guild;
     }
 
     @Nonnull
     @Override
-    public RoleActionImpl setCheck(BooleanSupplier checks)
-    {
+    public RoleActionImpl setCheck(BooleanSupplier checks) {
         return (RoleActionImpl) super.setCheck(checks);
     }
 
     @Nonnull
     @Override
-    public Guild getGuild()
-    {
+    public Guild getGuild() {
         return guild;
     }
 
     @Nonnull
     @Override
     @CheckReturnValue
-    public RoleActionImpl setName(String name)
-    {
+    public RoleActionImpl setName(String name) {
         Checks.check(name == null || name.length() > 0 && name.length() <= 100, "Name must be between 1-100 characters long");
         this.name = name;
         return this;
@@ -62,8 +55,7 @@ public class RoleActionImpl extends AuditableRestActionImpl<Role> implements Rol
     @Nonnull
     @Override
     @CheckReturnValue
-    public RoleActionImpl setHoisted(Boolean hoisted)
-    {
+    public RoleActionImpl setHoisted(Boolean hoisted) {
         this.hoisted = hoisted;
         return this;
     }
@@ -71,8 +63,7 @@ public class RoleActionImpl extends AuditableRestActionImpl<Role> implements Rol
     @Nonnull
     @Override
     @CheckReturnValue
-    public RoleActionImpl setMentionable(Boolean mentionable)
-    {
+    public RoleActionImpl setMentionable(Boolean mentionable) {
         this.mentionable = mentionable;
         return this;
     }
@@ -80,8 +71,7 @@ public class RoleActionImpl extends AuditableRestActionImpl<Role> implements Rol
     @Nonnull
     @Override
     @CheckReturnValue
-    public RoleActionImpl setColor(Integer rgb)
-    {
+    public RoleActionImpl setColor(Integer rgb) {
         this.color = rgb;
         return this;
     }
@@ -89,10 +79,8 @@ public class RoleActionImpl extends AuditableRestActionImpl<Role> implements Rol
     @Nonnull
     @Override
     @CheckReturnValue
-    public RoleActionImpl setPermissions(Long permissions)
-    {
-        if (permissions != null)
-        {
+    public RoleActionImpl setPermissions(Long permissions) {
+        if (permissions != null) {
             Checks.notNegative(permissions, "Raw Permissions");
             Checks.check(permissions <= Permission.ALL_PERMISSIONS, "Provided permissions may not be greater than a full permission set!");
             for (Permission p : Permission.getPermissions(permissions))
@@ -103,8 +91,7 @@ public class RoleActionImpl extends AuditableRestActionImpl<Role> implements Rol
     }
 
     @Override
-    protected RequestBody finalizeData()
-    {
+    protected RequestBody finalizeData() {
         DataObject object = DataObject.empty();
         if (name != null)
             object.put("name", name);
@@ -121,13 +108,11 @@ public class RoleActionImpl extends AuditableRestActionImpl<Role> implements Rol
     }
 
     @Override
-    protected void handleSuccess(Response response, Request<Role> request)
-    {
+    protected void handleSuccess(Response response, Request<Role> request) {
         request.onSuccess(api.getEntityBuilder().createRole((GuildImpl) guild, response.getObject(), guild.getIdLong()));
     }
 
-    private void checkPermission(Permission permission)
-    {
+    private void checkPermission(Permission permission) {
         if (!guild.getSelfMember().hasPermission(permission))
             throw new InsufficientPermissionException(guild, permission);
     }

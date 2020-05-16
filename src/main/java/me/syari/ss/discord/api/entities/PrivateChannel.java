@@ -1,4 +1,3 @@
-
 package me.syari.ss.discord.api.entities;
 
 import me.syari.ss.discord.api.JDA;
@@ -8,8 +7,7 @@ import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 
 
-public interface PrivateChannel extends MessageChannel, IFakeable
-{
+public interface PrivateChannel extends MessageChannel, IFakeable {
 
     @Nonnull
     User getUser();

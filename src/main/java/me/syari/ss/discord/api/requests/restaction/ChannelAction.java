@@ -1,5 +1,3 @@
-
-
 package me.syari.ss.discord.api.requests.restaction;
 
 import me.syari.ss.discord.api.Permission;
@@ -12,8 +10,7 @@ import java.util.Collection;
 import java.util.function.BooleanSupplier;
 
 
-public interface ChannelAction<T extends GuildChannel> extends AuditableRestAction<T>
-{
+public interface ChannelAction<T extends GuildChannel> extends AuditableRestAction<T> {
     @Nonnull
     @Override
     ChannelAction<T> setCheck(@Nullable BooleanSupplier checks);
@@ -59,8 +56,7 @@ public interface ChannelAction<T extends GuildChannel> extends AuditableRestActi
 
     @Nonnull
     @CheckReturnValue
-    default ChannelAction<T> addPermissionOverride(@Nonnull IPermissionHolder target, @Nullable Collection<Permission> allow, @Nullable Collection<Permission> deny)
-    {
+    default ChannelAction<T> addPermissionOverride(@Nonnull IPermissionHolder target, @Nullable Collection<Permission> allow, @Nullable Collection<Permission> deny) {
         final long allowRaw = allow != null ? Permission.getRaw(allow) : 0;
         final long denyRaw = deny != null ? Permission.getRaw(deny) : 0;
 

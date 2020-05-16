@@ -1,5 +1,3 @@
-
-
 package me.syari.ss.discord.internal.entities;
 
 import gnu.trove.map.TLongObjectMap;
@@ -38,8 +36,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-public class GuildImpl implements Guild
-{
+public class GuildImpl implements Guild {
     private final long id;
     private final JDAImpl api;
 
@@ -79,57 +76,49 @@ public class GuildImpl implements Guild
     private boolean canSendVerification = false;
     private int memberCount;
 
-    public GuildImpl(JDAImpl api, long id)
-    {
+    public GuildImpl(JDAImpl api, long id) {
         this.id = id;
         this.api = api;
     }
 
     @Override
-    public boolean isLoaded()
-    {
+    public boolean isLoaded() {
         // Only works with guild subscriptions
         return getJDA().isGuildSubscriptions()
                 && (long) getMemberCount() <= getMemberCache().size();
     }
 
     @Override
-    public int getMemberCount()
-    {
+    public int getMemberCount() {
         return memberCount;
     }
 
     @Nonnull
     @Override
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
     @Override
-    public String getIconId()
-    {
+    public String getIconId() {
         return iconId;
     }
 
     @Nonnull
     @Override
-    public Set<String> getFeatures()
-    {
+    public Set<String> getFeatures() {
         return features;
     }
 
     @Override
-    public String getSplashId()
-    {
+    public String getSplashId() {
         return splashId;
     }
 
     @Nonnull
     @Override
     @Deprecated
-    public RestAction<String> retrieveVanityUrl()
-    {
+    public RestAction<String> retrieveVanityUrl() {
         if (!getSelfMember().hasPermission(Permission.MANAGE_SERVER))
             throw new InsufficientPermissionException(this, Permission.MANAGE_SERVER);
         if (!getFeatures().contains("VANITY_URL"))
@@ -138,103 +127,88 @@ public class GuildImpl implements Guild
         Route.CompiledRoute route = Route.Guilds.GET_VANITY_URL.compile(getId());
 
         return new RestActionImpl<>(getJDA(), route,
-            (response, request) -> response.getObject().getString("code"));
+                (response, request) -> response.getObject().getString("code"));
     }
 
     @Nullable
     @Override
-    public String getVanityCode()
-    {
+    public String getVanityCode() {
         return vanityCode;
     }
 
     @Nullable
     @Override
-    public String getDescription()
-    {
+    public String getDescription() {
         return description;
     }
 
     @Nullable
     @Override
-    public String getBannerId()
-    {
+    public String getBannerId() {
         return banner;
     }
 
     @Nonnull
     @Override
-    public BoostTier getBoostTier()
-    {
+    public BoostTier getBoostTier() {
         return boostTier;
     }
 
     @Override
-    public int getBoostCount()
-    {
+    public int getBoostCount() {
         return boostCount;
     }
 
     @Override
-    public int getMaxMembers()
-    {
+    public int getMaxMembers() {
         return maxMembers;
     }
 
     @Override
-    public int getMaxPresences()
-    {
+    public int getMaxPresences() {
         return maxPresences;
     }
 
     @Override
-    public VoiceChannel getAfkChannel()
-    {
+    public VoiceChannel getAfkChannel() {
         return afkChannel;
     }
 
     @Override
-    public TextChannel getSystemChannel()
-    {
+    public TextChannel getSystemChannel() {
         return systemChannel;
     }
 
     @Override
-    public Member getOwner()
-    {
+    public Member getOwner() {
         return owner;
     }
 
     @Override
-    public long getOwnerIdLong()
-    {
+    public long getOwnerIdLong() {
         return ownerId;
     }
 
     @Nonnull
     @Override
-    public Timeout getAfkTimeout()
-    {
+    public Timeout getAfkTimeout() {
         return afkTimeout;
     }
 
     @Nonnull
     @Override
-    public String getRegionRaw()
-    {
+    public String getRegionRaw() {
         return region;
     }
 
     @Override
-    public boolean isMember(@Nonnull User user)
-    {
+    public boolean isMember(@Nonnull User user) {
         return memberCache.get(user.getIdLong()) != null;
     }
 
     @Nonnull
     @Override
-    public Member getSelfMember()
-    {
+    public Member getSelfMember() {
         Member member = getMember(getJDA().getSelfUser());
         if (member == null)
             throw new IllegalStateException("Guild does not have a self member");
@@ -242,65 +216,56 @@ public class GuildImpl implements Guild
     }
 
     @Override
-    public Member getMember(@Nonnull User user)
-    {
+    public Member getMember(@Nonnull User user) {
         Checks.notNull(user, "User");
         return getMemberById(user.getIdLong());
     }
 
     @Nonnull
     @Override
-    public MemberCacheView getMemberCache()
-    {
+    public MemberCacheView getMemberCache() {
         return memberCache;
     }
 
     @Nonnull
     @Override
-    public SortedSnowflakeCacheView<Category> getCategoryCache()
-    {
+    public SortedSnowflakeCacheView<Category> getCategoryCache() {
         return categoryCache;
     }
 
     @Nonnull
     @Override
-    public SortedSnowflakeCacheView<StoreChannel> getStoreChannelCache()
-    {
+    public SortedSnowflakeCacheView<StoreChannel> getStoreChannelCache() {
         return storeChannelCache;
     }
 
     @Nonnull
     @Override
-    public SortedSnowflakeCacheView<TextChannel> getTextChannelCache()
-    {
+    public SortedSnowflakeCacheView<TextChannel> getTextChannelCache() {
         return textChannelCache;
     }
 
     @Nonnull
     @Override
-    public SortedSnowflakeCacheView<VoiceChannel> getVoiceChannelCache()
-    {
+    public SortedSnowflakeCacheView<VoiceChannel> getVoiceChannelCache() {
         return voiceChannelCache;
     }
 
     @Nonnull
     @Override
-    public SortedSnowflakeCacheView<Role> getRoleCache()
-    {
+    public SortedSnowflakeCacheView<Role> getRoleCache() {
         return roleCache;
     }
 
     @Nonnull
     @Override
-    public SnowflakeCacheView<Emote> getEmoteCache()
-    {
+    public SnowflakeCacheView<Emote> getEmoteCache() {
         return emoteCache;
     }
 
     @Nonnull
     @Override
-    public List<GuildChannel> getChannels(boolean includeHidden)
-    {
+    public List<GuildChannel> getChannels(boolean includeHidden) {
         Member self = getSelfMember();
         Predicate<GuildChannel> filterHidden = it -> self.hasPermission(it, Permission.VIEW_CHANNEL);
 
@@ -316,16 +281,12 @@ public class GuildImpl implements Guild
         try (UnlockHook categoryHook = categoryView.readLock();
              UnlockHook voiceHook = voiceView.readLock();
              UnlockHook textHook = textView.readLock();
-             UnlockHook storeHook = storeView.readLock())
-        {
-            if (includeHidden)
-            {
+             UnlockHook storeHook = storeView.readLock()) {
+            if (includeHidden) {
                 storeChannels = storeView.asList();
                 textChannels = textView.asList();
                 voiceChannels = voiceView.asList();
-            }
-            else
-            {
+            } else {
                 storeChannels = storeView.stream().filter(filterHidden).collect(Collectors.toList());
                 textChannels = textView.stream().filter(filterHidden).collect(Collectors.toList());
                 voiceChannels = voiceView.stream().filter(filterHidden).collect(Collectors.toList());
@@ -339,15 +300,11 @@ public class GuildImpl implements Guild
         Collections.sort(channels);
         voiceChannels.stream().filter(it -> it.getParent() == null).forEach(channels::add);
 
-        for (Category category : categories)
-        {
+        for (Category category : categories) {
             List<GuildChannel> children;
-            if (includeHidden)
-            {
+            if (includeHidden) {
                 children = category.getChannels();
-            }
-            else
-            {
+            } else {
                 children = category.getChannels().stream().filter(filterHidden).collect(Collectors.toList());
                 if (children.isEmpty())
                     continue;
@@ -362,59 +319,51 @@ public class GuildImpl implements Guild
 
     @Nonnull
     @Override
-    public Role getPublicRole()
-    {
+    public Role getPublicRole() {
         return publicRole;
     }
 
     @Nonnull
     @Override
-    public JDAImpl getJDA()
-    {
+    public JDAImpl getJDA() {
         return api;
     }
 
     @Nonnull
     @Override
-    public VerificationLevel getVerificationLevel()
-    {
+    public VerificationLevel getVerificationLevel() {
         return verificationLevel;
     }
 
     @Nonnull
     @Override
-    public NotificationLevel getDefaultNotificationLevel()
-    {
+    public NotificationLevel getDefaultNotificationLevel() {
         return defaultNotificationLevel;
     }
 
     @Nonnull
     @Override
-    public MFALevel getRequiredMFALevel()
-    {
+    public MFALevel getRequiredMFALevel() {
         return mfaLevel;
     }
 
     @Nonnull
     @Override
-    public ExplicitContentLevel getExplicitContentLevel()
-    {
+    public ExplicitContentLevel getExplicitContentLevel() {
         return explicitContentLevel;
     }
 
     @Override
-    public boolean checkVerification()
-    {
+    public boolean checkVerification() {
         if (getJDA().getAccountType() == AccountType.BOT)
             return true;
-        if(canSendVerification)
+        if (canSendVerification)
             return true;
 
         if (getJDA().getSelfUser().getPhoneNumber() != null)
             return canSendVerification = true;
 
-        switch (verificationLevel)
-        {
+        switch (verificationLevel) {
             case VERY_HIGH:
                 break; // we already checked for a verified phone number
             case HIGH:
@@ -437,226 +386,189 @@ public class GuildImpl implements Guild
 
     @Override
     @Deprecated
-    public boolean isAvailable()
-    {
+    public boolean isAvailable() {
         return available;
     }
 
     @Override
-    public long getIdLong()
-    {
+    public long getIdLong() {
         return id;
     }
 
     @Nonnull
     @Override
-    public RoleAction createRole()
-    {
+    public RoleAction createRole() {
         checkPermission();
         return new RoleActionImpl(this);
     }
 
-    protected void checkPermission()
-    {
+    protected void checkPermission() {
         if (!getSelfMember().hasPermission(Permission.MANAGE_ROLES))
             throw new InsufficientPermissionException(this, Permission.MANAGE_ROLES);
     }
 
     // ---- Setters -----
 
-    public GuildImpl setAvailable(boolean available)
-    {
+    public GuildImpl setAvailable(boolean available) {
         this.available = available;
         return this;
     }
 
-    public GuildImpl setOwner(Member owner)
-    {
+    public GuildImpl setOwner(Member owner) {
         // Only cache owner if user cache is enabled
         if (getJDA().isGuildSubscriptions())
             this.owner = owner;
         return this;
     }
 
-    public GuildImpl setName(String name)
-    {
+    public GuildImpl setName(String name) {
         this.name = name;
         return this;
     }
 
-    public GuildImpl setIconId(String iconId)
-    {
+    public GuildImpl setIconId(String iconId) {
         this.iconId = iconId;
         return this;
     }
 
-    public GuildImpl setFeatures(Set<String> features)
-    {
+    public GuildImpl setFeatures(Set<String> features) {
         this.features = Collections.unmodifiableSet(features);
         return this;
     }
 
-    public GuildImpl setSplashId(String splashId)
-    {
+    public GuildImpl setSplashId(String splashId) {
         this.splashId = splashId;
         return this;
     }
 
-    public GuildImpl setRegion(String region)
-    {
+    public GuildImpl setRegion(String region) {
         this.region = region;
         return this;
     }
 
-    public GuildImpl setVanityCode(String code)
-    {
+    public GuildImpl setVanityCode(String code) {
         this.vanityCode = code;
         return this;
     }
 
-    public GuildImpl setDescription(String description)
-    {
+    public GuildImpl setDescription(String description) {
         this.description = description;
         return this;
     }
 
-    public GuildImpl setBannerId(String bannerId)
-    {
+    public GuildImpl setBannerId(String bannerId) {
         this.banner = bannerId;
         return this;
     }
 
-    public GuildImpl setMaxPresences(int maxPresences)
-    {
+    public GuildImpl setMaxPresences(int maxPresences) {
         this.maxPresences = maxPresences;
         return this;
     }
 
-    public GuildImpl setMaxMembers(int maxMembers)
-    {
+    public GuildImpl setMaxMembers(int maxMembers) {
         this.maxMembers = maxMembers;
         return this;
     }
 
-    public GuildImpl setAfkChannel(VoiceChannel afkChannel)
-    {
+    public GuildImpl setAfkChannel(VoiceChannel afkChannel) {
         this.afkChannel = afkChannel;
         return this;
     }
 
-    public GuildImpl setSystemChannel(TextChannel systemChannel)
-    {
+    public GuildImpl setSystemChannel(TextChannel systemChannel) {
         this.systemChannel = systemChannel;
         return this;
     }
 
-    public GuildImpl setPublicRole(Role publicRole)
-    {
+    public GuildImpl setPublicRole(Role publicRole) {
         this.publicRole = publicRole;
         return this;
     }
 
-    public GuildImpl setVerificationLevel(VerificationLevel level)
-    {
+    public GuildImpl setVerificationLevel(VerificationLevel level) {
         this.verificationLevel = level;
         this.canSendVerification = false;   //recalc on next send
         return this;
     }
 
-    public GuildImpl setDefaultNotificationLevel(NotificationLevel level)
-    {
+    public GuildImpl setDefaultNotificationLevel(NotificationLevel level) {
         this.defaultNotificationLevel = level;
         return this;
     }
 
-    public GuildImpl setRequiredMFALevel(MFALevel level)
-    {
+    public GuildImpl setRequiredMFALevel(MFALevel level) {
         this.mfaLevel = level;
         return this;
     }
 
-    public GuildImpl setExplicitContentLevel(ExplicitContentLevel level)
-    {
+    public GuildImpl setExplicitContentLevel(ExplicitContentLevel level) {
         this.explicitContentLevel = level;
         return this;
     }
 
-    public GuildImpl setAfkTimeout(Timeout afkTimeout)
-    {
+    public GuildImpl setAfkTimeout(Timeout afkTimeout) {
         this.afkTimeout = afkTimeout;
         return this;
     }
 
-    public GuildImpl setBoostTier(int tier)
-    {
+    public GuildImpl setBoostTier(int tier) {
         this.boostTier = BoostTier.fromKey(tier);
         return this;
     }
 
-    public GuildImpl setBoostCount(int count)
-    {
+    public GuildImpl setBoostCount(int count) {
         this.boostCount = count;
         return this;
     }
 
-    public GuildImpl setOwnerId(long ownerId)
-    {
+    public GuildImpl setOwnerId(long ownerId) {
         this.ownerId = ownerId;
         return this;
     }
 
-    public GuildImpl setMemberCount(int count)
-    {
+    public GuildImpl setMemberCount(int count) {
         this.memberCount = count;
         return this;
     }
 
     // -- Map getters --
 
-    public SortedSnowflakeCacheViewImpl<Category> getCategoriesView()
-    {
+    public SortedSnowflakeCacheViewImpl<Category> getCategoriesView() {
         return categoryCache;
     }
 
-    public SortedSnowflakeCacheViewImpl<StoreChannel> getStoreChannelView()
-    {
+    public SortedSnowflakeCacheViewImpl<StoreChannel> getStoreChannelView() {
         return storeChannelCache;
     }
 
-    public SortedSnowflakeCacheViewImpl<TextChannel> getTextChannelsView()
-    {
+    public SortedSnowflakeCacheViewImpl<TextChannel> getTextChannelsView() {
         return textChannelCache;
     }
 
-    public SortedSnowflakeCacheViewImpl<VoiceChannel> getVoiceChannelsView()
-    {
+    public SortedSnowflakeCacheViewImpl<VoiceChannel> getVoiceChannelsView() {
         return voiceChannelCache;
     }
 
-    public SortedSnowflakeCacheViewImpl<Role> getRolesView()
-    {
+    public SortedSnowflakeCacheViewImpl<Role> getRolesView() {
         return roleCache;
     }
 
-    public SnowflakeCacheViewImpl<Emote> getEmotesView()
-    {
+    public SnowflakeCacheViewImpl<Emote> getEmotesView() {
         return emoteCache;
     }
 
-    public MemberCacheViewImpl getMembersView()
-    {
+    public MemberCacheViewImpl getMembersView() {
         return memberCache;
     }
 
     // -- Member Tracking --
 
-    public TLongObjectMap<DataObject> removeOverrideMap(long userId)
-    {
+    public TLongObjectMap<DataObject> removeOverrideMap(long userId) {
         return overrideMap.remove(userId);
     }
 
-    public void pruneChannelOverrides(long channelId)
-    {
+    public void pruneChannelOverrides(long channelId) {
         WebSocketClient.LOG.debug("Pruning cached overrides for channel with id {}", channelId);
         overrideMap.retainEntries((key, value) -> {
             DataObject removed = value.remove(channelId);
@@ -664,8 +576,7 @@ public class GuildImpl implements Guild
         });
     }
 
-    public void cacheOverride(long userId, long channelId, DataObject obj)
-    {
+    public void cacheOverride(long userId, long channelId, DataObject obj) {
         if (!getJDA().isGuildSubscriptions())
             return;
         EntityBuilder.LOG.debug("Caching permission override of unloaded member {}", obj);
@@ -675,15 +586,13 @@ public class GuildImpl implements Guild
         channelMap.put(channelId, obj);
     }
 
-    public void updateCachedOverrides(AbstractChannelImpl<?, ?> channel, DataArray newOverrides)
-    {
+    public void updateCachedOverrides(AbstractChannelImpl<?, ?> channel, DataArray newOverrides) {
         if (!getJDA().isGuildSubscriptions())
             return;
         long channelId = channel.getIdLong();
         // extract user ids
         TLongSet users = new TLongHashSet();
-        for (int i = 0; i < newOverrides.length(); i++)
-        {
+        for (int i = 0; i < newOverrides.length(); i++) {
             DataObject obj = newOverrides.getObject(i);
             if (!obj.getString("type", "").equals("member"))
                 continue;
@@ -709,21 +618,17 @@ public class GuildImpl implements Guild
         overrideMap.keySet().removeAll(toRemove);
     }
 
-    public void onMemberAdd()
-    {
+    public void onMemberAdd() {
         memberCount++;
     }
 
-    public void onMemberRemove()
-    {
+    public void onMemberRemove() {
         memberCount--;
         acknowledgeMembers();
     }
 
-    public void acknowledgeMembers()
-    {
-        if (memberCache.size() == memberCount && !chunkingCallback.isDone())
-        {
+    public void acknowledgeMembers() {
+        if (memberCache.size() == memberCount && !chunkingCallback.isDone()) {
             JDALogger.getLog(Guild.class).debug("Chunking completed for guild {}", this);
             chunkingCallback.complete(null);
         }
@@ -732,8 +637,7 @@ public class GuildImpl implements Guild
     // -- Object overrides --
 
     @Override
-    public boolean equals(Object o)
-    {
+    public boolean equals(Object o) {
         if (o == this)
             return true;
         if (!(o instanceof GuildImpl))
@@ -743,14 +647,12 @@ public class GuildImpl implements Guild
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return Long.hashCode(id);
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "G:" + getName() + '(' + id + ')';
     }
 }

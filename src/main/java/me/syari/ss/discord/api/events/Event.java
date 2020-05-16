@@ -1,4 +1,3 @@
-
 package me.syari.ss.discord.api.events;
 
 import me.syari.ss.discord.api.JDA;
@@ -6,34 +5,29 @@ import me.syari.ss.discord.api.JDA;
 import javax.annotation.Nonnull;
 
 
-public abstract class Event implements GenericEvent
-{
+public abstract class Event implements GenericEvent {
     protected final JDA api;
     protected final long responseNumber;
 
-    
-    public Event(@Nonnull JDA api, long responseNumber)
-    {
+
+    public Event(@Nonnull JDA api, long responseNumber) {
         this.api = api;
         this.responseNumber = responseNumber;
     }
 
-    
-    public Event(@Nonnull JDA api)
-    {
+
+    public Event(@Nonnull JDA api) {
         this(api, api.getResponseTotal());
     }
 
     @Nonnull
     @Override
-    public JDA getJDA()
-    {
+    public JDA getJDA() {
         return api;
     }
 
     @Override
-    public long getResponseNumber()
-    {
+    public long getResponseNumber() {
         return responseNumber;
     }
 }

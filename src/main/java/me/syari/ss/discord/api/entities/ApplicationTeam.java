@@ -1,5 +1,3 @@
-
-
 package me.syari.ss.discord.api.entities;
 
 import me.syari.ss.discord.api.utils.MiscUtil;
@@ -10,8 +8,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 
-public interface ApplicationTeam extends ISnowflake
-{
+public interface ApplicationTeam extends ISnowflake {
 
 
     @Nonnull
@@ -19,25 +16,21 @@ public interface ApplicationTeam extends ISnowflake
 
 
     @Nullable
-    default TeamMember getMember(@Nonnull User user)
-    {
+    default TeamMember getMember(@Nonnull User user) {
         Checks.notNull(user, "User");
         return getMemberById(user.getIdLong());
     }
 
 
     @Nullable
-    default TeamMember getMemberById(@Nonnull String userId)
-    {
+    default TeamMember getMemberById(@Nonnull String userId) {
         return getMemberById(MiscUtil.parseSnowflake(userId));
     }
 
 
     @Nullable
-    default TeamMember getMemberById(long userId)
-    {
-        for (TeamMember member : getMembers())
-        {
+    default TeamMember getMemberById(long userId) {
+        for (TeamMember member : getMembers()) {
             if (member.getUser().getIdLong() == userId)
                 return member;
         }

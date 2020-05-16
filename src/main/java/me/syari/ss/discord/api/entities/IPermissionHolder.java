@@ -1,5 +1,3 @@
-
-
 package me.syari.ss.discord.api.entities;
 
 import me.syari.ss.discord.api.Permission;
@@ -9,8 +7,7 @@ import java.util.Collection;
 import java.util.EnumSet;
 
 
-public interface IPermissionHolder extends ISnowflake
-{
+public interface IPermissionHolder extends ISnowflake {
 
     @Nonnull
     Guild getGuild();

@@ -1,21 +1,16 @@
-
-
 package me.syari.ss.discord.internal.utils;
 
 import java.util.concurrent.locks.Lock;
 
-public class UnlockHook implements AutoCloseable
-{
+public class UnlockHook implements AutoCloseable {
     private final Lock lock;
 
-    public UnlockHook(Lock lock)
-    {
+    public UnlockHook(Lock lock) {
         this.lock = lock;
     }
 
     @Override
-    public void close()
-    {
+    public void close() {
         lock.unlock();
     }
 }

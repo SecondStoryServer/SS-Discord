@@ -1,5 +1,3 @@
-
-
 package me.syari.ss.discord.api.events.user;
 
 import me.syari.ss.discord.api.JDA;
@@ -11,33 +9,28 @@ import me.syari.ss.discord.api.events.user.update.GenericUserPresenceEvent;
 import javax.annotation.Nonnull;
 
 
-public class UserActivityStartEvent extends GenericUserEvent implements GenericUserPresenceEvent
-{
+public class UserActivityStartEvent extends GenericUserEvent implements GenericUserPresenceEvent {
     private final Activity newActivity;
     private final Member member;
 
-    public UserActivityStartEvent(@Nonnull JDA api, long responseNumber, @Nonnull Member member, @Nonnull Activity newActivity)
-    {
+    public UserActivityStartEvent(@Nonnull JDA api, long responseNumber, @Nonnull Member member, @Nonnull Activity newActivity) {
         super(api, responseNumber, member.getUser());
         this.newActivity = newActivity;
         this.member = member;
     }
 
 
-    public Activity getNewActivity()
-    {
+    public Activity getNewActivity() {
         return newActivity;
     }
 
     @Override
-    public Guild getGuild()
-    {
+    public Guild getGuild() {
         return member.getGuild();
     }
 
     @Override
-    public Member getMember()
-    {
+    public Member getMember() {
         return member;
     }
 }

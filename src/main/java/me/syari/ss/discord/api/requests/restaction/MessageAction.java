@@ -1,5 +1,3 @@
-
-
 package me.syari.ss.discord.api.requests.restaction;
 
 import me.syari.ss.discord.api.entities.Message;
@@ -20,8 +18,7 @@ import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
 
-public interface MessageAction extends RestAction<Message>, Appendable
-{
+public interface MessageAction extends RestAction<Message>, Appendable {
     @Nonnull
     @Override
     MessageAction setCheck(@Nullable BooleanSupplier checks);
@@ -70,8 +67,7 @@ public interface MessageAction extends RestAction<Message>, Appendable
     @Nonnull
     @Override
     @CheckReturnValue
-    default MessageAction append(@Nonnull final CharSequence csq)
-    {
+    default MessageAction append(@Nonnull final CharSequence csq) {
         return append(csq, 0, csq.length());
     }
 
@@ -90,8 +86,7 @@ public interface MessageAction extends RestAction<Message>, Appendable
 
     @Nonnull
     @CheckReturnValue
-    default MessageAction appendFormat(@Nonnull final String format, final Object... args)
-    {
+    default MessageAction appendFormat(@Nonnull final String format, final Object... args) {
         return append(String.format(format, args));
     }
 
@@ -103,8 +98,7 @@ public interface MessageAction extends RestAction<Message>, Appendable
 
     @Nonnull
     @CheckReturnValue
-    default MessageAction addFile(@Nonnull final byte[] data, @Nonnull final String name, @Nonnull AttachmentOption... options)
-    {
+    default MessageAction addFile(@Nonnull final byte[] data, @Nonnull final String name, @Nonnull AttachmentOption... options) {
         Checks.notNull(data, "Data");
         final long maxSize = getJDA().getSelfUser().getAllowedFileSize();
         Checks.check(data.length <= maxSize, "File may not exceed the maximum file length of %d bytes!", maxSize);
@@ -114,8 +108,7 @@ public interface MessageAction extends RestAction<Message>, Appendable
 
     @Nonnull
     @CheckReturnValue
-    default MessageAction addFile(@Nonnull final File file, @Nonnull AttachmentOption... options)
-    {
+    default MessageAction addFile(@Nonnull final File file, @Nonnull AttachmentOption... options) {
         Checks.notNull(file, "File");
         return addFile(file, file.getName(), options);
     }

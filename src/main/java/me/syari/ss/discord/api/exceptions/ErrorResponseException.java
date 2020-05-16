@@ -1,5 +1,3 @@
-
-
 package me.syari.ss.discord.api.exceptions;
 
 import me.syari.ss.discord.api.requests.ErrorResponse;
@@ -9,14 +7,12 @@ import me.syari.ss.discord.api.utils.data.DataObject;
 import java.util.Optional;
 
 
-public class ErrorResponseException extends RuntimeException
-{
+public class ErrorResponseException extends RuntimeException {
     private final ErrorResponse errorResponse;
     private final Response response;
 
 
-    private ErrorResponseException(ErrorResponse errorResponse, Response response, int code, String meaning)
-    {
+    private ErrorResponseException(ErrorResponse errorResponse, Response response, int code, String meaning) {
         super(code + ": " + meaning);
 
         this.response = response;
@@ -26,50 +22,39 @@ public class ErrorResponseException extends RuntimeException
     }
 
 
-    public ErrorResponse getErrorResponse()
-    {
+    public ErrorResponse getErrorResponse() {
         return errorResponse;
     }
 
 
-    public Response getResponse()
-    {
+    public Response getResponse() {
         return response;
     }
 
-    public static ErrorResponseException create(ErrorResponse errorResponse, Response response)
-    {
+    public static ErrorResponseException create(ErrorResponse errorResponse, Response response) {
         Optional<DataObject> optObj = response.optObject();
         String meaning = errorResponse.getMeaning();
         int code = errorResponse.getCode();
-        if (response.isError() && response.getException() != null)
-        {
+        if (response.isError() && response.getException() != null) {
             // this generally means that an exception occurred trying to
             //make an http request. e.g.:
             //SocketTimeoutException/ UnknownHostException
             code = response.code;
             meaning = response.getException().getClass().getName();
-        }
-        else if (optObj.isPresent())
-        {
+        } else if (optObj.isPresent()) {
             DataObject obj = optObj.get();
-            if (!obj.isNull("code") || !obj.isNull("message"))
-            {
+            if (!obj.isNull("code") || !obj.isNull("message")) {
                 if (!obj.isNull("code"))
                     code = obj.getInt("code");
                 if (!obj.isNull("message"))
                     meaning = obj.getString("message");
-            }
-            else
-            {
+            } else {
                 // This means that neither code or message is provided
                 //In that case we simply put the raw response in place!
                 code = response.code;
                 meaning = obj.toString();
             }
-        }
-        else
-        {
+        } else {
             // error response body is not JSON
             code = response.code;
             meaning = response.getString();

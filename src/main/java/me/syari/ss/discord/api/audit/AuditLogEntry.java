@@ -1,5 +1,3 @@
-
-
 package me.syari.ss.discord.api.audit;
 
 import me.syari.ss.discord.api.JDA;
@@ -17,8 +15,7 @@ import java.util.Collections;
 import java.util.Map;
 
 
-public class AuditLogEntry implements ISnowflake
-{
+public class AuditLogEntry implements ISnowflake {
     protected final long id;
     protected final long targetId;
     protected final GuildImpl guild;
@@ -32,8 +29,7 @@ public class AuditLogEntry implements ISnowflake
     protected final int rawType;
 
     public AuditLogEntry(ActionType type, int rawType, long id, long targetId, GuildImpl guild, UserImpl user, WebhookImpl webhook,
-                         String reason, Map<String, AuditLogChange> changes, Map<String, Object> options)
-    {
+                         String reason, Map<String, AuditLogChange> changes, Map<String, Object> options) {
         this.rawType = rawType;
         this.type = type;
         this.id = id;
@@ -51,63 +47,54 @@ public class AuditLogEntry implements ISnowflake
     }
 
     @Override
-    public long getIdLong()
-    {
+    public long getIdLong() {
         return id;
     }
 
 
     @Nullable
-    public Webhook getWebhook()
-    {
+    public Webhook getWebhook() {
         return webhook;
     }
 
 
     @Nonnull
-    public Guild getGuild()
-    {
+    public Guild getGuild() {
         return guild;
     }
 
 
     @Nullable
-    public User getUser()
-    {
+    public User getUser() {
         return user;
     }
 
 
     @Nullable
-    public String getReason()
-    {
+    public String getReason() {
         return reason;
     }
 
 
     @Nonnull
-    public JDA getJDA()
-    {
+    public JDA getJDA() {
         return guild.getJDA();
     }
 
 
     @Nonnull
-    public ActionType getType()
-    {
+    public ActionType getType() {
         return type;
     }
 
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return Long.hashCode(id);
     }
 
     @Override
-    public boolean equals(Object obj)
-    {
+    public boolean equals(Object obj) {
         if (!(obj instanceof AuditLogEntry))
             return false;
         AuditLogEntry other = (AuditLogEntry) obj;
@@ -115,8 +102,7 @@ public class AuditLogEntry implements ISnowflake
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "ALE:" + type + "(ID:" + id + " / TID:" + targetId + " / " + guild + ')';
     }
 

@@ -1,12 +1,10 @@
-
 package me.syari.ss.discord.api;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 
-public enum Region
-{
+public enum Region {
     AMSTERDAM("amsterdam", "Amsterdam", false),
     BRAZIL("brazil", "Brazil", false),
     EUROPE("europe", "Europe", false),
@@ -47,8 +45,7 @@ public enum Region
     private final String name;
     private final boolean vip;
 
-    Region(String key, String name, boolean vip)
-    {
+    Region(String key, String name, boolean vip) {
         this.key = key;
         this.name = name;
         this.vip = vip;
@@ -56,32 +53,26 @@ public enum Region
 
 
     @Nonnull
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
 
     @Nonnull
-    public String getKey()
-    {
+    public String getKey() {
         return key;
     }
 
 
-    public boolean isVip()
-    {
+    public boolean isVip() {
         return vip;
     }
 
 
     @Nonnull
-    public static Region fromKey(@Nullable String key)
-    {
-        for (Region region : values())
-        {
-            if (region.getKey().equals(key))
-            {
+    public static Region fromKey(@Nullable String key) {
+        for (Region region : values()) {
+            if (region.getKey().equals(key)) {
                 return region;
             }
         }
@@ -89,8 +80,7 @@ public enum Region
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return getName();
     }
 }

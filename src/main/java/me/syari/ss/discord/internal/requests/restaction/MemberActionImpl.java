@@ -1,5 +1,3 @@
-
-
 package me.syari.ss.discord.internal.requests.restaction;
 
 import me.syari.ss.discord.api.JDA;
@@ -23,8 +21,7 @@ import java.util.Set;
 import java.util.function.BooleanSupplier;
 import java.util.stream.Collectors;
 
-public class MemberActionImpl extends RestActionImpl<Void> implements MemberAction
-{
+public class MemberActionImpl extends RestActionImpl<Void> implements MemberAction {
     private final String accessToken;
     private final String userId;
     private final Guild guild;
@@ -34,8 +31,7 @@ public class MemberActionImpl extends RestActionImpl<Void> implements MemberActi
     private boolean mute;
     private boolean deaf;
 
-    public MemberActionImpl(JDA api, Guild guild, String userId, String accessToken)
-    {
+    public MemberActionImpl(JDA api, Guild guild, String userId, String accessToken) {
         super(api, Route.Guilds.ADD_MEMBER.compile(guild.getId(), userId));
         this.accessToken = accessToken;
         this.userId = userId;
@@ -44,48 +40,40 @@ public class MemberActionImpl extends RestActionImpl<Void> implements MemberActi
 
     @Nonnull
     @Override
-    public MemberAction setCheck(BooleanSupplier checks)
-    {
+    public MemberAction setCheck(BooleanSupplier checks) {
         return (MemberAction) super.setCheck(checks);
     }
 
     @Nonnull
     @Override
-    public String getAccessToken()
-    {
+    public String getAccessToken() {
         return accessToken;
     }
 
     @Nonnull
     @Override
-    public String getUserId()
-    {
+    public String getUserId() {
         return userId;
     }
 
     @Nullable
     @Override
-    public User getUser()
-    {
+    public User getUser() {
         return getJDA().getUserById(userId);
     }
 
     @Nonnull
     @Override
-    public Guild getGuild()
-    {
+    public Guild getGuild() {
         return guild;
     }
 
     @Nonnull
     @Override
     @CheckReturnValue
-    public MemberActionImpl setNickname(String nick)
-    {
-        if (nick != null)
-        {
-            if (Helpers.isBlank(nick))
-            {
+    public MemberActionImpl setNickname(String nick) {
+        if (nick != null) {
+            if (Helpers.isBlank(nick)) {
                 this.nick = null;
                 return this;
             }
@@ -98,10 +86,8 @@ public class MemberActionImpl extends RestActionImpl<Void> implements MemberActi
     @Nonnull
     @Override
     @CheckReturnValue
-    public MemberActionImpl setRoles(Collection<Role> roles)
-    {
-        if (roles == null)
-        {
+    public MemberActionImpl setRoles(Collection<Role> roles) {
+        if (roles == null) {
             this.roles = null;
             return this;
         }
@@ -115,10 +101,8 @@ public class MemberActionImpl extends RestActionImpl<Void> implements MemberActi
     @Nonnull
     @Override
     @CheckReturnValue
-    public MemberActionImpl setRoles(Role... roles)
-    {
-        if (roles == null)
-        {
+    public MemberActionImpl setRoles(Role... roles) {
+        if (roles == null) {
             this.roles = null;
             return this;
         }
@@ -132,8 +116,7 @@ public class MemberActionImpl extends RestActionImpl<Void> implements MemberActi
     @Nonnull
     @Override
     @CheckReturnValue
-    public MemberActionImpl setMute(boolean mute)
-    {
+    public MemberActionImpl setMute(boolean mute) {
         this.mute = mute;
         return this;
     }
@@ -141,15 +124,13 @@ public class MemberActionImpl extends RestActionImpl<Void> implements MemberActi
     @Nonnull
     @Override
     @CheckReturnValue
-    public MemberActionImpl setDeafen(boolean deaf)
-    {
+    public MemberActionImpl setDeafen(boolean deaf) {
         this.deaf = deaf;
         return this;
     }
 
     @Override
-    protected RequestBody finalizeData()
-    {
+    protected RequestBody finalizeData() {
         DataObject obj = DataObject.empty();
         obj.put("access_token", accessToken);
         if (nick != null)
@@ -161,8 +142,7 @@ public class MemberActionImpl extends RestActionImpl<Void> implements MemberActi
         return getRequestBody(obj);
     }
 
-    private void checkAndAdd(Set<Role> newRoles, Role role)
-    {
+    private void checkAndAdd(Set<Role> newRoles, Role role) {
         Checks.notNull(role, "Role");
         Checks.check(role.getGuild().equals(getGuild()), "Roles must all be from the same guild");
         newRoles.add(role);

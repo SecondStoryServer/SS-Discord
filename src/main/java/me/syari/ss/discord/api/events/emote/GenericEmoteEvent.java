@@ -1,5 +1,3 @@
-
-
 package me.syari.ss.discord.api.events.emote;
 
 import me.syari.ss.discord.api.JDA;
@@ -10,33 +8,28 @@ import me.syari.ss.discord.api.events.Event;
 import javax.annotation.Nonnull;
 
 
-public abstract class GenericEmoteEvent extends Event
-{
+public abstract class GenericEmoteEvent extends Event {
     protected final Emote emote;
 
-    public GenericEmoteEvent(@Nonnull JDA api, long responseNumber, @Nonnull Emote emote)
-    {
+    public GenericEmoteEvent(@Nonnull JDA api, long responseNumber, @Nonnull Emote emote) {
         super(api, responseNumber);
         this.emote = emote;
     }
 
 
     @Nonnull
-    public Guild getGuild()
-    {
+    public Guild getGuild() {
         return emote.getGuild();
     }
 
 
     @Nonnull
-    public Emote getEmote()
-    {
+    public Emote getEmote() {
         return emote;
     }
 
 
-    public boolean isManaged()
-    {
+    public boolean isManaged() {
         return emote.isManaged();
     }
 }

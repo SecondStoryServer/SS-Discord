@@ -1,5 +1,3 @@
-
-
 package me.syari.ss.discord.internal.handle;
 
 import gnu.trove.map.TLongObjectMap;
@@ -11,25 +9,21 @@ import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.entities.EntityBuilder;
 import me.syari.ss.discord.internal.requests.WebSocketClient;
 
-public class ReadyHandler extends SocketHandler
-{
+public class ReadyHandler extends SocketHandler {
 
-    public ReadyHandler(JDAImpl api)
-    {
+    public ReadyHandler(JDAImpl api) {
         super(api);
     }
 
     @Override
-    protected Long handleInternally(DataObject content)
-    {
+    protected Long handleInternally(DataObject content) {
         System.out.println(">> ReadyHandler");
         EntityBuilder builder = getJDA().getEntityBuilder();
 
         DataArray guilds = content.getArray("guilds");
         //Make sure we don't have any duplicates here!
         TLongObjectMap<DataObject> distinctGuilds = new TLongObjectHashMap<>();
-        for (int i = 0; i < guilds.length(); i++)
-        {
+        for (int i = 0; i < guilds.length(); i++) {
             DataObject guild = guilds.getObject(i);
             long id = guild.getUnsignedLong("id");
             DataObject previous = distinctGuilds.put(id, guild);
@@ -40,8 +34,7 @@ public class ReadyHandler extends SocketHandler
         DataObject selfJson = content.getObject("user");
 
         builder.createSelfUser(selfJson);
-        if (getJDA().getGuildSetupController().setIncompleteCount(distinctGuilds.size()))
-        {
+        if (getJDA().getGuildSetupController().setIncompleteCount(distinctGuilds.size())) {
             distinctGuilds.forEachEntry((id, guild) ->
             {
                 getJDA().getGuildSetupController().onReady(id, guild);
@@ -53,19 +46,16 @@ public class ReadyHandler extends SocketHandler
         return null;
     }
 
-    public void handleReady(DataObject content)
-    {
+    public void handleReady(DataObject content) {
         EntityBuilder builder = getJDA().getEntityBuilder();
         DataArray privateChannels = content.getArray("private_channels");
 
-        for (int i = 0; i < privateChannels.length(); i++)
-        {
+        for (int i = 0; i < privateChannels.length(); i++) {
             DataObject chan = privateChannels.getObject(i);
             ChannelType type = ChannelType.fromId(chan.getInt("type"));
 
             //noinspection SwitchStatementWithTooFewBranches
-            switch (type)
-            {
+            switch (type) {
                 case PRIVATE:
                     builder.createPrivateChannel(chan);
                     break;

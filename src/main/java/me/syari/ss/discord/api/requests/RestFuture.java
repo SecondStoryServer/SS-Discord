@@ -1,5 +1,3 @@
-
-
 package me.syari.ss.discord.api.requests;
 
 import me.syari.ss.discord.internal.JDAImpl;
@@ -11,22 +9,19 @@ import org.apache.commons.collections4.map.CaseInsensitiveMap;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BooleanSupplier;
 
-public class RestFuture<T> extends CompletableFuture<T>
-{
+public class RestFuture<T> extends CompletableFuture<T> {
     final Request<T> request;
 
     public RestFuture(final RestActionImpl<T> restAction, final boolean shouldQueue,
                       final BooleanSupplier checks, final RequestBody data, final Object rawData,
-                      final Route.CompiledRoute route, final CaseInsensitiveMap<String, String> headers)
-    {
+                      final Route.CompiledRoute route, final CaseInsensitiveMap<String, String> headers) {
         this.request = new Request<>(restAction, this::complete, this::completeExceptionally,
-                                     checks, shouldQueue, data, rawData, route, headers);
+                checks, shouldQueue, data, rawData, route, headers);
         ((JDAImpl) restAction.getJDA()).getRequester().request(this.request);
     }
 
     @Override
-    public boolean cancel(final boolean mayInterrupt)
-    {
+    public boolean cancel(final boolean mayInterrupt) {
         if (this.request != null)
             this.request.cancel();
 

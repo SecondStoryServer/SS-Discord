@@ -1,12 +1,10 @@
-
 package me.syari.ss.discord.api.entities;
 
 import javax.annotation.Nonnull;
 import java.util.EnumSet;
 
 
-public enum ChannelType
-{
+public enum ChannelType {
 
     TEXT(0, 0, true),
 
@@ -26,44 +24,37 @@ public enum ChannelType
     private final int id;
     private final boolean isGuild;
 
-    ChannelType(int id, int sortBucket)
-    {
+    ChannelType(int id, int sortBucket) {
         this(id, sortBucket, false);
     }
 
-    ChannelType(int id, int sortBucket, boolean isGuild)
-    {
+    ChannelType(int id, int sortBucket, boolean isGuild) {
         this.id = id;
         this.sortBucket = sortBucket;
         this.isGuild = isGuild;
     }
 
 
-    public int getSortBucket()
-    {
+    public int getSortBucket() {
         return sortBucket;
     }
 
 
-    public int getId()
-    {
+    public int getId() {
         return id;
     }
 
 
-    public boolean isGuild()
-    {
+    public boolean isGuild() {
         return isGuild;
     }
 
 
     @Nonnull
-    public static ChannelType fromId(int id)
-    {
+    public static ChannelType fromId(int id) {
         if (id == 5) // NEWS = TEXT
             return TEXT;
-        for (ChannelType type : values())
-        {
+        for (ChannelType type : values()) {
             if (type.id == id)
                 return type;
         }
@@ -72,11 +63,9 @@ public enum ChannelType
 
 
     @Nonnull
-    public static EnumSet<ChannelType> fromSortBucket(int bucket)
-    {
+    public static EnumSet<ChannelType> fromSortBucket(int bucket) {
         EnumSet<ChannelType> types = EnumSet.noneOf(ChannelType.class);
-        for (ChannelType type : values())
-        {
+        for (ChannelType type : values()) {
             if (type.getSortBucket() == bucket)
                 types.add(type);
         }

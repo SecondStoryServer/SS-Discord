@@ -1,5 +1,3 @@
-
-
 package me.syari.ss.discord.api.events.guild.update;
 
 import me.syari.ss.discord.api.JDA;
@@ -10,56 +8,48 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 
-public class GuildUpdateOwnerEvent extends GenericGuildUpdateEvent<Member>
-{
+public class GuildUpdateOwnerEvent extends GenericGuildUpdateEvent<Member> {
     public static final String IDENTIFIER = "owner";
     private final long prevId, nextId;
 
     public GuildUpdateOwnerEvent(@Nonnull JDA api, long responseNumber, @Nonnull Guild guild, @Nullable Member oldOwner,
-                                 long prevId, long nextId)
-    {
+                                 long prevId, long nextId) {
         super(api, responseNumber, guild, oldOwner, guild.getOwner(), IDENTIFIER);
         this.prevId = prevId;
         this.nextId = nextId;
     }
 
 
-    public long getNewOwnerIdLong()
-    {
+    public long getNewOwnerIdLong() {
         return nextId;
     }
 
 
     @Nonnull
-    public String getNewOwnerId()
-    {
+    public String getNewOwnerId() {
         return Long.toUnsignedString(nextId);
     }
 
 
-    public long getOldOwnerIdLong()
-    {
+    public long getOldOwnerIdLong() {
         return prevId;
     }
 
 
     @Nonnull
-    public String getOldOwnerId()
-    {
+    public String getOldOwnerId() {
         return Long.toUnsignedString(prevId);
     }
 
 
     @Nullable
-    public Member getOldOwner()
-    {
+    public Member getOldOwner() {
         return getOldValue();
     }
 
 
     @Nullable
-    public Member getNewOwner()
-    {
+    public Member getNewOwner() {
         return getNewValue();
     }
 }

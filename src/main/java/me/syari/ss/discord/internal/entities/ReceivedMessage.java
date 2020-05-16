@@ -1,5 +1,3 @@
-
-
 package me.syari.ss.discord.internal.entities;
 
 import gnu.trove.set.TLongSet;
@@ -16,8 +14,7 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class ReceivedMessage extends AbstractMessage
-{
+public class ReceivedMessage extends AbstractMessage {
     private final Object mutex = new Object();
 
     protected final JDAImpl api;
@@ -44,8 +41,7 @@ public class ReceivedMessage extends AbstractMessage
             long id, MessageChannel channel, MessageType type,
             boolean fromWebhook, boolean mentionsEveryone, TLongSet mentionedUsers, TLongSet mentionedRoles, boolean tts,
             String content, String nonce, User author, Member member,
-            List<MessageEmbed> embeds)
-    {
+            List<MessageEmbed> embeds) {
         super(content, tts);
         this.id = id;
         this.channel = channel;
@@ -62,27 +58,23 @@ public class ReceivedMessage extends AbstractMessage
 
     @Nonnull
     @Override
-    public JDA getJDA()
-    {
+    public JDA getJDA() {
         return api;
     }
 
 
     @Nonnull
     @Override
-    public MessageType getType()
-    {
+    public MessageType getType() {
         return type;
     }
 
     @Override
-    public long getIdLong()
-    {
+    public long getIdLong() {
         return id;
     }
 
-    private User matchUser(Matcher matcher)
-    {
+    private User matchUser(Matcher matcher) {
         long userId = MiscUtil.parseSnowflake(matcher.group(1));
         if (!mentionedUsers.contains(userId))
             return null;
@@ -96,30 +88,26 @@ public class ReceivedMessage extends AbstractMessage
 
     @Nonnull
     @Override
-    public synchronized List<User> getMentionedUsers()
-    {
+    public synchronized List<User> getMentionedUsers() {
         if (userMentions == null)
             userMentions = Collections.unmodifiableList(processMentions(Message.MentionType.USER, new ArrayList<>(), this::matchUser));
         return userMentions;
     }
 
-    private TextChannel matchTextChannel(Matcher matcher)
-    {
+    private TextChannel matchTextChannel(Matcher matcher) {
         long channelId = MiscUtil.parseSnowflake(matcher.group(1));
         return getJDA().getTextChannelById(channelId);
     }
 
     @Nonnull
     @Override
-    public synchronized List<TextChannel> getMentionedChannels()
-    {
+    public synchronized List<TextChannel> getMentionedChannels() {
         if (channelMentions == null)
             channelMentions = Collections.unmodifiableList(processMentions(Message.MentionType.CHANNEL, new ArrayList<>(), this::matchTextChannel));
         return channelMentions;
     }
 
-    private Role matchRole(Matcher matcher)
-    {
+    private Role matchRole(Matcher matcher) {
         long roleId = MiscUtil.parseSnowflake(matcher.group(1));
         if (!mentionedRoles.contains(roleId))
             return null;
@@ -131,8 +119,7 @@ public class ReceivedMessage extends AbstractMessage
 
     @Nonnull
     @Override
-    public synchronized List<Role> getMentionedRoles()
-    {
+    public synchronized List<Role> getMentionedRoles() {
         if (roleMentions == null)
             roleMentions = Collections.unmodifiableList(processMentions(Message.MentionType.ROLE, new ArrayList<>(), this::matchRole));
         return roleMentions;
@@ -140,8 +127,7 @@ public class ReceivedMessage extends AbstractMessage
 
     @Nonnull
     @Override
-    public List<IMentionable> getMentions(@Nonnull Message.MentionType... types)
-    {
+    public List<IMentionable> getMentions(@Nonnull Message.MentionType... types) {
         if (types.length == 0)
             return getMentions(Message.MentionType.values());
         List<IMentionable> mentions = new ArrayList<>();
@@ -151,13 +137,12 @@ public class ReceivedMessage extends AbstractMessage
         boolean role = false;
         boolean user = false;
         boolean emote = false;
-        for (Message.MentionType type : types)
-        {
-            switch (type)
-            {
+        for (Message.MentionType type : types) {
+            switch (type) {
                 case EVERYONE:
                 case HERE:
-                default: continue;
+                default:
+                    continue;
                 case CHANNEL:
                     if (!channel)
                         mentions.addAll(getMentionedChannels());
@@ -183,53 +168,42 @@ public class ReceivedMessage extends AbstractMessage
     }
 
     @Override
-    public boolean isMentioned(@Nonnull IMentionable mentionable, @Nonnull Message.MentionType... types)
-    {
+    public boolean isMentioned(@Nonnull IMentionable mentionable, @Nonnull Message.MentionType... types) {
         Checks.notNull(types, "Mention Types");
         if (types.length == 0)
             return isMentioned(mentionable, Message.MentionType.values());
         final boolean isUserEntity = mentionable instanceof User || mentionable instanceof Member;
-        for (Message.MentionType type : types)
-        {
-            switch (type)
-            {
-                case HERE:
-                {
+        for (Message.MentionType type : types) {
+            switch (type) {
+                case HERE: {
                     if (isMass("@here") && isUserEntity)
                         return true;
                     break;
                 }
-                case EVERYONE:
-                {
+                case EVERYONE: {
                     if (isMass("@everyone") && isUserEntity)
                         return true;
                     break;
                 }
-                case USER:
-                {
+                case USER: {
                     if (isUserMentioned(mentionable))
                         return true;
                     break;
                 }
-                case ROLE:
-                {
+                case ROLE: {
                     if (isRoleMentioned(mentionable))
                         return true;
                     break;
                 }
-                case CHANNEL:
-                {
-                    if (mentionable instanceof TextChannel)
-                    {
+                case CHANNEL: {
+                    if (mentionable instanceof TextChannel) {
                         if (getMentionedChannels().contains(mentionable))
                             return true;
                     }
                     break;
                 }
-                case EMOTE:
-                {
-                    if (mentionable instanceof Emote)
-                    {
+                case EMOTE: {
+                    if (mentionable instanceof Emote) {
                         if (getEmotes().contains(mentionable))
                             return true;
                     }
@@ -241,70 +215,54 @@ public class ReceivedMessage extends AbstractMessage
         return false;
     }
 
-    private boolean isUserMentioned(IMentionable mentionable)
-    {
-        if (mentionable instanceof User)
-        {
+    private boolean isUserMentioned(IMentionable mentionable) {
+        if (mentionable instanceof User) {
             return getMentionedUsers().contains(mentionable);
-        }
-        else if (mentionable instanceof Member)
-        {
+        } else if (mentionable instanceof Member) {
             final Member member = (Member) mentionable;
             return getMentionedUsers().contains(member.getUser());
         }
         return false;
     }
 
-    private boolean isRoleMentioned(IMentionable mentionable)
-    {
-        if (mentionable instanceof Role)
-        {
+    private boolean isRoleMentioned(IMentionable mentionable) {
+        if (mentionable instanceof Role) {
             return getMentionedRoles().contains(mentionable);
-        }
-        else if (mentionable instanceof Member)
-        {
+        } else if (mentionable instanceof Member) {
             final Member member = (Member) mentionable;
             return CollectionUtils.containsAny(getMentionedRoles(), member.getRoles());
-        }
-        else if (isFromType(ChannelType.TEXT) && mentionable instanceof User)
-        {
+        } else if (isFromType(ChannelType.TEXT) && mentionable instanceof User) {
             final Member member = getGuild().getMember((User) mentionable);
             return member != null && CollectionUtils.containsAny(getMentionedRoles(), member.getRoles());
         }
         return false;
     }
 
-    private boolean isMass(String s)
-    {
+    private boolean isMass(String s) {
         return mentionsEveryone && content.contains(s);
     }
 
     @Nonnull
     @Override
-    public User getAuthor()
-    {
+    public User getAuthor() {
         return author;
     }
 
     @Override
-    public Member getMember()
-    {
+    public Member getMember() {
         return member;
     }
 
     @Nonnull
     @Override
-    public String getContentDisplay()
-    {
+    public String getContentDisplay() {
         if (altContent != null)
             return altContent;
-        synchronized (mutex)
-        {
+        synchronized (mutex) {
             if (altContent != null)
                 return altContent;
             String tmp = content;
-            for (User user : getMentionedUsers())
-            {
+            for (User user : getMentionedUsers()) {
                 String name;
                 if (isFromType(ChannelType.TEXT) && getGuild().isMember(user))
                     name = getGuild().getMember(user).getEffectiveName();
@@ -312,16 +270,13 @@ public class ReceivedMessage extends AbstractMessage
                     name = user.getName();
                 tmp = tmp.replaceAll("<@!?" + Pattern.quote(user.getId()) + '>', '@' + Matcher.quoteReplacement(name));
             }
-            for (Emote emote : getEmotes())
-            {
+            for (Emote emote : getEmotes()) {
                 tmp = tmp.replace(emote.getAsMention(), ":" + emote.getName() + ":");
             }
-            for (TextChannel mentionedChannel : getMentionedChannels())
-            {
+            for (TextChannel mentionedChannel : getMentionedChannels()) {
                 tmp = tmp.replace(mentionedChannel.getAsMention(), '#' + mentionedChannel.getName());
             }
-            for (Role mentionedRole : getMentionedRoles())
-            {
+            for (Role mentionedRole : getMentionedRoles()) {
                 tmp = tmp.replace(mentionedRole.getAsMention(), '@' + mentionedRole.getName());
             }
             return altContent = tmp;
@@ -330,35 +285,30 @@ public class ReceivedMessage extends AbstractMessage
 
     @Nonnull
     @Override
-    public String getContentRaw()
-    {
+    public String getContentRaw() {
         return content;
     }
 
     @Override
-    public boolean isFromType(@Nonnull ChannelType type)
-    {
+    public boolean isFromType(@Nonnull ChannelType type) {
         return getChannelType() == type;
     }
 
     @Nonnull
     @Override
-    public ChannelType getChannelType()
-    {
+    public ChannelType getChannelType() {
         return channel.getType();
     }
 
     @Nonnull
     @Override
-    public MessageChannel getChannel()
-    {
+    public MessageChannel getChannel() {
         return channel;
     }
 
     @Nonnull
     @Override
-    public PrivateChannel getPrivateChannel()
-    {
+    public PrivateChannel getPrivateChannel() {
         if (!isFromType(ChannelType.PRIVATE))
             throw new IllegalStateException("This message was not sent in a private channel");
         return (PrivateChannel) channel;
@@ -366,8 +316,7 @@ public class ReceivedMessage extends AbstractMessage
 
     @Nonnull
     @Override
-    public TextChannel getTextChannel()
-    {
+    public TextChannel getTextChannel() {
         if (!isFromType(ChannelType.TEXT))
             throw new IllegalStateException("This message was not sent in a text channel");
         return (TextChannel) channel;
@@ -375,20 +324,17 @@ public class ReceivedMessage extends AbstractMessage
 
     @Nonnull
     @Override
-    public Guild getGuild()
-    {
+    public Guild getGuild() {
         return getTextChannel().getGuild();
     }
 
     @Nonnull
     @Override
-    public List<MessageEmbed> getEmbeds()
-    {
+    public List<MessageEmbed> getEmbeds() {
         return embeds;
     }
 
-    private Emote matchEmote(Matcher m)
-    {
+    private Emote matchEmote(Matcher m) {
         long emoteId = MiscUtil.parseSnowflake(m.group(2));
         String name = m.group(1);
         boolean animated = m.group(0).startsWith("<a:");
@@ -400,28 +346,24 @@ public class ReceivedMessage extends AbstractMessage
 
     @Nonnull
     @Override
-    public synchronized List<Emote> getEmotes()
-    {
+    public synchronized List<Emote> getEmotes() {
         if (this.emoteMentions == null)
             emoteMentions = Collections.unmodifiableList(processMentions(Message.MentionType.EMOTE, new ArrayList<>(), this::matchEmote));
         return emoteMentions;
     }
 
     @Override
-    public boolean isWebhookMessage()
-    {
+    public boolean isWebhookMessage() {
         return fromWebhook;
     }
 
     @Override
-    public boolean isTTS()
-    {
+    public boolean isTTS() {
         return isTTS;
     }
 
     @Override
-    public boolean equals(Object o)
-    {
+    public boolean equals(Object o) {
         if (o == this)
             return true;
         if (!(o instanceof ReceivedMessage))
@@ -431,28 +373,24 @@ public class ReceivedMessage extends AbstractMessage
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return Long.hashCode(id);
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return author != null
-            ? String.format("M:%#s:%.20s(%s)", author, this, getId())
-            : String.format("M:%.20s", this); // this message was made using MessageBuilder
+                ? String.format("M:%#s:%.20s(%s)", author, this, getId())
+                : String.format("M:%.20s", this); // this message was made using MessageBuilder
     }
 
     @Override
-    protected void unsupported()
-    {
+    protected void unsupported() {
         throw new UnsupportedOperationException("This operation is not supported on received messages!");
     }
 
     @Override
-    public void formatTo(Formatter formatter, int flags, int width, int precision)
-    {
+    public void formatTo(Formatter formatter, int flags, int width, int precision) {
         boolean upper = (flags & FormattableFlags.UPPERCASE) == FormattableFlags.UPPERCASE;
         boolean leftJustified = (flags & FormattableFlags.LEFT_JUSTIFY) == FormattableFlags.LEFT_JUSTIFY;
         boolean alt = (flags & FormattableFlags.ALTERNATE) == FormattableFlags.ALTERNATE;
@@ -465,33 +403,29 @@ public class ReceivedMessage extends AbstractMessage
         appendFormat(formatter, width, precision, leftJustified, out);
     }
 
-    public void setMentions(List<User> users, List<Member> members)
-    {
+    public void setMentions(List<User> users, List<Member> members) {
         users.sort(Comparator.comparing((user) ->
                 Math.max(content.indexOf("<@" + user.getId() + ">"),
                         content.indexOf("<@!" + user.getId() + ">")
                 )));
         members.sort(Comparator.comparing((user) ->
                 Math.max(content.indexOf("<@" + user.getId() + ">"),
-                         content.indexOf("<@!" + user.getId() + ">")
+                        content.indexOf("<@!" + user.getId() + ">")
                 )));
 
         this.userMentions = Collections.unmodifiableList(users);
     }
 
-    private <T, C extends Collection<T>> C processMentions(MentionType type, C collection, Function<Matcher, T> map)
-    {
+    private <T, C extends Collection<T>> C processMentions(MentionType type, C collection, Function<Matcher, T> map) {
         Matcher matcher = type.getPattern().matcher(getContentRaw());
-        while (matcher.find())
-        {
-            try
-            {
+        while (matcher.find()) {
+            try {
                 T elem = map.apply(matcher);
                 if (elem == null || (collection.contains(elem)))
                     continue;
                 collection.add(elem);
+            } catch (NumberFormatException ignored) {
             }
-            catch (NumberFormatException ignored) {}
         }
         return collection;
     }

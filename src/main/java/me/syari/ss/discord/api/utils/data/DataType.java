@@ -1,5 +1,3 @@
-
-
 package me.syari.ss.discord.api.utils.data;
 
 import javax.annotation.Nonnull;
@@ -8,29 +6,24 @@ import java.util.List;
 import java.util.Map;
 
 
-public enum DataType
-{
+public enum DataType {
     INT, FLOAT, STRING, OBJECT, ARRAY, BOOLEAN, NULL, UNKNOWN;
 
-    
+
     @Nonnull
-    public static DataType getType(@Nullable Object value)
-    {
-        for (DataType type : values())
-        {
+    public static DataType getType(@Nullable Object value) {
+        for (DataType type : values()) {
             if (type.isType(value))
                 return type;
         }
         return UNKNOWN;
     }
 
-    
-    public boolean isType(@Nullable Object value)
-    {
-        switch (this)
-        {
+
+    public boolean isType(@Nullable Object value) {
+        switch (this) {
             case INT:
-                return value instanceof Integer ||value instanceof Long || value instanceof Short || value instanceof Byte;
+                return value instanceof Integer || value instanceof Long || value instanceof Short || value instanceof Byte;
             case FLOAT:
                 return value instanceof Double || value instanceof Float;
             case STRING:

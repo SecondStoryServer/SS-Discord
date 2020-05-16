@@ -1,5 +1,3 @@
-
-
 package me.syari.ss.discord.internal.entities;
 
 import me.syari.ss.discord.api.JDA;
@@ -11,8 +9,7 @@ import me.syari.ss.discord.internal.utils.cache.SnowflakeReference;
 
 import javax.annotation.Nonnull;
 
-public class GuildVoiceStateImpl implements GuildVoiceState
-{
+public class GuildVoiceStateImpl implements GuildVoiceState {
     private final SnowflakeReference<Guild> guild;
     private final SnowflakeReference<Member> member;
     private final JDA api;
@@ -24,97 +21,82 @@ public class GuildVoiceStateImpl implements GuildVoiceState
     private boolean guildDeafened = false;
     private boolean suppressed = false;
 
-    public GuildVoiceStateImpl(Member member)
-    {
+    public GuildVoiceStateImpl(Member member) {
         this.api = member.getJDA();
         this.guild = new SnowflakeReference<>(member.getGuild(), api::getGuildById);
         this.member = new SnowflakeReference<>(member, (id) -> guild.resolve().getMemberById(id));
     }
 
     @Override
-    public boolean isSelfMuted()
-    {
+    public boolean isSelfMuted() {
         return selfMuted;
     }
 
     @Override
-    public boolean isSelfDeafened()
-    {
+    public boolean isSelfDeafened() {
         return selfDeafened;
     }
 
     @Nonnull
     @Override
-    public JDA getJDA()
-    {
+    public JDA getJDA() {
         return api;
     }
 
     @Override
-    public boolean isMuted()
-    {
+    public boolean isMuted() {
         return isSelfMuted() || isGuildMuted();
     }
 
     @Override
-    public boolean isDeafened()
-    {
+    public boolean isDeafened() {
         return isSelfDeafened() || isGuildDeafened();
     }
 
     @Override
-    public boolean isGuildMuted()
-    {
+    public boolean isGuildMuted() {
         return guildMuted;
     }
 
     @Override
-    public boolean isGuildDeafened()
-    {
+    public boolean isGuildDeafened() {
         return guildDeafened;
     }
 
     @Override
-    public boolean isSuppressed()
-    {
+    public boolean isSuppressed() {
         return suppressed;
     }
 
     @Override
-    public VoiceChannel getChannel()
-    {
+    public VoiceChannel getChannel() {
         return connectedChannel;
     }
 
     @Nonnull
     @Override
-    public Guild getGuild()
-    {
+    public Guild getGuild() {
         return this.guild.resolve();
     }
 
     @Nonnull
     @Override
-    public Member getMember()
-    {
+    public Member getMember() {
         return this.member.resolve();
     }
 
     @Override
-    public boolean inVoiceChannel()
-    {
+    public boolean inVoiceChannel() {
         return getChannel() != null;
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return getMember().hashCode();
     }
 
     @Override
-    public boolean equals(Object obj)
-    {
+    public boolean equals(Object obj) {
         if (obj == this)
             return true;
         if (!(obj instanceof GuildVoiceState))
@@ -124,50 +106,42 @@ public class GuildVoiceStateImpl implements GuildVoiceState
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "VS:" + getGuild().getName() + ':' + getMember().getEffectiveName();
     }
 
     // -- Setters --
 
-    public GuildVoiceStateImpl setConnectedChannel(VoiceChannel connectedChannel)
-    {
+    public GuildVoiceStateImpl setConnectedChannel(VoiceChannel connectedChannel) {
         this.connectedChannel = connectedChannel;
         return this;
     }
 
-    public GuildVoiceStateImpl setSessionId(String sessionId)
-    {
+    public GuildVoiceStateImpl setSessionId(String sessionId) {
         return this;
     }
 
-    public GuildVoiceStateImpl setSelfMuted(boolean selfMuted)
-    {
+    public GuildVoiceStateImpl setSelfMuted(boolean selfMuted) {
         this.selfMuted = selfMuted;
         return this;
     }
 
-    public GuildVoiceStateImpl setSelfDeafened(boolean selfDeafened)
-    {
+    public GuildVoiceStateImpl setSelfDeafened(boolean selfDeafened) {
         this.selfDeafened = selfDeafened;
         return this;
     }
 
-    public GuildVoiceStateImpl setGuildMuted(boolean guildMuted)
-    {
+    public GuildVoiceStateImpl setGuildMuted(boolean guildMuted) {
         this.guildMuted = guildMuted;
         return this;
     }
 
-    public GuildVoiceStateImpl setGuildDeafened(boolean guildDeafened)
-    {
+    public GuildVoiceStateImpl setGuildDeafened(boolean guildDeafened) {
         this.guildDeafened = guildDeafened;
         return this;
     }
 
-    public GuildVoiceStateImpl setSuppressed(boolean suppressed)
-    {
+    public GuildVoiceStateImpl setSuppressed(boolean suppressed) {
         this.suppressed = suppressed;
         return this;
     }

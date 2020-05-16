@@ -1,5 +1,3 @@
-
-
 package me.syari.ss.discord.api.entities;
 
 import me.syari.ss.discord.annotations.DeprecatedSince;
@@ -14,8 +12,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 
-public interface Emote extends IMentionable, IFakeable
-{
+public interface Emote extends IMentionable, IFakeable {
 
 
     @Nullable
@@ -29,8 +26,7 @@ public interface Emote extends IMentionable, IFakeable
     @Deprecated
     @DeprecatedSince("3.8.0")
     @ReplaceWith("canProvideRoles()")
-    default boolean hasRoles()
-    {
+    default boolean hasRoles() {
         return canProvideRoles();
     }
 
@@ -63,8 +59,7 @@ public interface Emote extends IMentionable, IFakeable
 
     @Nonnull
     @Override
-    default String getAsMention()
-    {
+    default String getAsMention() {
         return (isAnimated() ? "<a:" : "<:") + getName() + ":" + getId() + ">";
     }
 

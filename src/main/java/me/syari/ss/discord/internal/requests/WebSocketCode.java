@@ -1,10 +1,7 @@
-
-
 package me.syari.ss.discord.internal.requests;
 
 
-public final class WebSocketCode
-{
+public final class WebSocketCode {
     public static final int DISPATCH = 0;
     public static final int HEARTBEAT = 1;
     public static final int IDENTIFY = 2;

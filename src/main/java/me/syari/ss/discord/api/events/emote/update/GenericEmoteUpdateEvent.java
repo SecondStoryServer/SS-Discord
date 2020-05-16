@@ -1,5 +1,3 @@
-
-
 package me.syari.ss.discord.api.events.emote.update;
 
 import me.syari.ss.discord.api.JDA;
@@ -11,16 +9,14 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 
-public abstract class GenericEmoteUpdateEvent<T> extends GenericEmoteEvent implements UpdateEvent<Emote, T>
-{
+public abstract class GenericEmoteUpdateEvent<T> extends GenericEmoteEvent implements UpdateEvent<Emote, T> {
     protected final T previous;
     protected final T next;
     protected final String identifier;
 
     public GenericEmoteUpdateEvent(
             @Nonnull JDA api, long responseNumber, @Nonnull Emote emote,
-            @Nullable T previous, @Nullable T next, @Nonnull String identifier)
-    {
+            @Nullable T previous, @Nullable T next, @Nonnull String identifier) {
         super(api, responseNumber, emote);
         this.previous = previous;
         this.next = next;
@@ -29,35 +25,30 @@ public abstract class GenericEmoteUpdateEvent<T> extends GenericEmoteEvent imple
 
     @Nonnull
     @Override
-    public Emote getEntity()
-    {
+    public Emote getEntity() {
         return getEmote();
     }
 
     @Nonnull
     @Override
-    public String getPropertyIdentifier()
-    {
+    public String getPropertyIdentifier() {
         return identifier;
     }
 
     @Nullable
     @Override
-    public T getOldValue()
-    {
+    public T getOldValue() {
         return previous;
     }
 
     @Nullable
     @Override
-    public T getNewValue()
-    {
+    public T getNewValue() {
         return next;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "EmoteUpdate[" + getPropertyIdentifier() + "](" + getOldValue() + "->" + getNewValue() + ')';
     }
 }

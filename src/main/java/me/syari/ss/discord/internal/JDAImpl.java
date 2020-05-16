@@ -1,5 +1,3 @@
-
-
 package me.syari.ss.discord.internal;
 
 import com.neovisionaries.ws.client.WebSocketFactory;
@@ -52,8 +50,7 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
-public class JDAImpl implements JDA
-{
+public class JDAImpl implements JDA {
     public static final Logger LOG = JDALogger.getLog(JDA.class);
 
     protected ScheduledThreadPoolExecutor audioLifeCyclePool;
@@ -94,15 +91,13 @@ public class JDAImpl implements JDA
 
     protected String clientId = null;
 
-    public JDAImpl(AuthorizationConfig authConfig)
-    {
+    public JDAImpl(AuthorizationConfig authConfig) {
         this(authConfig, null, null, null);
     }
 
     public JDAImpl(
             AuthorizationConfig authConfig, SessionConfig sessionConfig,
-            ThreadingConfig threadConfig, MetaConfig metaConfig)
-    {
+            ThreadingConfig threadConfig, MetaConfig metaConfig) {
         this.authConfig = authConfig;
         this.threadConfig = threadConfig == null ? ThreadingConfig.getDefault() : threadConfig;
         this.sessionConfig = sessionConfig == null ? SessionConfig.getDefault() : sessionConfig;
@@ -115,76 +110,60 @@ public class JDAImpl implements JDA
         this.eventCache = new EventCache(isGuildSubscriptions());
     }
 
-    public void handleEvent(@Nonnull GenericEvent event)
-    {
+    public void handleEvent(@Nonnull GenericEvent event) {
         eventManager.handle(event);
     }
 
-    public boolean isRawEvents()
-    {
+    public boolean isRawEvents() {
         return sessionConfig.isRawEvents();
     }
 
-    public boolean isRelativeRateLimit()
-    {
+    public boolean isRelativeRateLimit() {
         return sessionConfig.isRelativeRateLimit();
     }
 
-    public boolean isCacheFlagSet(CacheFlag flag)
-    {
+    public boolean isCacheFlagSet(CacheFlag flag) {
         return metaConfig.getCacheFlags().contains(flag);
     }
 
-    public boolean isGuildSubscriptions()
-    {
+    public boolean isGuildSubscriptions() {
         return metaConfig.isGuildSubscriptions();
     }
 
-    public int getLargeThreshold()
-    {
+    public int getLargeThreshold() {
         return sessionConfig.getLargeThreshold();
     }
 
-    public int getMaxBufferSize()
-    {
+    public int getMaxBufferSize() {
         return metaConfig.getMaxBufferSize();
     }
 
-    public boolean chunkGuild(long id)
-    {
-        try
-        {
+    public boolean chunkGuild(long id) {
+        try {
             return isGuildSubscriptions() && chunkingFilter.filter(id);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             LOG.error("Uncaught exception from chunking filter", e);
             return true;
         }
     }
 
-    public void setChunkingFilter(ChunkingFilter filter)
-    {
+    public void setChunkingFilter(ChunkingFilter filter) {
         this.chunkingFilter = filter;
     }
 
-    public SessionController getSessionController()
-    {
+    public SessionController getSessionController() {
         return sessionConfig.getSessionController();
     }
 
-    public GuildSetupController getGuildSetupController()
-    {
+    public GuildSetupController getGuildSetupController() {
         return guildSetupController;
     }
 
-    public int login(ShardInfo shardInfo, Compression compression, boolean validateToken) throws LoginException
-    {
+    public int login(ShardInfo shardInfo, Compression compression, boolean validateToken) throws LoginException {
         return login(null, shardInfo, compression, validateToken);
     }
 
-    public int login(String gatewayUrl, ShardInfo shardInfo, Compression compression, boolean validateToken) throws LoginException
-    {
+    public int login(String gatewayUrl, ShardInfo shardInfo, Compression compression, boolean validateToken) throws LoginException {
         this.shardInfo = shardInfo;
         threadConfig.init(this::getIdentifierString);
         requester.getRateLimiter().init();
@@ -198,10 +177,8 @@ public class JDAImpl implements JDA
 
         Map<String, String> previousContext = null;
         ConcurrentMap<String, String> contextMap = metaConfig.getMdcContextMap();
-        if (contextMap != null)
-        {
-            if (shardInfo != null)
-            {
+        if (contextMap != null) {
+            if (shardInfo != null) {
                 contextMap.put("jda.shard", shardInfo.getShardString());
                 contextMap.put("jda.shard.id", String.valueOf(shardInfo.getShardId()));
                 contextMap.put("jda.shard.total", String.valueOf(shardInfo.getShardTotal()));
@@ -211,8 +188,7 @@ public class JDAImpl implements JDA
             contextMap.forEach(MDC::put);
             requester.setContextReady(true);
         }
-        if (validateToken)
-        {
+        if (validateToken) {
             verifyToken();
             LOG.info("Login Successful!");
         }
@@ -228,33 +204,27 @@ public class JDAImpl implements JDA
         return shardInfo == null ? -1 : shardInfo.getShardTotal();
     }
 
-    public String getGateway()
-    {
+    public String getGateway() {
         return getSessionController().getGateway(this);
     }
 
 
-    public ConcurrentMap<String, String> getContextMap()
-    {
+    public ConcurrentMap<String, String> getContextMap() {
         return metaConfig.getMdcContextMap() == null ? null : new ConcurrentHashMap<>(metaConfig.getMdcContextMap());
     }
 
-    public void setContext()
-    {
+    public void setContext() {
         if (metaConfig.getMdcContextMap() != null)
             metaConfig.getMdcContextMap().forEach(MDC::put);
     }
 
-    public void setToken(String token)
-    {
+    public void setToken(String token) {
         this.authConfig.setToken(token);
     }
 
-    public void setStatus(Status status)
-    {
+    public void setStatus(Status status) {
         //noinspection SynchronizeOnNonFinalField
-        synchronized (this.status)
-        {
+        synchronized (this.status) {
             Status oldStatus = this.status;
             this.status = status;
 
@@ -262,20 +232,16 @@ public class JDAImpl implements JDA
         }
     }
 
-    public void verifyToken() throws LoginException
-    {
+    public void verifyToken() throws LoginException {
         this.verifyToken(false);
     }
 
     // @param alreadyFailed If has already been a failed attempt with the current configuration
-    public void verifyToken(boolean alreadyFailed) throws LoginException
-    {
+    public void verifyToken(boolean alreadyFailed) throws LoginException {
 
-        RestActionImpl<DataObject> login = new RestActionImpl<DataObject>(this, Route.Self.GET_SELF.compile())
-        {
+        RestActionImpl<DataObject> login = new RestActionImpl<DataObject>(this, Route.Self.GET_SELF.compile()) {
             @Override
-            public void handleResponse(Response response, Request<DataObject> request)
-            {
+            public void handleResponse(Response response, Request<DataObject> request) {
                 if (response.isOk())
                     request.onSuccess(response.getObject());
                 else if (response.isRateLimit())
@@ -284,17 +250,15 @@ public class JDAImpl implements JDA
                     request.onSuccess(null);
                 else
                     request.onFailure(new LoginException("When verifying the authenticity of the provided token, Discord returned an unknown response:\n" +
-                        response.toString()));
+                            response.toString()));
             }
         };
 
         DataObject userResponse;
 
-        if (!alreadyFailed)
-        {
+        if (!alreadyFailed) {
             userResponse = checkToken(login);
-            if (userResponse != null)
-            {
+            if (userResponse != null) {
                 verifyAccountType(userResponse);
                 getEntityBuilder().createSelfUser(userResponse);
                 return;
@@ -310,12 +274,10 @@ public class JDAImpl implements JDA
 
         //If we attempted to login as a Bot, remove the "Bot " prefix and set the Requester to be a client.
         String token;
-        if (getAccountType() == AccountType.BOT)
-        {
+        if (getAccountType() == AccountType.BOT) {
             token = getToken().substring("Bot ".length());
             requester = new Requester(this, new AuthorizationConfig(AccountType.CLIENT, token));
-        }
-        else    //If we attempted to login as a Client, prepend the "Bot " prefix and set the Requester to be a Bot
+        } else    //If we attempted to login as a Client, prepend the "Bot " prefix and set the Requester to be a Bot
         {
             requester = new Requester(this, new AuthorizationConfig(AccountType.BOT, getToken()));
         }
@@ -331,29 +293,21 @@ public class JDAImpl implements JDA
             throw new LoginException("The provided token is invalid!");
     }
 
-    private void verifyAccountType(DataObject userResponse)
-    {
-        if (getAccountType() == AccountType.BOT)
-        {
+    private void verifyAccountType(DataObject userResponse) {
+        if (getAccountType() == AccountType.BOT) {
             if (!userResponse.hasKey("bot") || !userResponse.getBoolean("bot"))
                 throw new AccountTypeException("Attempted to login as a BOT with a CLIENT token!");
-        }
-        else
-        {
+        } else {
             if (userResponse.hasKey("bot") && userResponse.getBoolean("bot"))
                 throw new AccountTypeException("Attempted to login as a CLIENT with a BOT token!");
         }
     }
 
-    private DataObject checkToken(RestActionImpl<DataObject> login) throws LoginException
-    {
+    private DataObject checkToken(RestActionImpl<DataObject> login) throws LoginException {
         DataObject userResponse;
-        try
-        {
+        try {
             userResponse = login.complete();
-        }
-        catch (RuntimeException e)
-        {
+        } catch (RuntimeException e) {
             //We check if the LoginException is masked inside of a ExecutionException which is masked inside of the RuntimeException
             Throwable ex = e.getCause() instanceof ExecutionException ? e.getCause().getCause() : null;
             if (ex instanceof LoginException)
@@ -364,48 +318,41 @@ public class JDAImpl implements JDA
         return userResponse;
     }
 
-    public AuthorizationConfig getAuthorizationConfig()
-    {
+    public AuthorizationConfig getAuthorizationConfig() {
         return authConfig;
     }
 
     @Nonnull
     @Override
-    public String getToken()
-    {
+    public String getToken() {
         return authConfig.getToken();
     }
 
 
     @Override
-    public boolean isBulkDeleteSplittingEnabled()
-    {
+    public boolean isBulkDeleteSplittingEnabled() {
         return sessionConfig.isBulkDeleteSplittingEnabled();
     }
 
     @Override
-    public boolean isAutoReconnect()
-    {
+    public boolean isAutoReconnect() {
         return sessionConfig.isAutoReconnect();
     }
 
     @Nonnull
     @Override
-    public Status getStatus()
-    {
+    public Status getStatus() {
         return status;
     }
 
     @Override
-    public long getGatewayPing()
-    {
+    public long getGatewayPing() {
         return gatewayPing;
     }
 
     @Nonnull
     @Override
-    public JDA awaitStatus(@Nonnull Status status, @Nonnull Status... failOn) throws InterruptedException
-    {
+    public JDA awaitStatus(@Nonnull Status status, @Nonnull Status... failOn) throws InterruptedException {
         Checks.notNull(status, "Status");
         Checks.check(status.isInit(), "Cannot await the status %s as it is not part of the login cycle!", status);
         if (getStatus() == Status.CONNECTED)
@@ -425,47 +372,41 @@ public class JDAImpl implements JDA
 
     @Nonnull
     @Override
-    public ScheduledExecutorService getRateLimitPool()
-    {
+    public ScheduledExecutorService getRateLimitPool() {
         return threadConfig.getRateLimitPool();
     }
 
     @Nonnull
     @Override
-    public ScheduledExecutorService getGatewayPool()
-    {
+    public ScheduledExecutorService getGatewayPool() {
         return threadConfig.getGatewayPool();
     }
 
     @Nonnull
     @Override
-    public ExecutorService getCallbackPool()
-    {
+    public ExecutorService getCallbackPool() {
         return threadConfig.getCallbackPool();
     }
 
     @Nonnull
     @Override
     @SuppressWarnings("ConstantConditions") // this can't really happen unless you pass bad configs
-    public OkHttpClient getHttpClient()
-    {
+    public OkHttpClient getHttpClient() {
         return sessionConfig.getHttpClient();
     }
 
     @Nonnull
     @Override
-    public List<Guild> getMutualGuilds(@Nonnull User... users)
-    {
+    public List<Guild> getMutualGuilds(@Nonnull User... users) {
         Checks.notNull(users, "users");
         return getMutualGuilds(Arrays.asList(users));
     }
 
     @Nonnull
     @Override
-    public List<Guild> getMutualGuilds(@Nonnull Collection<User> users)
-    {
+    public List<Guild> getMutualGuilds(@Nonnull Collection<User> users) {
         Checks.notNull(users, "users");
-        for(User u : users)
+        for (User u : users)
             Checks.notNull(u, "All users");
         return Collections.unmodifiableList(getGuilds().stream()
                 .filter(guild -> users.stream().allMatch(guild::isMember))
@@ -474,97 +415,83 @@ public class JDAImpl implements JDA
 
     @Nonnull
     @Override
-    public SnowflakeCacheView<Guild> getGuildCache()
-    {
+    public SnowflakeCacheView<Guild> getGuildCache() {
         return guildCache;
     }
 
     @Override
-    public boolean isUnavailable(long guildId)
-    {
+    public boolean isUnavailable(long guildId) {
         return guildSetupController.isUnavailable(guildId);
     }
 
     @Nonnull
     @Override
-    public SnowflakeCacheView<Role> getRoleCache()
-    {
+    public SnowflakeCacheView<Role> getRoleCache() {
         return CacheView.allSnowflakes(() -> guildCache.stream().map(Guild::getRoleCache));
     }
 
     @Nonnull
     @Override
-    public SnowflakeCacheView<Emote> getEmoteCache()
-    {
+    public SnowflakeCacheView<Emote> getEmoteCache() {
         return CacheView.allSnowflakes(() -> guildCache.stream().map(Guild::getEmoteCache));
     }
 
     @Nonnull
     @Override
-    public SnowflakeCacheView<Category> getCategoryCache()
-    {
+    public SnowflakeCacheView<Category> getCategoryCache() {
         return categories;
     }
 
     @Nonnull
     @Override
-    public SnowflakeCacheView<StoreChannel> getStoreChannelCache()
-    {
+    public SnowflakeCacheView<StoreChannel> getStoreChannelCache() {
         return storeChannelCache;
     }
 
     @Nonnull
     @Override
-    public SnowflakeCacheView<TextChannel> getTextChannelCache()
-    {
+    public SnowflakeCacheView<TextChannel> getTextChannelCache() {
         return textChannelCache;
     }
 
     @Nonnull
     @Override
-    public SnowflakeCacheView<VoiceChannel> getVoiceChannelCache()
-    {
+    public SnowflakeCacheView<VoiceChannel> getVoiceChannelCache() {
         return voiceChannelCache;
     }
 
     @Nonnull
     @Override
-    public SnowflakeCacheView<PrivateChannel> getPrivateChannelCache()
-    {
+    public SnowflakeCacheView<PrivateChannel> getPrivateChannelCache() {
         return privateChannelCache;
     }
 
     @Nonnull
     @Override
-    public SnowflakeCacheView<User> getUserCache()
-    {
+    public SnowflakeCacheView<User> getUserCache() {
         return userCache;
     }
 
-    public boolean hasSelfUser()
-    {
+    public boolean hasSelfUser() {
         return selfUser != null;
     }
 
     @Nonnull
     @Override
-    public SelfUser getSelfUser()
-    {
+    public SelfUser getSelfUser() {
         if (selfUser == null)
             throw new IllegalStateException("Session is not yet ready!");
         return selfUser;
     }
 
     @Override
-    public synchronized void shutdownNow()
-    {
+    public synchronized void shutdownNow() {
         shutdown();
         threadConfig.shutdownNow();
     }
 
     @Override
-    public synchronized void shutdown()
-    {
+    public synchronized void shutdown() {
         if (status == Status.SHUTDOWN || status == Status.SHUTTING_DOWN)
             return;
 
@@ -577,8 +504,7 @@ public class JDAImpl implements JDA
         shutdownInternals();
     }
 
-    public synchronized void shutdownInternals()
-    {
+    public synchronized void shutdownInternals() {
         if (status == Status.SHUTDOWN)
             return;
         //so we can shutdown from WebSocketClient properly
@@ -589,77 +515,66 @@ public class JDAImpl implements JDA
             audioLifeCyclePool.shutdownNow();
         threadConfig.shutdown();
 
-        if (shutdownHook != null)
-        {
-            try
-            {
+        if (shutdownHook != null) {
+            try {
                 Runtime.getRuntime().removeShutdownHook(shutdownHook);
+            } catch (Exception ignored) {
             }
-            catch (Exception ignored) {}
         }
 
         setStatus(Status.SHUTDOWN);
     }
 
     @Override
-    public long getResponseTotal()
-    {
+    public long getResponseTotal() {
         return responseTotal;
     }
 
     @Override
-    public int getMaxReconnectDelay()
-    {
+    public int getMaxReconnectDelay() {
         return sessionConfig.getMaxReconnectDelay();
     }
 
     @Nonnull
     @Override
-    public ShardInfo getShardInfo()
-    {
+    public ShardInfo getShardInfo() {
         return shardInfo == null ? ShardInfo.SINGLE : shardInfo;
     }
 
     @Nonnull
     @Override
-    public Presence getPresence()
-    {
+    public Presence getPresence() {
         return presence;
     }
 
     @Nonnull
     @Override
-    public IEventManager getEventManager()
-    {
+    public IEventManager getEventManager() {
         return eventManager.getSubject();
     }
 
     @Nonnull
     @Override
-    public AccountType getAccountType()
-    {
+    public AccountType getAccountType() {
         return authConfig.getAccountType();
     }
 
     @Override
-    public void setEventManager(IEventManager eventManager)
-    {
+    public void setEventManager(IEventManager eventManager) {
         this.eventManager.setSubject(eventManager);
     }
 
     @Override
-    public void addEventListener(@Nonnull Object... listeners)
-    {
+    public void addEventListener(@Nonnull Object... listeners) {
         Checks.noneNull(listeners, "listeners");
 
-        for (Object listener: listeners)
+        for (Object listener : listeners)
             eventManager.register(listener);
     }
 
     @Nonnull
     @Override
-    public RestAction<ApplicationInfo> retrieveApplicationInfo()
-    {
+    public RestAction<ApplicationInfo> retrieveApplicationInfo() {
         AccountTypeException.check(getAccountType(), AccountType.BOT);
         Route.CompiledRoute route = Route.Applications.GET_BOT_APPLICATION.compile();
         return new RestActionImpl<>(this, route, (response, request) ->
@@ -670,108 +585,88 @@ public class JDAImpl implements JDA
         });
     }
 
-    public EntityBuilder getEntityBuilder()
-    {
+    public EntityBuilder getEntityBuilder() {
         return entityBuilder;
     }
 
-    public void setGatewayPing(long ping)
-    {
+    public void setGatewayPing(long ping) {
         long oldPing = this.gatewayPing;
         this.gatewayPing = ping;
         handleEvent(new GatewayPingEvent(this, oldPing));
     }
 
-    public Requester getRequester()
-    {
+    public Requester getRequester() {
         return requester;
     }
 
-    public WebSocketFactory getWebSocketFactory()
-    {
+    public WebSocketFactory getWebSocketFactory() {
         return sessionConfig.getWebSocketFactory();
     }
 
-    public WebSocketClient getClient()
-    {
+    public WebSocketClient getClient() {
         return client;
     }
 
-    public SnowflakeCacheViewImpl<User> getUsersView()
-    {
+    public SnowflakeCacheViewImpl<User> getUsersView() {
         return userCache;
     }
 
-    public SnowflakeCacheViewImpl<Guild> getGuildsView()
-    {
+    public SnowflakeCacheViewImpl<Guild> getGuildsView() {
         return guildCache;
     }
 
-    public SnowflakeCacheViewImpl<Category> getCategoriesView()
-    {
+    public SnowflakeCacheViewImpl<Category> getCategoriesView() {
         return categories;
     }
 
-    public SnowflakeCacheViewImpl<StoreChannel> getStoreChannelsView()
-    {
+    public SnowflakeCacheViewImpl<StoreChannel> getStoreChannelsView() {
         return storeChannelCache;
     }
 
-    public SnowflakeCacheViewImpl<TextChannel> getTextChannelsView()
-    {
+    public SnowflakeCacheViewImpl<TextChannel> getTextChannelsView() {
         return textChannelCache;
     }
 
-    public SnowflakeCacheViewImpl<VoiceChannel> getVoiceChannelsView()
-    {
+    public SnowflakeCacheViewImpl<VoiceChannel> getVoiceChannelsView() {
         return voiceChannelCache;
     }
 
-    public SnowflakeCacheViewImpl<PrivateChannel> getPrivateChannelsView()
-    {
+    public SnowflakeCacheViewImpl<PrivateChannel> getPrivateChannelsView() {
         return privateChannelCache;
     }
 
-    public TLongObjectMap<User> getFakeUserMap()
-    {
+    public TLongObjectMap<User> getFakeUserMap() {
         return fakeUsers;
     }
 
-    public TLongObjectMap<PrivateChannel> getFakePrivateChannelMap()
-    {
+    public TLongObjectMap<PrivateChannel> getFakePrivateChannelMap() {
         return fakePrivateChannels;
     }
 
-    public void setSelfUser(SelfUser selfUser)
-    {
+    public void setSelfUser(SelfUser selfUser) {
         this.selfUser = selfUser;
     }
 
-    public void setResponseTotal(int responseTotal)
-    {
+    public void setResponseTotal(int responseTotal) {
         this.responseTotal = responseTotal;
     }
 
-    public String getIdentifierString()
-    {
+    public String getIdentifierString() {
         if (shardInfo != null)
             return "JDA " + shardInfo.getShardString();
         else
             return "JDA";
     }
 
-    public EventCache getEventCache()
-    {
+    public EventCache getEventCache() {
         return eventCache;
     }
 
-    public String getGatewayUrl()
-    {
+    public String getGatewayUrl() {
         return gatewayUrl;
     }
 
-    public void resetGatewayUrl()
-    {
+    public void resetGatewayUrl() {
         this.gatewayUrl = getGateway();
     }
 

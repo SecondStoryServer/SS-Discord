@@ -1,5 +1,3 @@
-
-
 package me.syari.ss.discord.internal.requests.restaction.order;
 
 import me.syari.ss.discord.api.Permission;
@@ -19,29 +17,24 @@ import java.util.Collections;
 import java.util.List;
 
 public class RoleOrderActionImpl
-    extends OrderActionImpl<Role, RoleOrderAction>
-    implements RoleOrderAction
-{
+        extends OrderActionImpl<Role, RoleOrderAction>
+        implements RoleOrderAction {
     protected final Guild guild;
 
 
-    public RoleOrderActionImpl(Guild guild, boolean useAscendingOrder)
-    {
+    public RoleOrderActionImpl(Guild guild, boolean useAscendingOrder) {
         super(guild.getJDA(), !useAscendingOrder, Route.Guilds.MODIFY_ROLES.compile(guild.getId()));
         this.guild = guild;
 
         List<Role> roles = guild.getRoles();
         roles = roles.subList(0, roles.size() - 1); //Don't include the @everyone role.
 
-        if (useAscendingOrder)
-        {
+        if (useAscendingOrder) {
             //Add roles to orderList in reverse due to role position ordering being descending
             // Top role starts at roles.size() - 1, bottom is 0.
             for (int i = roles.size() - 1; i >= 0; i--)
                 this.orderList.add(roles.get(i));
-        }
-        else
-        {
+        } else {
             //If not using discord ordering, we are ascending, so we add from first to last.
             // We add first to last because the roles provided from getRoles() are in ascending order already
             // with the highest role at index 0.
@@ -52,19 +45,16 @@ public class RoleOrderActionImpl
 
     @Nonnull
     @Override
-    public Guild getGuild()
-    {
+    public Guild getGuild() {
         return guild;
     }
 
     @Override
-    protected RequestBody finalizeData()
-    {
+    protected RequestBody finalizeData() {
         final Member self = guild.getSelfMember();
         final boolean isOwner = self.isOwner();
 
-        if (!isOwner)
-        {
+        if (!isOwner) {
             if (self.getRoles().isEmpty())
                 throw new IllegalStateException("Cannot move roles above your highest role unless you are the guild owner");
             if (!self.hasPermission(Permission.MANAGE_ROLES))
@@ -79,8 +69,7 @@ public class RoleOrderActionImpl
         if (ascendingOrder)
             Collections.reverse(ordering);
 
-        for (int i = 0; i < ordering.size(); i++)
-        {
+        for (int i = 0; i < ordering.size(); i++) {
             Role role = ordering.get(i);
             final int initialPos = role.getPosition();
             if (initialPos != i && !isOwner && !self.canInteract(role))

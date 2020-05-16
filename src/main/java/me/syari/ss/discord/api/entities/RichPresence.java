@@ -1,5 +1,3 @@
-
-
 package me.syari.ss.discord.api.entities;
 
 import javax.annotation.Nonnull;
@@ -8,8 +6,7 @@ import java.util.EnumSet;
 import java.util.Objects;
 
 
-public interface RichPresence extends Activity
-{
+public interface RichPresence extends Activity {
 
     long getApplicationIdLong();
 
@@ -52,14 +49,12 @@ public interface RichPresence extends Activity
     Image getSmallImage();
 
 
-    class Image
-    {
+    class Image {
         protected final String key;
         protected final String text;
         protected final String applicationId;
 
-        public Image(long applicationId, String key, String text)
-        {
+        public Image(long applicationId, String key, String text) {
             this.applicationId = Long.toUnsignedString(applicationId);
             this.key = key;
             this.text = text;
@@ -67,22 +62,19 @@ public interface RichPresence extends Activity
 
 
         @Nonnull
-        public String getKey()
-        {
+        public String getKey() {
             return key;
         }
 
 
         @Nullable
-        public String getText()
-        {
+        public String getText() {
             return text;
         }
 
 
         @Nonnull
-        public String getUrl()
-        {
+        public String getUrl() {
             if (key.startsWith("spotify:"))
                 return "https://i.scdn.co/image/" + key.substring("spotify:".length());
             if (key.startsWith("twitch:"))
@@ -91,14 +83,12 @@ public interface RichPresence extends Activity
         }
 
         @Override
-        public String toString()
-        {
+        public String toString() {
             return String.format("RichPresenceImage(%s | %s)", key, text);
         }
 
         @Override
-        public boolean equals(Object obj)
-        {
+        public boolean equals(Object obj) {
             if (!(obj instanceof Image))
                 return false;
             Image i = (Image) obj;
@@ -106,21 +96,18 @@ public interface RichPresence extends Activity
         }
 
         @Override
-        public int hashCode()
-        {
+        public int hashCode() {
             return Objects.hash(key, text);
         }
     }
 
 
-    class Party
-    {
+    class Party {
         protected final String id;
         protected final long size;
         protected final long max;
 
-        public Party(String id, long size, long max)
-        {
+        public Party(String id, long size, long max) {
             this.id = id;
             this.size = size;
             this.max = max;
@@ -128,32 +115,27 @@ public interface RichPresence extends Activity
 
 
         @Nullable
-        public String getId()
-        {
+        public String getId() {
             return id;
         }
 
 
-        public long getSize()
-        {
+        public long getSize() {
             return size;
         }
 
 
-        public long getMax()
-        {
+        public long getMax() {
             return max;
         }
 
         @Override
-        public String toString()
-        {
+        public String toString() {
             return String.format("RichPresenceParty(%s | [%d, %d])", id, size, max);
         }
 
         @Override
-        public boolean equals(Object obj)
-        {
+        public boolean equals(Object obj) {
             if (!(obj instanceof Party))
                 return false;
             Party p = (Party) obj;
@@ -161,8 +143,7 @@ public interface RichPresence extends Activity
         }
 
         @Override
-        public int hashCode()
-        {
+        public int hashCode() {
             return Objects.hash(id, size, max);
         }
     }

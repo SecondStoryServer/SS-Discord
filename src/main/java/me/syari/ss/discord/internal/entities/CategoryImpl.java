@@ -1,5 +1,3 @@
-
-
 package me.syari.ss.discord.internal.entities;
 
 import me.syari.ss.discord.api.entities.*;
@@ -11,48 +9,41 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class CategoryImpl extends AbstractChannelImpl<Category, CategoryImpl> implements Category
-{
-    public CategoryImpl(long id, GuildImpl guild)
-    {
+public class CategoryImpl extends AbstractChannelImpl<Category, CategoryImpl> implements Category {
+    public CategoryImpl(long id, GuildImpl guild) {
         super(id, guild);
     }
 
     @Override
-    public CategoryImpl setPosition(int rawPosition)
-    {
+    public CategoryImpl setPosition(int rawPosition) {
         getGuild().getCategoriesView().clearCachedLists();
         return super.setPosition(rawPosition);
     }
 
     @Override
-    public Category getParent()
-    {
+    public Category getParent() {
         return null;
     }
 
     @Nonnull
     @Override
-    public ChannelType getType()
-    {
+    public ChannelType getType() {
         return ChannelType.CATEGORY;
     }
 
     @Nonnull
     @Override
-    public List<Member> getMembers()
-    {
+    public List<Member> getMembers() {
         return Collections.unmodifiableList(getChannels().stream()
-                    .map(GuildChannel::getMembers)
-                    .flatMap(List::stream)
-                    .distinct()
-                    .collect(Collectors.toList()));
+                .map(GuildChannel::getMembers)
+                .flatMap(List::stream)
+                .distinct()
+                .collect(Collectors.toList()));
     }
 
     @Nonnull
     @Override
-    public List<GuildChannel> getChannels()
-    {
+    public List<GuildChannel> getChannels() {
         List<GuildChannel> channels = new ArrayList<>();
         channels.addAll(getStoreChannels());
         channels.addAll(getTextChannels());
@@ -63,39 +54,34 @@ public class CategoryImpl extends AbstractChannelImpl<Category, CategoryImpl> im
 
     @Nonnull
     @Override
-    public List<StoreChannel> getStoreChannels()
-    {
+    public List<StoreChannel> getStoreChannels() {
         return Collections.unmodifiableList(getGuild().getStoreChannelCache().stream()
-                    .filter(channel -> equals(channel.getParent()))
-                    .sorted().collect(Collectors.toList()));
+                .filter(channel -> equals(channel.getParent()))
+                .sorted().collect(Collectors.toList()));
     }
 
     @Nonnull
     @Override
-    public List<TextChannel> getTextChannels()
-    {
+    public List<TextChannel> getTextChannels() {
         return Collections.unmodifiableList(getGuild().getTextChannels().stream()
-                    .filter(channel -> equals(channel.getParent()))
-                    .sorted().collect(Collectors.toList()));
+                .filter(channel -> equals(channel.getParent()))
+                .sorted().collect(Collectors.toList()));
     }
 
     @Nonnull
     @Override
-    public List<VoiceChannel> getVoiceChannels()
-    {
+    public List<VoiceChannel> getVoiceChannels() {
         return Collections.unmodifiableList(getGuild().getVoiceChannels().stream()
-                    .filter(channel -> equals(channel.getParent()))
-                    .sorted().collect(Collectors.toList()));
+                .filter(channel -> equals(channel.getParent()))
+                .sorted().collect(Collectors.toList()));
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "GC:" + getName() + '(' + id + ')';
     }
 
-    private void applyPermission(ChannelAction a)
-    {
+    private void applyPermission(ChannelAction a) {
         overrides.forEachValue(override ->
         {
             if (override.isMemberOverride())

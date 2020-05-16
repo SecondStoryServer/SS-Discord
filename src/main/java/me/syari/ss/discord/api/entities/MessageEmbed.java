@@ -1,4 +1,3 @@
-
 package me.syari.ss.discord.api.entities;
 
 import me.syari.ss.discord.api.AccountType;
@@ -17,8 +16,7 @@ import java.util.List;
 import java.util.Objects;
 
 
-public class MessageEmbed implements SerializableData
-{
+public class MessageEmbed implements SerializableData {
 
     public static final int TITLE_MAX_LENGTH = 256;
 
@@ -51,10 +49,9 @@ public class MessageEmbed implements SerializableData
     protected volatile DataObject json = null;
 
     public MessageEmbed(
-        String url, String title, String description, EmbedType type, OffsetDateTime timestamp,
-        int color, Thumbnail thumbnail, Provider siteProvider, AuthorInfo author,
-        VideoInfo videoInfo, Footer footer, ImageInfo image, List<Field> fields)
-    {
+            String url, String title, String description, EmbedType type, OffsetDateTime timestamp,
+            int color, Thumbnail thumbnail, Provider siteProvider, AuthorInfo author,
+            VideoInfo videoInfo, Footer footer, ImageInfo image, List<Field> fields) {
         this.url = url;
         this.title = title;
         this.description = description;
@@ -68,40 +65,35 @@ public class MessageEmbed implements SerializableData
         this.footer = footer;
         this.image = image;
         this.fields = fields != null && !fields.isEmpty()
-            ? Collections.unmodifiableList(fields) : Collections.emptyList();
+                ? Collections.unmodifiableList(fields) : Collections.emptyList();
     }
 
 
     @Nullable
-    public Thumbnail getThumbnail()
-    {
+    public Thumbnail getThumbnail() {
         return thumbnail;
     }
 
 
     @Nullable
-    public ImageInfo getImage()
-    {
+    public ImageInfo getImage() {
         return image;
     }
 
 
-    public boolean isEmpty()
-    {
+    public boolean isEmpty() {
         return color == Role.DEFAULT_COLOR_RAW
-            && timestamp == null
-            && getImage() == null
-            && getThumbnail() == null
-            && getLength() == 0;
+                && timestamp == null
+                && getImage() == null
+                && getThumbnail() == null
+                && getLength() == 0;
     }
 
 
-    public int getLength()
-    {
+    public int getLength() {
         if (length > -1)
             return length;
-        synchronized (mutex)
-        {
+        synchronized (mutex) {
             if (length > -1)
                 return length;
             length = 0;
@@ -114,8 +106,7 @@ public class MessageEmbed implements SerializableData
                 length += author.getName().length();
             if (footer != null)
                 length += footer.getText().length();
-            if (fields != null)
-            {
+            if (fields != null) {
                 for (Field f : fields)
                     length += f.getName().length() + f.getValue().length();
             }
@@ -125,53 +116,51 @@ public class MessageEmbed implements SerializableData
     }
 
 
-    public boolean isSendable(@Nonnull AccountType type)
-    {
+    public boolean isSendable(@Nonnull AccountType type) {
         Checks.notNull(type, "AccountType");
         final int length = getLength();
         if (isEmpty())
             return false;
 
-        switch (type)
-        {
-            case BOT: return length <= EMBED_MAX_LENGTH_BOT;
-            case CLIENT: return length <= EMBED_MAX_LENGTH_CLIENT;
-            default: throw new IllegalArgumentException(String.format("Cannot check against AccountType '%s'!", type));
+        switch (type) {
+            case BOT:
+                return length <= EMBED_MAX_LENGTH_BOT;
+            case CLIENT:
+                return length <= EMBED_MAX_LENGTH_CLIENT;
+            default:
+                throw new IllegalArgumentException(String.format("Cannot check against AccountType '%s'!", type));
         }
     }
 
     @Override
-    public boolean equals(Object obj)
-    {
+    public boolean equals(Object obj) {
         if (!(obj instanceof MessageEmbed))
             return false;
         if (obj == this)
             return true;
         MessageEmbed other = (MessageEmbed) obj;
         return Objects.equals(url, other.url)
-            && Objects.equals(title, other.title)
-            && Objects.equals(description, other.description)
-            && Objects.equals(type, other.type)
-            && Objects.equals(thumbnail, other.thumbnail)
-            && Objects.equals(siteProvider, other.siteProvider)
-            && Objects.equals(author, other.author)
-            && Objects.equals(videoInfo, other.videoInfo)
-            && Objects.equals(footer, other.footer)
-            && Objects.equals(image, other.image)
-            && (color & 0xFFFFFF) == (other.color & 0xFFFFFF)
-            && Objects.equals(timestamp, other.timestamp)
-            && Helpers.deepEquals(fields, other.fields);
+                && Objects.equals(title, other.title)
+                && Objects.equals(description, other.description)
+                && Objects.equals(type, other.type)
+                && Objects.equals(thumbnail, other.thumbnail)
+                && Objects.equals(siteProvider, other.siteProvider)
+                && Objects.equals(author, other.author)
+                && Objects.equals(videoInfo, other.videoInfo)
+                && Objects.equals(footer, other.footer)
+                && Objects.equals(image, other.image)
+                && (color & 0xFFFFFF) == (other.color & 0xFFFFFF)
+                && Objects.equals(timestamp, other.timestamp)
+                && Helpers.deepEquals(fields, other.fields);
     }
 
 
     @Nonnull
     @Override
-    public DataObject toData()
-    {
+    public DataObject toData() {
         if (json != null)
             return json;
-        synchronized (mutex)
-        {
+        synchronized (mutex) {
             if (json != null)
                 return json;
             DataObject obj = DataObject.empty();
@@ -187,8 +176,7 @@ public class MessageEmbed implements SerializableData
                 obj.put("color", color & 0xFFFFFF);
             if (thumbnail != null)
                 obj.put("thumbnail", DataObject.empty().put("url", thumbnail.getUrl()));
-            if (siteProvider != null)
-            {
+            if (siteProvider != null) {
                 DataObject siteProviderObj = DataObject.empty();
                 if (siteProvider.getName() != null)
                     siteProviderObj.put("name", siteProvider.getName());
@@ -196,8 +184,7 @@ public class MessageEmbed implements SerializableData
                     siteProviderObj.put("url", siteProvider.getUrl());
                 obj.put("provider", siteProviderObj);
             }
-            if (author != null)
-            {
+            if (author != null) {
                 DataObject authorObj = DataObject.empty();
                 if (author.getName() != null)
                     authorObj.put("name", author.getName());
@@ -209,8 +196,7 @@ public class MessageEmbed implements SerializableData
             }
             if (videoInfo != null)
                 obj.put("video", DataObject.empty().put("url", videoInfo.getUrl()));
-            if (footer != null)
-            {
+            if (footer != null) {
                 DataObject footerObj = DataObject.empty();
                 if (footer.getText() != null)
                     footerObj.put("text", footer.getText());
@@ -220,16 +206,14 @@ public class MessageEmbed implements SerializableData
             }
             if (image != null)
                 obj.put("image", DataObject.empty().put("url", image.getUrl()));
-            if (!fields.isEmpty())
-            {
+            if (!fields.isEmpty()) {
                 DataArray fieldsArray = DataArray.empty();
-                for (Field field : fields)
-                {
+                for (Field field : fields) {
                     fieldsArray
-                        .add(DataObject.empty()
-                            .put("name", field.getName())
-                            .put("value", field.getValue())
-                            .put("inline", field.isInline()));
+                            .add(DataObject.empty()
+                                    .put("name", field.getName())
+                                    .put("value", field.getValue())
+                                    .put("inline", field.isInline()));
                 }
                 obj.put("fields", fieldsArray);
             }
@@ -238,15 +222,13 @@ public class MessageEmbed implements SerializableData
     }
 
 
-    public static class Thumbnail
-    {
+    public static class Thumbnail {
         protected final String url;
         protected final String proxyUrl;
         protected final int width;
         protected final int height;
 
-        public Thumbnail(String url, String proxyUrl, int width, int height)
-        {
+        public Thumbnail(String url, String proxyUrl, int width, int height) {
             this.url = url;
             this.proxyUrl = proxyUrl;
             this.width = width;
@@ -255,71 +237,62 @@ public class MessageEmbed implements SerializableData
 
 
         @Nullable
-        public String getUrl()
-        {
+        public String getUrl() {
             return url;
         }
 
 
         @Override
-        public boolean equals(Object obj)
-        {
+        public boolean equals(Object obj) {
             if (!(obj instanceof Thumbnail))
                 return false;
             Thumbnail thumbnail = (Thumbnail) obj;
             return thumbnail == this || (Objects.equals(thumbnail.url, url)
-                && Objects.equals(thumbnail.proxyUrl, proxyUrl)
-                && thumbnail.width == width
-                && thumbnail.height == height);
+                    && Objects.equals(thumbnail.proxyUrl, proxyUrl)
+                    && thumbnail.width == width
+                    && thumbnail.height == height);
         }
     }
 
 
-    public static class Provider
-    {
+    public static class Provider {
         protected final String name;
         protected final String url;
 
-        public Provider(String name, String url)
-        {
+        public Provider(String name, String url) {
             this.name = name;
             this.url = url;
         }
 
 
         @Nullable
-        public String getName()
-        {
+        public String getName() {
             return name;
         }
 
 
         @Nullable
-        public String getUrl()
-        {
+        public String getUrl() {
             return url;
         }
 
         @Override
-        public boolean equals(Object obj)
-        {
+        public boolean equals(Object obj) {
             if (!(obj instanceof Provider))
                 return false;
             Provider provider = (Provider) obj;
             return provider == this || (Objects.equals(provider.name, name)
-                && Objects.equals(provider.url, url));
+                    && Objects.equals(provider.url, url));
         }
     }
 
 
-    public static class VideoInfo
-    {
+    public static class VideoInfo {
         protected final String url;
         protected final int width;
         protected final int height;
 
-        public VideoInfo(String url, int width, int height)
-        {
+        public VideoInfo(String url, int width, int height) {
             this.url = url;
             this.width = width;
             this.height = height;
@@ -327,34 +300,30 @@ public class MessageEmbed implements SerializableData
 
 
         @Nullable
-        public String getUrl()
-        {
+        public String getUrl() {
             return url;
         }
 
 
         @Override
-        public boolean equals(Object obj)
-        {
+        public boolean equals(Object obj) {
             if (!(obj instanceof VideoInfo))
                 return false;
             VideoInfo video = (VideoInfo) obj;
             return video == this || (Objects.equals(video.url, url)
-                && video.width == width
-                && video.height == height);
+                    && video.width == width
+                    && video.height == height);
         }
     }
-    
 
-    public static class ImageInfo
-    {
+
+    public static class ImageInfo {
         protected final String url;
         protected final String proxyUrl;
         protected final int width;
         protected final int height;
 
-        public ImageInfo(String url, String proxyUrl, int width, int height)
-        {
+        public ImageInfo(String url, String proxyUrl, int width, int height) {
             this.url = url;
             this.proxyUrl = proxyUrl;
             this.width = width;
@@ -363,35 +332,31 @@ public class MessageEmbed implements SerializableData
 
 
         @Nullable
-        public String getUrl()
-        {
+        public String getUrl() {
             return url;
         }
 
 
         @Override
-        public boolean equals(Object obj)
-        {
+        public boolean equals(Object obj) {
             if (!(obj instanceof ImageInfo))
                 return false;
             ImageInfo image = (ImageInfo) obj;
             return image == this || (Objects.equals(image.url, url)
-                && Objects.equals(image.proxyUrl, proxyUrl)
-                && image.width == width
-                && image.height == height);
+                    && Objects.equals(image.proxyUrl, proxyUrl)
+                    && image.width == width
+                    && image.height == height);
         }
     }
-    
 
-    public static class AuthorInfo
-    {
+
+    public static class AuthorInfo {
         protected final String name;
         protected final String url;
         protected final String iconUrl;
         protected final String proxyIconUrl;
 
-        public AuthorInfo(String name, String url, String iconUrl, String proxyIconUrl)
-        {
+        public AuthorInfo(String name, String url, String iconUrl, String proxyIconUrl) {
             this.name = name;
             this.url = url;
             this.iconUrl = iconUrl;
@@ -400,48 +365,42 @@ public class MessageEmbed implements SerializableData
 
 
         @Nullable
-        public String getName()
-        {
+        public String getName() {
             return name;
         }
 
 
         @Nullable
-        public String getUrl()
-        {
+        public String getUrl() {
             return url;
         }
-        
+
 
         @Nullable
-        public String getIconUrl()
-        {
+        public String getIconUrl() {
             return iconUrl;
         }
 
 
         @Override
-        public boolean equals(Object obj)
-        {
+        public boolean equals(Object obj) {
             if (!(obj instanceof AuthorInfo))
                 return false;
             AuthorInfo author = (AuthorInfo) obj;
             return author == this || (Objects.equals(author.name, name)
-                && Objects.equals(author.url, url)
-                && Objects.equals(author.iconUrl, iconUrl)
-                && Objects.equals(author.proxyIconUrl, proxyIconUrl));
+                    && Objects.equals(author.url, url)
+                    && Objects.equals(author.iconUrl, iconUrl)
+                    && Objects.equals(author.proxyIconUrl, proxyIconUrl));
         }
     }
-    
 
-    public static class Footer
-    {
+
+    public static class Footer {
         protected final String text;
         protected final String iconUrl;
         protected final String proxyIconUrl;
 
-        public Footer(String text, String iconUrl, String proxyIconUrl)
-        {
+        public Footer(String text, String iconUrl, String proxyIconUrl) {
             this.text = text;
             this.iconUrl = iconUrl;
             this.proxyIconUrl = proxyIconUrl;
@@ -449,43 +408,37 @@ public class MessageEmbed implements SerializableData
 
 
         @Nullable
-        public String getText()
-        {
+        public String getText() {
             return text;
         }
-        
+
 
         @Nullable
-        public String getIconUrl()
-        {
+        public String getIconUrl() {
             return iconUrl;
         }
 
 
         @Override
-        public boolean equals(Object obj)
-        {
+        public boolean equals(Object obj) {
             if (!(obj instanceof Footer))
                 return false;
             Footer footer = (Footer) obj;
             return footer == this || (Objects.equals(footer.text, text)
-                && Objects.equals(footer.iconUrl, iconUrl)
-                && Objects.equals(footer.proxyIconUrl, proxyIconUrl));
+                    && Objects.equals(footer.iconUrl, iconUrl)
+                    && Objects.equals(footer.proxyIconUrl, proxyIconUrl));
         }
     }
 
     private final static String ZERO_WIDTH_SPACE = "\u200E";
 
-    public static class Field
-    {
+    public static class Field {
         protected final String name;
         protected final String value;
         protected final boolean inline;
 
-        public Field(String name, String value, boolean inline, boolean checked)
-        {
-            if (checked)
-            {
+        public Field(String name, String value, boolean inline, boolean checked) {
+            if (checked) {
                 if (name == null || value == null)
                     throw new IllegalArgumentException("Both Name and Value must be set!");
                 else if (name.length() > TITLE_MAX_LENGTH)
@@ -502,9 +455,7 @@ public class MessageEmbed implements SerializableData
                     this.value = ZERO_WIDTH_SPACE;
                 else
                     this.value = value;
-            }
-            else
-            {
+            } else {
                 this.name = name;
                 this.value = value;
             }
@@ -513,33 +464,29 @@ public class MessageEmbed implements SerializableData
 
 
         @Nullable
-        public String getName()
-        {
+        public String getName() {
             return name;
         }
 
 
         @Nullable
-        public String getValue()
-        {
+        public String getValue() {
             return value;
         }
-        
 
-        public boolean isInline()
-        {
+
+        public boolean isInline() {
             return inline;
         }
 
         @Override
-        public boolean equals(Object obj)
-        {
+        public boolean equals(Object obj) {
             if (!(obj instanceof Field))
                 return false;
             final Field field = (Field) obj;
             return field == this || (field.inline == inline
-                && Objects.equals(field.name, name)
-                && Objects.equals(field.value, value));
+                    && Objects.equals(field.name, name)
+                    && Objects.equals(field.value, value));
         }
     }
 }
