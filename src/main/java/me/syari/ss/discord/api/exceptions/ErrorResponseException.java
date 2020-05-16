@@ -20,10 +20,6 @@ public class ErrorResponseException extends RuntimeException {
     }
 
 
-    public Response getResponse() {
-        return response;
-    }
-
     public static ErrorResponseException create(ErrorResponse errorResponse, Response response) {
         Optional<DataObject> optObj = response.optObject();
         String meaning = errorResponse.getMeaning();

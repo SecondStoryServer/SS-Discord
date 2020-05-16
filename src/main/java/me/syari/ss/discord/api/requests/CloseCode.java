@@ -34,11 +34,6 @@ public enum CloseCode {
     }
 
 
-    public int getCode() {
-        return code;
-    }
-
-
     public boolean isReconnect() {
         return isReconnect;
     }

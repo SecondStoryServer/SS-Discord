@@ -18,10 +18,6 @@ public interface User extends IMentionable, IFakeable {
     String getDiscriminator();
 
 
-    @Nullable
-    String getAvatarId();
-
-
     @Nonnull
     String getAsTag();
 

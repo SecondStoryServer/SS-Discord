@@ -61,11 +61,6 @@ public class DataArray implements Iterable<Object> {
     }
 
 
-    public boolean isEmpty() {
-        return data.isEmpty();
-    }
-
-
     @Nonnull
     @SuppressWarnings("unchecked")
     public DataObject getObject(int index) {
@@ -87,13 +82,6 @@ public class DataArray implements Iterable<Object> {
         if (value == null)
             throw valueError(index, "String");
         return value;
-    }
-
-
-    @Contract("_, !null -> !null")
-    public String getString(int index, @Nullable String defaultValue) {
-        String value = get(String.class, index, UnaryOperator.identity(), String::valueOf);
-        return value == null ? defaultValue : value;
     }
 
 
@@ -124,19 +112,6 @@ public class DataArray implements Iterable<Object> {
         return this;
     }
 
-
-    @Nonnull
-    public DataArray remove(int index) {
-        data.remove(index);
-        return this;
-    }
-
-
-    @Nonnull
-    public DataArray remove(@Nullable Object value) {
-        data.remove(value);
-        return this;
-    }
 
     @Override
     public String toString() {

@@ -7,17 +7,7 @@ import java.util.Map;
 
 
 public enum DataType {
-    INT, FLOAT, STRING, OBJECT, ARRAY, BOOLEAN, NULL, UNKNOWN;
-
-
-    @Nonnull
-    public static DataType getType(@Nullable Object value) {
-        for (DataType type : values()) {
-            if (type.isType(value))
-                return type;
-        }
-        return UNKNOWN;
-    }
+    INT, FLOAT, STRING, OBJECT, ARRAY, BOOLEAN, NULL;
 
 
     public boolean isType(@Nullable Object value) {

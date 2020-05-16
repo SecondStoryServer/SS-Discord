@@ -3,7 +3,6 @@ package me.syari.ss.discord.internal.entities;
 import me.syari.ss.discord.api.entities.ChannelType;
 import me.syari.ss.discord.api.entities.MessageEmbed;
 import me.syari.ss.discord.api.entities.TextChannel;
-import me.syari.ss.discord.api.exceptions.VerificationLevelException;
 import me.syari.ss.discord.api.requests.restaction.MessageAction;
 import me.syari.ss.discord.internal.utils.Checks;
 
@@ -36,14 +35,12 @@ public class TextChannelImpl extends AbstractChannelImpl<TextChannel, TextChanne
     @Nonnull
     @Override
     public MessageAction sendMessage(@Nonnull CharSequence text) {
-        checkVerification();
         return TextChannel.super.sendMessage(text);
     }
 
     @Nonnull
     @Override
     public MessageAction sendMessage(@Nonnull MessageEmbed embed) {
-        checkVerification();
         return TextChannel.super.sendMessage(embed);
     }
 
@@ -52,8 +49,6 @@ public class TextChannelImpl extends AbstractChannelImpl<TextChannel, TextChanne
     public MessageAction sendMessage(@Nonnull Message msg) {
         Checks.notNull(msg, "Message");
 
-        checkVerification();
-
         //Call MessageChannel's default
         return TextChannel.super.sendMessage(msg);
     }
@@ -61,10 +56,5 @@ public class TextChannelImpl extends AbstractChannelImpl<TextChannel, TextChanne
     @Override
     public String toString() {
         return "TC:" + getName() + '(' + id + ')';
-    }
-
-    private void checkVerification() {
-        if (!getGuild().checkVerification())
-            throw new VerificationLevelException(getGuild().getVerificationLevel());
     }
 }

@@ -10,21 +10,10 @@ import javax.annotation.Nullable;
 
 
 public interface Guild extends ISnowflake {
-    boolean isLoaded();
-
-
-    int getMemberCount();
 
 
     @Nonnull
     String getName();
-
-
-    @Nullable
-    Member getOwner();
-
-
-    long getOwnerIdLong();
 
 
     boolean isMember(@Nonnull User user);
@@ -72,32 +61,4 @@ public interface Guild extends ISnowflake {
 
     @Nonnull
     JDA getJDA();
-
-
-    @Nonnull
-    VerificationLevel getVerificationLevel();
-
-
-    boolean checkVerification();
-
-
-    /* From GuildController */
-
-
-    //////////////////////////
-
-
-    enum VerificationLevel {
-        NONE(),
-        LOW(),
-        MEDIUM(),
-        HIGH(),
-        VERY_HIGH(),
-        UNKNOWN();
-
-        VerificationLevel() {
-        }
-    }
-
-
 }

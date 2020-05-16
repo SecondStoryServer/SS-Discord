@@ -194,7 +194,7 @@ public class GuildSetupNode {
         for (TLongIterator it = removedMembers.iterator(); it.hasNext(); )
             members.remove(it.next());
         removedMembers.clear();
-        GuildImpl guild = api.getEntityBuilder().createGuild(id, partialGuild, members, expectedMemberCount);
+        GuildImpl guild = api.getEntityBuilder().createGuild(id, partialGuild, expectedMemberCount);
         switch (type) {
             case AVAILABLE:
                 getController().remove(id);

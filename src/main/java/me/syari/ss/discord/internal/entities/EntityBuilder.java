@@ -57,14 +57,13 @@ public class EntityBuilder {
         }
     }
 
-    public GuildImpl createGuild(long guildId, DataObject guildJson, TLongObjectMap<DataObject> members, int memberCount) {
+    public GuildImpl createGuild(long guildId, DataObject guildJson, int memberCount) {
         final GuildImpl guildObj = new GuildImpl(getJDA(), guildId);
         final String name = guildJson.getString("name", "");
         final DataArray roleArray = guildJson.getArray("roles");
         final DataArray channelArray = guildJson.getArray("channels");
         final DataArray emotesArray = guildJson.getArray("emojis");
         final DataArray voiceStateArray = guildJson.getArray("voice_states");
-        final Optional<DataArray> featuresArray = guildJson.optArray("features");
         final long ownerId = guildJson.getUnsignedLong("owner_id", 0L);
 
         guildObj.setName(name)
@@ -163,7 +162,6 @@ public class EntityBuilder {
             // Initial creation
             userObj.setName(user.getString("username"))
                     .setDiscriminator(user.get("discriminator").toString())
-                    .setAvatarId(user.getString("avatar", null))
                     .setBot(user.getBoolean("bot"));
         } else if (!userObj.isFake()) {
             // Fire update events
@@ -179,8 +177,6 @@ public class EntityBuilder {
         String newName = user.getString("username");
         String oldDiscriminator = userObj.getDiscriminator();
         String newDiscriminator = user.get("discriminator").toString();
-        String oldAvatar = userObj.getAvatarId();
-        String newAvatar = user.getString("avatar", null);
 
         if (!oldName.equals(newName)) {
             userObj.setName(newName);
@@ -188,10 +184,6 @@ public class EntityBuilder {
 
         if (!oldDiscriminator.equals(newDiscriminator)) {
             userObj.setDiscriminator(newDiscriminator);
-        }
-
-        if (!Objects.equals(oldAvatar, newAvatar)) {
-            userObj.setAvatarId(newAvatar);
         }
     }
 
@@ -340,8 +332,7 @@ public class EntityBuilder {
             }
         }
 
-        channel.setParent(json.getLong("parent_id", 0))
-                .setName(json.getString("name"))
+        channel.setName(json.getString("name"))
                 .setPosition(json.getInt("position"));
         if (playbackCache)
             getJDA().getEventCache().playbackCache(EventCache.Type.CHANNEL, id);

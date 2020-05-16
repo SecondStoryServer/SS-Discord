@@ -14,7 +14,6 @@ public abstract class AbstractChannelImpl<T extends GuildChannel, M extends Abst
     protected final SnowflakeReference<Guild> guild;
     protected final JDAImpl api;
 
-    protected long parentId;
     protected String name;
     protected int rawPosition;
 
@@ -81,12 +80,6 @@ public abstract class AbstractChannelImpl<T extends GuildChannel, M extends Abst
     @SuppressWarnings("unchecked")
     public M setName(String name) {
         this.name = name;
-        return (M) this;
-    }
-
-    @SuppressWarnings("unchecked")
-    public M setParent(long parentId) {
-        this.parentId = parentId;
         return (M) this;
     }
 

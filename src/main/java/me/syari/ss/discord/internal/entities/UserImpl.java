@@ -14,7 +14,6 @@ public class UserImpl implements User {
 
     protected short discriminator;
     protected String name;
-    protected String avatarId;
     protected boolean bot;
     protected boolean fake = false;
 
@@ -33,11 +32,6 @@ public class UserImpl implements User {
     @Override
     public String getDiscriminator() {
         return String.format("%04d", discriminator);
-    }
-
-    @Override
-    public String getAvatarId() {
-        return avatarId;
     }
 
     @Nonnull
@@ -103,11 +97,6 @@ public class UserImpl implements User {
 
     public UserImpl setDiscriminator(String discriminator) {
         this.discriminator = Short.parseShort(discriminator);
-        return this;
-    }
-
-    public UserImpl setAvatarId(String avatarId) {
-        this.avatarId = avatarId;
         return this;
     }
 

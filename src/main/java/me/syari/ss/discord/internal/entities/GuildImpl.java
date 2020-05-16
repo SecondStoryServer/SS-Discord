@@ -29,7 +29,6 @@ public class GuildImpl implements Guild {
     private Member owner;
     private String name;
     private long ownerId;
-    private final VerificationLevel verificationLevel = VerificationLevel.UNKNOWN;
     private int memberCount;
 
     public GuildImpl(JDAImpl api, long id) {
@@ -37,15 +36,13 @@ public class GuildImpl implements Guild {
         this.api = api;
     }
 
-    @Override
     public boolean isLoaded() {
         // Only works with guild subscriptions
         return getJDA().isGuildSubscriptions()
                 && (long) getMemberCount() <= getMemberCache().size();
     }
 
-    @Override
-    public int getMemberCount() {
+    private int getMemberCount() {
         return memberCount;
     }
 
@@ -55,12 +52,10 @@ public class GuildImpl implements Guild {
         return name;
     }
 
-    @Override
     public Member getOwner() {
         return owner;
     }
 
-    @Override
     public long getOwnerIdLong() {
         return ownerId;
     }
@@ -100,13 +95,6 @@ public class GuildImpl implements Guild {
         return api;
     }
 
-    @Nonnull
-    @Override
-    public VerificationLevel getVerificationLevel() {
-        return verificationLevel;
-    }
-
-    @Override
     public boolean checkVerification() {
         return true;
     }

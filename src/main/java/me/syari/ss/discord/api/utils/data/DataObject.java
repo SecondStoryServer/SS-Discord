@@ -230,12 +230,6 @@ public class DataObject implements SerializableData {
 
 
     @Nonnull
-    public Collection<Object> values() {
-        return data.values();
-    }
-
-
-    @Nonnull
     public Set<String> keys() {
         return data.keySet();
     }

@@ -85,13 +85,6 @@ public class EventCache {
         }
     }
 
-    public synchronized int size() {
-        return (int) eventCache.values().stream()
-                .mapToLong(typeMap ->
-                        typeMap.valueCollection().stream().mapToLong(List::size).sum())
-                .sum();
-    }
-
     public synchronized void clear() {
         eventCache.clear();
     }
