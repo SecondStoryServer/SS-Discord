@@ -1,7 +1,6 @@
 package me.syari.ss.discord.api.requests;
 
 import me.syari.ss.discord.api.exceptions.RateLimitedException;
-import me.syari.ss.discord.internal.requests.RestActionImpl;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
