@@ -82,10 +82,6 @@ public interface Guild extends ISnowflake {
 
 
     @Nullable
-    VoiceChannel getAfkChannel();
-
-
-    @Nullable
     TextChannel getSystemChannel();
 
 
@@ -135,8 +131,6 @@ public interface Guild extends ISnowflake {
     default GuildChannel getGuildChannelById(long id) {
         GuildChannel channel = getTextChannelById(id);
         if (channel == null)
-            channel = getVoiceChannelById(id);
-        if (channel == null)
             channel = getStoreChannelById(id);
         if (channel == null)
             channel = getCategoryById(id);
@@ -178,22 +172,6 @@ public interface Guild extends ISnowflake {
 
     @Nonnull
     SortedSnowflakeCacheView<TextChannel> getTextChannelCache();
-
-
-    @Nullable
-    default VoiceChannel getVoiceChannelById(long id) {
-        return getVoiceChannelCache().getElementById(id);
-    }
-
-
-    @Nonnull
-    default List<VoiceChannel> getVoiceChannels() {
-        return getVoiceChannelCache().asList();
-    }
-
-
-    @Nonnull
-    SortedSnowflakeCacheView<VoiceChannel> getVoiceChannelCache();
 
 
     @Nonnull

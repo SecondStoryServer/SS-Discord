@@ -154,8 +154,6 @@ public class ChannelActionImpl<T extends GuildChannel> extends AuditableRestActi
     @Override
     @CheckReturnValue
     public ChannelActionImpl<T> setBitrate(Integer bitrate) {
-        if (type != ChannelType.VOICE)
-            throw new UnsupportedOperationException("Can only set the bitrate for a VoiceChannel!");
         if (bitrate != null) {
             int maxBitrate = getGuild().getMaxBitrate();
             if (bitrate < 8000)
@@ -172,8 +170,6 @@ public class ChannelActionImpl<T extends GuildChannel> extends AuditableRestActi
     @Override
     @CheckReturnValue
     public ChannelActionImpl<T> setUserlimit(Integer userlimit) {
-        if (type != ChannelType.VOICE)
-            throw new UnsupportedOperationException("Can only set the userlimit for a VoiceChannel!");
         if (userlimit != null && (userlimit < 0 || userlimit > 99))
             throw new IllegalArgumentException("Userlimit must be between 0-99!");
         this.userlimit = userlimit;
@@ -188,20 +184,13 @@ public class ChannelActionImpl<T extends GuildChannel> extends AuditableRestActi
         object.put("permission_overwrites", DataArray.fromCollection(overrides));
         if (position != null)
             object.put("position", position);
-        switch (type) {
-            case VOICE:
-                if (bitrate != null)
-                    object.put("bitrate", bitrate);
-                if (userlimit != null)
-                    object.put("user_limit", userlimit);
-                break;
-            case TEXT:
-                if (topic != null && !topic.isEmpty())
-                    object.put("topic", topic);
-                if (nsfw != null)
-                    object.put("nsfw", nsfw);
-                if (slowmode != null)
-                    object.put("rate_limit_per_user", slowmode);
+        if (type == ChannelType.TEXT) {
+            if (topic != null && !topic.isEmpty())
+                object.put("topic", topic);
+            if (nsfw != null)
+                object.put("nsfw", nsfw);
+            if (slowmode != null)
+                object.put("rate_limit_per_user", slowmode);
         }
         if (type != ChannelType.CATEGORY && parent != null)
             object.put("parent_id", parent.getId());
@@ -214,9 +203,6 @@ public class ChannelActionImpl<T extends GuildChannel> extends AuditableRestActi
         EntityBuilder builder = api.getEntityBuilder();
         GuildChannel channel;
         switch (type) {
-            case VOICE:
-                channel = builder.createVoiceChannel(response.getObject(), guild.getIdLong());
-                break;
             case TEXT:
                 channel = builder.createTextChannel(response.getObject(), guild.getIdLong());
                 break;

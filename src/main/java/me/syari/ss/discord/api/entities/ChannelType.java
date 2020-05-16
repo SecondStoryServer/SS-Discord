@@ -10,8 +10,6 @@ public enum ChannelType {
 
     PRIVATE(1, -1),
 
-    VOICE(2, 1, true),
-
     GROUP(3, -1),
 
     CATEGORY(4, 2, true),

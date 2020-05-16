@@ -37,7 +37,6 @@ public class GuildImpl implements Guild {
     private final JDAImpl api;
 
     private final SortedSnowflakeCacheViewImpl<Category> categoryCache = new SortedSnowflakeCacheViewImpl<>(Category.class, GuildChannel::getName, Comparator.naturalOrder());
-    private final SortedSnowflakeCacheViewImpl<VoiceChannel> voiceChannelCache = new SortedSnowflakeCacheViewImpl<>(VoiceChannel.class, GuildChannel::getName, Comparator.naturalOrder());
     private final SortedSnowflakeCacheViewImpl<StoreChannel> storeChannelCache = new SortedSnowflakeCacheViewImpl<>(StoreChannel.class, StoreChannel::getName, Comparator.naturalOrder());
     private final SortedSnowflakeCacheViewImpl<TextChannel> textChannelCache = new SortedSnowflakeCacheViewImpl<>(TextChannel.class, GuildChannel::getName, Comparator.naturalOrder());
     private final SortedSnowflakeCacheViewImpl<Role> roleCache = new SortedSnowflakeCacheViewImpl<>(Role.class, Role::getName, Comparator.reverseOrder());
@@ -59,7 +58,6 @@ public class GuildImpl implements Guild {
     private int boostCount;
     private long ownerId;
     private Set<String> features;
-    private VoiceChannel afkChannel;
     private TextChannel systemChannel;
     private Role publicRole;
     private VerificationLevel verificationLevel = VerificationLevel.UNKNOWN;
@@ -156,11 +154,6 @@ public class GuildImpl implements Guild {
     }
 
     @Override
-    public VoiceChannel getAfkChannel() {
-        return afkChannel;
-    }
-
-    @Override
     public TextChannel getSystemChannel() {
         return systemChannel;
     }
@@ -233,12 +226,6 @@ public class GuildImpl implements Guild {
 
     @Nonnull
     @Override
-    public SortedSnowflakeCacheView<VoiceChannel> getVoiceChannelCache() {
-        return voiceChannelCache;
-    }
-
-    @Nonnull
-    @Override
     public SortedSnowflakeCacheView<Role> getRoleCache() {
         return roleCache;
     }
@@ -257,34 +244,28 @@ public class GuildImpl implements Guild {
 
         List<GuildChannel> channels;
         SnowflakeCacheViewImpl<Category> categoryView = getCategoriesView();
-        SnowflakeCacheViewImpl<VoiceChannel> voiceView = getVoiceChannelsView();
         SnowflakeCacheViewImpl<TextChannel> textView = getTextChannelsView();
         SnowflakeCacheViewImpl<StoreChannel> storeView = getStoreChannelView();
         List<TextChannel> textChannels;
         List<StoreChannel> storeChannels;
-        List<VoiceChannel> voiceChannels;
         List<Category> categories;
         try (UnlockHook categoryHook = categoryView.readLock();
-             UnlockHook voiceHook = voiceView.readLock();
              UnlockHook textHook = textView.readLock();
              UnlockHook storeHook = storeView.readLock()) {
             if (includeHidden) {
                 storeChannels = storeView.asList();
                 textChannels = textView.asList();
-                voiceChannels = voiceView.asList();
             } else {
                 storeChannels = storeView.stream().filter(filterHidden).collect(Collectors.toList());
                 textChannels = textView.stream().filter(filterHidden).collect(Collectors.toList());
-                voiceChannels = voiceView.stream().filter(filterHidden).collect(Collectors.toList());
             }
             categories = categoryView.asList(); // we filter categories out when they are empty (no visible channels inside)
-            channels = new ArrayList<>((int) categoryView.size() + voiceChannels.size() + textChannels.size() + storeChannels.size());
+            channels = new ArrayList<>((int) categoryView.size() + textChannels.size() + storeChannels.size());
         }
 
         storeChannels.stream().filter(it -> it.getParent() == null).forEach(channels::add);
         textChannels.stream().filter(it -> it.getParent() == null).forEach(channels::add);
         Collections.sort(channels);
-        voiceChannels.stream().filter(it -> it.getParent() == null).forEach(channels::add);
 
         for (Category category : categories) {
             List<GuildChannel> children;
@@ -455,11 +436,6 @@ public class GuildImpl implements Guild {
         return this;
     }
 
-    public GuildImpl setAfkChannel(VoiceChannel afkChannel) {
-        this.afkChannel = afkChannel;
-        return this;
-    }
-
     public void setSystemChannel(TextChannel systemChannel) {
         this.systemChannel = systemChannel;
     }
@@ -525,10 +501,6 @@ public class GuildImpl implements Guild {
 
     public SortedSnowflakeCacheViewImpl<TextChannel> getTextChannelsView() {
         return textChannelCache;
-    }
-
-    public SortedSnowflakeCacheViewImpl<VoiceChannel> getVoiceChannelsView() {
-        return voiceChannelCache;
     }
 
     public SortedSnowflakeCacheViewImpl<Role> getRolesView() {

@@ -12,10 +12,6 @@ public interface SelfUser extends User {
     boolean isVerified();
 
 
-    @Nonnull
-    String getEmail();
-
-
     boolean isNitro();
 
 

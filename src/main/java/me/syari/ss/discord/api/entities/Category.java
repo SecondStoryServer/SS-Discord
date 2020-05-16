@@ -17,9 +17,4 @@ public interface Category extends GuildChannel {
     @Nonnull
     List<TextChannel> getTextChannels();
 
-
-    @Nonnull
-    List<VoiceChannel> getVoiceChannels();
-
-
 }

@@ -214,8 +214,6 @@ public interface JDA {
         switch (type) {
             case TEXT:
                 return getTextChannelById(id);
-            case VOICE:
-                return getVoiceChannelById(id);
             case STORE:
                 return getStoreChannelById(id);
             case CATEGORY:
@@ -253,33 +251,6 @@ public interface JDA {
     default TextChannel getTextChannelById(long id) {
         return getTextChannelCache().getElementById(id);
     }
-
-
-    @Nonnull
-    SnowflakeCacheView<VoiceChannel> getVoiceChannelCache();
-
-
-    @Nullable
-    default VoiceChannel getVoiceChannelById(long id) {
-        return getVoiceChannelCache().getElementById(id);
-    }
-
-
-    @Nonnull
-    @Deprecated
-    @ForRemoval
-    @DeprecatedSince("4.0.0")
-    @ReplaceWith("jda.getVoiceChannelsByName(name, ignoreCase)")
-    default List<VoiceChannel> getVoiceChannelByName(@Nonnull String name, boolean ignoreCase) {
-        return getVoiceChannelsByName(name, ignoreCase);
-    }
-
-
-    @Nonnull
-    default List<VoiceChannel> getVoiceChannelsByName(@Nonnull String name, boolean ignoreCase) {
-        return getVoiceChannelCache().getElementsByName(name, ignoreCase);
-    }
-
 
     @Nonnull
     SnowflakeCacheView<PrivateChannel> getPrivateChannelCache();

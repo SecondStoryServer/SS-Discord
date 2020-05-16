@@ -11,16 +11,6 @@ public interface TextChannel extends GuildChannel, MessageChannel, IMentionable 
     int MAX_SLOWMODE = 21600;
 
 
-    @Nullable
-    String getTopic();
-
-
-    boolean isNSFW();
-
-
-    int getSlowmode();
-
-
     @Override
     default void formatTo(Formatter formatter, int flags, int width, int precision) {
         boolean leftJustified = (flags & FormattableFlags.LEFT_JUSTIFY) == FormattableFlags.LEFT_JUSTIFY;

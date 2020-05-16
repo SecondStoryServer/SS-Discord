@@ -109,21 +109,6 @@ public class TextChannelImpl extends AbstractChannelImpl<TextChannel, TextChanne
         return ChannelType.TEXT;
     }
 
-    @Override
-    public String getTopic() {
-        return topic;
-    }
-
-    @Override
-    public boolean isNSFW() {
-        return nsfw;
-    }
-
-    @Override
-    public int getSlowmode() {
-        return slowmode;
-    }
-
     @Nonnull
     @Override
     public List<Member> getMembers() {

@@ -10,9 +10,6 @@ import javax.annotation.Nullable;
 public interface User extends IMentionable, IFakeable {
 
 
-    String AVATAR_URL = "https://cdn.discordapp.com/avatars/%s/%s.%s";
-
-
     @Nonnull
     String getName();
 

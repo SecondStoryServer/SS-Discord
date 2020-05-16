@@ -32,11 +32,6 @@ public interface GuildVoiceState {
 
     boolean isSuppressed();
 
-
-    @Nullable
-    VoiceChannel getChannel();
-
-
     @Nonnull
     Guild getGuild();
 

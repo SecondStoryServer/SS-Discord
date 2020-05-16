@@ -214,9 +214,6 @@ public class EntityBuilder {
         createGuildEmotePass(guildObj, emotesArray);
         createGuildVoiceStatePass(guildObj, voiceStateArray);
 
-        guildObj.setAfkChannel(guildObj.getVoiceChannelById(afkChannelId))
-                .setSystemChannel(guildObj.getTextChannelById(systemChannelId));
-
         presencesArray.ifPresent((arr) -> {
             for (int i = 0; i < arr.length(); i++) {
                 DataObject presence = arr.getObject(i);
@@ -238,9 +235,6 @@ public class EntityBuilder {
         switch (channelType) {
             case TEXT:
                 createTextChannel(guildObj, channelData, guildObj.getIdLong());
-                break;
-            case VOICE:
-                createVoiceChannel(guildObj, channelData, guildObj.getIdLong());
                 break;
             case CATEGORY:
                 createCategory(guildObj, channelData, guildObj.getIdLong());
@@ -269,14 +263,6 @@ public class EntityBuilder {
             GuildVoiceStateImpl voiceState = (GuildVoiceStateImpl) member.getVoiceState();
             if (voiceState == null)
                 continue;
-            final long channelId = voiceStateJson.getLong("channel_id");
-            VoiceChannelImpl voiceChannel =
-                    (VoiceChannelImpl) guildObj.getVoiceChannelsView().get(channelId);
-            if (voiceChannel != null)
-                voiceChannel.getConnectedMembersMap().put(member.getIdLong(), member);
-            else
-                LOG.error("Received a GuildVoiceState with a channel ID for a non-existent channel! ChannelId: {} GuildId: {} UserId: {}",
-                        channelId, guildObj.getId(), userId);
 
             // VoiceState is considered volatile so we don't expect anything to actually exist
             voiceState.setSelfMuted(voiceStateJson.getBoolean("self_mute"))
@@ -284,8 +270,7 @@ public class EntityBuilder {
                     .setGuildMuted(voiceStateJson.getBoolean("mute"))
                     .setGuildDeafened(voiceStateJson.getBoolean("deaf"))
                     .setSuppressed(voiceStateJson.getBoolean("suppress"))
-                    .setSessionId(voiceStateJson.getString("session_id", ""))
-                    .setConnectedChannel(voiceChannel);
+                    .setSessionId(voiceStateJson.getString("session_id", ""));
         }
     }
 
@@ -755,45 +740,6 @@ public class EntityBuilder {
                 .setPosition(json.getInt("position"))
                 .setNSFW(json.getBoolean("nsfw"))
                 .setSlowmode(json.getInt("rate_limit_per_user", 0));
-        if (playbackCache)
-            getJDA().getEventCache().playbackCache(EventCache.Type.CHANNEL, id);
-        return channel;
-    }
-
-    public VoiceChannel createVoiceChannel(DataObject json, long guildId) {
-        return createVoiceChannel(null, json, guildId);
-    }
-
-    public VoiceChannel createVoiceChannel(GuildImpl guild, DataObject json, long guildId) {
-        boolean playbackCache = false;
-        final long id = json.getLong("id");
-        VoiceChannelImpl channel = ((VoiceChannelImpl) getJDA().getVoiceChannelsView().get(id));
-        if (channel == null) {
-            if (guild == null)
-                guild = (GuildImpl) getJDA().getGuildsView().get(guildId);
-            SnowflakeCacheViewImpl<VoiceChannel>
-                    guildVoiceView = guild.getVoiceChannelsView(),
-                    voiceView = getJDA().getVoiceChannelsView();
-            try (
-                    UnlockHook vlock = guildVoiceView.writeLock();
-                    UnlockHook jlock = voiceView.writeLock()) {
-                channel = new VoiceChannelImpl(id, guild);
-                guildVoiceView.getMap().put(id, channel);
-                playbackCache = voiceView.getMap().put(id, channel) == null;
-            }
-        }
-
-        if (!json.isNull("permission_overwrites")) {
-            DataArray overrides = json.getArray("permission_overwrites");
-            createOverridesPass(channel, overrides);
-        }
-
-        channel
-                .setParent(json.getLong("parent_id", 0))
-                .setName(json.getString("name"))
-                .setPosition(json.getInt("position"))
-                .setUserLimit(json.getInt("user_limit"))
-                .setBitrate(json.getInt("bitrate"));
         if (playbackCache)
             getJDA().getEventCache().playbackCache(EventCache.Type.CHANNEL, id);
         return channel;

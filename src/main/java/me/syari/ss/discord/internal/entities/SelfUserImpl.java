@@ -45,14 +45,6 @@ public class SelfUserImpl extends UserImpl implements SelfUser {
         return verified;
     }
 
-    @Nonnull
-    @Override
-    public String getEmail() throws AccountTypeException {
-        if (getJDA().getAccountType() != AccountType.CLIENT)
-            throw new AccountTypeException("Email retrieval can only be done on CLIENT accounts!");
-        return email;
-    }
-
     @Override
     public String getPhoneNumber() throws AccountTypeException {
         if (getJDA().getAccountType() != AccountType.CLIENT)

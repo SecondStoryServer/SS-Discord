@@ -4,7 +4,6 @@ import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.entities.Guild;
 import me.syari.ss.discord.api.entities.GuildVoiceState;
 import me.syari.ss.discord.api.entities.Member;
-import me.syari.ss.discord.api.entities.VoiceChannel;
 import me.syari.ss.discord.internal.utils.cache.SnowflakeReference;
 
 import javax.annotation.Nonnull;
@@ -14,7 +13,6 @@ public class GuildVoiceStateImpl implements GuildVoiceState {
     private final SnowflakeReference<Member> member;
     private final JDA api;
 
-    private VoiceChannel connectedChannel;
     private boolean selfMuted = false;
     private boolean selfDeafened = false;
     private boolean guildMuted = false;
@@ -68,11 +66,6 @@ public class GuildVoiceStateImpl implements GuildVoiceState {
         return suppressed;
     }
 
-    @Override
-    public VoiceChannel getChannel() {
-        return connectedChannel;
-    }
-
     @Nonnull
     @Override
     public Guild getGuild() {
@@ -106,11 +99,6 @@ public class GuildVoiceStateImpl implements GuildVoiceState {
     }
 
     // -- Setters --
-
-    public GuildVoiceStateImpl setConnectedChannel(VoiceChannel connectedChannel) {
-        this.connectedChannel = connectedChannel;
-        return this;
-    }
 
     public GuildVoiceStateImpl setSessionId(String sessionId) {
         return this;
