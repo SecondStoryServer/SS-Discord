@@ -62,18 +62,6 @@ public class SortedSnowflakeCacheViewImpl<T extends ISnowflake & Comparable<? su
 
     @Nonnull
     @Override
-    public Stream<T> streamUnordered() {
-        return super.stream();
-    }
-
-    @Nonnull
-    @Override
-    public Stream<T> parallelStreamUnordered() {
-        return super.parallelStream();
-    }
-
-    @Nonnull
-    @Override
     public Stream<T> stream() {
         return super.stream().sorted(comparator);
     }

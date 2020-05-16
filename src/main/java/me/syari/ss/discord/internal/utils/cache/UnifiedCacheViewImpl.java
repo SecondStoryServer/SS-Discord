@@ -1,17 +1,12 @@
 package me.syari.ss.discord.internal.utils.cache;
 
 import me.syari.ss.discord.api.entities.ISnowflake;
-import me.syari.ss.discord.api.entities.Member;
-import me.syari.ss.discord.api.entities.Role;
 import me.syari.ss.discord.api.utils.ClosableIterator;
 import me.syari.ss.discord.api.utils.cache.CacheView;
-import me.syari.ss.discord.api.utils.cache.MemberCacheView;
 import me.syari.ss.discord.api.utils.cache.SnowflakeCacheView;
-import me.syari.ss.discord.api.utils.cache.UnifiedMemberCacheView;
 import me.syari.ss.discord.internal.utils.ChainedClosableIterator;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -105,52 +100,4 @@ public class UnifiedCacheViewImpl<T, E extends CacheView<T>> implements CacheVie
         }
     }
 
-    public static class UnifiedMemberCacheViewImpl
-            extends UnifiedCacheViewImpl<Member, MemberCacheView> implements UnifiedMemberCacheView {
-
-        public UnifiedMemberCacheViewImpl(Supplier<? extends Stream<? extends MemberCacheView>> generator) {
-            super(generator);
-        }
-
-        @Nonnull
-        @Override
-        public List<Member> getElementsById(long id) {
-            return Collections.unmodifiableList(distinctStream()
-                    .map(view -> view.getElementById(id))
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toList()));
-        }
-
-        @Nonnull
-        @Override
-        public List<Member> getElementsByUsername(@Nonnull String name, boolean ignoreCase) {
-            return Collections.unmodifiableList(distinctStream()
-                    .flatMap(view -> view.getElementsByUsername(name, ignoreCase).stream())
-                    .collect(Collectors.toList()));
-        }
-
-        @Nonnull
-        @Override
-        public List<Member> getElementsByNickname(@Nullable String name, boolean ignoreCase) {
-            return Collections.unmodifiableList(distinctStream()
-                    .flatMap(view -> view.getElementsByNickname(name, ignoreCase).stream())
-                    .collect(Collectors.toList()));
-        }
-
-        @Nonnull
-        @Override
-        public List<Member> getElementsWithRoles(@Nonnull Role... roles) {
-            return Collections.unmodifiableList(distinctStream()
-                    .flatMap(view -> view.getElementsWithRoles(roles).stream())
-                    .collect(Collectors.toList()));
-        }
-
-        @Nonnull
-        @Override
-        public List<Member> getElementsWithRoles(@Nonnull Collection<Role> roles) {
-            return Collections.unmodifiableList(distinctStream()
-                    .flatMap(view -> view.getElementsWithRoles(roles).stream())
-                    .collect(Collectors.toList()));
-        }
-    }
 }

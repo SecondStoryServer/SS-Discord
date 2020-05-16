@@ -12,10 +12,5 @@ public interface OrderAction<T, M extends OrderAction<T, M>> extends RestAction<
     @Override
     M setCheck(@Nullable BooleanSupplier checks);
 
-    @Nonnull
-    M moveTo(int position);
 
-
-    @Nonnull
-    M swapPosition(int swapPosition);
 }

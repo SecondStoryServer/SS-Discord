@@ -22,30 +22,4 @@ public interface MemberCacheView extends SnowflakeCacheView<Member> {
     }
 
 
-    @Nonnull
-    List<Member> getElementsByUsername(@Nonnull String name, boolean ignoreCase);
-
-
-    @Nonnull
-    default List<Member> getElementsByUsername(@Nonnull String name) {
-        return getElementsByUsername(name, false);
-    }
-
-
-    @Nonnull
-    List<Member> getElementsByNickname(@Nullable String name, boolean ignoreCase);
-
-
-    @Nonnull
-    default List<Member> getElementsByNickname(@Nullable String name) {
-        return getElementsByNickname(name, false);
-    }
-
-
-    @Nonnull
-    List<Member> getElementsWithRoles(@Nonnull Role... roles);
-
-
-    @Nonnull
-    List<Member> getElementsWithRoles(@Nonnull Collection<Role> roles);
 }

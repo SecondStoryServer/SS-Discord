@@ -54,42 +54,12 @@ public class DataArray implements Iterable<Object> {
 
 
     @Nonnull
-    public static DataArray fromJson(@Nonnull String json) {
-        try {
-            return new DataArray(mapper.readValue(json, listType));
-        } catch (IOException e) {
-            throw new ParsingException(e);
-        }
-    }
-
-
-    @Nonnull
-    public static DataArray fromJson(@Nonnull InputStream json) {
-        try {
-            return new DataArray(mapper.readValue(json, listType));
-        } catch (IOException e) {
-            throw new ParsingException(e);
-        }
-    }
-
-
-    @Nonnull
     public static DataArray fromJson(@Nonnull Reader json) {
         try {
             return new DataArray(mapper.readValue(json, listType));
         } catch (IOException e) {
             throw new ParsingException(e);
         }
-    }
-
-
-    public boolean isNull(int index) {
-        return data.get(index) == null;
-    }
-
-
-    public boolean isType(int index, @Nonnull DataType type) {
-        return type.isType(data.get(index));
     }
 
 
@@ -119,21 +89,6 @@ public class DataArray implements Iterable<Object> {
 
 
     @Nonnull
-    @SuppressWarnings("unchecked")
-    public DataArray getArray(int index) {
-        List<Object> child = null;
-        try {
-            child = (List<Object>) get(List.class, index);
-        } catch (ClassCastException ex) {
-            log.error("Unable to extract child data", ex);
-        }
-        if (child == null)
-            throw valueError(index, "DataArray");
-        return new DataArray(child);
-    }
-
-
-    @Nonnull
     public String getString(int index) {
         String value = get(String.class, index, UnaryOperator.identity(), String::valueOf);
         if (value == null)
@@ -149,45 +104,6 @@ public class DataArray implements Iterable<Object> {
     }
 
 
-    public boolean getBoolean(int index) {
-        return getBoolean(index, false);
-    }
-
-
-    public boolean getBoolean(int index, boolean defaultValue) {
-        Boolean value = get(Boolean.class, index, Boolean::parseBoolean, null);
-        return value == null ? defaultValue : value;
-    }
-
-
-    public int getInt(int index) {
-        Integer value = get(Integer.class, index, Integer::parseInt, Number::intValue);
-        if (value == null)
-            throw valueError(index, "int");
-        return value;
-    }
-
-
-    public int getInt(int index, int defaultValue) {
-        Integer value = get(Integer.class, index, Integer::parseInt, Number::intValue);
-        return value == null ? defaultValue : value;
-    }
-
-
-    public int getUnsignedInt(int index) {
-        Integer value = get(Integer.class, index, Integer::parseUnsignedInt, Number::intValue);
-        if (value == null)
-            throw valueError(index, "unsigned int");
-        return value;
-    }
-
-
-    public int getUnsignedInt(int index, int defaultValue) {
-        Integer value = get(Integer.class, index, Integer::parseUnsignedInt, Number::intValue);
-        return value == null ? defaultValue : value;
-    }
-
-
     public long getLong(int index) {
         Long value = get(Long.class, index, Long::parseLong, Number::longValue);
         if (value == null)
@@ -196,23 +112,11 @@ public class DataArray implements Iterable<Object> {
     }
 
 
-    public long getLong(int index, long defaultValue) {
-        Long value = get(Long.class, index, Long::parseLong, Number::longValue);
-        return value == null ? defaultValue : value;
-    }
-
-
     public long getUnsignedLong(int index) {
         Long value = get(Long.class, index, Long::parseUnsignedLong, Number::longValue);
         if (value == null)
             throw valueError(index, "unsigned long");
         return value;
-    }
-
-
-    public long getUnsignedLong(int index, long defaultValue) {
-        Long value = get(Long.class, index, Long::parseUnsignedLong, Number::longValue);
-        return value == null ? defaultValue : value;
     }
 
 
@@ -231,24 +135,6 @@ public class DataArray implements Iterable<Object> {
     @Nonnull
     public DataArray addAll(@Nonnull Collection<?> values) {
         values.forEach(this::add);
-        return this;
-    }
-
-
-    @Nonnull
-    public DataArray addAll(@Nonnull DataArray array) {
-        return addAll(array.data);
-    }
-
-
-    @Nonnull
-    public DataArray insert(int index, @Nullable Object value) {
-        if (value instanceof SerializableData)
-            data.add(index, ((SerializableData) value).toData().data);
-        else if (value instanceof DataArray)
-            data.add(index, ((DataArray) value).data);
-        else
-            data.add(index, value);
         return this;
     }
 
@@ -273,12 +159,6 @@ public class DataArray implements Iterable<Object> {
         } catch (JsonProcessingException e) {
             throw new IllegalStateException(e);
         }
-    }
-
-
-    @Nonnull
-    public List<Object> toList() {
-        return data;
     }
 
     private ParsingException valueError(int index, String expectedType) {
