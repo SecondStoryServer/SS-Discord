@@ -32,10 +32,6 @@ public interface Member extends IMentionable, IPermissionHolder, IFakeable {
     OffsetDateTime getTimeBoosted();
 
 
-    @Nullable
-    GuildVoiceState getVoiceState();
-
-
     @Nonnull
     List<Activity> getActivities();
 

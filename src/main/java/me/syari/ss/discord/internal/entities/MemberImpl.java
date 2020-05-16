@@ -24,7 +24,6 @@ public class MemberImpl implements Member {
     private final User user;
     private final JDAImpl api;
     private final Set<Role> roles = ConcurrentHashMap.newKeySet();
-    private final GuildVoiceState voiceState;
     private final Map<ClientType, OnlineStatus> clientStatus;
 
     private String nickname;
@@ -38,7 +37,6 @@ public class MemberImpl implements Member {
         this.user = user;
         boolean cacheState = api.isCacheFlagSet(CacheFlag.VOICE_STATE) || user.equals(api.getSelfUser());
         boolean cacheOnline = api.isCacheFlagSet(CacheFlag.CLIENT_STATUS);
-        this.voiceState = cacheState ? new GuildVoiceStateImpl(this) : null;
         this.clientStatus = cacheOnline ? Collections.synchronizedMap(new EnumMap<>(ClientType.class)) : null;
     }
 
@@ -70,11 +68,6 @@ public class MemberImpl implements Member {
     @Override
     public OffsetDateTime getTimeBoosted() {
         return boostDate != 0 ? OffsetDateTime.ofInstant(Instant.ofEpochMilli(boostDate), OFFSET) : null;
-    }
-
-    @Override
-    public GuildVoiceState getVoiceState() {
-        return voiceState;
     }
 
     @Nonnull

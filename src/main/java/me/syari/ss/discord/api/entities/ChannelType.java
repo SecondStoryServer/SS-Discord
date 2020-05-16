@@ -1,8 +1,6 @@
 package me.syari.ss.discord.api.entities;
 
 import javax.annotation.Nonnull;
-import java.util.EnumSet;
-
 
 public enum ChannelType {
 
@@ -60,13 +58,4 @@ public enum ChannelType {
     }
 
 
-    @Nonnull
-    public static EnumSet<ChannelType> fromSortBucket(int bucket) {
-        EnumSet<ChannelType> types = EnumSet.noneOf(ChannelType.class);
-        for (ChannelType type : values()) {
-            if (type.getSortBucket() == bucket)
-                types.add(type);
-        }
-        return types;
-    }
 }

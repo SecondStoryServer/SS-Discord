@@ -2,7 +2,6 @@ package me.syari.ss.discord.api.entities;
 
 import javax.annotation.Nonnull;
 
-
 public enum ClientType {
 
     DESKTOP("desktop"),

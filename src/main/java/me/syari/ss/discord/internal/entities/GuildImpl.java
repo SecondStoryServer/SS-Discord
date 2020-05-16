@@ -5,7 +5,6 @@ import me.syari.ss.discord.api.Permission;
 import me.syari.ss.discord.api.entities.*;
 import me.syari.ss.discord.api.exceptions.InsufficientPermissionException;
 import me.syari.ss.discord.api.requests.RestAction;
-import me.syari.ss.discord.api.requests.restaction.RoleAction;
 import me.syari.ss.discord.api.utils.MiscUtil;
 import me.syari.ss.discord.api.utils.cache.MemberCacheView;
 import me.syari.ss.discord.api.utils.cache.SnowflakeCacheView;
@@ -14,7 +13,6 @@ import me.syari.ss.discord.api.utils.data.DataObject;
 import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.requests.RestActionImpl;
 import me.syari.ss.discord.internal.requests.Route;
-import me.syari.ss.discord.internal.requests.restaction.RoleActionImpl;
 import me.syari.ss.discord.internal.utils.Checks;
 import me.syari.ss.discord.internal.utils.JDALogger;
 import me.syari.ss.discord.internal.utils.UnlockHook;
@@ -23,9 +21,6 @@ import me.syari.ss.discord.internal.utils.cache.SnowflakeCacheViewImpl;
 import me.syari.ss.discord.internal.utils.cache.SortedSnowflakeCacheViewImpl;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.time.OffsetDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
@@ -113,48 +108,10 @@ public class GuildImpl implements Guild {
                 (response, request) -> response.getObject().getString("code"));
     }
 
-    @Nullable
-    @Override
-    public String getVanityCode() {
-        return vanityCode;
-    }
-
-    @Nullable
-    @Override
-    public String getDescription() {
-        return description;
-    }
-
-    @Nullable
-    @Override
-    public String getBannerId() {
-        return banner;
-    }
-
     @Nonnull
     @Override
     public BoostTier getBoostTier() {
         return boostTier;
-    }
-
-    @Override
-    public int getBoostCount() {
-        return boostCount;
-    }
-
-    @Override
-    public int getMaxMembers() {
-        return maxMembers;
-    }
-
-    @Override
-    public int getMaxPresences() {
-        return maxPresences;
-    }
-
-    @Override
-    public TextChannel getSystemChannel() {
-        return systemChannel;
     }
 
     @Override
@@ -165,18 +122,6 @@ public class GuildImpl implements Guild {
     @Override
     public long getOwnerIdLong() {
         return ownerId;
-    }
-
-    @Nonnull
-    @Override
-    public Timeout getAfkTimeout() {
-        return afkTimeout;
-    }
-
-    @Nonnull
-    @Override
-    public String getRegionRaw() {
-        return region;
     }
 
     @Override
@@ -301,24 +246,6 @@ public class GuildImpl implements Guild {
         return verificationLevel;
     }
 
-    @Nonnull
-    @Override
-    public NotificationLevel getDefaultNotificationLevel() {
-        return defaultNotificationLevel;
-    }
-
-    @Nonnull
-    @Override
-    public MFALevel getRequiredMFALevel() {
-        return mfaLevel;
-    }
-
-    @Nonnull
-    @Override
-    public ExplicitContentLevel getExplicitContentLevel() {
-        return explicitContentLevel;
-    }
-
     @Override
     public boolean checkVerification() {
         return true;
@@ -333,13 +260,6 @@ public class GuildImpl implements Guild {
     @Override
     public long getIdLong() {
         return id;
-    }
-
-    @Nonnull
-    @Override
-    public RoleAction createRole() {
-        checkPermission();
-        return new RoleActionImpl(this);
     }
 
     protected void checkPermission() {

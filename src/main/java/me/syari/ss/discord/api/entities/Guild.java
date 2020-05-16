@@ -4,9 +4,7 @@ import me.syari.ss.discord.annotations.DeprecatedSince;
 import me.syari.ss.discord.annotations.ForRemoval;
 import me.syari.ss.discord.annotations.ReplaceWith;
 import me.syari.ss.discord.api.JDA;
-import me.syari.ss.discord.api.Region;
 import me.syari.ss.discord.api.requests.RestAction;
-import me.syari.ss.discord.api.requests.restaction.RoleAction;
 import me.syari.ss.discord.api.utils.cache.MemberCacheView;
 import me.syari.ss.discord.api.utils.cache.SnowflakeCacheView;
 import me.syari.ss.discord.api.utils.cache.SortedSnowflakeCacheView;
@@ -19,14 +17,6 @@ import java.util.Set;
 
 
 public interface Guild extends ISnowflake {
-
-    String ICON_URL = "https://cdn.discordapp.com/icons/%s/%s.%s";
-
-    String SPLASH_URL = "https://cdn.discordapp.com/splashes/%s/%s.png";
-
-    String BANNER_URL = "https://cdn.discordapp.com/banners/%s/%s.png";
-
-
     boolean isLoaded();
 
 
@@ -50,23 +40,8 @@ public interface Guild extends ISnowflake {
     RestAction<String> retrieveVanityUrl();
 
 
-    @Nullable
-    String getVanityCode();
-
-
-    @Nullable
-    String getDescription();
-
-
-    @Nullable
-    String getBannerId();
-
-
     @Nonnull
     BoostTier getBoostTier();
-
-
-    int getBoostCount();
 
 
     default int getMaxBitrate() {
@@ -75,35 +50,11 @@ public interface Guild extends ISnowflake {
     }
 
 
-    int getMaxMembers();
-
-
-    int getMaxPresences();
-
-
-    @Nullable
-    TextChannel getSystemChannel();
-
-
     @Nullable
     Member getOwner();
 
 
     long getOwnerIdLong();
-
-
-    @Nonnull
-    Timeout getAfkTimeout();
-
-
-    @Nonnull
-    default Region getRegion() {
-        return Region.fromKey(getRegionRaw());
-    }
-
-
-    @Nonnull
-    String getRegionRaw();
 
 
     boolean isMember(@Nonnull User user);
@@ -228,18 +179,6 @@ public interface Guild extends ISnowflake {
     VerificationLevel getVerificationLevel();
 
 
-    @Nonnull
-    NotificationLevel getDefaultNotificationLevel();
-
-
-    @Nonnull
-    MFALevel getRequiredMFALevel();
-
-
-    @Nonnull
-    ExplicitContentLevel getExplicitContentLevel();
-
-
     boolean checkVerification();
 
 
@@ -251,11 +190,6 @@ public interface Guild extends ISnowflake {
 
 
     /* From GuildController */
-
-
-    @Nonnull
-    @CheckReturnValue
-    RoleAction createRole();
 
 
     //////////////////////////

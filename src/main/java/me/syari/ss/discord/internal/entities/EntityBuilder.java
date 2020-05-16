@@ -244,18 +244,6 @@ public class EntityBuilder {
                 }
                 continue;
             }
-
-            GuildVoiceStateImpl voiceState = (GuildVoiceStateImpl) member.getVoiceState();
-            if (voiceState == null)
-                continue;
-
-            // VoiceState is considered volatile so we don't expect anything to actually exist
-            voiceState.setSelfMuted(voiceStateJson.getBoolean("self_mute"))
-                    .setSelfDeafened(voiceStateJson.getBoolean("self_deaf"))
-                    .setGuildMuted(voiceStateJson.getBoolean("mute"))
-                    .setGuildDeafened(voiceStateJson.getBoolean("deaf"))
-                    .setSuppressed(voiceStateJson.getBoolean("suppress"))
-                    .setSessionId(voiceStateJson.getString("session_id", ""));
         }
     }
 
@@ -394,12 +382,6 @@ public class EntityBuilder {
     }
 
     private void loadMember(GuildImpl guild, DataObject memberJson, User user, MemberImpl member) {
-        GuildVoiceStateImpl state = (GuildVoiceStateImpl) member.getVoiceState();
-        if (state != null) {
-            state.setGuildMuted(memberJson.getBoolean("mute"))
-                    .setGuildDeafened(memberJson.getBoolean("deaf"));
-        }
-
         if (!memberJson.isNull("premium_since")) {
             TemporalAccessor boostDate = DateTimeFormatter.ISO_OFFSET_DATE_TIME.parse(memberJson.getString("premium_since"));
             member.setBoostDate(Instant.from(boostDate).toEpochMilli());
