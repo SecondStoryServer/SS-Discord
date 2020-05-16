@@ -4,18 +4,23 @@ import java.io.Serializable;
 import java.util.Objects;
 
 
-public abstract class Pair<L, R> implements Serializable {
+public final class Pair<L, R> implements Serializable {
+    public final L left;
 
+    public final R right;
 
-    public static <L, R> Pair<L, R> of(final L left, final R right) {
-        return new ImmutablePair<>(left, right);
+    public Pair(final L left, final R right) {
+        this.left = left;
+        this.right = right;
     }
 
+    public L getLeft() {
+        return left;
+    }
 
-    public abstract L getLeft();
-
-
-    public abstract R getRight();
+    public R getRight() {
+        return right;
+    }
 
 
     @Override
