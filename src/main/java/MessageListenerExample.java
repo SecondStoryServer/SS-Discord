@@ -3,9 +3,8 @@ import me.syari.ss.discord.api.JDABuilder;
 import me.syari.ss.discord.api.entities.Member;
 import me.syari.ss.discord.api.entities.MessageChannel;
 import me.syari.ss.discord.api.entities.User;
-import me.syari.ss.discord.api.events.message.MessageReceivedEvent;
+import me.syari.ss.discord.api.events.MessageReceivedEvent;
 import me.syari.ss.discord.api.hooks.ListenerAdapter;
-import me.syari.ss.discord.internal.JDAImpl;
 import org.jetbrains.annotations.NotNull;
 
 import javax.security.auth.login.LoginException;

@@ -1,6 +1,6 @@
 package me.syari.ss.discord.internal.hooks;
 
-import me.syari.ss.discord.api.events.message.MessageReceivedEvent;
+import me.syari.ss.discord.api.events.MessageReceivedEvent;
 import me.syari.ss.discord.api.hooks.IEventManager;
 import me.syari.ss.discord.api.hooks.InterfacedEventManager;
 import me.syari.ss.discord.internal.JDAImpl;

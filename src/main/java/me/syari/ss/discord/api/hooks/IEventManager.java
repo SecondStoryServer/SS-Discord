@@ -1,6 +1,6 @@
 package me.syari.ss.discord.api.hooks;
 
-import me.syari.ss.discord.api.events.message.MessageReceivedEvent;
+import me.syari.ss.discord.api.events.MessageReceivedEvent;
 
 import javax.annotation.Nonnull;
 

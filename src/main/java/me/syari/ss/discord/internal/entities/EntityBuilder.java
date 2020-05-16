@@ -94,7 +94,6 @@ public class EntityBuilder {
         }
 
         createGuildEmotePass(guildObj, emotesArray);
-        createGuildVoiceStatePass(guildObj, voiceStateArray);
 
         return guildObj;
     }
@@ -105,20 +104,6 @@ public class EntityBuilder {
             createTextChannel(guildObj, channelData, guildObj.getIdLong());
         } else {
             LOG.debug("Cannot create channel for type " + channelData.getInt("type"));
-        }
-    }
-
-    public void createGuildVoiceStatePass(GuildImpl guildObj, DataArray voiceStates) {
-        for (int i = 0; i < voiceStates.length(); i++) {
-            DataObject voiceStateJson = voiceStates.getObject(i);
-            final long userId = voiceStateJson.getLong("user_id");
-            Member member = guildObj.getMembersView().get(userId);
-            if (member == null) {
-                if (getJDA().isCacheFlagSet(CacheFlag.VOICE_STATE)) {
-                    LOG.error("Received a VoiceState for a unknown Member! GuildId: "
-                            + guildObj.getId() + " MemberId: " + voiceStateJson.getString("user_id"));
-                }
-            }
         }
     }
 
@@ -234,18 +219,17 @@ public class EntityBuilder {
         DataArray rolesJson = memberJson.getArray("roles");
         for (int k = 0; k < rolesJson.length(); k++) {
             final long roleId = rolesJson.getLong(k);
-            Role r = guild.getRolesView().get(roleId);
-            if (r == null) {
+            Role role = guild.getRolesView().get(roleId);
+            if (role == null) {
                 LOG.debug("Received a Member with an unknown Role. MemberId: {} GuildId: {} roleId: {}",
                         member.getUser().getId(), guild.getId(), roleId);
             } else {
-                member.getRoleSet().add(r);
+                member.getRoleSet().add(role);
             }
         }
     }
 
     public void updateMember(MemberImpl member, DataObject content, List<Role> newRoles) {
-        //If newRoles is null that means that we didn't find a role that was in the array and was cached this event
         if (newRoles != null) {
             updateMemberRoles(member, newRoles);
         }

@@ -7,8 +7,6 @@ import javax.annotation.Nonnull;
 
 
 public interface User extends IMentionable, IFakeable {
-
-
     @Nonnull
     String getName();
 

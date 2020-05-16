@@ -13,23 +13,6 @@ import java.util.function.Consumer;
 public interface RestAction<T> {
 
 
-    static boolean isPassContext() {
-        return RestActionImpl.isPassContext();
-    }
-
-
-    @Nonnull
-    static Consumer<? super Throwable> getDefaultFailure() {
-        return RestActionImpl.getDefaultFailure();
-    }
-
-
-    @Nonnull
-    static Consumer<Object> getDefaultSuccess() {
-        return RestActionImpl.getDefaultSuccess();
-    }
-
-
     @Nonnull
     RestAction<T> setCheck(@Nullable BooleanSupplier checks);
 

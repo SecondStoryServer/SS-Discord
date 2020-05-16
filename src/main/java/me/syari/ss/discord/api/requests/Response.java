@@ -16,7 +16,6 @@ public class Response implements Closeable {
     public static final int ERROR_CODE = -1;
     public static final String ERROR_MESSAGE = "ERROR";
     public static final IOFunction<BufferedReader, DataObject> JSON_SERIALIZE_OBJECT = DataObject::fromJson;
-    public static final IOFunction<BufferedReader, DataArray> JSON_SERIALIZE_ARRAY = DataArray::fromJson;
 
     public final int code;
     public final long retryAfter;
@@ -40,12 +39,13 @@ public class Response implements Closeable {
 
         if (response == null) {
             this.body = null;
-        } else // weird compatibility issue, thinks some final isn't initialized if we return pre-maturely
+        } else {
             try {
                 this.body = IOUtil.getBody(response);
             } catch (final Exception e) {
                 throw new IllegalStateException("An error occurred while parsing the response for a RestAction", e);
             }
+        }
     }
 
     public Response(final long retryAfter) {
