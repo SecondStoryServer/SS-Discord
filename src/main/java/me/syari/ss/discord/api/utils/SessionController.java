@@ -1,10 +1,6 @@
 package me.syari.ss.discord.api.utils;
 
-import me.syari.ss.discord.annotations.DeprecatedSince;
-import me.syari.ss.discord.annotations.ForRemoval;
-import me.syari.ss.discord.annotations.ReplaceWith;
 import me.syari.ss.discord.api.JDA;
-import me.syari.ss.discord.internal.utils.tuple.Pair;
 
 import javax.annotation.Nonnull;
 

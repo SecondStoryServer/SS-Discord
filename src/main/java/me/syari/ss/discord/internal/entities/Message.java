@@ -40,7 +40,7 @@ public class Message {
 
     public Message(
             long id, MessageChannel channel, MessageType type,
-            boolean fromWebhook, boolean mentionsEveryone, TLongSet mentionedUsers, TLongSet mentionedRoles, boolean tts,
+            TLongSet mentionedUsers, TLongSet mentionedRoles, boolean tts,
             String content, User author, Member member,
             List<MessageEmbed> embeds) {
         this.content = content;
@@ -65,10 +65,6 @@ public class Message {
     @Nonnull
     public MessageType getType() {
         return type;
-    }
-
-    public long getIdLong() {
-        return id;
     }
 
     private User matchUser(Matcher matcher) {

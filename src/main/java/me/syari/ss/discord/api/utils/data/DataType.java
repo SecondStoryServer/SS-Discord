@@ -1,6 +1,5 @@
 package me.syari.ss.discord.api.utils.data;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;

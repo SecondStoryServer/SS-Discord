@@ -19,7 +19,6 @@ import org.slf4j.Logger;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 
 @SuppressWarnings("WeakerAccess")
 public class GuildSetupController {
@@ -208,10 +207,6 @@ public class GuildSetupController {
             chunkingGuilds.clear();
             sendChunkRequest(array);
         }
-    }
-
-    private void startTimeout() {
-        timeoutHandle = getJDA().getGatewayPool().scheduleAtFixedRate(new ChunkTimeout(), CHUNK_TIMEOUT, CHUNK_TIMEOUT, TimeUnit.MILLISECONDS);
     }
 
     // Syncing

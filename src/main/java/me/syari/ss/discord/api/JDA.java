@@ -1,17 +1,11 @@
 package me.syari.ss.discord.api;
 
 import me.syari.ss.discord.api.entities.*;
-import me.syari.ss.discord.api.hooks.IEventManager;
-import me.syari.ss.discord.api.hooks.ListenerAdapter;
-import me.syari.ss.discord.api.managers.Presence;
 import me.syari.ss.discord.api.utils.cache.SnowflakeCacheView;
-import okhttp3.OkHttpClient;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ScheduledExecutorService;
 
 
 public interface JDA {

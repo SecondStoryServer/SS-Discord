@@ -1,18 +1,13 @@
 package me.syari.ss.discord.api.requests;
 
-import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.exceptions.RateLimitedException;
 import me.syari.ss.discord.internal.requests.RestActionImpl;
-import me.syari.ss.discord.internal.requests.restaction.operator.MapRestAction;
-import me.syari.ss.discord.internal.utils.Checks;
 
-import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 
 public interface RestAction<T> {

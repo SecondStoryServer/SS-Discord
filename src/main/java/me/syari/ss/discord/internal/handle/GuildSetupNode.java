@@ -92,19 +92,6 @@ public class GuildSetupNode {
         this.status = status;
     }
 
-    void handleReady(DataObject obj) {
-        if (!sync)
-            return;
-        partialGuild = obj;
-        markedUnavailable = partialGuild.getBoolean("unavailable");
-        if (markedUnavailable) {
-            updateStatus(GuildSetupController.Status.UNAVAILABLE);
-        } else {
-            getController().addGuildForSyncing(id, isJoin());
-            requestedSync = true;
-        }
-    }
-
     void handleCreate(DataObject obj) {
         if (partialGuild == null) {
             partialGuild = obj;
@@ -232,6 +219,6 @@ public class GuildSetupNode {
     }
 
     public enum Type {
-        INIT, JOIN, AVAILABLE
+        JOIN, AVAILABLE
     }
 }

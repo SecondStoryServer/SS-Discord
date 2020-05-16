@@ -2,17 +2,12 @@ package me.syari.ss.discord.api.utils;
 
 import com.neovisionaries.ws.client.OpeningHandshakeException;
 import me.syari.ss.discord.api.JDA;
-import me.syari.ss.discord.api.requests.Request;
-import me.syari.ss.discord.api.requests.Response;
-import me.syari.ss.discord.api.utils.data.DataObject;
 import me.syari.ss.discord.internal.requests.RestActionImpl;
 import me.syari.ss.discord.internal.requests.Route;
 import me.syari.ss.discord.internal.utils.JDALogger;
-import me.syari.ss.discord.internal.utils.tuple.Pair;
 import org.slf4j.Logger;
 
 import javax.annotation.Nonnull;
-import javax.security.auth.login.LoginException;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;

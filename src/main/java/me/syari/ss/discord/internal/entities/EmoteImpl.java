@@ -2,6 +2,7 @@ package me.syari.ss.discord.internal.entities;
 
 import me.syari.ss.discord.api.entities.ListedEmote;
 import me.syari.ss.discord.api.entities.Role;
+
 import javax.annotation.Nonnull;
 import java.util.Set;
 

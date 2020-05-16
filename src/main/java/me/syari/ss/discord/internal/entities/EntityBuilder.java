@@ -428,8 +428,8 @@ public class EntityBuilder {
         MessageType type = MessageType.fromId(jsonObject.getInt("type"));
         Message message;
         if (type == MessageType.DEFAULT) {
-            message = new Message(id, chan, type, fromWebhook,
-                    mentionsEveryone, mentionedUsers, mentionedRoles, tts,
+            message = new Message(id, chan, type,
+                    mentionedUsers, mentionedRoles, tts,
                     content, user, member, embeds);
         } else {
             throw new IllegalArgumentException(UNKNOWN_MESSAGE_TYPE);

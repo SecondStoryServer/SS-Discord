@@ -95,10 +95,6 @@ public class GuildImpl implements Guild {
         return api;
     }
 
-    public boolean checkVerification() {
-        return true;
-    }
-
     @Override
     public long getIdLong() {
         return id;
