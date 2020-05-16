@@ -1,5 +1,6 @@
 package me.syari.ss.discord.internal.entities;
 
+import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.entities.ChannelType;
 import me.syari.ss.discord.api.entities.MessageEmbed;
 import me.syari.ss.discord.api.entities.TextChannel;
@@ -30,6 +31,12 @@ public class TextChannelImpl extends AbstractChannelImpl<TextChannel, TextChanne
     @Override
     public ChannelType getType() {
         return ChannelType.TEXT;
+    }
+
+    @Nonnull
+    @Override
+    public JDA getJDA() {
+        return api;
     }
 
     @Nonnull

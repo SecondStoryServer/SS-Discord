@@ -39,16 +39,6 @@ public interface MessageAction extends RestAction<Message>, Appendable {
 
     @Nonnull
     @CheckReturnValue
-    MessageAction reset();
-
-
-    @Nonnull
-    @CheckReturnValue
-    MessageAction nonce(@Nullable final String nonce);
-
-
-    @Nonnull
-    @CheckReturnValue
     MessageAction content(@Nullable final String content);
 
 

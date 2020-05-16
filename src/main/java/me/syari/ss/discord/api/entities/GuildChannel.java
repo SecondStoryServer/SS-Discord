@@ -22,6 +22,4 @@ public interface GuildChannel extends ISnowflake, Comparable<GuildChannel> {
     int getPositionRaw();
 
 
-    @Nonnull
-    JDA getJDA();
 }

@@ -97,33 +97,6 @@ public class GuildSetupController {
             tryChunking();
     }
 
-    public boolean setIncompleteCount(int count) {
-        log.debug("Setting incomplete count to {}", count);
-        this.incompleteCount = count;
-        this.syncingCount = count;
-        boolean ready = count == 0;
-        if (ready)
-            getJDA().getClient().ready();
-        else
-            startTimeout();
-        return !ready;
-    }
-
-    public void onReady(long id, DataObject obj) {
-        log.trace("Adding id to setup cache {}", id);
-        GuildSetupNode node = new GuildSetupNode(id, this, GuildSetupNode.Type.INIT);
-        setupNodes.put(id, node);
-        node.handleReady(obj);
-        if (node.markedUnavailable) {
-            if (node.sync) {
-                syncingCount--;
-                trySyncing();
-            }
-            incompleteCount--;
-            tryChunking();
-        }
-    }
-
     public void onCreate(long id, DataObject obj) {
         boolean available = obj.isNull("unavailable") || !obj.getBoolean("unavailable");
         log.trace("Received guild create for id: {} available: {}", id, available);
@@ -281,8 +254,7 @@ public class GuildSetupController {
         CHUNKING,
         BUILDING,
         READY,
-        UNAVAILABLE,
-        REMOVED
+        UNAVAILABLE
     }
 
     @FunctionalInterface

@@ -1,6 +1,5 @@
 package me.syari.ss.discord.internal.entities;
 
-import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.entities.Guild;
 import me.syari.ss.discord.api.entities.GuildChannel;
 import me.syari.ss.discord.internal.JDAImpl;
@@ -48,12 +47,6 @@ public abstract class AbstractChannelImpl<T extends GuildChannel, M extends Abst
     @Override
     public int getPositionRaw() {
         return rawPosition;
-    }
-
-    @Nonnull
-    @Override
-    public JDA getJDA() {
-        return api;
     }
 
 

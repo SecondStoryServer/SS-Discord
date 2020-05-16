@@ -98,21 +98,6 @@ public class MessageActionImpl extends RestActionImpl<Message> implements Messag
     @Nonnull
     @Override
     @CheckReturnValue
-    public MessageActionImpl reset() {
-        return content(null).nonce(null).embed(null).tts(false).override(false).clearFiles();
-    }
-
-    @Nonnull
-    @Override
-    @CheckReturnValue
-    public MessageActionImpl nonce(final String nonce) {
-        this.nonce = nonce;
-        return this;
-    }
-
-    @Nonnull
-    @Override
-    @CheckReturnValue
     public MessageActionImpl content(final String content) {
         if (content == null || content.isEmpty())
             this.content.setLength(0);
