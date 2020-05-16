@@ -4,7 +4,6 @@ import me.syari.ss.discord.api.Permission;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
-import java.util.EnumSet;
 
 
 public interface IPermissionHolder extends ISnowflake {
