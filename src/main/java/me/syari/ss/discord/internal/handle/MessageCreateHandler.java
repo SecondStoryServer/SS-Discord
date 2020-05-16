@@ -23,6 +23,7 @@ public class MessageCreateHandler extends SocketHandler
     @Override
     protected Long handleInternally(DataObject content)
     {
+        System.out.println(">> MessageCreateHandler");
         MessageType type = MessageType.fromId(content.getInt("type"));
 
         if (type == MessageType.UNKNOWN)

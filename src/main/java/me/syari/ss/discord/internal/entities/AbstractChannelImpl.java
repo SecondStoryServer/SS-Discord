@@ -26,7 +26,6 @@ public abstract class AbstractChannelImpl<T extends GuildChannel, M extends Abst
 
     protected final TLongObjectMap<PermissionOverride> overrides = MiscUtil.newLongMap();
 
-    protected final ReentrantLock mngLock = new ReentrantLock();
     protected volatile ChannelManager manager;
 
     protected long parentId;

@@ -2,12 +2,8 @@
 
 package me.syari.ss.discord.internal.handle;
 
-import me.syari.ss.discord.api.entities.TextChannel;
-import me.syari.ss.discord.api.events.message.guild.react.GuildMessageReactionRemoveAllEvent;
-import me.syari.ss.discord.api.events.message.react.MessageReactionRemoveAllEvent;
 import me.syari.ss.discord.api.utils.data.DataObject;
 import me.syari.ss.discord.internal.JDAImpl;
-import me.syari.ss.discord.internal.requests.WebSocketClient;
 
 public class MessageReactionBulkRemoveHandler extends SocketHandler
 {
@@ -19,34 +15,6 @@ public class MessageReactionBulkRemoveHandler extends SocketHandler
     @Override
     protected Long handleInternally(DataObject content)
     {
-        final long messageId = content.getLong("message_id");
-        final long channelId = content.getLong("channel_id");
-        JDAImpl jda = getJDA();
-        TextChannel channel = jda.getTextChannelById(channelId);
-        if (channel == null)
-        {
-            jda.getEventCache().cache(EventCache.Type.CHANNEL, channelId, responseNumber, allContent, this::handle);
-            EventCache.LOG.debug("Received a reaction for a channel that JDA does not currently have cached channel_id: {} message_id: {}", channelId, messageId);
-            return null;
-        }
-
-        switch (channel.getType())
-        {
-            case TEXT:
-               jda.handleEvent(
-                   new GuildMessageReactionRemoveAllEvent(
-                       jda, responseNumber,
-                       messageId, channel));
-               break;
-            case GROUP:
-                WebSocketClient.LOG.error("Received a reaction bulk delete for a group which should not be possible");
-                return null;
-        }
-
-        jda.handleEvent(
-            new MessageReactionRemoveAllEvent(
-                jda, responseNumber,
-                messageId, channel));
         return null;
     }
 }

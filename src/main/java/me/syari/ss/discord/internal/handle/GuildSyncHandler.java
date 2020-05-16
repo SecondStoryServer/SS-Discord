@@ -15,8 +15,6 @@ public class GuildSyncHandler extends SocketHandler
     @Override
     protected Long handleInternally(DataObject content)
     {
-        final long guildId = content.getLong("id");
-        getJDA().getGuildSetupController().onSync(guildId, content);
         return null;
     }
 }

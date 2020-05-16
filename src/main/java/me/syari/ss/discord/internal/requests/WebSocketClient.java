@@ -963,8 +963,8 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
         handlers.put("CHANNEL_CREATE",              new ChannelCreateHandler(api));
         handlers.put("CHANNEL_DELETE",              new ChannelDeleteHandler(api));
         handlers.put("CHANNEL_UPDATE",              new ChannelUpdateHandler(api));
-        handlers.put("GUILD_BAN_ADD",               new GuildBanHandler(api, true));
-        handlers.put("GUILD_BAN_REMOVE",            new GuildBanHandler(api, false));
+        handlers.put("GUILD_BAN_ADD",               new GuildBanHandler(api));
+        handlers.put("GUILD_BAN_REMOVE",            new GuildBanHandler(api));
         handlers.put("GUILD_CREATE",                new GuildCreateHandler(api));
         handlers.put("GUILD_DELETE",                new GuildDeleteHandler(api));
         handlers.put("GUILD_EMOJIS_UPDATE",         new GuildEmojisUpdateHandler(api));
@@ -980,8 +980,8 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
         handlers.put("MESSAGE_CREATE",              new MessageCreateHandler(api));
         handlers.put("MESSAGE_DELETE",              new MessageDeleteHandler(api));
         handlers.put("MESSAGE_DELETE_BULK",         new MessageBulkDeleteHandler(api));
-        handlers.put("MESSAGE_REACTION_ADD",        new MessageReactionHandler(api, true));
-        handlers.put("MESSAGE_REACTION_REMOVE",     new MessageReactionHandler(api, false));
+        handlers.put("MESSAGE_REACTION_ADD",        new MessageReactionHandler(api));
+        handlers.put("MESSAGE_REACTION_REMOVE",     new MessageReactionHandler(api));
         handlers.put("MESSAGE_REACTION_REMOVE_ALL", new MessageReactionBulkRemoveHandler(api));
         handlers.put("MESSAGE_UPDATE",              new MessageUpdateHandler(api));
         handlers.put("READY",                       new ReadyHandler(api));
