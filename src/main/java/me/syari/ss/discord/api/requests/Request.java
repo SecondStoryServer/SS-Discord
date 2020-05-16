@@ -86,11 +86,6 @@ public class Request<T> {
         });
     }
 
-    @Nonnull
-    public JDAImpl getJDA() {
-        return api;
-    }
-
     public boolean runChecks() {
         return checks == null || checks.getAsBoolean();
     }

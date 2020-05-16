@@ -30,23 +30,6 @@ public interface SessionController {
     String getGateway(@Nonnull JDA api);
 
 
-    @Nonnull
-    @Deprecated
-    @ForRemoval
-    @DeprecatedSince("4.0.0")
-    @ReplaceWith("getShardedGateway(api)")
-    @SuppressWarnings("DeprecatedIsStillUsed")
-    Pair<String, Integer> getGatewayBot(@Nonnull JDA api);
-
-
-    @Nonnull
-    @SuppressWarnings({"deprecation", "RedundantSuppression"})
-    default ShardedGateway getShardedGateway(@Nonnull JDA api) {
-        Pair<String, Integer> tuple = getGatewayBot(api);
-        return new ShardedGateway(tuple.getLeft(), tuple.getRight());
-    }
-
-
     class ShardedGateway {
         private final String url;
         private final int shardTotal;
@@ -70,10 +53,6 @@ public interface SessionController {
 
 
     interface SessionConnectNode {
-
-
-        @Nonnull
-        JDA getJDA();
 
 
         void run(boolean isLast) throws InterruptedException;

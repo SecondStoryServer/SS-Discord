@@ -1,6 +1,5 @@
 package me.syari.ss.discord.internal.requests.restaction.operator;
 
-import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.exceptions.ContextException;
 import me.syari.ss.discord.api.requests.RestAction;
 
@@ -21,12 +20,6 @@ public abstract class RestActionOperator<I, O> implements RestAction<O> {
             RestAction.getDefaultSuccess().accept(value);
         else
             callback.accept(value);
-    }
-
-    @Nonnull
-    @Override
-    public JDA getJDA() {
-        return action.getJDA();
     }
 
     @Nonnull

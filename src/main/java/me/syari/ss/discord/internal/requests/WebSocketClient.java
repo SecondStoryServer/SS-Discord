@@ -808,11 +808,9 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
 
     protected abstract class ConnectNode implements SessionController.SessionConnectNode {
         @Nonnull
-        @Override
-        public JDA getJDA() {
+        JDA getJDA() {
             return api;
         }
-
     }
 
     protected class StartingNode extends ConnectNode {

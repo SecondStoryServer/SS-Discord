@@ -19,7 +19,6 @@ public class Response implements Closeable {
     public static final IOFunction<BufferedReader, DataArray> JSON_SERIALIZE_ARRAY = DataArray::fromJson;
 
     public final int code;
-    public final String message;
     public final long retryAfter;
     private final InputStream body;
     private final okhttp3.Response rawResponse;
@@ -36,7 +35,6 @@ public class Response implements Closeable {
     public Response(@Nullable final okhttp3.Response response, final int code, @Nonnull final String message, final long retryAfter) {
         this.rawResponse = response;
         this.code = code;
-        this.message = message;
         this.exception = null;
         this.retryAfter = retryAfter;
 
@@ -56,11 +54,6 @@ public class Response implements Closeable {
 
     public Response(@Nonnull final okhttp3.Response response, final long retryAfter) {
         this(response, response.code(), response.message(), retryAfter);
-    }
-
-    @Nonnull
-    public DataArray getArray() {
-        return get(DataArray.class, JSON_SERIALIZE_ARRAY);
     }
 
     @Nonnull

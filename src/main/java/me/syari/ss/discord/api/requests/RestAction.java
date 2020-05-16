@@ -36,10 +36,6 @@ public interface RestAction<T> {
 
 
     @Nonnull
-    JDA getJDA();
-
-
-    @Nonnull
     RestAction<T> setCheck(@Nullable BooleanSupplier checks);
 
 
@@ -75,10 +71,4 @@ public interface RestAction<T> {
     CompletableFuture<T> submit(boolean shouldQueue);
 
 
-    @Nonnull
-    @CheckReturnValue
-    default <O> RestAction<O> map(@Nonnull Function<? super T, ? extends O> map) {
-        Checks.notNull(map, "Function");
-        return new MapRestAction<>(this, map);
-    }
 }

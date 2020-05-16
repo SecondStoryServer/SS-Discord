@@ -5,14 +5,11 @@ import me.syari.ss.discord.internal.utils.UnlockHook;
 import java.lang.ref.WeakReference;
 import java.util.Collections;
 import java.util.List;
-import java.util.NavigableSet;
-import java.util.Set;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public abstract class ReadWriteLockCache<T> {
     protected final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
     protected WeakReference<List<T>> cachedList;
-    protected WeakReference<Set<T>> cachedSet;
 
     public UnlockHook writeLock() {
         if (lock.getReadHoldCount() > 0)
@@ -33,7 +30,6 @@ public abstract class ReadWriteLockCache<T> {
 
     public void clearCachedLists() {
         cachedList = null;
-        cachedSet = null;
     }
 
     protected void onAcquireWriteLock() {
@@ -52,15 +48,4 @@ public abstract class ReadWriteLockCache<T> {
         return list;
     }
 
-    protected Set<T> cache(Set<T> set) {
-        set = Collections.unmodifiableSet(set);
-        cachedSet = new WeakReference<>(set);
-        return set;
-    }
-
-    protected NavigableSet<T> cache(NavigableSet<T> set) {
-        set = Collections.unmodifiableNavigableSet(set);
-        cachedSet = new WeakReference<>(set);
-        return set;
-    }
 }

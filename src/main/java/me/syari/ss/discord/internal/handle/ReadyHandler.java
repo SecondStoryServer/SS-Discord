@@ -18,8 +18,6 @@ public class ReadyHandler extends SocketHandler {
     @Override
     protected Long handleInternally(DataObject content) {
         System.out.println(">> ReadyHandler");
-        EntityBuilder builder = getJDA().getEntityBuilder();
-
         DataArray guilds = content.getArray("guilds");
         //Make sure we don't have any duplicates here!
         TLongObjectMap<DataObject> distinctGuilds = new TLongObjectHashMap<>();

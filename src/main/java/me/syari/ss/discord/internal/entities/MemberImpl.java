@@ -1,6 +1,5 @@
 package me.syari.ss.discord.internal.entities;
 
-import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.entities.Guild;
 import me.syari.ss.discord.api.entities.Member;
 import me.syari.ss.discord.api.entities.Role;
@@ -34,15 +33,8 @@ public class MemberImpl implements Member {
     }
 
     @Nonnull
-    @Override
-    public GuildImpl getGuild() {
+    private GuildImpl getGuild() {
         return (GuildImpl) guild.resolve();
-    }
-
-    @Nonnull
-    @Override
-    public JDA getJDA() {
-        return api;
     }
 
     @Override

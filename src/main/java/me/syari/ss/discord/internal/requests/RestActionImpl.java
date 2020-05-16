@@ -77,7 +77,6 @@ public class RestActionImpl<T> implements RestAction<T> {
     }
 
     @Nonnull
-    @Override
     public JDA getJDA() {
         return api;
     }

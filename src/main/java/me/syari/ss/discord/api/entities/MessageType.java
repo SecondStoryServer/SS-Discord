@@ -53,11 +53,6 @@ public enum MessageType {
     }
 
 
-    public int getId() {
-        return id;
-    }
-
-
     @Nonnull
     public static MessageType fromId(int id) {
         for (MessageType type : values()) {

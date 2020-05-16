@@ -11,14 +11,6 @@ public interface Member extends IMentionable, IFakeable {
     User getUser();
 
 
-    @Nonnull
-    Guild getGuild();
-
-
-    @Nonnull
-    JDA getJDA();
-
-
     @Nullable
     String getNickname();
 

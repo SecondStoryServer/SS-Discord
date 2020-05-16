@@ -69,10 +69,5 @@ public interface MessageAction extends RestAction<Message>, Appendable {
 
     @Nonnull
     @CheckReturnValue
-    MessageAction clearFiles();
-
-
-    @Nonnull
-    @CheckReturnValue
     MessageAction override(final boolean bool);
 }

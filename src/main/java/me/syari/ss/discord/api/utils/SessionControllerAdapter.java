@@ -62,38 +62,9 @@ public class SessionControllerAdapter implements SessionController {
     }
 
     @Nonnull
-    @Override
-    public ShardedGateway getShardedGateway(@Nonnull JDA api) {
+    private ShardedGateway getShardedGateway(@Nonnull JDA api) {
         return new RestActionImpl<ShardedGateway>(api, Route.Misc.GATEWAY_BOT.compile()) {
-            @Override
-            public void handleResponse(Response response, Request<ShardedGateway> request) {
-                try {
-                    if (response.isOk()) {
-                        DataObject object = response.getObject();
-
-                        String url = object.getString("url");
-                        int shards = object.getInt("shards");
-
-                        request.onSuccess(new ShardedGateway(url, shards));
-                    } else if (response.code == 401) {
-                        api.verifyToken(true);
-                    } else {
-                        request.onFailure(new LoginException("When verifying the authenticity of the provided token, Discord returned an unknown response:\n" +
-                                response.toString()));
-                    }
-                } catch (Exception e) {
-                    request.onFailure(e);
-                }
-            }
         }.complete();
-    }
-
-    @Nonnull
-    @Override
-    @SuppressWarnings({"deprecation", "RedundantSuppression"})
-    public Pair<String, Integer> getGatewayBot(@Nonnull JDA api) {
-        ShardedGateway bot = getShardedGateway(api);
-        return Pair.of(bot.getUrl(), bot.getShardTotal());
     }
 
     protected void runWorker() {

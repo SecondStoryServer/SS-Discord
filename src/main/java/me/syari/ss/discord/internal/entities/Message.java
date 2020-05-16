@@ -22,8 +22,6 @@ public class Message {
     protected final long id;
     protected final MessageType type;
     protected final MessageChannel channel;
-    protected final boolean fromWebhook;
-    protected final boolean mentionsEveryone;
     protected final User author;
     protected final Member member;
     protected final List<MessageEmbed> embeds;
@@ -51,8 +49,6 @@ public class Message {
         this.channel = channel;
         this.type = type;
         this.api = (channel != null) ? (JDAImpl) channel.getJDA() : null;
-        this.fromWebhook = fromWebhook;
-        this.mentionsEveryone = mentionsEveryone;
         this.author = author;
         this.member = member;
         this.embeds = Collections.unmodifiableList(embeds);
@@ -280,11 +276,7 @@ public class Message {
 
         CHANNEL("<#(\\d+)>"),
 
-        EMOTE("<a?:([a-zA-Z0-9_]+):([0-9]+)>"),
-
-        HERE("@here"),
-
-        EVERYONE("@everyone");
+        EMOTE("<a?:([a-zA-Z0-9_]+):([0-9]+)>");
 
         private final Pattern pattern;
 

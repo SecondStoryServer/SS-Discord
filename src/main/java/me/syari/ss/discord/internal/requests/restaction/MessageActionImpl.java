@@ -144,15 +144,6 @@ public class MessageActionImpl extends RestActionImpl<Message> implements Messag
     @Nonnull
     @Override
     @CheckReturnValue
-    public MessageActionImpl clearFiles() {
-        files.clear();
-        clearResources();
-        return this;
-    }
-
-    @Nonnull
-    @Override
-    @CheckReturnValue
     public MessageActionImpl override(final boolean bool) {
         this.override = isEdit() && bool;
         return this;

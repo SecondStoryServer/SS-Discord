@@ -10,12 +10,10 @@ import javax.annotation.Nullable;
 
 
 public class MessageReceivedEvent {
-    protected long messageId;
     protected MessageChannel channel;
     private final Message message;
 
     public MessageReceivedEvent(@Nonnull Message message) {
-        this.messageId = message.getIdLong();
         this.channel = message.getChannel();
         this.message = message;
     }

@@ -1,6 +1,5 @@
 package me.syari.ss.discord.internal.managers;
 
-import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.OnlineStatus;
 import me.syari.ss.discord.api.entities.Activity;
 import me.syari.ss.discord.api.managers.Presence;
@@ -23,12 +22,6 @@ public class PresenceImpl implements Presence {
 
 
     /* -- Public Getters -- */
-
-    @Nonnull
-    @Override
-    public JDA getJDA() {
-        return api;
-    }
 
     @Nonnull
     @Override

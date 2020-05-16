@@ -4,15 +4,9 @@ public enum OnlineStatus {
 
     ONLINE("online"),
 
-    IDLE("idle"),
-
-    DO_NOT_DISTURB("dnd"),
-
     INVISIBLE("invisible"),
 
-    OFFLINE("offline"),
-
-    UNKNOWN("");
+    OFFLINE("offline");
 
     private final String key;
 

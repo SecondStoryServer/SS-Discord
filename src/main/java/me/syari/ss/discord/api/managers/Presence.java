@@ -8,9 +8,6 @@ import javax.annotation.Nonnull;
 
 public interface Presence {
 
-    @Nonnull
-    JDA getJDA();
-
 
     @Nonnull
     OnlineStatus getStatus();
