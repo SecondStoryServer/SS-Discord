@@ -95,12 +95,5 @@ public class RoleOrderActionImpl
 
         return getRequestBody(array);
     }
-
-    @Override
-    protected void validateInput(Role entity)
-    {
-        Checks.check(entity.getGuild().equals(guild), "Provided selected role is not from this Guild!");
-        Checks.check(orderList.contains(entity), "Provided role is not in the list of orderable roles!");
-    }
 }
 

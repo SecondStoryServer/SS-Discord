@@ -80,12 +80,6 @@ public class Response implements Closeable
     }
 
     @Nonnull
-    public Optional<DataArray> optArray()
-    {
-        return parseBody(true, DataArray.class, JSON_SERIALIZE_ARRAY);
-    }
-
-    @Nonnull
     public DataObject getObject()
     {
         return get(DataObject.class, JSON_SERIALIZE_OBJECT);

@@ -56,12 +56,6 @@ public class ChannelOrderActionImpl
     }
 
     @Override
-    public int getSortBucket()
-    {
-        return bucket;
-    }
-
-    @Override
     protected RequestBody finalizeData()
     {
         final Member self = guild.getSelfMember();
@@ -77,13 +71,6 @@ public class ChannelOrderActionImpl
         }
 
         return getRequestBody(array);
-    }
-
-    @Override
-    protected void validateInput(GuildChannel entity)
-    {
-        Checks.check(entity.getGuild().equals(guild), "Provided channel is not from this Guild!");
-        Checks.check(orderList.contains(entity), "Provided channel is not in the list of orderable channels!");
     }
 
     protected static Collection<GuildChannel> getChannelsOfType(Guild guild, int bucket)

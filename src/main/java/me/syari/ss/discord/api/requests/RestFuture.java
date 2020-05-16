@@ -24,18 +24,6 @@ public class RestFuture<T> extends CompletableFuture<T>
         ((JDAImpl) restAction.getJDA()).getRequester().request(this.request);
     }
 
-    public RestFuture(final T t)
-    {
-        complete(t);
-        this.request = null;
-    }
-
-    public RestFuture(final Throwable t)
-    {
-        completeExceptionally(t);
-        this.request = null;
-    }
-
     @Override
     public boolean cancel(final boolean mayInterrupt)
     {

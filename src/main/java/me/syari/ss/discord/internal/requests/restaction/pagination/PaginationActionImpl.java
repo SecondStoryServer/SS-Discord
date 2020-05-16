@@ -53,39 +53,9 @@ public abstract class PaginationActionImpl<T, M extends PaginationAction<T, M>>
     @Nonnull
     @Override
     @SuppressWarnings("unchecked")
-    public M skipTo(long id)
-    {
-        if (!cached.isEmpty())
-        {
-            int cmp = Long.compareUnsigned(this.lastKey, id);
-            if (cmp < 0) // old - new < 0 => old < new
-                throw new IllegalArgumentException("Cannot jump to that id, it is newer than the current oldest element.");
-        }
-        if (this.lastKey != id)
-            this.last = null;
-        this.iteratorIndex = id;
-        this.lastKey = id;
-        return (M) this;
-    }
-
-    @Override
-    public long getLastKey()
-    {
-        return lastKey;
-    }
-
-    @Nonnull
-    @Override
-    @SuppressWarnings("unchecked")
     public M setCheck(BooleanSupplier checks)
     {
         return (M) super.setCheck(checks);
-    }
-
-    @Override
-    public int cacheSize()
-    {
-        return cached.size();
     }
 
     @Override
@@ -99,16 +69,6 @@ public abstract class PaginationActionImpl<T, M extends PaginationAction<T, M>>
     public List<T> getCached()
     {
         return Collections.unmodifiableList(cached);
-    }
-
-    @Nonnull
-    @Override
-    public T getLast()
-    {
-        final T last = this.last;
-        if (last == null)
-            throw new NoSuchElementException("No entities have been retrieved yet.");
-        return last;
     }
 
     @Nonnull
@@ -140,11 +100,6 @@ public abstract class PaginationActionImpl<T, M extends PaginationAction<T, M>>
         return (M) this;
     }
 
-    @Override
-    public boolean isCacheEnabled()
-    {
-        return useCache;
-    }
 
     @Override
     public final int getMaxLimit()
@@ -152,45 +107,11 @@ public abstract class PaginationActionImpl<T, M extends PaginationAction<T, M>>
         return maxLimit;
     }
 
-    @Override
-    public final int getMinLimit()
-    {
-        return minLimit;
-    }
 
     @Override
     public final int getLimit()
     {
         return limit.get();
-    }
-
-    @Nonnull
-    @Override
-    public CompletableFuture<List<T>> takeAsync(int amount)
-    {
-        return takeAsync0(amount, (task, list) -> forEachAsync(val -> {
-            list.add(val);
-            return list.size() < amount;
-        }, task::completeExceptionally));
-    }
-
-    @Nonnull
-    @Override
-    public CompletableFuture<List<T>> takeRemainingAsync(int amount)
-    {
-        return takeAsync0(amount, (task, list) -> forEachRemainingAsync(val -> {
-            list.add(val);
-            return list.size() < amount;
-        }, task::completeExceptionally));
-    }
-
-    private CompletableFuture<List<T>> takeAsync0(int amount, BiFunction<CompletableFuture<?>, List<T>, CompletableFuture<?>> converter)
-    {
-        CompletableFuture<List<T>> task = new CompletableFuture<>();
-        List<T> list = new ArrayList<>(amount);
-        CompletableFuture<?> promise = converter.apply(task, list);
-        promise.thenRun(() -> task.complete(list));
-        return task;
     }
 
     @Nonnull
@@ -248,26 +169,6 @@ public abstract class PaginationActionImpl<T, M extends PaginationAction<T, M>>
             task.completeExceptionally(ex);
         }
         return task;
-    }
-
-    @Override
-    public void forEachRemaining(@Nonnull final Procedure<? super T> action)
-    {
-        Checks.notNull(action, "Procedure");
-        Queue<T> queue = new LinkedList<>();
-        while (queue.addAll(getNextChunk()))
-        {
-            while (!queue.isEmpty())
-            {
-                T it = queue.poll();
-                if (!action.execute(it))
-                {
-                    // set the iterator index for next call of remaining
-                    updateIndex(it);
-                    return;
-                }
-            }
-        }
     }
 
     protected List<T> getRemainingCache()

@@ -31,14 +31,6 @@ public class CategoryOrderActionImpl
         return category;
     }
 
-    @Override
-    protected void validateInput(GuildChannel entity)
-    {
-        Checks.notNull(entity, "Provided channel");
-        Checks.check(getCategory().equals(entity.getParent()), "Provided channel's Category is not this Category!");
-        Checks.check(orderList.contains(entity), "Provided channel is not in the list of orderable channels!");
-    }
-
     @Nonnull
     private static Collection<GuildChannel> getChannelsOfType(Category category, int bucket)
     {

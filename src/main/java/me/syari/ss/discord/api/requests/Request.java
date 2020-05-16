@@ -130,12 +130,6 @@ public class Request<T>
         return onSuccess;
     }
 
-    @Nonnull
-    public Consumer<? super Throwable> getOnFailure()
-    {
-        return onFailure;
-    }
-
     public boolean runChecks()
     {
         return checks == null || checks.getAsBoolean();

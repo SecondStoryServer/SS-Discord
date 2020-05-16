@@ -46,13 +46,6 @@ public enum CloseCode
     }
 
 
-    @Nonnull
-    public String getMeaning()
-    {
-        return meaning;
-    }
-
-
     public boolean isReconnect()
     {
         return isReconnect;
