@@ -1,14 +1,11 @@
 package me.syari.ss.discord.api.requests.restaction.pagination;
 
 import me.syari.ss.discord.api.requests.RestAction;
-import me.syari.ss.discord.api.utils.Procedure;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.BooleanSupplier;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -26,18 +23,6 @@ public interface PaginationAction<T, M extends PaginationAction<T, M>> extends R
 
 
     @Nonnull
-    List<T> getCached();
-
-
-    @Nonnull
-    T getFirst();
-
-
-    @Nonnull
-    M limit(final int limit);
-
-
-    @Nonnull
     M cache(final boolean enableCache);
 
 
@@ -45,14 +30,6 @@ public interface PaginationAction<T, M extends PaginationAction<T, M>> extends R
 
 
     int getLimit();
-
-
-    @Nonnull
-    CompletableFuture<?> forEachAsync(@Nonnull final Procedure<? super T> action, @Nonnull final Consumer<? super Throwable> failure);
-
-
-    @Nonnull
-    CompletableFuture<?> forEachRemainingAsync(@Nonnull final Procedure<? super T> action, @Nonnull final Consumer<? super Throwable> failure);
 
 
     @Override

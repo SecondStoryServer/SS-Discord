@@ -13,10 +13,6 @@ public interface AccountManager extends Manager<AccountManager> {
 
     long AVATAR = 0x2;
 
-    long EMAIL = 0x4;
-
-    long PASSWORD = 0x8;
-
 
     @Nonnull
     SelfUser getSelfUser();

@@ -5,12 +5,10 @@ import me.syari.ss.discord.api.requests.restaction.pagination.PaginationAction;
 import me.syari.ss.discord.api.utils.Procedure;
 import me.syari.ss.discord.internal.requests.RestActionImpl;
 import me.syari.ss.discord.internal.requests.Route;
-import me.syari.ss.discord.internal.utils.Checks;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -60,30 +58,6 @@ public abstract class PaginationActionImpl<T, M extends PaginationAction<T, M>>
 
     @Nonnull
     @Override
-    public List<T> getCached() {
-        return Collections.unmodifiableList(cached);
-    }
-
-    @Nonnull
-    @Override
-    public T getFirst() {
-        if (cached.isEmpty())
-            throw new NoSuchElementException("No entities have been retrieved yet.");
-        return cached.get(0);
-    }
-
-    @Nonnull
-    @Override
-    @SuppressWarnings("unchecked")
-    public M limit(final int limit) {
-        Checks.check(maxLimit == 0 || limit <= maxLimit, "Limit must not exceed %d!", maxLimit);
-        Checks.check(minLimit == 0 || limit >= minLimit, "Limit must be greater or equal to %d", minLimit);
-        this.limit.set(limit);
-        return (M) this;
-    }
-
-    @Nonnull
-    @Override
     @SuppressWarnings("unchecked")
     public M cache(final boolean enableCache) {
         this.useCache = enableCache;
@@ -106,48 +80,6 @@ public abstract class PaginationActionImpl<T, M extends PaginationAction<T, M>>
     @Override
     public PaginationIterator<T> iterator() {
         return new PaginationIterator<>(cached, this::getNextChunk);
-    }
-
-    @Nonnull
-    @Override
-    public CompletableFuture<?> forEachAsync(@Nonnull final Procedure<? super T> action, @Nonnull final Consumer<? super Throwable> failure) {
-        Checks.notNull(action, "Procedure");
-        Checks.notNull(failure, "Failure Consumer");
-
-        final CompletableFuture<?> task = new CompletableFuture<>();
-        final Consumer<List<T>> acceptor = new ChainedConsumer(task, action, (throwable) ->
-        {
-            task.completeExceptionally(throwable);
-            failure.accept(throwable);
-        });
-        try {
-            acceptor.accept(cached);
-        } catch (Exception ex) {
-            failure.accept(ex);
-            task.completeExceptionally(ex);
-        }
-        return task;
-    }
-
-    @Nonnull
-    @Override
-    public CompletableFuture<?> forEachRemainingAsync(@Nonnull final Procedure<? super T> action, @Nonnull final Consumer<? super Throwable> failure) {
-        Checks.notNull(action, "Procedure");
-        Checks.notNull(failure, "Failure Consumer");
-
-        final CompletableFuture<?> task = new CompletableFuture<>();
-        final Consumer<List<T>> acceptor = new ChainedConsumer(task, action, (throwable) ->
-        {
-            task.completeExceptionally(throwable);
-            failure.accept(throwable);
-        });
-        try {
-            acceptor.accept(getRemainingCache());
-        } catch (Exception ex) {
-            failure.accept(ex);
-            task.completeExceptionally(ex);
-        }
-        return task;
     }
 
     protected List<T> getRemainingCache() {

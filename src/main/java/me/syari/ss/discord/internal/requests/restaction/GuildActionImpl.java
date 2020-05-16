@@ -2,7 +2,6 @@ package me.syari.ss.discord.internal.requests.restaction;
 
 import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.Region;
-import me.syari.ss.discord.api.entities.ChannelType;
 import me.syari.ss.discord.api.entities.Guild;
 import me.syari.ss.discord.api.entities.Icon;
 import me.syari.ss.discord.api.requests.restaction.GuildAction;
@@ -49,23 +48,6 @@ public class GuildActionImpl extends RestActionImpl<Void> implements GuildAction
     @Nonnull
     @Override
     @CheckReturnValue
-    public GuildActionImpl setRegion(Region region) {
-        Checks.check(region == null || !region.isVip(), "Cannot create a Guild with a VIP voice region!");
-        this.region = region;
-        return this;
-    }
-
-    @Nonnull
-    @Override
-    @CheckReturnValue
-    public GuildActionImpl setIcon(Icon icon) {
-        this.icon = icon;
-        return this;
-    }
-
-    @Nonnull
-    @Override
-    @CheckReturnValue
     public GuildActionImpl setName(@Nonnull String name) {
         Checks.notBlank(name, "Name");
         name = name.trim();
@@ -74,40 +56,7 @@ public class GuildActionImpl extends RestActionImpl<Void> implements GuildAction
         return this;
     }
 
-    @Nonnull
-    @Override
-    @CheckReturnValue
-    public GuildActionImpl setVerificationLevel(Guild.VerificationLevel level) {
-        this.verificationLevel = level;
-        return this;
-    }
-
-    @Nonnull
-    @Override
-    @CheckReturnValue
-    public GuildActionImpl setNotificationLevel(Guild.NotificationLevel level) {
-        this.notificationLevel = level;
-        return this;
-    }
-
-    @Nonnull
-    @Override
-    @CheckReturnValue
-    public GuildActionImpl setExplicitContentLevel(Guild.ExplicitContentLevel level) {
-        this.explicitContentLevel = level;
-        return this;
-    }
-
     // Channels
-
-    @Nonnull
-    @Override
-    @CheckReturnValue
-    public GuildActionImpl addChannel(@Nonnull ChannelData channel) {
-        Checks.notNull(channel, "Channel");
-        this.channels.add(channel);
-        return this;
-    }
 
     @Nonnull
     @Override
@@ -116,54 +65,7 @@ public class GuildActionImpl extends RestActionImpl<Void> implements GuildAction
         return this.channels.get(index);
     }
 
-    @Nonnull
-    @Override
-    @CheckReturnValue
-    public ChannelData removeChannel(int index) {
-        return this.channels.remove(index);
-    }
-
-    @Nonnull
-    @Override
-    @CheckReturnValue
-    public GuildActionImpl removeChannel(@Nonnull ChannelData data) {
-        this.channels.remove(data);
-        return this;
-    }
-
-    @Nonnull
-    @Override
-    @CheckReturnValue
-    public ChannelData newChannel(@Nonnull ChannelType type, @Nonnull String name) {
-        ChannelData data = new ChannelData(type, name);
-        addChannel(data);
-        return data;
-    }
-
     // Roles
-
-    @Nonnull
-    @Override
-    @CheckReturnValue
-    public RoleData getPublicRole() {
-        return this.roles.get(0);
-    }
-
-    @Nonnull
-    @Override
-    @CheckReturnValue
-    public RoleData getRole(int index) {
-        return this.roles.get(index);
-    }
-
-    @Nonnull
-    @Override
-    @CheckReturnValue
-    public RoleData newRole() {
-        final RoleData role = new RoleData(roles.size());
-        this.roles.add(role);
-        return role;
-    }
 
     @Override
     protected RequestBody finalizeData() {

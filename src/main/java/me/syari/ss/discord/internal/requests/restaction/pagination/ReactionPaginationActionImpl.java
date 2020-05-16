@@ -13,7 +13,6 @@ import me.syari.ss.discord.internal.requests.RestActionImpl;
 import me.syari.ss.discord.internal.requests.Route;
 import me.syari.ss.discord.internal.utils.EncodingUtil;
 
-import javax.annotation.Nonnull;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -39,14 +38,6 @@ public class ReactionPaginationActionImpl
         return emote.isEmote()
                 ? emote.getName() + ":" + emote.getId()
                 : EncodingUtil.encodeUTF8(emote.getName());
-    }
-
-    @Nonnull
-    @Override
-    public MessageReaction getReaction() {
-        if (reaction == null)
-            throw new IllegalStateException("Cannot get reaction for this action");
-        return reaction;
     }
 
     @Override
