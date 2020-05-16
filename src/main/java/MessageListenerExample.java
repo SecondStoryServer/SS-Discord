@@ -26,6 +26,7 @@ public class MessageListenerExample extends ListenerAdapter
             e.printStackTrace();
         }
     }
+
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event)
     {
@@ -40,7 +41,10 @@ public class MessageListenerExample extends ListenerAdapter
                     name = nickName;
                 }
             }
-            channel.sendMessage(name + ": " + event.getMessage().getContentDisplay() + "[" + (event.getJDA().getTextChannelById(710828174686027790L) != null) + "]").queue();
+            String message = event.getMessage().getContentDisplay();
+                        channel.sendMessage("Chat -> " + name + ": " + message + "\r\n" +
+                                "GetTextChannel -> " + (event.getJDA().getTextChannelById(710828174686027790L) != null)
+                        ).queue();
         }
     }
 }

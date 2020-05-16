@@ -37,16 +37,8 @@ public interface Guild extends ISnowflake {
     String getName();
 
 
-    @Nullable
-    String getIconId();
-
-
     @Nonnull
     Set<String> getFeatures();
-
-
-    @Nullable
-    String getSplashId();
 
 
     @Nonnull

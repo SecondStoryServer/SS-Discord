@@ -34,9 +34,4 @@ public class MessageReceivedEvent extends GenericMessageEvent {
     public Member getMember() {
         return message.getMember();
     }
-
-
-    public boolean isWebhookMessage() {
-        return getMessage().isWebhookMessage();
-    }
 }

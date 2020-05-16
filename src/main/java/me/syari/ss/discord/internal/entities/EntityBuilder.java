@@ -14,9 +14,6 @@ import me.syari.ss.discord.api.events.guild.member.GuildMemberRoleAddEvent;
 import me.syari.ss.discord.api.events.guild.member.GuildMemberRoleRemoveEvent;
 import me.syari.ss.discord.api.events.guild.member.update.GuildMemberUpdateBoostTimeEvent;
 import me.syari.ss.discord.api.events.guild.member.update.GuildMemberUpdateNicknameEvent;
-import me.syari.ss.discord.api.events.user.update.UserUpdateAvatarEvent;
-import me.syari.ss.discord.api.events.user.update.UserUpdateDiscriminatorEvent;
-import me.syari.ss.discord.api.events.user.update.UserUpdateNameEvent;
 import me.syari.ss.discord.api.utils.cache.CacheFlag;
 import me.syari.ss.discord.api.utils.data.DataArray;
 import me.syari.ss.discord.api.utils.data.DataObject;
@@ -364,30 +361,16 @@ public class EntityBuilder {
         String oldAvatar = userObj.getAvatarId();
         String newAvatar = user.getString("avatar", null);
 
-        JDAImpl jda = getJDA();
-        long responseNumber = jda.getResponseTotal();
         if (!oldName.equals(newName)) {
             userObj.setName(newName);
-            jda.handleEvent(
-                    new UserUpdateNameEvent(
-                            jda, responseNumber,
-                            userObj, oldName));
         }
 
         if (!oldDiscriminator.equals(newDiscriminator)) {
             userObj.setDiscriminator(newDiscriminator);
-            jda.handleEvent(
-                    new UserUpdateDiscriminatorEvent(
-                            jda, responseNumber,
-                            userObj, oldDiscriminator));
         }
 
         if (!Objects.equals(oldAvatar, newAvatar)) {
             userObj.setAvatarId(newAvatar);
-            jda.handleEvent(
-                    new UserUpdateAvatarEvent(
-                            jda, responseNumber,
-                            userObj, oldAvatar));
         }
     }
 

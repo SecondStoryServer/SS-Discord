@@ -95,20 +95,10 @@ public class GuildImpl implements Guild {
         return name;
     }
 
-    @Override
-    public String getIconId() {
-        return iconId;
-    }
-
     @Nonnull
     @Override
     public Set<String> getFeatures() {
         return features;
-    }
-
-    @Override
-    public String getSplashId() {
-        return splashId;
     }
 
     @Nonnull
