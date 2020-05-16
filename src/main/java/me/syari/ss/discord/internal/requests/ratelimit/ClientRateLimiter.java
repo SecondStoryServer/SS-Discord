@@ -1,6 +1,5 @@
 package me.syari.ss.discord.internal.requests.ratelimit;
 
-import me.syari.ss.discord.api.events.ExceptionEvent;
 import me.syari.ss.discord.api.requests.Request;
 import me.syari.ss.discord.api.utils.data.DataObject;
 import me.syari.ss.discord.internal.JDAImpl;
@@ -179,10 +178,6 @@ public class ClientRateLimiter extends RateLimiter {
                 }
             } catch (Throwable err) {
                 log.error("There was some exception in the ClientRateLimiter", err);
-                if (err instanceof Error) {
-                    JDAImpl api = requester.getJDA();
-                    api.handleEvent(new ExceptionEvent(api, err, true));
-                }
             }
         }
 

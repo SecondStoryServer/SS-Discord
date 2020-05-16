@@ -1,8 +1,6 @@
 package me.syari.ss.discord.api.requests;
 
 import me.syari.ss.discord.api.audit.ThreadLocalReason;
-import me.syari.ss.discord.api.events.ExceptionEvent;
-import me.syari.ss.discord.api.events.http.HttpRequestEvent;
 import me.syari.ss.discord.api.exceptions.ContextException;
 import me.syari.ss.discord.api.exceptions.ErrorResponseException;
 import me.syari.ss.discord.api.exceptions.RateLimitedException;
@@ -65,8 +63,6 @@ public class Request<T> {
                 onSuccess.accept(successObj);
             } catch (Throwable t) {
                 RestActionImpl.LOG.error("Encountered error while processing success consumer", t);
-                if (t instanceof Error)
-                    api.handleEvent(new ExceptionEvent(api, t, true));
             }
         });
     }
@@ -86,12 +82,8 @@ public class Request<T> {
             try (ThreadLocalReason.Closable __ = ThreadLocalReason.closable(localReason);
                  CallbackContext ___ = CallbackContext.getInstance()) {
                 onFailure.accept(failException);
-                if (failException instanceof Error)
-                    api.handleEvent(new ExceptionEvent(api, failException, false));
             } catch (Throwable t) {
                 RestActionImpl.LOG.error("Encountered error while processing failure consumer", t);
-                if (t instanceof Error)
-                    api.handleEvent(new ExceptionEvent(api, t, true));
             }
         });
     }
@@ -149,6 +141,5 @@ public class Request<T> {
 
     public void handleResponse(@Nonnull Response response) {
         restAction.handleResponse(response, this);
-        api.handleEvent(new HttpRequestEvent(this, response));
     }
 }

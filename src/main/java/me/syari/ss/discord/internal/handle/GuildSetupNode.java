@@ -6,10 +6,6 @@ import gnu.trove.map.TLongObjectMap;
 import gnu.trove.map.hash.TLongObjectHashMap;
 import gnu.trove.set.TLongSet;
 import gnu.trove.set.hash.TLongHashSet;
-import me.syari.ss.discord.api.events.guild.GuildAvailableEvent;
-import me.syari.ss.discord.api.events.guild.GuildJoinEvent;
-import me.syari.ss.discord.api.events.guild.GuildReadyEvent;
-import me.syari.ss.discord.api.events.guild.UnavailableGuildJoinedEvent;
 import me.syari.ss.discord.api.utils.data.DataArray;
 import me.syari.ss.discord.api.utils.data.DataObject;
 import me.syari.ss.discord.internal.JDAImpl;
@@ -160,8 +156,6 @@ public class GuildSetupNode {
         if (unavailable) {
             if (!firedUnavailableJoin && isJoin()) {
                 firedUnavailableJoin = true;
-                JDAImpl api = getController().getJDA();
-                api.handleEvent(new UnavailableGuildJoinedEvent(api, api.getResponseTotal(), id));
             }
             return;
         }
@@ -299,18 +293,15 @@ public class GuildSetupNode {
         GuildImpl guild = api.getEntityBuilder().createGuild(id, partialGuild, members, expectedMemberCount);
         switch (type) {
             case AVAILABLE:
-                api.handleEvent(new GuildAvailableEvent(api, api.getResponseTotal(), guild));
                 getController().remove(id);
                 break;
             case JOIN:
-                api.handleEvent(new GuildJoinEvent(api, api.getResponseTotal(), guild));
                 if (requestedChunk)
                     getController().ready(id);
                 else
                     getController().remove(id);
                 break;
             default:
-                api.handleEvent(new GuildReadyEvent(api, api.getResponseTotal(), guild));
                 getController().ready(id);
                 break;
         }

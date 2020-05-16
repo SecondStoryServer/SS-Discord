@@ -10,10 +10,6 @@ import me.syari.ss.discord.api.audit.ActionType;
 import me.syari.ss.discord.api.audit.AuditLogChange;
 import me.syari.ss.discord.api.audit.AuditLogEntry;
 import me.syari.ss.discord.api.entities.*;
-import me.syari.ss.discord.api.events.guild.member.GuildMemberRoleAddEvent;
-import me.syari.ss.discord.api.events.guild.member.GuildMemberRoleRemoveEvent;
-import me.syari.ss.discord.api.events.guild.member.update.GuildMemberUpdateBoostTimeEvent;
-import me.syari.ss.discord.api.events.guild.member.update.GuildMemberUpdateNicknameEvent;
 import me.syari.ss.discord.api.utils.cache.CacheFlag;
 import me.syari.ss.discord.api.utils.data.DataArray;
 import me.syari.ss.discord.api.utils.data.DataObject;
@@ -470,10 +466,6 @@ public class EntityBuilder {
             String newNick = content.getString("nick", null);
             if (!Objects.equals(oldNick, newNick)) {
                 member.setNickname(newNick);
-                getJDA().handleEvent(
-                        new GuildMemberUpdateNicknameEvent(
-                                getJDA(), responseNumber,
-                                member, oldNick));
             }
         }
         if (content.hasKey("premium_since")) {
@@ -485,10 +477,6 @@ public class EntityBuilder {
             if (epoch != member.getBoostDateRaw()) {
                 OffsetDateTime oldTime = member.getTimeBoosted();
                 member.setBoostDate(epoch);
-                getJDA().handleEvent(
-                        new GuildMemberUpdateBoostTimeEvent(
-                                getJDA(), responseNumber,
-                                member, oldTime));
             }
         }
     }
@@ -513,19 +501,6 @@ public class EntityBuilder {
             currentRoles.removeAll(removedRoles);
         if (newRoles.size() > 0)
             currentRoles.addAll(newRoles);
-
-        if (removedRoles.size() > 0) {
-            getJDA().handleEvent(
-                    new GuildMemberRoleRemoveEvent(
-                            getJDA(), responseNumber,
-                            member, removedRoles));
-        }
-        if (newRoles.size() > 0) {
-            getJDA().handleEvent(
-                    new GuildMemberRoleAddEvent(
-                            getJDA(), responseNumber,
-                            member, newRoles));
-        }
     }
 
     public void createPresence(MemberImpl member, DataObject presenceJson) {

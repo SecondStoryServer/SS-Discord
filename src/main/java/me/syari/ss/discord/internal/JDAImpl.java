@@ -5,9 +5,7 @@ import gnu.trove.map.TLongObjectMap;
 import me.syari.ss.discord.api.AccountType;
 import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.entities.*;
-import me.syari.ss.discord.api.events.GatewayPingEvent;
 import me.syari.ss.discord.api.events.GenericEvent;
-import me.syari.ss.discord.api.events.StatusChangeEvent;
 import me.syari.ss.discord.api.exceptions.AccountTypeException;
 import me.syari.ss.discord.api.exceptions.RateLimitedException;
 import me.syari.ss.discord.api.hooks.IEventManager;
@@ -225,10 +223,7 @@ public class JDAImpl implements JDA {
     public void setStatus(Status status) {
         //noinspection SynchronizeOnNonFinalField
         synchronized (this.status) {
-            Status oldStatus = this.status;
             this.status = status;
-
-            handleEvent(new StatusChangeEvent(this, status, oldStatus));
         }
     }
 
@@ -554,9 +549,7 @@ public class JDAImpl implements JDA {
     }
 
     public void setGatewayPing(long ping) {
-        long oldPing = this.gatewayPing;
         this.gatewayPing = ping;
-        handleEvent(new GatewayPingEvent(this, oldPing));
     }
 
     public Requester getRequester() {

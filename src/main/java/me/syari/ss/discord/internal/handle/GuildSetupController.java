@@ -10,7 +10,6 @@ import gnu.trove.map.hash.TLongObjectHashMap;
 import gnu.trove.set.TLongSet;
 import gnu.trove.set.hash.TLongHashSet;
 import me.syari.ss.discord.api.AccountType;
-import me.syari.ss.discord.api.events.guild.UnavailableGuildLeaveEvent;
 import me.syari.ss.discord.api.utils.MiscUtil;
 import me.syari.ss.discord.api.utils.data.DataArray;
 import me.syari.ss.discord.api.utils.data.DataObject;
@@ -169,7 +168,6 @@ public class GuildSetupController {
         if (isUnavailable(id) && available) {
             log.debug("Leaving unavailable guild with id {}", id);
             remove(id);
-            api.getEventManager().handle(new UnavailableGuildLeaveEvent(api, api.getResponseTotal(), id));
             return true;
         }
 
@@ -205,7 +203,6 @@ public class GuildSetupController {
                 remove(id);
             else
                 ready(id);
-            api.getEventManager().handle(new UnavailableGuildLeaveEvent(api, api.getResponseTotal(), id));
         }
         log.debug("Updated incompleteCount to {} and syncCount to {}", incompleteCount, syncingCount);
         return true;
