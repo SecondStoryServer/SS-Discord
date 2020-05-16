@@ -1,13 +1,10 @@
 package me.syari.ss.discord.internal.entities;
 
 import me.syari.ss.discord.api.entities.*;
-import me.syari.ss.discord.api.requests.RestAction;
 import me.syari.ss.discord.api.utils.cache.MemberCacheView;
 import me.syari.ss.discord.api.utils.cache.SnowflakeCacheView;
 import me.syari.ss.discord.api.utils.cache.SortedSnowflakeCacheView;
 import me.syari.ss.discord.internal.JDAImpl;
-import me.syari.ss.discord.internal.requests.RestActionImpl;
-import me.syari.ss.discord.internal.requests.Route;
 import me.syari.ss.discord.internal.utils.Checks;
 import me.syari.ss.discord.internal.utils.JDALogger;
 import me.syari.ss.discord.internal.utils.cache.MemberCacheViewImpl;
@@ -15,9 +12,7 @@ import me.syari.ss.discord.internal.utils.cache.SnowflakeCacheViewImpl;
 import me.syari.ss.discord.internal.utils.cache.SortedSnowflakeCacheViewImpl;
 
 import javax.annotation.Nonnull;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 public class GuildImpl implements Guild {
@@ -34,9 +29,7 @@ public class GuildImpl implements Guild {
     private Member owner;
     private String name;
     private long ownerId;
-    private Set<String> features;
     private final VerificationLevel verificationLevel = VerificationLevel.UNKNOWN;
-    private boolean available;
     private int memberCount;
 
     public GuildImpl(JDAImpl api, long id) {
@@ -60,25 +53,6 @@ public class GuildImpl implements Guild {
     @Override
     public String getName() {
         return name;
-    }
-
-    @Nonnull
-    @Override
-    public Set<String> getFeatures() {
-        return features;
-    }
-
-    @Nonnull
-    @Override
-    @Deprecated
-    public RestAction<String> retrieveVanityUrl() {
-        if (!getFeatures().contains("VANITY_URL"))
-            throw new IllegalStateException("This guild doesn't have a vanity url");
-
-        Route.CompiledRoute route = Route.Guilds.GET_VANITY_URL.compile(getId());
-
-        return new RestActionImpl<>(getJDA(), route,
-                (response, request) -> response.getObject().getString("code"));
     }
 
     @Override
@@ -138,22 +112,11 @@ public class GuildImpl implements Guild {
     }
 
     @Override
-    @Deprecated
-    public boolean isAvailable() {
-        return available;
-    }
-
-    @Override
     public long getIdLong() {
         return id;
     }
 
     // ---- Setters -----
-
-    public GuildImpl setAvailable(boolean available) {
-        this.available = available;
-        return this;
-    }
 
     public void setOwner(Member owner) {
         // Only cache owner if user cache is enabled
@@ -166,12 +129,6 @@ public class GuildImpl implements Guild {
         return this;
     }
 
-    public void setFeatures(Set<String> features) {
-        this.features = Collections.unmodifiableSet(features);
-    }
-
-    public void setPublicRole(Role publicRole) {
-    }
 
     public GuildImpl setOwnerId(long ownerId) {
         this.ownerId = ownerId;

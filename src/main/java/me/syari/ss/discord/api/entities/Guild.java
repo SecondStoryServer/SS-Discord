@@ -26,19 +26,6 @@ public interface Guild extends ISnowflake {
     String getName();
 
 
-    @Nonnull
-    Set<String> getFeatures();
-
-
-    @Nonnull
-    @Deprecated
-    @ForRemoval
-    @DeprecatedSince("4.0.0")
-    @ReplaceWith("getVanityCode()")
-    @CheckReturnValue
-    RestAction<String> retrieveVanityUrl();
-
-
     @Nullable
     Member getOwner();
 
@@ -100,13 +87,6 @@ public interface Guild extends ISnowflake {
     boolean checkVerification();
 
 
-    @ForRemoval
-    @Deprecated
-    @DeprecatedSince("4.1.0")
-    @ReplaceWith("getJDA().isUnavailable(guild.getIdLong())")
-    boolean isAvailable();
-
-
     /* From GuildController */
 
 
@@ -122,36 +102,6 @@ public interface Guild extends ISnowflake {
         UNKNOWN();
 
         VerificationLevel() {
-        }
-    }
-
-
-    enum BoostTier {
-
-        NONE(0),
-
-        TIER_1(1),
-
-        TIER_2(2),
-
-        TIER_3(3),
-
-        UNKNOWN(-1);
-
-        private final int key;
-
-        BoostTier(int key) {
-            this.key = key;
-        }
-
-
-        @Nonnull
-        public static BoostTier fromKey(int key) {
-            for (BoostTier tier : values()) {
-                if (tier.key == key)
-                    return tier;
-            }
-            return UNKNOWN;
         }
     }
 

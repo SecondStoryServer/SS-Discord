@@ -31,17 +31,6 @@ public class ReadyHandler extends SocketHandler {
                 WebSocketClient.LOG.warn("Found duplicate guild for id {} in ready payload", id);
         }
 
-        DataObject selfJson = content.getObject("user");
-
-        builder.createSelfUser(selfJson);
-        if (getJDA().getGuildSetupController().setIncompleteCount(distinctGuilds.size())) {
-            distinctGuilds.forEachEntry((id, guild) ->
-            {
-                getJDA().getGuildSetupController().onReady(id, guild);
-                return true;
-            });
-        }
-
         handleReady(content);
         return null;
     }

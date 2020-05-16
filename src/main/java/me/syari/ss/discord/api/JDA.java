@@ -144,7 +144,7 @@ public interface JDA {
     void setEventManager(@Nullable IEventManager manager);
 
 
-    void addEventListener(@Nonnull ListenerAdapter listeners);
+    void setEventListener(@Nonnull ListenerAdapter listeners);
 
 
     @Nonnull
@@ -214,10 +214,6 @@ public interface JDA {
     default Emote getEmoteById(long id) {
         return getEmoteCache().getElementById(id);
     }
-
-
-    @Nonnull
-    SelfUser getSelfUser();
 
 
     @Nonnull

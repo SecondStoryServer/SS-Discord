@@ -11,7 +11,6 @@ import me.syari.ss.discord.api.utils.SessionControllerAdapter;
 import me.syari.ss.discord.api.utils.cache.CacheFlag;
 import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.managers.PresenceImpl;
-import me.syari.ss.discord.internal.utils.Checks;
 import me.syari.ss.discord.internal.utils.config.AuthorizationConfig;
 import me.syari.ss.discord.internal.utils.config.MetaConfig;
 import me.syari.ss.discord.internal.utils.config.SessionConfig;
@@ -22,18 +21,15 @@ import okhttp3.OkHttpClient;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.security.auth.login.LoginException;
-import java.util.Collections;
 import java.util.EnumSet;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 
 
 public class JDABuilder {
+    protected String token;
     protected final ListenerAdapter listener;
-
     protected ScheduledExecutorService rateLimitPool = null;
     protected boolean shutdownRateLimitPool = true;
     protected ScheduledExecutorService mainWsPool = null;
@@ -46,7 +42,6 @@ public class JDABuilder {
     protected OkHttpClient.Builder httpClientBuilder = null;
     protected OkHttpClient httpClient = null;
     protected WebSocketFactory wsFactory = null;
-    protected String token;
     protected IEventManager eventManager = null;
     protected JDA.ShardInfo shardInfo = null;
     protected Compression compression = Compression.ZLIB;
@@ -95,10 +90,9 @@ public class JDABuilder {
             jda.setEventManager(eventManager);
 
 
-        jda.addEventListener(listener);
-        jda.setStatus(JDA.Status.INITIALIZED);  //This is already set by JDA internally, but this is to make sure the listeners catch it.
+        jda.setEventListener(listener);
+        jda.setStatus(JDA.Status.INITIALIZED);
 
-        // Set the presence information before connecting to have the correct information ready when sending IDENTIFY
         ((PresenceImpl) jda.getPresence())
                 .setCacheActivity(activity)
                 .setCacheIdle(idle)

@@ -66,15 +66,6 @@ public class MemberImpl implements Member {
         return nickname != null ? nickname : getUser().getName();
     }
 
-    @Nonnull
-    @Override
-    public List<Role> getRoles() {
-        List<Role> roleList = new ArrayList<>(roles);
-        roleList.sort(Comparator.reverseOrder());
-
-        return Collections.unmodifiableList(roleList);
-    }
-
     @Override
     public boolean isOwner() {
         return this.user.getIdLong() == getGuild().getOwnerIdLong();

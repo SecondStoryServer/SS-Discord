@@ -5,8 +5,6 @@ import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.entities.*;
 import me.syari.ss.discord.api.utils.MiscUtil;
 import me.syari.ss.discord.internal.JDAImpl;
-import me.syari.ss.discord.internal.utils.Checks;
-import org.apache.commons.collections4.CollectionUtils;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -15,7 +13,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Message {
-    public static int MAX_FILE_AMOUNT = 10;
 
     public static int MAX_CONTENT_LENGTH = 2000;
 
@@ -124,121 +121,6 @@ public class Message {
         if (roleMentions == null)
             roleMentions = Collections.unmodifiableList(processMentions(Message.MentionType.ROLE, new ArrayList<>(), this::matchRole));
         return roleMentions;
-    }
-
-    @Nonnull
-    public List<IMentionable> getMentions(@Nonnull Message.MentionType... types) {
-        if (types.length == 0)
-            return getMentions(Message.MentionType.values());
-        List<IMentionable> mentions = new ArrayList<>();
-        // boolean duplicate checks
-        // not using Set because channel and role might have the same ID
-        boolean channel = false;
-        boolean role = false;
-        boolean user = false;
-        boolean emote = false;
-        for (Message.MentionType type : types) {
-            switch (type) {
-                case EVERYONE:
-                case HERE:
-                default:
-                    continue;
-                case CHANNEL:
-                    if (!channel)
-                        mentions.addAll(getMentionedChannels());
-                    channel = true;
-                    break;
-                case USER:
-                    if (!user)
-                        mentions.addAll(getMentionedUsers());
-                    user = true;
-                    break;
-                case ROLE:
-                    if (!role)
-                        mentions.addAll(getMentionedRoles());
-                    role = true;
-                    break;
-                case EMOTE:
-                    if (!emote)
-                        mentions.addAll(getEmotes());
-                    emote = true;
-            }
-        }
-        return Collections.unmodifiableList(mentions);
-    }
-
-    public boolean isMentioned(@Nonnull IMentionable mentionable, @Nonnull Message.MentionType... types) {
-        Checks.notNull(types, "Mention Types");
-        if (types.length == 0)
-            return isMentioned(mentionable, Message.MentionType.values());
-        final boolean isUserEntity = mentionable instanceof User || mentionable instanceof Member;
-        for (Message.MentionType type : types) {
-            switch (type) {
-                case HERE: {
-                    if (isMass("@here") && isUserEntity)
-                        return true;
-                    break;
-                }
-                case EVERYONE: {
-                    if (isMass("@everyone") && isUserEntity)
-                        return true;
-                    break;
-                }
-                case USER: {
-                    if (isUserMentioned(mentionable))
-                        return true;
-                    break;
-                }
-                case ROLE: {
-                    if (isRoleMentioned(mentionable))
-                        return true;
-                    break;
-                }
-                case CHANNEL: {
-                    if (mentionable instanceof TextChannel) {
-                        if (getMentionedChannels().contains(mentionable))
-                            return true;
-                    }
-                    break;
-                }
-                case EMOTE: {
-                    if (mentionable instanceof Emote) {
-                        if (getEmotes().contains(mentionable))
-                            return true;
-                    }
-                    break;
-                }
-//              default: continue;
-            }
-        }
-        return false;
-    }
-
-    private boolean isUserMentioned(IMentionable mentionable) {
-        if (mentionable instanceof User) {
-            return getMentionedUsers().contains(mentionable);
-        } else if (mentionable instanceof Member) {
-            final Member member = (Member) mentionable;
-            return getMentionedUsers().contains(member.getUser());
-        }
-        return false;
-    }
-
-    private boolean isRoleMentioned(IMentionable mentionable) {
-        if (mentionable instanceof Role) {
-            return getMentionedRoles().contains(mentionable);
-        } else if (mentionable instanceof Member) {
-            final Member member = (Member) mentionable;
-            return CollectionUtils.containsAny(getMentionedRoles(), member.getRoles());
-        } else if (isFromType(ChannelType.TEXT) && mentionable instanceof User) {
-            final Member member = getGuild().getMember((User) mentionable);
-            return member != null && CollectionUtils.containsAny(getMentionedRoles(), member.getRoles());
-        }
-        return false;
-    }
-
-    private boolean isMass(String s) {
-        return mentionsEveryone && content.contains(s);
     }
 
     @Nonnull

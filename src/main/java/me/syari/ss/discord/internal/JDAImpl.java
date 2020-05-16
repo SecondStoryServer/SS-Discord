@@ -74,7 +74,6 @@ public class JDAImpl implements JDA {
     protected WebSocketClient client;
     protected Requester requester;
     protected Status status = Status.INITIALIZING;
-    protected SelfUser selfUser;
     protected ShardInfo shardInfo;
     protected long responseTotal;
     protected long gatewayPing = -1;
@@ -236,7 +235,6 @@ public class JDAImpl implements JDA {
         if (!alreadyFailed) {
             userResponse = checkToken(login);
             if (userResponse != null) {
-                getEntityBuilder().createSelfUser(userResponse);
                 return;
             }
         }
@@ -377,18 +375,6 @@ public class JDAImpl implements JDA {
         return userCache;
     }
 
-    public boolean hasSelfUser() {
-        return selfUser != null;
-    }
-
-    @Nonnull
-    @Override
-    public SelfUser getSelfUser() {
-        if (selfUser == null)
-            throw new IllegalStateException("Session is not yet ready!");
-        return selfUser;
-    }
-
     @Override
     public synchronized void shutdownNow() {
         shutdown();
@@ -458,7 +444,7 @@ public class JDAImpl implements JDA {
     }
 
     @Override
-    public void addEventListener(@Nonnull ListenerAdapter listener) {
+    public void setEventListener(@Nonnull ListenerAdapter listener) {
         eventManager.register(listener);
     }
 
@@ -496,10 +482,6 @@ public class JDAImpl implements JDA {
 
     public TLongObjectMap<User> getFakeUserMap() {
         return fakeUsers;
-    }
-
-    public void setSelfUser(SelfUser selfUser) {
-        this.selfUser = selfUser;
     }
 
     public void setResponseTotal(int responseTotal) {

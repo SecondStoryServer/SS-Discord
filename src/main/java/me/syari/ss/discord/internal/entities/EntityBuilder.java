@@ -41,26 +41,6 @@ public class EntityBuilder {
         return api;
     }
 
-    public void createSelfUser(DataObject self) {
-        SelfUserImpl selfUser = (SelfUserImpl) (getJDA().hasSelfUser() ? getJDA().getSelfUser() : null);
-        if (selfUser == null) {
-            final long id = self.getLong("id");
-            selfUser = new SelfUserImpl(id, getJDA());
-            getJDA().setSelfUser(selfUser);
-        }
-
-        SnowflakeCacheViewImpl<User> userView = getJDA().getUsersView();
-        try (UnlockHook hook = userView.writeLock()) {
-            if (userView.getElementById(selfUser.getIdLong()) == null)
-                userView.getMap().put(selfUser.getIdLong(), selfUser);
-        }
-
-        selfUser.setName(self.getString("username"))
-                .setDiscriminator(self.getString("discriminator"))
-                .setAvatarId(self.getString("avatar", null))
-                .setBot(self.getBoolean("bot"));
-    }
-
     private void createGuildEmotePass(GuildImpl guildObj, DataArray array) {
         if (!getJDA().isCacheFlagSet(CacheFlag.EMOTE))
             return;
@@ -89,8 +69,7 @@ public class EntityBuilder {
         final Optional<DataArray> featuresArray = guildJson.optArray("features");
         final long ownerId = guildJson.getUnsignedLong("owner_id", 0L);
 
-        guildObj.setAvailable(true)
-                .setName(name)
+        guildObj.setName(name)
                 .setOwnerId(ownerId)
                 .setMemberCount(memberCount);
 
@@ -99,12 +78,6 @@ public class EntityBuilder {
             guildView.getMap().put(guildId, guildObj);
         }
 
-        guildObj.setFeatures(featuresArray.map(it ->
-                StreamSupport.stream(it.spliterator(), false)
-                        .map(String::valueOf)
-                        .collect(Collectors.toSet())
-        ).orElse(Collections.emptySet()));
-
         SnowflakeCacheViewImpl<Role> roleView = guildObj.getRolesView();
         try (UnlockHook hook = roleView.writeLock()) {
             TLongObjectMap<Role> map = roleView.getMap();
@@ -112,24 +85,6 @@ public class EntityBuilder {
                 DataObject obj = roleArray.getObject(i);
                 Role role = createRole(guildObj, obj, guildId);
                 map.put(role.getIdLong(), role);
-                if (role.getIdLong() == guildObj.getIdLong())
-                    guildObj.setPublicRole(role);
-            }
-        }
-
-        try (UnlockHook h1 = guildObj.getMembersView().writeLock();
-             UnlockHook h2 = getJDA().getUsersView().writeLock()) {
-            //Add members to cache when subscriptions are disabled when they appear here
-            // this is done because we can still keep track of members in voice channels
-            TLongObjectMap<Member> memberCache = guildObj.getMembersView().getMap();
-            TLongObjectMap<User> userCache = getJDA().getUsersView().getMap();
-            for (DataObject memberJson : members.valueCollection()) {
-                MemberImpl member = createMember(guildObj, memberJson);
-                // ignore members in voice channels if voice state cache is disabled
-                if (member.getUser().equals(getJDA().getSelfUser()) || getJDA().isCacheFlagSet(CacheFlag.VOICE_STATE)) {
-                    memberCache.put(member.getIdLong(), member);
-                    userCache.put(member.getIdLong(), member.getUser());
-                }
             }
         }
 
@@ -250,15 +205,9 @@ public class EntityBuilder {
             MemberCacheViewImpl memberView = guild.getMembersView();
             try (UnlockHook hook = memberView.writeLock()) {
                 member = new MemberImpl(guild, user);
-                // Cache member if guild subscriptions are enabled or the user is the self user
-                if (getJDA().isGuildSubscriptions() || user.equals(getJDA().getSelfUser())) {
-                    playbackCache = memberView.getMap().put(user.getIdLong(), member) == null;
-                } else // otherwise re-create every time!
-                {
-                    playbackCache = true;
-                }
+                playbackCache = true;
             }
-            if (playbackCache && guild.getOwnerIdLong() == user.getIdLong()) {
+            if (guild.getOwnerIdLong() == user.getIdLong()) {
                 LOG.trace("Found owner of guild with id {}", guild.getId());
                 guild.setOwner(member);
             }

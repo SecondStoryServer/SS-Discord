@@ -5,8 +5,6 @@ import me.syari.ss.discord.api.JDA;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.time.OffsetDateTime;
-import java.util.List;
-
 
 public interface Member extends IMentionable, IFakeable {
 
@@ -32,10 +30,6 @@ public interface Member extends IMentionable, IFakeable {
 
     @Nonnull
     String getDisplayName();
-
-
-    @Nonnull
-    List<Role> getRoles();
 
 
     boolean isOwner();

@@ -1,11 +1,8 @@
 package me.syari.ss.discord.internal.entities;
 
-import gnu.trove.map.TLongObjectMap;
 import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.entities.Guild;
 import me.syari.ss.discord.api.entities.GuildChannel;
-import me.syari.ss.discord.api.entities.PermissionOverride;
-import me.syari.ss.discord.api.utils.MiscUtil;
 import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.utils.Checks;
 import me.syari.ss.discord.internal.utils.cache.SnowflakeReference;
@@ -16,8 +13,6 @@ public abstract class AbstractChannelImpl<T extends GuildChannel, M extends Abst
     protected final long id;
     protected final SnowflakeReference<Guild> guild;
     protected final JDAImpl api;
-
-    protected final TLongObjectMap<PermissionOverride> overrides = MiscUtil.newLongMap();
 
     protected long parentId;
     protected String name;
