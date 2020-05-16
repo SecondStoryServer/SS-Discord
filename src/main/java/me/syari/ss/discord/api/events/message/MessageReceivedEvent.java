@@ -2,17 +2,22 @@ package me.syari.ss.discord.api.events.message;
 
 import me.syari.ss.discord.api.entities.Member;
 import me.syari.ss.discord.api.entities.Message;
+import me.syari.ss.discord.api.entities.MessageChannel;
 import me.syari.ss.discord.api.entities.User;
+import me.syari.ss.discord.api.events.GenericEvent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 
-public class MessageReceivedEvent extends GenericMessageEvent {
+public class MessageReceivedEvent implements GenericEvent {
+    protected long messageId;
+    protected MessageChannel channel;
     private final Message message;
 
     public MessageReceivedEvent(@Nonnull Message message) {
-        super(message.getIdLong(), message.getChannel());
+        this.messageId = message.getIdLong();
+        this.channel = message.getChannel();
         this.message = message;
     }
 
@@ -31,5 +36,10 @@ public class MessageReceivedEvent extends GenericMessageEvent {
     @Nullable
     public Member getMember() {
         return message.getMember();
+    }
+
+    @Nonnull
+    public MessageChannel getChannel() {
+        return channel;
     }
 }
