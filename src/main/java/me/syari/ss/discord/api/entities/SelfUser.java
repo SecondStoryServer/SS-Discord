@@ -6,9 +6,6 @@ import javax.annotation.Nonnull;
 
 
 public interface SelfUser extends User {
-
-    boolean isVerified();
-
     @Nonnull
     AccountManager getManager();
 }

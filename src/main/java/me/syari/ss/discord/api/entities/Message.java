@@ -10,13 +10,6 @@ import java.util.regex.Pattern;
 
 
 public interface Message extends ISnowflake, Formattable {
-
-    int MAX_FILE_SIZE = 8 << 20;
-
-
-    int MAX_FILE_SIZE_NITRO = 50 << 20;
-
-
     int MAX_FILE_AMOUNT = 10;
 
 
@@ -70,15 +63,8 @@ public interface Message extends ISnowflake, Formattable {
     ChannelType getChannelType();
 
 
-    boolean isWebhookMessage();
-
-
     @Nonnull
     MessageChannel getChannel();
-
-
-    @Nonnull
-    PrivateChannel getPrivateChannel();
 
 
     @Nonnull

@@ -308,14 +308,6 @@ public class ReceivedMessage extends AbstractMessage {
 
     @Nonnull
     @Override
-    public PrivateChannel getPrivateChannel() {
-        if (!isFromType(ChannelType.PRIVATE))
-            throw new IllegalStateException("This message was not sent in a private channel");
-        return (PrivateChannel) channel;
-    }
-
-    @Nonnull
-    @Override
     public TextChannel getTextChannel() {
         if (!isFromType(ChannelType.TEXT))
             throw new IllegalStateException("This message was not sent in a text channel");
@@ -350,11 +342,6 @@ public class ReceivedMessage extends AbstractMessage {
         if (this.emoteMentions == null)
             emoteMentions = Collections.unmodifiableList(processMentions(Message.MentionType.EMOTE, new ArrayList<>(), this::matchEmote));
         return emoteMentions;
-    }
-
-    @Override
-    public boolean isWebhookMessage() {
-        return fromWebhook;
     }
 
     @Override

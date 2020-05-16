@@ -29,11 +29,6 @@ public class MessageReaction {
     }
 
 
-    public boolean isSelf() {
-        return self;
-    }
-
-
     @Nullable
     public Guild getGuild() {
         TextChannel channel = getTextChannel();
@@ -44,12 +39,6 @@ public class MessageReaction {
     @Nullable
     public TextChannel getTextChannel() {
         return getChannel() instanceof TextChannel ? (TextChannel) getChannel() : null;
-    }
-
-
-    @Nullable
-    public PrivateChannel getPrivateChannel() {
-        return getChannel() instanceof PrivateChannel ? (PrivateChannel) getChannel() : null;
     }
 
 
@@ -68,11 +57,6 @@ public class MessageReaction {
     @Nonnull
     public String getMessageId() {
         return Long.toUnsignedString(messageId);
-    }
-
-
-    public long getMessageIdLong() {
-        return messageId;
     }
 
 

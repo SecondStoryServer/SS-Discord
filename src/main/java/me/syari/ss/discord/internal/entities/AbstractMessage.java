@@ -131,22 +131,9 @@ public abstract class AbstractMessage implements Message {
         return null;
     }
 
-    @Override
-    public boolean isWebhookMessage() {
-        unsupported();
-        return false;
-    }
-
     @Nonnull
     @Override
     public MessageChannel getChannel() {
-        unsupported();
-        return null;
-    }
-
-    @Nonnull
-    @Override
-    public PrivateChannel getPrivateChannel() {
         unsupported();
         return null;
     }

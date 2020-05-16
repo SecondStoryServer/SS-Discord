@@ -30,11 +30,6 @@ public class SelfUserImpl extends UserImpl implements SelfUser {
         throw new UnsupportedOperationException("You cannot get a PrivateChannel with yourself (SelfUser)");
     }
 
-    @Override
-    public boolean isVerified() {
-        return verified;
-    }
-
     @Nonnull
     @Override
     public AccountManager getManager() {
