@@ -174,7 +174,6 @@ public class PermissionOverrideActionImpl
 
     @Override
     protected void handleSuccess(Response response, Request<PermissionOverride> request) {
-        long id = permissionHolder.getIdLong();
         DataObject object = (DataObject) request.getRawBody();
         PermissionOverrideImpl override = new PermissionOverrideImpl(channel, permissionHolder);
         override.setAllow(object.getLong("allow"));

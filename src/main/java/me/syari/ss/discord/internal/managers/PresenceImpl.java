@@ -121,8 +121,11 @@ public class PresenceImpl implements Presence {
     }
 
     private DataObject getGameJson(Activity activity) {
-        if (activity == null || activity.getName() == null || activity.getType() == null)
+        if (activity == null) {
             return null;
+        } else {
+            activity.getType();
+        }
         DataObject gameObj = DataObject.empty();
         gameObj.put("name", activity.getName());
         gameObj.put("type", activity.getType().getKey());

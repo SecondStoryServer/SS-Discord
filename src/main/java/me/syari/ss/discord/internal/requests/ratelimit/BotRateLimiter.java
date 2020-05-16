@@ -91,7 +91,6 @@ public class BotRateLimiter extends RateLimiter {
 
             while (entries.hasNext()) {
                 Map.Entry<String, Bucket> entry = entries.next();
-                String key = entry.getKey();
                 Bucket bucket = entry.getValue();
                 if (bucket.isUnlimited() && bucket.requests.isEmpty())
                     entries.remove(); // remove unlimited if requests are empty

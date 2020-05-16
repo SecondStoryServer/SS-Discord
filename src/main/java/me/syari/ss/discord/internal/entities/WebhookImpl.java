@@ -25,7 +25,6 @@ public class WebhookImpl implements Webhook {
     private final long id;
     private final WebhookType type;
 
-    private Member owner;
     private User user;
     private String token;
 
@@ -123,11 +122,6 @@ public class WebhookImpl implements Webhook {
     }
 
     /* -- Impl Setters -- */
-
-    public WebhookImpl setOwner(Member member) {
-        this.owner = member;
-        return this;
-    }
 
     public WebhookImpl setToken(String token) {
         this.token = token;

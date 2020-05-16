@@ -273,7 +273,7 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
         api.setStatus(JDA.Status.DISCONNECTED);
 
         CloseCode closeCode = null;
-        int rawCloseCode = 1000;
+        int rawCloseCode;
         //When we get 1000 from remote close we will try to resume
         // as apparently discord doesn't understand what "graceful disconnect" means
         boolean isInvalidate = false;

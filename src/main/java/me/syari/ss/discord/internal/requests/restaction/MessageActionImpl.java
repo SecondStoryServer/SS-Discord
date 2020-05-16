@@ -80,7 +80,7 @@ public class MessageActionImpl extends RestActionImpl<Message> implements Messag
         if (message == null || message.getType() != MessageType.DEFAULT)
             return this;
         final List<MessageEmbed> embeds = message.getEmbeds();
-        if (embeds != null && !embeds.isEmpty())
+        if (!embeds.isEmpty())
             embed(embeds.get(0));
         files.clear();
 
@@ -165,7 +165,7 @@ public class MessageActionImpl extends RestActionImpl<Message> implements Messag
         Checks.notBlank(name, "Name");
         Checks.noneNull(options, "Options");
         checkFileAmount();
-        checkPermission(Permission.MESSAGE_ATTACH_FILES);
+        checkPermission();
         name = applyOptions(name, options);
         files.put(name, data);
         return this;
@@ -267,10 +267,10 @@ public class MessageActionImpl extends RestActionImpl<Message> implements Messag
             throw new IllegalStateException("Cannot add files to an existing message! Edit-Message does not support this operation!");
     }
 
-    protected void checkPermission(Permission perm) {
-        if (!hasPermission(perm)) {
+    protected void checkPermission() {
+        if (!hasPermission(Permission.MESSAGE_ATTACH_FILES)) {
             TextChannel channel = (TextChannel) this.channel;
-            throw new InsufficientPermissionException(channel, perm);
+            throw new InsufficientPermissionException(channel, Permission.MESSAGE_ATTACH_FILES);
         }
     }
 
@@ -297,7 +297,6 @@ public class MessageActionImpl extends RestActionImpl<Message> implements Messag
     }
 
     @Override
-    @SuppressWarnings("deprecation") /* If this was in JDK9 we would be using java.lang.ref.Cleaner instead! */
     protected void finalize() {
         if (ownedResources.isEmpty())
             return;

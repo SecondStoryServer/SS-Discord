@@ -4,7 +4,6 @@ import me.syari.ss.discord.api.entities.ChannelType;
 import me.syari.ss.discord.api.requests.RestAction;
 import me.syari.ss.discord.api.utils.data.DataObject;
 import me.syari.ss.discord.api.utils.data.SerializableData;
-import me.syari.ss.discord.internal.requests.restaction.PermOverrideData;
 import me.syari.ss.discord.internal.utils.Checks;
 
 import javax.annotation.CheckReturnValue;
@@ -85,8 +84,6 @@ public interface GuildAction extends RestAction<Void> {
         protected final ChannelType type;
         protected final String name;
 
-        protected final Set<PermOverrideData> overrides = new HashSet<>();
-
         protected Integer position;
 
         // Text only
@@ -121,8 +118,6 @@ public interface GuildAction extends RestAction<Void> {
                 o.put("user_limit", userlimit);
             if (position != null)
                 o.put("position", position);
-            if (!overrides.isEmpty())
-                o.put("permission_overwrites", overrides);
             return o;
         }
     }
