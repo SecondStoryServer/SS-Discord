@@ -11,8 +11,6 @@ import me.syari.ss.discord.internal.utils.Checks;
 import me.syari.ss.discord.internal.utils.cache.SnowflakeReference;
 
 import javax.annotation.Nonnull;
-import java.util.Arrays;
-import java.util.List;
 
 public abstract class AbstractChannelImpl<T extends GuildChannel, M extends AbstractChannelImpl<T, M>> implements GuildChannel {
     protected final long id;
@@ -74,12 +72,6 @@ public abstract class AbstractChannelImpl<T extends GuildChannel, M extends Abst
         Checks.notNull(permissionHolder, "Permission Holder");
         Checks.check(permissionHolder.getGuild().equals(getGuild()), "Provided permission holder is not from the same guild as this channel!");
         return overrides.get(permissionHolder.getIdLong());
-    }
-
-    @Nonnull
-    @Override
-    public List<PermissionOverride> getPermissionOverrides() {
-        return Arrays.asList(overrides.values(new PermissionOverride[overrides.size()]));
     }
 
     @Override

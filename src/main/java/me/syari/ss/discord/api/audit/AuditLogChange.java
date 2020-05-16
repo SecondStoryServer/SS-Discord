@@ -1,7 +1,6 @@
 package me.syari.ss.discord.api.audit;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Objects;
 
 

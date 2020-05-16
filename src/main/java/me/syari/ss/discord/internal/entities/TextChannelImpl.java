@@ -8,23 +8,15 @@ import me.syari.ss.discord.api.exceptions.VerificationLevelException;
 import me.syari.ss.discord.api.requests.RestAction;
 import me.syari.ss.discord.api.requests.restaction.AuditableRestAction;
 import me.syari.ss.discord.api.requests.restaction.MessageAction;
-import me.syari.ss.discord.api.requests.restaction.WebhookAction;
 import me.syari.ss.discord.api.utils.AttachmentOption;
-import me.syari.ss.discord.api.utils.MiscUtil;
 import me.syari.ss.discord.api.utils.TimeUtil;
-import me.syari.ss.discord.api.utils.data.DataArray;
 import me.syari.ss.discord.api.utils.data.DataObject;
-import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.requests.RestActionImpl;
 import me.syari.ss.discord.internal.requests.Route;
-import me.syari.ss.discord.internal.requests.restaction.AuditableRestActionImpl;
-import me.syari.ss.discord.internal.requests.restaction.WebhookActionImpl;
 import me.syari.ss.discord.internal.utils.Checks;
-import me.syari.ss.discord.internal.utils.EncodingUtil;
 
 import javax.annotation.Nonnull;
 import java.io.InputStream;
-import java.io.UncheckedIOException;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
@@ -49,91 +41,6 @@ public class TextChannelImpl extends AbstractChannelImpl<TextChannel, TextChanne
     @Override
     public String getAsMention() {
         return "<#" + id + '>';
-    }
-
-    @Nonnull
-    @Override
-    public RestAction<List<Webhook>> retrieveWebhooks() {
-        checkPermission(Permission.MANAGE_WEBHOOKS);
-
-        Route.CompiledRoute route = Route.Channels.GET_WEBHOOKS.compile(getId());
-        JDAImpl jda = (JDAImpl) getJDA();
-        return new RestActionImpl<>(jda, route, (response, request) ->
-        {
-            DataArray array = response.getArray();
-            List<Webhook> webhooks = new ArrayList<>(array.length());
-            EntityBuilder builder = jda.getEntityBuilder();
-
-            for (int i = 0; i < array.length(); i++) {
-                try {
-                    webhooks.add(builder.createWebhook(array.getObject(i)));
-                } catch (UncheckedIOException | NullPointerException e) {
-                    JDAImpl.LOG.error("Error while creating websocket from json", e);
-                }
-            }
-
-            return Collections.unmodifiableList(webhooks);
-        });
-    }
-
-    @Nonnull
-    @Override
-    public WebhookAction createWebhook(@Nonnull String name) {
-        Checks.notBlank(name, "Webhook name");
-        name = name.trim();
-        checkPermission(Permission.MANAGE_WEBHOOKS);
-        Checks.check(name.length() >= 2 && name.length() <= 100, "Name must be 2-100 characters in length!");
-
-        return new WebhookActionImpl(getJDA(), this, name);
-    }
-
-    @Nonnull
-    @Override
-    public RestAction<Void> deleteMessages(@Nonnull Collection<Message> messages) {
-        Checks.notEmpty(messages, "Messages collection");
-
-        return deleteMessagesByIds(messages.stream()
-                .map(ISnowflake::getId)
-                .collect(Collectors.toList()));
-    }
-
-    @Nonnull
-    @Override
-    public RestAction<Void> deleteMessagesByIds(@Nonnull Collection<String> messageIds) {
-        checkPermission(Permission.MESSAGE_MANAGE, "Must have MESSAGE_MANAGE in order to bulk delete messages in this channel regardless of author.");
-        if (messageIds.size() < 2 || messageIds.size() > 100)
-            throw new IllegalArgumentException("Must provide at least 2 or at most 100 messages to be deleted.");
-
-        long twoWeeksAgo = TimeUtil.getDiscordTimestamp((System.currentTimeMillis() - (14 * 24 * 60 * 60 * 1000)));
-        for (String id : messageIds)
-            Checks.check(MiscUtil.parseSnowflake(id) > twoWeeksAgo, "Message Id provided was older than 2 weeks. Id: " + id);
-
-        return deleteMessages0(messageIds);
-    }
-
-    @Nonnull
-    @Override
-    public AuditableRestAction<Void> deleteWebhookById(@Nonnull String id) {
-        Checks.isSnowflake(id, "Webhook ID");
-
-        if (!getGuild().getSelfMember().hasPermission(this, Permission.MANAGE_WEBHOOKS))
-            throw new InsufficientPermissionException(this, Permission.MANAGE_WEBHOOKS);
-
-        Route.CompiledRoute route = Route.Webhooks.DELETE_WEBHOOK.compile(id);
-        return new AuditableRestActionImpl<>(getJDA(), route);
-    }
-
-    @Override
-    public boolean canTalk() {
-        return canTalk(getGuild().getSelfMember());
-    }
-
-    @Override
-    public boolean canTalk(@Nonnull Member member) {
-        if (!getGuild().equals(member.getGuild()))
-            throw new IllegalArgumentException("Provided Member is not from the Guild that this TextChannel is part of.");
-
-        return member.hasPermission(this, Permission.MESSAGE_READ, Permission.MESSAGE_WRITE);
     }
 
     @Nonnull
@@ -194,19 +101,6 @@ public class TextChannelImpl extends AbstractChannelImpl<TextChannel, TextChanne
                 list.add(deleteMessageById(message).submit());
         }
         return list;
-    }
-
-    @Override
-    public long getLatestMessageIdLong() {
-        final long messageId = lastMessageId;
-        if (messageId == 0)
-            throw new IllegalStateException("No last message id found.");
-        return messageId;
-    }
-
-    @Override
-    public boolean hasLatestMessage() {
-        return lastMessageId != 0;
     }
 
     @Nonnull
@@ -350,40 +244,6 @@ public class TextChannelImpl extends AbstractChannelImpl<TextChannel, TextChanne
 
         //Call MessageChannel's default method
         return TextChannel.super.addReactionById(messageId, emote);
-    }
-
-    @Nonnull
-    @Override
-    public RestAction<Void> clearReactionsById(@Nonnull String messageId) {
-        Checks.isSnowflake(messageId, "Message ID");
-
-        checkPermission(Permission.MESSAGE_MANAGE);
-        final Route.CompiledRoute route = Route.Messages.REMOVE_ALL_REACTIONS.compile(getId(), messageId);
-        return new RestActionImpl<>(getJDA(), route);
-    }
-
-    @Nonnull
-    @Override
-    public RestActionImpl<Void> removeReactionById(@Nonnull String messageId, @Nonnull String unicode, @Nonnull User user) {
-        Checks.isSnowflake(messageId, "Message ID");
-        Checks.notNull(unicode, "Provided Unicode");
-        unicode = unicode.trim();
-        Checks.notEmpty(unicode, "Provided Unicode");
-        Checks.notNull(user, "User");
-
-        if (!getJDA().getSelfUser().equals(user))
-            checkPermission(Permission.MESSAGE_MANAGE);
-
-        final String encoded = EncodingUtil.encodeReaction(unicode);
-
-        String targetUser;
-        if (user.equals(getJDA().getSelfUser()))
-            targetUser = "@me";
-        else
-            targetUser = user.getId();
-
-        final Route.CompiledRoute route = Route.Messages.REMOVE_REACTION.compile(getId(), messageId, encoded, targetUser);
-        return new RestActionImpl<>(getJDA(), route);
     }
 
     @Nonnull

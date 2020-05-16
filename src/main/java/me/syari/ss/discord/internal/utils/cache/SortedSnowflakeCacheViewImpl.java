@@ -29,11 +29,6 @@ public class SortedSnowflakeCacheViewImpl<T extends ISnowflake & Comparable<? su
         }
     }
 
-    @Override
-    public void forEachUnordered(@Nonnull Consumer<? super T> action) {
-        super.forEach(action);
-    }
-
     @Nonnull
     @Override
     public List<T> asList() {
@@ -47,21 +42,6 @@ public class SortedSnowflakeCacheViewImpl<T extends ISnowflake & Comparable<? su
             elements.forEachValue(list::add);
             list.sort(comparator);
             return cache(list);
-        }
-    }
-
-    @Nonnull
-    @Override
-    public NavigableSet<T> asSet() {
-        if (isEmpty())
-            return Collections.emptyNavigableSet();
-        try (UnlockHook hook = readLock()) {
-            NavigableSet<T> set = (NavigableSet<T>) getCachedSet();
-            if (set != null)
-                return set;
-            set = new TreeSet<>(comparator);
-            elements.forEachValue(set::add);
-            return cache(set);
         }
     }
 

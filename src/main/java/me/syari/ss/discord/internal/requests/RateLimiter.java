@@ -5,10 +5,7 @@ import me.syari.ss.discord.internal.requests.ratelimit.IBucket;
 import me.syari.ss.discord.internal.utils.JDALogger;
 import org.slf4j.Logger;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -52,22 +49,6 @@ public abstract class RateLimiter {
 
 
     // --- Default Implementations --
-
-    public boolean isRateLimited(Route.CompiledRoute route) {
-        return getRateLimit(route) != null;
-    }
-
-    public List<IBucket> getRouteBuckets() {
-        synchronized (buckets) {
-            return Collections.unmodifiableList(new ArrayList<>(buckets.values()));
-        }
-    }
-
-    public List<IBucket> getQueuedRouteBuckets() {
-        synchronized (submittedBuckets) {
-            return Collections.unmodifiableList(new ArrayList<>(submittedBuckets));
-        }
-    }
 
     public void init() {
     }

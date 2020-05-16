@@ -2,51 +2,17 @@ package me.syari.ss.discord.api.entities;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.EnumSet;
 import java.util.Objects;
 
 
 public interface RichPresence extends Activity {
-
-    long getApplicationIdLong();
 
 
     @Nonnull
     String getApplicationId();
 
 
-    @Nullable
-    String getSessionId();
-
-
-    @Nullable
-    String getSyncId();
-
-
     int getFlags();
-
-
-    EnumSet<ActivityFlag> getFlagSet();
-
-
-    @Nullable
-    String getState();
-
-
-    @Nullable
-    String getDetails();
-
-
-    @Nullable
-    Party getParty();
-
-
-    @Nullable
-    Image getLargeImage();
-
-
-    @Nullable
-    Image getSmallImage();
 
 
     class Image {
@@ -124,10 +90,6 @@ public interface RichPresence extends Activity {
             return size;
         }
 
-
-        public long getMax() {
-            return max;
-        }
 
         @Override
         public String toString() {

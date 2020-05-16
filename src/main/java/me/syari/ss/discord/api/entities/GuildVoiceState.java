@@ -45,7 +45,4 @@ public interface GuildVoiceState {
     Member getMember();
 
 
-    boolean inVoiceChannel();
-
-
 }

@@ -74,19 +74,6 @@ public class ShardCacheViewImpl extends ReadWriteLockCache<JDA> implements Shard
 
     @Nonnull
     @Override
-    public Set<JDA> asSet() {
-        if (isEmpty())
-            return Collections.emptySet();
-        try (UnlockHook hook = readLock()) {
-            Set<JDA> set = getCachedSet();
-            if (set != null)
-                return set;
-            return cache(new HashSet<>(elements.valueCollection()));
-        }
-    }
-
-    @Nonnull
-    @Override
     public LockIterator<JDA> lockedIterator() {
         ReentrantReadWriteLock.ReadLock readLock = lock.readLock();
         readLock.lock();
@@ -217,14 +204,6 @@ public class ShardCacheViewImpl extends ReadWriteLockCache<JDA> implements Shard
             List<JDA> list = new ArrayList<>();
             stream().forEach(list::add);
             return Collections.unmodifiableList(list);
-        }
-
-        @Nonnull
-        @Override
-        public Set<JDA> asSet() {
-            Set<JDA> set = new HashSet<>();
-            generator.get().flatMap(CacheView::stream).forEach(set::add);
-            return Collections.unmodifiableSet(set);
         }
 
         @Nonnull

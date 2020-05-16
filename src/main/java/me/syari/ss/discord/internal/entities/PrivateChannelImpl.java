@@ -32,19 +32,6 @@ public class PrivateChannelImpl implements PrivateChannel {
         return user;
     }
 
-    @Override
-    public long getLatestMessageIdLong() {
-        final long messageId = lastMessageId;
-        if (messageId < 0)
-            throw new IllegalStateException("No last message id found.");
-        return messageId;
-    }
-
-    @Override
-    public boolean hasLatestMessage() {
-        return lastMessageId > 0;
-    }
-
     @Nonnull
     @Override
     public String getName() {

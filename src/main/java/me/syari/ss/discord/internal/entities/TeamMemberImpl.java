@@ -23,12 +23,6 @@ public class TeamMemberImpl implements TeamMember {
         return user;
     }
 
-    @Nonnull
-    @Override
-    public MembershipState getMembershipState() {
-        return state;
-    }
-
     @Override
     public long getTeamIdLong() {
         return teamId;

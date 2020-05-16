@@ -14,7 +14,6 @@ import me.syari.ss.discord.internal.requests.restaction.PermissionOverrideAction
 import me.syari.ss.discord.internal.utils.cache.SnowflakeReference;
 
 import javax.annotation.Nonnull;
-import java.util.EnumSet;
 import java.util.Objects;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -45,31 +44,8 @@ public class PermissionOverrideImpl implements PermissionOverride {
     }
 
     @Override
-    public long getInheritRaw() {
-        return ~(allow | deny);
-    }
-
-    @Override
     public long getDeniedRaw() {
         return deny;
-    }
-
-    @Nonnull
-    @Override
-    public EnumSet<Permission> getAllowed() {
-        return Permission.getPermissions(allow);
-    }
-
-    @Nonnull
-    @Override
-    public EnumSet<Permission> getInherit() {
-        return Permission.getPermissions(getInheritRaw());
-    }
-
-    @Nonnull
-    @Override
-    public EnumSet<Permission> getDenied() {
-        return Permission.getPermissions(deny);
     }
 
     @Nonnull

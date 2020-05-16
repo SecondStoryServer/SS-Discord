@@ -218,38 +218,6 @@ public class Requester {
         }
     }
 
-    private void applyBody(Request<?> apiRequest, okhttp3.Request.Builder builder) {
-        String method = apiRequest.getRoute().getMethod().toString();
-        RequestBody body = apiRequest.getBody();
-
-        if (body == null && HttpMethod.requiresRequestBody(method))
-            body = EMPTY_BODY;
-
-        builder.method(method, body);
-    }
-
-    private void applyHeaders(Request<?> apiRequest, okhttp3.Request.Builder builder, boolean authorized) {
-        builder.header("user-agent", USER_AGENT)
-                .header("accept-encoding", "gzip")
-                .header("x-ratelimit-precision", "millisecond");
-
-        //adding token to all requests to the discord api or cdn pages
-        //we can check for startsWith(DISCORD_API_PREFIX) because the cdn endpoints don't need any kind of authorization
-        if (authorized)
-            builder.header("authorization", authConfig.getToken());
-
-        // Apply custom headers like X-Audit-Log-Reason
-        // If customHeaders is null this does nothing
-        if (apiRequest.getHeaders() != null) {
-            for (Entry<String, String> header : apiRequest.getHeaders().entrySet())
-                builder.addHeader(header.getKey(), header.getValue());
-        }
-    }
-
-    public OkHttpClient getHttpClient() {
-        return this.httpClient;
-    }
-
     public RateLimiter getRateLimiter() {
         return rateLimiter;
     }

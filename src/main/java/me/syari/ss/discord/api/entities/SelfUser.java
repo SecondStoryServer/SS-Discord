@@ -12,14 +12,8 @@ public interface SelfUser extends User {
     boolean isVerified();
 
 
-    boolean isMfaEnabled();
-
-
     @Nonnull
     String getEmail();
-
-
-    boolean isMobile();
 
 
     boolean isNitro();

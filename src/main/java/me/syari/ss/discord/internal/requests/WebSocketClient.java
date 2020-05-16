@@ -22,9 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.MDC;
 
 import javax.annotation.Nonnull;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.lang.ref.SoftReference;
 import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.concurrent.*;
@@ -37,8 +35,6 @@ import java.util.zip.DataFormatException;
 public class WebSocketClient extends WebSocketAdapter implements WebSocketListener {
     public static final Logger LOG = JDALogger.getLog(WebSocketClient.class);
     public static final int DISCORD_GATEWAY_VERSION = 6;
-    public static final int IDENTIFY_DELAY = 5;
-    public static final int ZLIB_SUFFIX = 0x0000FFFF;
 
     protected static final String INVALIDATE_REASON = "INVALIDATE_SESSION";
     protected static final long IDENTIFY_BACKOFF = TimeUnit.SECONDS.toMillis(SessionController.IDENTIFY_DELAY); // same as 1000 * IDENTIFY_DELAY
@@ -106,14 +102,6 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
 
     public JDA getJDA() {
         return api;
-    }
-
-    public void setAutoReconnect(boolean reconnect) {
-        this.shouldReconnect = reconnect;
-    }
-
-    public boolean isConnected() {
-        return connected;
     }
 
     public void ready() {
@@ -265,7 +253,7 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
     }
 
     @Override
-    public void onThreadStarted(WebSocket websocket, ThreadType threadType, Thread thread) throws Exception {
+    public void onThreadStarted(WebSocket websocket, ThreadType threadType, Thread thread) {
         api.setContext();
     }
 
@@ -527,7 +515,7 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
         sessionId = null;
         sentAuthInfo = false;
 
-        locked("Interrupted while trying to invalidate chunk/sync queue", chunkSyncQueue::clear);
+        locked(chunkSyncQueue::clear);
 
         api.getTextChannelsView().clear();
         api.getVoiceChannelsView().clear();
@@ -740,7 +728,7 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
     }
 
     @Override
-    public void onUnexpectedError(WebSocket websocket, WebSocketException cause) throws Exception {
+    public void onUnexpectedError(WebSocket websocket, WebSocketException cause) {
         handleCallbackError(websocket, cause);
     }
 
@@ -751,7 +739,7 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
     }
 
     @Override
-    public void onThreadCreated(WebSocket websocket, ThreadType threadType, Thread thread) throws Exception {
+    public void onThreadCreated(WebSocket websocket, ThreadType threadType, Thread thread) {
         String identifier = api.getIdentifierString();
         switch (threadType) {
             case CONNECT_THREAD:
@@ -776,35 +764,26 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
             queueLock.unlock();
     }
 
-    protected void locked(String comment, Runnable task) {
+    protected void locked(Runnable task) {
         try {
             queueLock.lockInterruptibly();
             task.run();
         } catch (InterruptedException e) {
-            LOG.error(comment, e);
+            LOG.error("Interrupted while trying to invalidate chunk/sync queue", e);
         } finally {
             maybeUnlock();
         }
     }
 
-    protected <T> T locked(String comment, Supplier<T> task) {
+    protected <T> void locked(String comment, Supplier<T> task) {
         try {
             queueLock.lockInterruptibly();
-            return task.get();
+            task.get();
         } catch (InterruptedException e) {
             LOG.error(comment, e);
-            return null;
         } finally {
             maybeUnlock();
         }
-    }
-
-    private SoftReference<ByteArrayOutputStream> newDecompressBuffer() {
-        return new SoftReference<>(new ByteArrayOutputStream(1024));
-    }
-
-    public Map<String, SocketHandler> getHandlers() {
-        return handlers;
     }
 
     @SuppressWarnings("unchecked")
@@ -846,15 +825,8 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
         handlers.put("USER_UPDATE", nopHandler);
         handlers.put("VOICE_SERVER_UPDATE", nopHandler);
         handlers.put("VOICE_STATE_UPDATE", nopHandler);
-
-        if (api.isGuildSubscriptions()) {
-            // These events are not expected if guild subscriptions are disabled
-            handlers.put("PRESENCE_UPDATE", nopHandler);
-            handlers.put("TYPING_START", nopHandler);
-        } else {
-            handlers.put("PRESENCE_UPDATE", nopHandler);
-            handlers.put("TYPING_START", nopHandler);
-        }
+        handlers.put("PRESENCE_UPDATE", nopHandler);
+        handlers.put("TYPING_START", nopHandler);
 
         // Unused events
         handlers.put("CHANNEL_PINS_ACK", nopHandler);

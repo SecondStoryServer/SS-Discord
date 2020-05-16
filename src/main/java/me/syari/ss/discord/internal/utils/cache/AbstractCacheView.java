@@ -85,21 +85,6 @@ public abstract class AbstractCacheView<T> extends ReadWriteLockCache<T> impleme
         }
     }
 
-    @Nonnull
-    @Override
-    public Set<T> asSet() {
-        if (isEmpty())
-            return Collections.emptySet();
-        try (UnlockHook hook = readLock()) {
-            Set<T> set = getCachedSet();
-            if (set != null)
-                return set;
-            set = new HashSet<>(elements.size());
-            elements.forEachValue(set::add);
-            return cache(set);
-        }
-    }
-
     @Override
     public long size() {
         return elements.size();

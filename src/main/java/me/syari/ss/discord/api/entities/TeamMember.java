@@ -10,10 +10,6 @@ public interface TeamMember {
 
 
     @Nonnull
-    MembershipState getMembershipState();
-
-
-    @Nonnull
     default String getTeamId() {
         return Long.toUnsignedString(getTeamIdLong());
     }

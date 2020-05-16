@@ -292,18 +292,6 @@ public class BotRateLimiter extends RateLimiter {
             return remaining < 1 ? reset - now : 0L;
         }
 
-        public long getReset() {
-            return reset;
-        }
-
-        public int getRemaining() {
-            return remaining;
-        }
-
-        public int getLimit() {
-            return limit;
-        }
-
         private boolean isUnlimited() {
             return bucketId.startsWith("unlimited");
         }

@@ -27,9 +27,9 @@ import java.util.function.Consumer;
 public class RestActionImpl<T> implements RestAction<T> {
     public static final Logger LOG = JDALogger.getLog(RestAction.class);
 
-    private static Consumer<Object> DEFAULT_SUCCESS = o -> {
+    private static final Consumer<Object> DEFAULT_SUCCESS = o -> {
     };
-    private static Consumer<? super Throwable> DEFAULT_FAILURE = t ->
+    private static final Consumer<? super Throwable> DEFAULT_FAILURE = t ->
     {
         if (LOG.isDebugEnabled()) {
             LOG.error("RestAction queue returned failure", t);
@@ -51,22 +51,8 @@ public class RestActionImpl<T> implements RestAction<T> {
     private Object rawData;
     private BooleanSupplier checks;
 
-    public static void setPassContext(boolean enable) {
-        passContext = enable;
-    }
-
     public static boolean isPassContext() {
         return passContext;
-    }
-
-    public static void setDefaultFailure(final Consumer<? super Throwable> callback) {
-        DEFAULT_FAILURE = callback == null ? t -> {
-        } : callback;
-    }
-
-    public static void setDefaultSuccess(final Consumer<Object> callback) {
-        DEFAULT_SUCCESS = callback == null ? t -> {
-        } : callback;
     }
 
     public static Consumer<? super Throwable> getDefaultFailure() {

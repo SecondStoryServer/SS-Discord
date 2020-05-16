@@ -9,7 +9,6 @@ import me.syari.ss.discord.api.exceptions.HierarchyException;
 import me.syari.ss.discord.api.exceptions.InsufficientPermissionException;
 import me.syari.ss.discord.api.managers.RoleManager;
 import me.syari.ss.discord.api.requests.restaction.AuditableRestAction;
-import me.syari.ss.discord.api.requests.restaction.RoleAction;
 import me.syari.ss.discord.api.utils.MiscUtil;
 import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.managers.RoleManagerImpl;
@@ -21,7 +20,6 @@ import me.syari.ss.discord.internal.utils.cache.SnowflakeReference;
 import me.syari.ss.discord.internal.utils.cache.SortedSnowflakeCacheViewImpl;
 
 import javax.annotation.Nonnull;
-import java.awt.*;
 import java.time.OffsetDateTime;
 import java.util.Collection;
 import java.util.EnumSet;
@@ -77,16 +75,6 @@ public class RoleImpl implements Role {
     }
 
     @Override
-    public boolean isManaged() {
-        return managed;
-    }
-
-    @Override
-    public boolean isHoisted() {
-        return hoisted;
-    }
-
-    @Override
     public boolean isMentionable() {
         return mentionable;
     }
@@ -100,11 +88,6 @@ public class RoleImpl implements Role {
     @Override
     public EnumSet<Permission> getPermissions() {
         return Permission.getPermissions(rawPermissions);
-    }
-
-    @Override
-    public Color getColor() {
-        return color != Role.DEFAULT_COLOR_RAW ? new Color(color) : null;
     }
 
     @Override
@@ -153,27 +136,10 @@ public class RoleImpl implements Role {
         return hasPermission(channel, permissions.toArray(Permission.EMPTY_PERMISSIONS));
     }
 
-    @Override
-    public boolean canInteract(@Nonnull Role role) {
-        return PermissionUtil.canInteract(this, role);
-    }
-
     @Nonnull
     @Override
     public Guild getGuild() {
         return guild.resolve();
-    }
-
-    @Nonnull
-    @Override
-    public RoleAction createCopy(@Nonnull Guild guild) {
-        Checks.notNull(guild, "Guild");
-        return guild.createRole()
-                .setColor(color)
-                .setHoisted(hoisted)
-                .setMentionable(mentionable)
-                .setName(name)
-                .setPermissions(rawPermissions);
     }
 
     @Nonnull

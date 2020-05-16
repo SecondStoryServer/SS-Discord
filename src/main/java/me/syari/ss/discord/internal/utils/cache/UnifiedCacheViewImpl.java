@@ -54,17 +54,6 @@ public class UnifiedCacheViewImpl<T, E extends CacheView<T>> implements CacheVie
 
     @Nonnull
     @Override
-    public Set<T> asSet() {
-        try (ChainedClosableIterator<T> it = lockedIterator()) {
-            //because the iterator needs to retain elements to avoid duplicates,
-            // we can use the resulting HashSet as our return value!
-            while (it.hasNext()) it.next();
-            return Collections.unmodifiableSet(it.getItems());
-        }
-    }
-
-    @Nonnull
-    @Override
     public ChainedClosableIterator<T> lockedIterator() {
         Iterator<? extends E> gen = generator.get().iterator();
         return new ChainedClosableIterator<>(gen);

@@ -86,11 +86,6 @@ public class GuildVoiceStateImpl implements GuildVoiceState {
     }
 
     @Override
-    public boolean inVoiceChannel() {
-        return getChannel() != null;
-    }
-
-    @Override
     public int hashCode() {
         return getMember().hashCode();
     }

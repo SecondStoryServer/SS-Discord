@@ -53,12 +53,6 @@ public interface MessageChannel extends ISnowflake, Formattable {
     }
 
 
-    long getLatestMessageIdLong();
-
-
-    boolean hasLatestMessage();
-
-
     @Nonnull
     String getName();
 

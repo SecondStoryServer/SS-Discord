@@ -40,8 +40,4 @@ public interface GuildChannel extends ISnowflake, Comparable<GuildChannel> {
     PermissionOverride getPermissionOverride(@Nonnull IPermissionHolder permissionHolder);
 
 
-    @Nonnull
-    List<PermissionOverride> getPermissionOverrides();
-
-
 }

@@ -6,7 +6,6 @@ import me.syari.ss.discord.api.entities.PrivateChannel;
 import me.syari.ss.discord.api.entities.SelfUser;
 import me.syari.ss.discord.api.exceptions.AccountTypeException;
 import me.syari.ss.discord.api.managers.AccountManager;
-import me.syari.ss.discord.api.requests.RestAction;
 import me.syari.ss.discord.api.utils.MiscUtil;
 import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.managers.AccountManagerImpl;
@@ -41,20 +40,9 @@ public class SelfUserImpl extends UserImpl implements SelfUser {
         throw new UnsupportedOperationException("You cannot get a PrivateChannel with yourself (SelfUser)");
     }
 
-    @Nonnull
-    @Override
-    public RestAction<PrivateChannel> openPrivateChannel() {
-        throw new UnsupportedOperationException("You cannot open a PrivateChannel with yourself (SelfUser)");
-    }
-
     @Override
     public boolean isVerified() {
         return verified;
-    }
-
-    @Override
-    public boolean isMfaEnabled() {
-        return mfaEnabled;
     }
 
     @Nonnull
@@ -70,13 +58,6 @@ public class SelfUserImpl extends UserImpl implements SelfUser {
         if (getJDA().getAccountType() != AccountType.CLIENT)
             throw new AccountTypeException("Phone number retrieval can only be done on CLIENT accounts!");
         return this.phoneNumber;
-    }
-
-    @Override
-    public boolean isMobile() throws AccountTypeException {
-        if (getJDA().getAccountType() != AccountType.CLIENT)
-            throw new AccountTypeException("Mobile app retrieval can only be done on CLIENT accounts!");
-        return this.mobile;
     }
 
     @Override

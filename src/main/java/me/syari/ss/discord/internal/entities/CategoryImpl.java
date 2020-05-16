@@ -1,7 +1,6 @@
 package me.syari.ss.discord.internal.entities;
 
 import me.syari.ss.discord.api.entities.*;
-import me.syari.ss.discord.api.requests.restaction.ChannelAction;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -81,14 +80,4 @@ public class CategoryImpl extends AbstractChannelImpl<Category, CategoryImpl> im
         return "GC:" + getName() + '(' + id + ')';
     }
 
-    private void applyPermission(ChannelAction a) {
-        overrides.forEachValue(override ->
-        {
-            if (override.isMemberOverride())
-                a.addPermissionOverride(override.getMember(), override.getAllowedRaw(), override.getDeniedRaw());
-            else
-                a.addPermissionOverride(override.getRole(), override.getAllowedRaw(), override.getDeniedRaw());
-            return true;
-        });
-    }
 }

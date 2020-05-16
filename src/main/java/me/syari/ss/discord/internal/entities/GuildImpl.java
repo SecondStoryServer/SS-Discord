@@ -1,8 +1,6 @@
 package me.syari.ss.discord.internal.entities;
 
 import gnu.trove.map.TLongObjectMap;
-import gnu.trove.set.TLongSet;
-import gnu.trove.set.hash.TLongHashSet;
 import me.syari.ss.discord.api.AccountType;
 import me.syari.ss.discord.api.Permission;
 import me.syari.ss.discord.api.entities.*;
@@ -13,12 +11,10 @@ import me.syari.ss.discord.api.utils.MiscUtil;
 import me.syari.ss.discord.api.utils.cache.MemberCacheView;
 import me.syari.ss.discord.api.utils.cache.SnowflakeCacheView;
 import me.syari.ss.discord.api.utils.cache.SortedSnowflakeCacheView;
-import me.syari.ss.discord.api.utils.data.DataArray;
 import me.syari.ss.discord.api.utils.data.DataObject;
 import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.requests.RestActionImpl;
 import me.syari.ss.discord.internal.requests.Route;
-import me.syari.ss.discord.internal.requests.WebSocketClient;
 import me.syari.ss.discord.internal.requests.restaction.RoleActionImpl;
 import me.syari.ss.discord.internal.utils.Checks;
 import me.syari.ss.discord.internal.utils.JDALogger;
@@ -414,11 +410,10 @@ public class GuildImpl implements Guild {
         return this;
     }
 
-    public GuildImpl setOwner(Member owner) {
+    public void setOwner(Member owner) {
         // Only cache owner if user cache is enabled
         if (getJDA().isGuildSubscriptions())
             this.owner = owner;
-        return this;
     }
 
     public GuildImpl setName(String name) {
@@ -431,9 +426,8 @@ public class GuildImpl implements Guild {
         return this;
     }
 
-    public GuildImpl setFeatures(Set<String> features) {
+    public void setFeatures(Set<String> features) {
         this.features = Collections.unmodifiableSet(features);
-        return this;
     }
 
     public GuildImpl setSplashId(String splashId) {
@@ -476,14 +470,12 @@ public class GuildImpl implements Guild {
         return this;
     }
 
-    public GuildImpl setSystemChannel(TextChannel systemChannel) {
+    public void setSystemChannel(TextChannel systemChannel) {
         this.systemChannel = systemChannel;
-        return this;
     }
 
-    public GuildImpl setPublicRole(Role publicRole) {
+    public void setPublicRole(Role publicRole) {
         this.publicRole = publicRole;
-        return this;
     }
 
     public GuildImpl setVerificationLevel(VerificationLevel level) {
@@ -527,9 +519,8 @@ public class GuildImpl implements Guild {
         return this;
     }
 
-    public GuildImpl setMemberCount(int count) {
+    public void setMemberCount(int count) {
         this.memberCount = count;
-        return this;
     }
 
     // -- Map getters --
@@ -568,14 +559,6 @@ public class GuildImpl implements Guild {
         return overrideMap.remove(userId);
     }
 
-    public void pruneChannelOverrides(long channelId) {
-        WebSocketClient.LOG.debug("Pruning cached overrides for channel with id {}", channelId);
-        overrideMap.retainEntries((key, value) -> {
-            DataObject removed = value.remove(channelId);
-            return !value.isEmpty();
-        });
-    }
-
     public void cacheOverride(long userId, long channelId, DataObject obj) {
         if (!getJDA().isGuildSubscriptions())
             return;
@@ -584,47 +567,6 @@ public class GuildImpl implements Guild {
         if (channelMap == null)
             overrideMap.put(userId, channelMap = MiscUtil.newLongMap());
         channelMap.put(channelId, obj);
-    }
-
-    public void updateCachedOverrides(AbstractChannelImpl<?, ?> channel, DataArray newOverrides) {
-        if (!getJDA().isGuildSubscriptions())
-            return;
-        long channelId = channel.getIdLong();
-        // extract user ids
-        TLongSet users = new TLongHashSet();
-        for (int i = 0; i < newOverrides.length(); i++) {
-            DataObject obj = newOverrides.getObject(i);
-            if (!obj.getString("type", "").equals("member"))
-                continue;
-            long id = obj.getUnsignedLong("id");
-            // remember that this user has an override
-            users.add(id);
-        }
-
-        // now remove the overrides that are missing
-        TLongSet toRemove = new TLongHashSet();
-        overrideMap.forEachEntry((userId, overrides) ->
-        {
-            if (users.contains(userId))
-                return true;
-            // remove for the channel
-            overrides.remove(channelId);
-            // remember to remove this map if its empty now
-            if (overrides.isEmpty())
-                toRemove.add(userId);
-            return true;
-        });
-        // remove all empty maps
-        overrideMap.keySet().removeAll(toRemove);
-    }
-
-    public void onMemberAdd() {
-        memberCount++;
-    }
-
-    public void onMemberRemove() {
-        memberCount--;
-        acknowledgeMembers();
     }
 
     public void acknowledgeMembers() {

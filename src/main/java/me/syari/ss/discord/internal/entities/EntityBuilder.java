@@ -70,7 +70,7 @@ public class EntityBuilder {
         return api;
     }
 
-    public SelfUser createSelfUser(DataObject self) {
+    public void createSelfUser(DataObject self) {
         SelfUserImpl selfUser = (SelfUserImpl) (getJDA().hasSelfUser() ? getJDA().getSelfUser() : null);
         if (selfUser == null) {
             final long id = self.getLong("id");
@@ -99,7 +99,6 @@ public class EntityBuilder {
                     .setPhoneNumber(self.getString("phone", null));
         }
 
-        return selfUser;
     }
 
     public static Activity createActivity(String name, String url, Activity.ActivityType type) {

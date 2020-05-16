@@ -1,11 +1,8 @@
 package me.syari.ss.discord.internal.entities;
 
-import me.syari.ss.discord.api.entities.ActivityFlag;
 import me.syari.ss.discord.api.entities.RichPresence;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.EnumSet;
 import java.util.Objects;
 
 public class RichPresenceImpl extends ActivityImpl implements RichPresence {
@@ -36,67 +33,15 @@ public class RichPresenceImpl extends ActivityImpl implements RichPresence {
         this.smallImage = smallImageKey != null ? new Image(applicationId, smallImageKey, smallImageText) : null;
     }
 
-    @Override
-    public long getApplicationIdLong() {
-        return applicationId;
-    }
-
     @Nonnull
     @Override
     public String getApplicationId() {
         return Long.toUnsignedString(applicationId);
     }
 
-    @Nullable
-    @Override
-    public String getSessionId() {
-        return sessionId;
-    }
-
-    @Nullable
-    @Override
-    public String getSyncId() {
-        return syncId;
-    }
-
     @Override
     public int getFlags() {
         return flags;
-    }
-
-    @Override
-    public EnumSet<ActivityFlag> getFlagSet() {
-        return ActivityFlag.getFlags(getFlags());
-    }
-
-    @Nullable
-    @Override
-    public String getState() {
-        return state;
-    }
-
-    @Nullable
-    @Override
-    public String getDetails() {
-        return details;
-    }
-
-    @Nullable
-    @Override
-    public Party getParty() {
-        return party;
-    }
-
-    @Nullable
-    @Override
-    public Image getLargeImage() {
-        return largeImage;
-    }
-
-    @Nullable
-    @Override
-    public Image getSmallImage() {
-        return smallImage;
     }
 
     @Override

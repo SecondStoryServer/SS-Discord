@@ -1,20 +1,13 @@
 package me.syari.ss.discord.internal.entities;
 
-import me.syari.ss.discord.api.entities.Guild;
 import me.syari.ss.discord.api.entities.PrivateChannel;
 import me.syari.ss.discord.api.entities.User;
-import me.syari.ss.discord.api.requests.RestAction;
 import me.syari.ss.discord.api.utils.MiscUtil;
-import me.syari.ss.discord.api.utils.data.DataObject;
 import me.syari.ss.discord.internal.JDAImpl;
-import me.syari.ss.discord.internal.requests.DeferredRestAction;
-import me.syari.ss.discord.internal.requests.RestActionImpl;
-import me.syari.ss.discord.internal.requests.Route;
 
 import javax.annotation.Nonnull;
 import java.util.FormattableFlags;
 import java.util.Formatter;
-import java.util.List;
 
 public class UserImpl implements User {
     protected final long id;
@@ -51,12 +44,6 @@ public class UserImpl implements User {
 
     @Nonnull
     @Override
-    public String getDefaultAvatarId() {
-        return String.valueOf(discriminator % 5);
-    }
-
-    @Nonnull
-    @Override
     public String getAsTag() {
         return getName() + '#' + getDiscriminator();
     }
@@ -64,27 +51,6 @@ public class UserImpl implements User {
     @Override
     public boolean hasPrivateChannel() {
         return privateChannel != null;
-    }
-
-    @Nonnull
-    @Override
-    public RestAction<PrivateChannel> openPrivateChannel() {
-        return new DeferredRestAction<>(getJDA(), PrivateChannel.class, () -> privateChannel, () -> {
-            Route.CompiledRoute route = Route.Self.CREATE_PRIVATE_CHANNEL.compile();
-            DataObject body = DataObject.empty().put("recipient_id", getId());
-            return new RestActionImpl<>(getJDA(), route, body, (response, request) ->
-            {
-                PrivateChannel priv = api.getEntityBuilder().createPrivateChannel(response.getObject(), this);
-                UserImpl.this.privateChannel = priv;
-                return priv;
-            });
-        });
-    }
-
-    @Nonnull
-    @Override
-    public List<Guild> getMutualGuilds() {
-        return getJDA().getMutualGuilds(this);
     }
 
     public PrivateChannel getPrivateChannel() {
