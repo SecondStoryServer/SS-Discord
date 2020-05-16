@@ -293,7 +293,6 @@ public class EntityBuilder {
     public EmoteImpl createEmote(GuildImpl guildObj, DataObject json) {
         DataArray emoteRoles = json.optArray("roles").orElseGet(DataArray::empty);
         final long emoteId = json.getLong("id");
-        final User user = json.isNull("user") ? null : createFakeUser(json.getObject("user"), false);
         EmoteImpl emoteObj = (EmoteImpl) guildObj.getEmoteById(emoteId);
         if (emoteObj == null)
             emoteObj = new EmoteImpl(emoteId);
@@ -389,7 +388,6 @@ public class EntityBuilder {
         final String content = jsonObject.getString("content", "");
         final boolean fromWebhook = jsonObject.hasKey("webhook_id");
         final boolean tts = jsonObject.getBoolean("tts");
-        final boolean mentionsEveryone = jsonObject.getBoolean("mention_everyone");
 
         final List<MessageEmbed> embeds = map(jsonObject, "embeds", this::createMessageEmbed);
 

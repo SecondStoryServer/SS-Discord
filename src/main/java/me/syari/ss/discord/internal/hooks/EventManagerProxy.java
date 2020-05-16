@@ -25,7 +25,6 @@ public class EventManagerProxy implements IEventManager {
 
     @Override
     public void handle(@Nonnull MessageReceivedEvent event) {
-        // don't allow mere exceptions to obstruct the socket handler
         try {
             subject.handle(event);
         } catch (RuntimeException e) {

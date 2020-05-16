@@ -4,20 +4,17 @@ import me.syari.ss.discord.api.OnlineStatus;
 import me.syari.ss.discord.api.entities.Activity;
 import me.syari.ss.discord.api.managers.Presence;
 import me.syari.ss.discord.api.utils.data.DataObject;
-import me.syari.ss.discord.internal.JDAImpl;
 
 import javax.annotation.Nonnull;
 
 
 public class PresenceImpl implements Presence {
-    private final JDAImpl api;
     private boolean idle = false;
     private Activity activity = null;
     private OnlineStatus status = OnlineStatus.ONLINE;
 
 
-    public PresenceImpl(JDAImpl jda) {
-        this.api = jda;
+    public PresenceImpl() {
     }
 
 

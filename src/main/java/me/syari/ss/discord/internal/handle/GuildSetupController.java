@@ -1,7 +1,6 @@
 package me.syari.ss.discord.internal.handle;
 
 import gnu.trove.iterator.TLongIterator;
-import gnu.trove.iterator.TLongLongIterator;
 import gnu.trove.map.TLongLongMap;
 import gnu.trove.map.TLongObjectMap;
 import gnu.trove.map.hash.TLongLongHashMap;
@@ -16,8 +15,6 @@ import me.syari.ss.discord.internal.requests.WebSocketCode;
 import me.syari.ss.discord.internal.utils.JDALogger;
 import org.slf4j.Logger;
 
-import java.util.LinkedList;
-import java.util.List;
 import java.util.concurrent.Future;
 
 @SuppressWarnings("WeakerAccess")
@@ -248,8 +245,7 @@ public class GuildSetupController {
         SYNCING,
         CHUNKING,
         BUILDING,
-        READY,
-        UNAVAILABLE
+        READY
     }
 
     @FunctionalInterface
@@ -257,31 +253,4 @@ public class GuildSetupController {
         void onStatusChange(long guildId, Status oldStatus, Status newStatus);
     }
 
-    private class ChunkTimeout implements Runnable {
-        @Override
-        public void run() {
-            if (pendingChunks.isEmpty())
-                return;
-            synchronized (pendingChunks) {
-                TLongLongIterator it = pendingChunks.iterator();
-                List<DataArray> requests = new LinkedList<>();
-                DataArray arr = DataArray.empty();
-                while (it.hasNext()) {
-                    // key=guild_id, value=timeout
-                    it.advance();
-                    if (System.currentTimeMillis() <= it.value())
-                        continue;
-                    arr.add(it.key());
-
-                    if (arr.length() == 50) {
-                        requests.add(arr);
-                        arr = DataArray.empty();
-                    }
-                }
-                if (arr.length() > 0)
-                    requests.add(arr);
-                requests.forEach(GuildSetupController.this::sendChunkRequest);
-            }
-        }
-    }
 }

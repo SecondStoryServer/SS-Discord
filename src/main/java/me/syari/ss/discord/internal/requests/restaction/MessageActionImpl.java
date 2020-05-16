@@ -33,7 +33,6 @@ public class MessageActionImpl extends RestActionImpl<Message> implements Messag
     protected final StringBuilder content;
     protected final MessageChannel channel;
     protected MessageEmbed embed = null;
-    protected final String nonce = null;
     protected boolean tts = false, override = false;
 
     public MessageActionImpl(JDA api, Route.CompiledRoute route, MessageChannel channel) {
@@ -191,18 +190,13 @@ public class MessageActionImpl extends RestActionImpl<Message> implements Messag
                 obj.putNull("content");
             else
                 obj.put("content", content.toString());
-            if (nonce == null)
-                obj.putNull("nonce");
-            else
-                obj.put("nonce", nonce);
+            obj.putNull("nonce");
             obj.put("tts", tts);
         } else {
             if (embed != null)
                 obj.put("embed", embed);
             if (content.length() > 0)
                 obj.put("content", content.toString());
-            if (nonce != null)
-                obj.put("nonce", nonce);
             obj.put("tts", tts);
         }
         return obj;

@@ -88,7 +88,7 @@ public class JDAImpl implements JDA {
         this.sessionConfig = sessionConfig == null ? SessionConfig.getDefault() : sessionConfig;
         this.metaConfig = metaConfig == null ? MetaConfig.getDefault() : metaConfig;
         this.shutdownHook = this.metaConfig.isUseShutdownHook() ? new Thread(this::shutdown, "JDA Shutdown Hook") : null;
-        this.presence = new PresenceImpl(this);
+        this.presence = new PresenceImpl();
         this.requester = new Requester(this);
         this.requester.setRetryOnTimeout(this.sessionConfig.isRetryOnTimeout());
         this.guildSetupController = new GuildSetupController(this);
@@ -384,7 +384,6 @@ public class JDAImpl implements JDA {
     public synchronized void shutdownInternals() {
         if (status == Status.SHUTDOWN)
             return;
-        //so we can shutdown from WebSocketClient properly
         guildSetupController.close();
 
         getRequester().shutdown();

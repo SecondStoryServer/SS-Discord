@@ -14,42 +14,6 @@ import java.util.Queue;
 import java.util.concurrent.*;
 import java.util.concurrent.locks.ReentrantLock;
 
-/*
-
-** How does it work? **
-
-A bucket is determined via the Path+Method+Major in the following way:
-
-    1. Get Hash from Path+Method (we call this route)
-    2. Get bucket from Hash+Major (we call this bucketid)
-
-If no hash is known we default to the constant "unlimited" hash. The hash is loaded from HTTP responses using the "X-RateLimit-Bucket" response header.
-This hash is per Method+Path and can be stored indefinitely once received.
-Some endpoints don't return a hash, this means that the endpoint is **unlimited** and will be in queue with only the major parameter.
-
-To explain this further, lets look at the example of message history. The endpoint to fetch message history is "GET/channels/{channel.id}/messages".
-This endpoint does not have any rate limit (unlimited) and will thus use the hash "unlimited+GET/channels/{channel.id}/messages".
-The bucket id for this will be "unlimited+GET/channels/{channel.id}/messages:guild_id:{channel.id}:webhook_id" where "{channel.id}" would be replaced with the respective id.
-This means you can fetch history concurrently for multiple channels but it will be in sequence for the same channel.
-
-If the endpoint is not unlimited we will receive a hash on the first response.
-Once this happens every unlimited bucket will start moving its queue to the correct bucket.
-This is done during the queue work iteration so many requests to one endpoint would be moved correctly.
-
-For example, the first message sending:
-
-    public void onReady(ReadyEvent event) {
-      TextChannel channel = event.getJDA().getTextChannelById("123");
-      for (int i = 1; i <= 100; i++) {
-        channel.sendMessage("Message: " + i).queue();
-      }
-    }
-
-This will send 100 messages on startup. At this point we don't yet know the hash for this route so we put them all in "unlimited+POST/channels/{channel.id}/messages:guild_id:123:webhook_id".
-The bucket iterates the requests in sync and gets the first response. This response provides the hash for this route and we create a bucket for it.
-Once the response is handled we continue with the next request in the unlimited bucket and notice the new bucket. We then move all related requests to this bucket.
-
- */
 public class BotRateLimiter extends RateLimiter {
     private static final String RESET_AFTER_HEADER = "X-RateLimit-Reset-After";
     private static final String RESET_HEADER = "X-RateLimit-Reset";
@@ -61,11 +25,8 @@ public class BotRateLimiter extends RateLimiter {
     private static final String UNLIMITED_BUCKET = "unlimited"; // we generate an unlimited bucket for every major parameter configuration
 
     private final ReentrantLock bucketLock = new ReentrantLock();
-    // Route -> Hash
     private final Map<Route, String> hash = new ConcurrentHashMap<>();
-    // Hash + Major Parameter -> Bucket
     private final Map<String, Bucket> bucket = new ConcurrentHashMap<>();
-    // Bucket -> Rate-Limit Worker
     private final Map<Bucket, Future<?>> rateLimitQueue = new ConcurrentHashMap<>();
     private Future<?> cleanupWorker;
 
@@ -83,8 +44,6 @@ public class BotRateLimiter extends RateLimiter {
     }
 
     private void cleanup() {
-        // This will remove buckets that are no longer needed every 30 seconds to avoid memory leakage
-        // We will keep the hashes in memory since they are very limited (by the amount of possible routes)
         MiscUtil.locked(bucketLock, () -> {
             int size = bucket.size();
             Iterator<Map.Entry<String, Bucket>> entries = bucket.entrySet().iterator();
@@ -93,12 +52,10 @@ public class BotRateLimiter extends RateLimiter {
                 Map.Entry<String, Bucket> entry = entries.next();
                 Bucket bucket = entry.getValue();
                 if (bucket.isUnlimited() && bucket.requests.isEmpty())
-                    entries.remove(); // remove unlimited if requests are empty
-                    // If the requests of the bucket are drained and the reset is expired the bucket has no valuable information
+                    entries.remove();
                 else if (bucket.requests.isEmpty() && bucket.reset <= getNow())
                     entries.remove();
             }
-            // Log how many buckets were removed
             size -= bucket.size();
             if (size > 0)
                 log.debug("Removed {} expired buckets", size);
