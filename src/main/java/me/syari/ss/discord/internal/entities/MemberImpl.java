@@ -23,7 +23,6 @@ public class MemberImpl implements Member {
     private final User user;
     private final JDAImpl api;
     private final Set<Role> roles = ConcurrentHashMap.newKeySet();
-    private final Map<ClientType, OnlineStatus> clientStatus;
 
     private String nickname;
     private long joinDate, boostDate;
@@ -33,7 +32,6 @@ public class MemberImpl implements Member {
         this.guild = new SnowflakeReference<>(guild, api::getGuildById);
         this.user = user;
         boolean cacheOnline = api.isCacheFlagSet(CacheFlag.CLIENT_STATUS);
-        this.clientStatus = cacheOnline ? Collections.synchronizedMap(new EnumMap<>(ClientType.class)) : null;
     }
 
     @Nonnull
@@ -135,15 +133,6 @@ public class MemberImpl implements Member {
 
     public void setBoostDate(long boostDate) {
         this.boostDate = boostDate;
-    }
-
-    public void setOnlineStatus(ClientType type, OnlineStatus status) {
-        if (this.clientStatus == null || type == ClientType.UNKNOWN || type == null)
-            return;
-        if (status == null || status == OnlineStatus.UNKNOWN || status == OnlineStatus.OFFLINE)
-            this.clientStatus.remove(type);
-        else
-            this.clientStatus.put(type, status);
     }
 
     public Set<Role> getRoleSet() {

@@ -103,7 +103,6 @@ public class EntityBuilder {
         final DataArray emotesArray = guildJson.getArray("emojis");
         final DataArray voiceStateArray = guildJson.getArray("voice_states");
         final Optional<DataArray> featuresArray = guildJson.optArray("features");
-        final Optional<DataArray> presencesArray = guildJson.optArray("presences");
         final long ownerId = guildJson.getUnsignedLong("owner_id", 0L);
         final int boostTier = guildJson.getInt("premium_tier", 0);
 
@@ -163,19 +162,6 @@ public class EntityBuilder {
 
         createGuildEmotePass(guildObj, emotesArray);
         createGuildVoiceStatePass(guildObj, voiceStateArray);
-
-        presencesArray.ifPresent((arr) -> {
-            for (int i = 0; i < arr.length(); i++) {
-                DataObject presence = arr.getObject(i);
-                final long userId = presence.getObject("user").getLong("id");
-                MemberImpl member = (MemberImpl) guildObj.getMembersView().get(userId);
-
-                if (member == null)
-                    LOG.debug("Received a ghost presence in GuildFirstPass! UserId: {} Guild: {}", userId, guildObj);
-                else
-                    createPresence(member, presence);
-            }
-        });
 
         return guildObj;
     }
@@ -398,21 +384,6 @@ public class EntityBuilder {
             currentRoles.removeAll(removedRoles);
         if (newRoles.size() > 0)
             currentRoles.addAll(newRoles);
-    }
-
-    public void createPresence(MemberImpl member, DataObject presenceJson) {
-        if (member == null)
-            throw new NullPointerException("Provided member was null!");
-        boolean cacheStatus = getJDA().isCacheFlagSet(CacheFlag.CLIENT_STATUS);
-
-        DataObject clientStatusJson = !cacheStatus || presenceJson.isNull("client_status") ? null : presenceJson.getObject("client_status");
-        if (clientStatusJson != null) {
-            for (String key : clientStatusJson.keys()) {
-                ClientType type = ClientType.fromKey(key);
-                OnlineStatus status = OnlineStatus.fromKey(clientStatusJson.getString(key));
-                member.setOnlineStatus(type, status);
-            }
-        }
     }
 
     public EmoteImpl createEmote(GuildImpl guildObj, DataObject json, boolean fake) {
