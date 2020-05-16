@@ -271,17 +271,6 @@ public class EntityBuilder {
                 // Cache member if guild subscriptions are enabled or the user is the self user
                 if (getJDA().isGuildSubscriptions() || user.equals(getJDA().getSelfUser())) {
                     playbackCache = memberView.getMap().put(user.getIdLong(), member) == null;
-                    // load the overrides
-                    TLongObjectMap<DataObject> cachedOverrides = guild.removeOverrideMap(user.getIdLong());
-                    if (cachedOverrides != null) {
-                        cachedOverrides.forEachEntry((channelId, override) ->
-                        {
-                            GuildChannel channel = guild.getGuildChannelById(channelId);
-                            if (channel instanceof AbstractChannelImpl) // essentially a null check plus cast safety
-                                createPermissionOverride(override, (AbstractChannelImpl) channel);
-                            return true;
-                        });
-                    }
                 } else // otherwise re-create every time!
                 {
                     playbackCache = true;
@@ -428,30 +417,11 @@ public class EntityBuilder {
             }
         }
 
-        if (!json.isNull("permission_overwrites")) {
-            DataArray overrides = json.getArray("permission_overwrites");
-            createOverridesPass(channel, overrides);
-        }
-
         channel.setParent(json.getLong("parent_id", 0))
                 .setName(json.getString("name"))
                 .setPosition(json.getInt("position"));
         if (playbackCache)
             getJDA().getEventCache().playbackCache(EventCache.Type.CHANNEL, id);
-    }
-
-    public void createOverridesPass(AbstractChannelImpl<?, ?> channel, DataArray overrides) {
-        for (int i = 0; i < overrides.length(); i++) {
-            try {
-                createPermissionOverride(overrides.getObject(i), channel);
-            } catch (NoSuchElementException e) {
-                //Caused by Discord not properly clearing PermissionOverrides when a Member leaves a Guild.
-                LOG.debug("{}. Ignoring PermissionOverride.", e.getMessage());
-            } catch (IllegalArgumentException e) {
-                //Missing handling for a type
-                LOG.warn("{}. Ignoring PermissionOverride.", e.getMessage());
-            }
-        }
     }
 
     public Role createRole(GuildImpl guild, DataObject roleJson, long guildId) {
@@ -467,10 +437,7 @@ public class EntityBuilder {
                 playbackCache = roleView.getMap().put(id, role) == null;
             }
         }
-        role.setName(roleJson.getString("name"))
-                .setRawPosition(roleJson.getInt("position"))
-                .setRawPermissions(roleJson.getLong("permissions"))
-                .setManaged(roleJson.getBoolean("managed"));
+        role.setName(roleJson.getString("name"));
         if (playbackCache)
             getJDA().getEventCache().playbackCache(EventCache.Type.ROLE, id);
         return role;
@@ -605,7 +572,7 @@ public class EntityBuilder {
         final String title = content.getString("title", null);
         final String description = content.getString("description", null);
         final OffsetDateTime timestamp = content.isNull("timestamp") ? null : OffsetDateTime.parse(content.getString("timestamp"));
-        final int color = content.isNull("color") ? Role.DEFAULT_COLOR_RAW : content.getInt("color");
+        final int color = content.getInt("color");
 
         final MessageEmbed.Thumbnail thumbnail;
         if (content.isNull("thumbnail")) {
@@ -685,41 +652,6 @@ public class EntityBuilder {
                                                   MessageEmbed.VideoInfo videoInfo, MessageEmbed.Footer footer, MessageEmbed.ImageInfo image, List<MessageEmbed.Field> fields) {
         return new MessageEmbed(url, title, description, type, timestamp,
                 color, thumbnail, siteProvider, author, videoInfo, footer, image, fields);
-    }
-
-    public void createPermissionOverride(DataObject override, AbstractChannelImpl<?, ?> chan) {
-        IPermissionHolder permHolder;
-        final long id = override.getLong("id");
-
-        //Throwing NoSuchElementException for common issues with overrides that are not cleared properly by discord
-        // when a member leaves or a role is deleted
-        switch (override.getString("type")) {
-            case "member":
-                permHolder = chan.getGuild().getMemberById(id);
-                if (permHolder == null) {
-                    // cache override for later
-                    chan.getGuild().cacheOverride(id, chan.getIdLong(), override);
-                    return;
-                }
-                break;
-            case "role":
-                permHolder = chan.getGuild().getRolesView().get(id);
-                if (permHolder == null)
-                    throw new NoSuchElementException("Attempted to create a PermissionOverride for a non-existent role! JSON: " + override);
-                break;
-            default:
-                throw new IllegalArgumentException("Provided with an unknown PermissionOverride type! JSON: " + override);
-        }
-
-        long allow = override.getLong("allow");
-        long deny = override.getLong("deny");
-
-        PermissionOverrideImpl permOverride = (PermissionOverrideImpl) chan.getPermissionOverride(permHolder);
-        if (permOverride == null) {
-            permOverride = new PermissionOverrideImpl(chan, permHolder);
-            chan.getOverrideMap().put(permHolder.getIdLong(), permOverride);
-        }
-        permOverride.setAllow(allow).setDeny(deny);
     }
 
     private <T> List<T> map(DataObject jsonObject, String key, Function<DataObject, T> convert) {

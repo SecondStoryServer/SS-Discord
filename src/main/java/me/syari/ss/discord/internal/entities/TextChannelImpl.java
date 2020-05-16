@@ -1,6 +1,5 @@
 package me.syari.ss.discord.internal.entities;
 
-import me.syari.ss.discord.api.Permission;
 import me.syari.ss.discord.api.entities.ChannelType;
 import me.syari.ss.discord.api.entities.MessageEmbed;
 import me.syari.ss.discord.api.entities.TextChannel;
@@ -38,8 +37,6 @@ public class TextChannelImpl extends AbstractChannelImpl<TextChannel, TextChanne
     @Override
     public MessageAction sendMessage(@Nonnull CharSequence text) {
         checkVerification();
-        checkPermission(Permission.MESSAGE_READ);
-        checkPermission(Permission.MESSAGE_WRITE);
         return TextChannel.super.sendMessage(text);
     }
 
@@ -47,10 +44,6 @@ public class TextChannelImpl extends AbstractChannelImpl<TextChannel, TextChanne
     @Override
     public MessageAction sendMessage(@Nonnull MessageEmbed embed) {
         checkVerification();
-        checkPermission(Permission.MESSAGE_READ);
-        checkPermission(Permission.MESSAGE_WRITE);
-        // this is checked because you cannot send an empty message
-        checkPermission(Permission.MESSAGE_EMBED_LINKS);
         return TextChannel.super.sendMessage(embed);
     }
 
@@ -60,10 +53,6 @@ public class TextChannelImpl extends AbstractChannelImpl<TextChannel, TextChanne
         Checks.notNull(msg, "Message");
 
         checkVerification();
-        checkPermission(Permission.MESSAGE_READ);
-        checkPermission(Permission.MESSAGE_WRITE);
-        if (msg.getContentRaw().isEmpty() && !msg.getEmbeds().isEmpty())
-            checkPermission(Permission.MESSAGE_EMBED_LINKS);
 
         //Call MessageChannel's default
         return TextChannel.super.sendMessage(msg);

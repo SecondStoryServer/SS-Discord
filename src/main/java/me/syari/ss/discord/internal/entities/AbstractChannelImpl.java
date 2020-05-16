@@ -2,12 +2,9 @@ package me.syari.ss.discord.internal.entities;
 
 import gnu.trove.map.TLongObjectMap;
 import me.syari.ss.discord.api.JDA;
-import me.syari.ss.discord.api.Permission;
 import me.syari.ss.discord.api.entities.Guild;
 import me.syari.ss.discord.api.entities.GuildChannel;
-import me.syari.ss.discord.api.entities.IPermissionHolder;
 import me.syari.ss.discord.api.entities.PermissionOverride;
-import me.syari.ss.discord.api.exceptions.InsufficientPermissionException;
 import me.syari.ss.discord.api.utils.MiscUtil;
 import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.utils.Checks;
@@ -65,12 +62,6 @@ public abstract class AbstractChannelImpl<T extends GuildChannel, M extends Abst
         return api;
     }
 
-    @Override
-    public PermissionOverride getPermissionOverride(@Nonnull IPermissionHolder permissionHolder) {
-        Checks.notNull(permissionHolder, "Permission Holder");
-        Checks.check(permissionHolder.getGuild().equals(getGuild()), "Provided permission holder is not from the same guild as this channel!");
-        return overrides.get(permissionHolder.getIdLong());
-    }
 
     @Override
     public long getIdLong() {
@@ -112,11 +103,5 @@ public abstract class AbstractChannelImpl<T extends GuildChannel, M extends Abst
     public M setPosition(int rawPosition) {
         this.rawPosition = rawPosition;
         return (M) this;
-    }
-
-    protected void checkPermission(Permission permission) {
-        if (!getGuild().getSelfMember().hasPermission(this, permission)) {
-            throw new InsufficientPermissionException(this, permission);
-        }
     }
 }

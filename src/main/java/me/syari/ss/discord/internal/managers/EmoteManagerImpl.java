@@ -1,10 +1,8 @@
 package me.syari.ss.discord.internal.managers;
 
-import me.syari.ss.discord.api.Permission;
 import me.syari.ss.discord.api.entities.Emote;
 import me.syari.ss.discord.api.entities.Guild;
 import me.syari.ss.discord.api.entities.Role;
-import me.syari.ss.discord.api.exceptions.InsufficientPermissionException;
 import me.syari.ss.discord.api.managers.EmoteManager;
 import me.syari.ss.discord.api.utils.data.DataArray;
 import me.syari.ss.discord.api.utils.data.DataObject;
@@ -98,7 +96,6 @@ public class EmoteManagerImpl extends ManagerBase<EmoteManager> implements Emote
             roles.forEach((role) ->
             {
                 Checks.notNull(role, "Roles");
-                Checks.check(role.getGuild().equals(getGuild()), "Roles must all be from the same guild");
             });
             withLock(this.roles, (list) ->
             {
@@ -122,12 +119,5 @@ public class EmoteManagerImpl extends ManagerBase<EmoteManager> implements Emote
         });
         reset();
         return getRequestBody(object);
-    }
-
-    @Override
-    protected boolean checkPermissions() {
-        if (!getGuild().getSelfMember().hasPermission(Permission.MANAGE_EMOTES))
-            throw new InsufficientPermissionException(getGuild(), Permission.MANAGE_EMOTES);
-        return super.checkPermissions();
     }
 }

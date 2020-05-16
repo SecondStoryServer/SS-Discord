@@ -79,8 +79,7 @@ public class MessageEmbed implements SerializableData {
 
 
     public boolean isEmpty() {
-        return color == Role.DEFAULT_COLOR_RAW
-                && timestamp == null
+        return timestamp == null
                 && getImage() == null
                 && getThumbnail() == null
                 && getLength() == 0;
@@ -160,8 +159,6 @@ public class MessageEmbed implements SerializableData {
                 obj.put("description", description);
             if (timestamp != null)
                 obj.put("timestamp", timestamp.format(DateTimeFormatter.ISO_INSTANT));
-            if (color != Role.DEFAULT_COLOR_RAW)
-                obj.put("color", color & 0xFFFFFF);
             if (thumbnail != null)
                 obj.put("thumbnail", DataObject.empty().put("url", thumbnail.getUrl()));
             if (siteProvider != null) {

@@ -4,9 +4,7 @@ import me.syari.ss.discord.annotations.DeprecatedSince;
 import me.syari.ss.discord.annotations.ReplaceWith;
 import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.managers.EmoteManager;
-import me.syari.ss.discord.api.requests.restaction.AuditableRestAction;
 
-import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
@@ -40,11 +38,6 @@ public interface Emote extends IMentionable, IFakeable {
 
     @Nonnull
     JDA getJDA();
-
-
-    @Nonnull
-    @CheckReturnValue
-    AuditableRestAction<Void> delete();
 
 
     @Nonnull

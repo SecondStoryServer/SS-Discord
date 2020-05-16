@@ -361,23 +361,6 @@ public class Message {
                 : String.format("M:%.20s", this); // this message was made using MessageBuilder
     }
 
-    protected void unsupported() {
-        throw new UnsupportedOperationException("This operation is not supported on received messages!");
-    }
-
-    public void formatTo(Formatter formatter, int flags, int width, int precision) {
-        boolean upper = (flags & FormattableFlags.UPPERCASE) == FormattableFlags.UPPERCASE;
-        boolean leftJustified = (flags & FormattableFlags.LEFT_JUSTIFY) == FormattableFlags.LEFT_JUSTIFY;
-        boolean alt = (flags & FormattableFlags.ALTERNATE) == FormattableFlags.ALTERNATE;
-
-        String out = alt ? getContentRaw() : getContentDisplay();
-
-        if (upper)
-            out = out.toUpperCase(formatter.locale());
-
-        appendFormat(formatter, width, precision, leftJustified, out);
-    }
-
     public void setMentions(List<User> users, List<Member> members) {
         users.sort(Comparator.comparing((user) ->
                 Math.max(content.indexOf("<@" + user.getId() + ">"),

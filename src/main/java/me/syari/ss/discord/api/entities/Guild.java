@@ -90,16 +90,6 @@ public interface Guild extends ISnowflake {
     SortedSnowflakeCacheView<TextChannel> getTextChannelCache();
 
 
-    @Nonnull
-    default List<GuildChannel> getChannels() {
-        return getChannels(true);
-    }
-
-
-    @Nonnull
-    List<GuildChannel> getChannels(boolean includeHidden);
-
-
     @Nullable
     default Role getRoleById(@Nonnull String id) {
         return getRoleCache().getElementById(id);

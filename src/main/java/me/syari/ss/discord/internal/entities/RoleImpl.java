@@ -1,67 +1,23 @@
 package me.syari.ss.discord.internal.entities;
 
-import me.syari.ss.discord.api.JDA;
-import me.syari.ss.discord.api.Permission;
 import me.syari.ss.discord.api.entities.Guild;
-import me.syari.ss.discord.api.entities.GuildChannel;
 import me.syari.ss.discord.api.entities.Role;
-import me.syari.ss.discord.api.exceptions.HierarchyException;
-import me.syari.ss.discord.api.exceptions.InsufficientPermissionException;
-import me.syari.ss.discord.api.managers.RoleManager;
-import me.syari.ss.discord.api.requests.restaction.AuditableRestAction;
-import me.syari.ss.discord.api.utils.MiscUtil;
 import me.syari.ss.discord.internal.JDAImpl;
-import me.syari.ss.discord.internal.managers.RoleManagerImpl;
-import me.syari.ss.discord.internal.requests.Route;
-import me.syari.ss.discord.internal.requests.restaction.AuditableRestActionImpl;
-import me.syari.ss.discord.internal.utils.Checks;
-import me.syari.ss.discord.internal.utils.PermissionUtil;
 import me.syari.ss.discord.internal.utils.cache.SnowflakeReference;
-import me.syari.ss.discord.internal.utils.cache.SortedSnowflakeCacheViewImpl;
 
 import javax.annotation.Nonnull;
 import java.time.OffsetDateTime;
-import java.util.Collection;
-import java.util.concurrent.locks.ReentrantLock;
 
 public class RoleImpl implements Role {
     private final long id;
     private final SnowflakeReference<Guild> guild;
-    private final JDAImpl api;
-
-    private final ReentrantLock mngLock = new ReentrantLock();
-    private volatile RoleManager manager;
 
     private String name;
-    private boolean managed;
-    private long rawPermissions;
-    private int rawPosition;
 
     public RoleImpl(long id, Guild guild) {
         this.id = id;
-        this.api = (JDAImpl) guild.getJDA();
+        JDAImpl api = (JDAImpl) guild.getJDA();
         this.guild = new SnowflakeReference<>(guild, api::getGuildById);
-    }
-
-    @Override
-    public int getPosition() {
-        Guild guild = getGuild();
-        if (equals(guild.getPublicRole()))
-            return -1;
-
-        //Subtract 1 to get into 0-index, and 1 to disregard the everyone role.
-        int i = guild.getRoles().size() - 2;
-        for (Role r : guild.getRoles()) {
-            if (equals(r))
-                return i;
-            i--;
-        }
-        throw new AssertionError("Somehow when determining position we never found the role in the Guild's roles? wtf?");
-    }
-
-    @Override
-    public int getPositionRaw() {
-        return rawPosition;
     }
 
     @Nonnull
@@ -70,98 +26,10 @@ public class RoleImpl implements Role {
         return name;
     }
 
-    @Override
-    public long getPermissionsRaw() {
-        return rawPermissions;
-    }
-
-    @Override
-    public boolean isPublicRole() {
-        return this.equals(this.getGuild().getPublicRole());
-    }
-
-    @Override
-    public boolean hasPermission(@Nonnull Permission... permissions) {
-        long effectivePerms = rawPermissions | getGuild().getPublicRole().getPermissionsRaw();
-        for (Permission perm : permissions) {
-            final long rawValue = perm.getRawValue();
-            if ((effectivePerms & rawValue) != rawValue)
-                return false;
-        }
-        return true;
-    }
-
-    @Override
-    public boolean hasPermission(@Nonnull Collection<Permission> permissions) {
-        Checks.notNull(permissions, "Permission Collection");
-
-        return hasPermission(permissions.toArray(Permission.EMPTY_PERMISSIONS));
-    }
-
-    @Override
-    public boolean hasPermission(@Nonnull GuildChannel channel, @Nonnull Permission... permissions) {
-        long effectivePerms = PermissionUtil.getEffectivePermission(channel, this);
-        for (Permission perm : permissions) {
-            final long rawValue = perm.getRawValue();
-            if ((effectivePerms & rawValue) != rawValue)
-                return false;
-        }
-        return true;
-    }
-
-    @Override
-    public boolean hasPermission(@Nonnull GuildChannel channel, @Nonnull Collection<Permission> permissions) {
-        Checks.notNull(permissions, "Permission Collection");
-
-        return hasPermission(channel, permissions.toArray(Permission.EMPTY_PERMISSIONS));
-    }
-
-    @Nonnull
-    @Override
-    public Guild getGuild() {
-        return guild.resolve();
-    }
-
-    @Nonnull
-    @Override
-    public RoleManager getManager() {
-        RoleManager mng = manager;
-        if (mng == null) {
-            mng = MiscUtil.locked(mngLock, () ->
-            {
-                if (manager == null)
-                    manager = new RoleManagerImpl(this);
-                return manager;
-            });
-        }
-        return mng;
-    }
-
-    @Nonnull
-    @Override
-    public AuditableRestAction<Void> delete() {
-        Guild guild = getGuild();
-        if (!guild.getSelfMember().hasPermission(Permission.MANAGE_ROLES))
-            throw new InsufficientPermissionException(guild, Permission.MANAGE_ROLES);
-        if (!PermissionUtil.canInteract(guild.getSelfMember(), this))
-            throw new HierarchyException("Can't delete role >= highest self-role");
-        if (managed)
-            throw new UnsupportedOperationException("Cannot delete a Role that is managed. ");
-
-        Route.CompiledRoute route = Route.Roles.DELETE_ROLE.compile(guild.getId(), getId());
-        return new AuditableRestActionImpl<>(getJDA(), route);
-    }
-
-    @Nonnull
-    @Override
-    public JDA getJDA() {
-        return api;
-    }
-
     @Nonnull
     @Override
     public String getAsMention() {
-        return isPublicRole() ? "@everyone" : "<@&" + getId() + '>';
+        return "<@&" + getId() + '>';
     }
 
     @Override
@@ -200,9 +68,6 @@ public class RoleImpl implements Role {
         if (this.guild.getIdLong() != impl.guild.getIdLong())
             throw new IllegalArgumentException("Cannot compare roles that aren't from the same guild!");
 
-        if (this.getPositionRaw() != r.getPositionRaw())
-            return this.getPositionRaw() - r.getPositionRaw();
-
         OffsetDateTime thisTime = this.getTimeCreated();
         OffsetDateTime rTime = r.getTimeCreated();
 
@@ -216,23 +81,6 @@ public class RoleImpl implements Role {
 
     public RoleImpl setName(String name) {
         this.name = name;
-        return this;
-    }
-
-    public RoleImpl setManaged(boolean managed) {
-        this.managed = managed;
-        return this;
-    }
-
-    public RoleImpl setRawPermissions(long rawPermissions) {
-        this.rawPermissions = rawPermissions;
-        return this;
-    }
-
-    public RoleImpl setRawPosition(int rawPosition) {
-        SortedSnowflakeCacheViewImpl<Role> roleCache = (SortedSnowflakeCacheViewImpl<Role>) getGuild().getRoleCache();
-        roleCache.clearCachedLists();
-        this.rawPosition = rawPosition;
         return this;
     }
 }

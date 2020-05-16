@@ -1,18 +1,13 @@
 package me.syari.ss.discord.internal.entities;
 
-import me.syari.ss.discord.api.Permission;
 import me.syari.ss.discord.api.entities.Guild;
 import me.syari.ss.discord.api.entities.ListedEmote;
 import me.syari.ss.discord.api.entities.Role;
 import me.syari.ss.discord.api.entities.User;
-import me.syari.ss.discord.api.exceptions.InsufficientPermissionException;
 import me.syari.ss.discord.api.managers.EmoteManager;
-import me.syari.ss.discord.api.requests.restaction.AuditableRestAction;
 import me.syari.ss.discord.api.utils.MiscUtil;
 import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.managers.EmoteManagerImpl;
-import me.syari.ss.discord.internal.requests.Route;
-import me.syari.ss.discord.internal.requests.restaction.AuditableRestActionImpl;
 import me.syari.ss.discord.internal.utils.cache.SnowflakeReference;
 
 import javax.annotation.Nonnull;
@@ -130,20 +125,6 @@ public class EmoteImpl implements ListedEmote {
     @Override
     public boolean isAnimated() {
         return animated;
-    }
-
-    @Nonnull
-    @Override
-    public AuditableRestAction<Void> delete() {
-        if (getGuild() == null)
-            throw new IllegalStateException("The emote you are trying to delete is not an actual emote we have access to (it is fake)!");
-        if (managed)
-            throw new UnsupportedOperationException("You cannot delete a managed emote!");
-        if (!getGuild().getSelfMember().hasPermission(Permission.MANAGE_EMOTES))
-            throw new InsufficientPermissionException(getGuild(), Permission.MANAGE_EMOTES);
-
-        Route.CompiledRoute route = Route.Emotes.DELETE_EMOTE.compile(getGuild().getId(), getId());
-        return new AuditableRestActionImpl<>(getJDA(), route);
     }
 
     // -- Setters --

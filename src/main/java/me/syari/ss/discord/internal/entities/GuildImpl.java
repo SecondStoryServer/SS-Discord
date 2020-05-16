@@ -1,9 +1,7 @@
 package me.syari.ss.discord.internal.entities;
 
 import gnu.trove.map.TLongObjectMap;
-import me.syari.ss.discord.api.Permission;
 import me.syari.ss.discord.api.entities.*;
-import me.syari.ss.discord.api.exceptions.InsufficientPermissionException;
 import me.syari.ss.discord.api.requests.RestAction;
 import me.syari.ss.discord.api.utils.MiscUtil;
 import me.syari.ss.discord.api.utils.cache.MemberCacheView;
@@ -15,16 +13,15 @@ import me.syari.ss.discord.internal.requests.RestActionImpl;
 import me.syari.ss.discord.internal.requests.Route;
 import me.syari.ss.discord.internal.utils.Checks;
 import me.syari.ss.discord.internal.utils.JDALogger;
-import me.syari.ss.discord.internal.utils.UnlockHook;
 import me.syari.ss.discord.internal.utils.cache.MemberCacheViewImpl;
 import me.syari.ss.discord.internal.utils.cache.SnowflakeCacheViewImpl;
 import me.syari.ss.discord.internal.utils.cache.SortedSnowflakeCacheViewImpl;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 public class GuildImpl implements Guild {
     private final long id;
@@ -82,8 +79,6 @@ public class GuildImpl implements Guild {
     @Override
     @Deprecated
     public RestAction<String> retrieveVanityUrl() {
-        if (!getSelfMember().hasPermission(Permission.MANAGE_SERVER))
-            throw new InsufficientPermissionException(this, Permission.MANAGE_SERVER);
         if (!getFeatures().contains("VANITY_URL"))
             throw new IllegalStateException("This guild doesn't have a vanity url");
 
@@ -145,28 +140,6 @@ public class GuildImpl implements Guild {
     @Override
     public SnowflakeCacheView<Emote> getEmoteCache() {
         return emoteCache;
-    }
-
-    @Nonnull
-    @Override
-    public List<GuildChannel> getChannels(boolean includeHidden) {
-        Member self = getSelfMember();
-        Predicate<GuildChannel> filterHidden = it -> self.hasPermission(it, Permission.VIEW_CHANNEL);
-
-        List<GuildChannel> channels;
-        SnowflakeCacheViewImpl<TextChannel> textView = getTextChannelsView();
-        List<TextChannel> textChannels;
-        try (UnlockHook textHook = textView.readLock()) {
-            if (includeHidden) {
-                textChannels = textView.asList();
-            } else {
-                textChannels = textView.stream().filter(filterHidden).collect(Collectors.toList());
-            }
-            channels = new ArrayList<>(textChannels.size());
-        }
-        Collections.sort(channels);
-
-        return Collections.unmodifiableList(channels);
     }
 
     @Nonnull

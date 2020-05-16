@@ -8,7 +8,7 @@ import java.time.OffsetDateTime;
 import java.util.List;
 
 
-public interface Member extends IMentionable, IPermissionHolder, IFakeable {
+public interface Member extends IMentionable, IFakeable {
 
     @Nonnull
     User getUser();
@@ -36,9 +36,6 @@ public interface Member extends IMentionable, IPermissionHolder, IFakeable {
 
     @Nonnull
     List<Role> getRoles();
-
-
-    boolean canInteract(@Nonnull Role role);
 
 
     boolean isOwner();

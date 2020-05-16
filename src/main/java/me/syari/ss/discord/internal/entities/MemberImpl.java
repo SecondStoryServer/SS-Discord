@@ -1,12 +1,12 @@
 package me.syari.ss.discord.internal.entities;
 
 import me.syari.ss.discord.api.JDA;
-import me.syari.ss.discord.api.Permission;
-import me.syari.ss.discord.api.entities.*;
+import me.syari.ss.discord.api.entities.Guild;
+import me.syari.ss.discord.api.entities.Member;
+import me.syari.ss.discord.api.entities.Role;
+import me.syari.ss.discord.api.entities.User;
 import me.syari.ss.discord.api.utils.cache.CacheFlag;
 import me.syari.ss.discord.internal.JDAImpl;
-import me.syari.ss.discord.internal.utils.Checks;
-import me.syari.ss.discord.internal.utils.PermissionUtil;
 import me.syari.ss.discord.internal.utils.cache.SnowflakeReference;
 
 import javax.annotation.Nonnull;
@@ -75,35 +75,6 @@ public class MemberImpl implements Member {
         roleList.sort(Comparator.reverseOrder());
 
         return Collections.unmodifiableList(roleList);
-    }
-
-    @Override
-    public boolean hasPermission(@Nonnull Permission... permissions) {
-        return PermissionUtil.checkPermission(this, permissions);
-    }
-
-    @Override
-    public boolean hasPermission(@Nonnull Collection<Permission> permissions) {
-        Checks.notNull(permissions, "Permission Collection");
-
-        return hasPermission(permissions.toArray(Permission.EMPTY_PERMISSIONS));
-    }
-
-    @Override
-    public boolean hasPermission(@Nonnull GuildChannel channel, @Nonnull Permission... permissions) {
-        return PermissionUtil.checkPermission(channel, this, permissions);
-    }
-
-    @Override
-    public boolean hasPermission(@Nonnull GuildChannel channel, @Nonnull Collection<Permission> permissions) {
-        Checks.notNull(permissions, "Permission Collection");
-
-        return hasPermission(channel, permissions.toArray(Permission.EMPTY_PERMISSIONS));
-    }
-
-    @Override
-    public boolean canInteract(@Nonnull Role role) {
-        return PermissionUtil.canInteract(this, role);
     }
 
     @Override

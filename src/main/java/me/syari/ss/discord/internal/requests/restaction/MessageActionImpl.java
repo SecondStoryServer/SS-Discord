@@ -1,9 +1,9 @@
 package me.syari.ss.discord.internal.requests.restaction;
 
 import me.syari.ss.discord.api.JDA;
-import me.syari.ss.discord.api.Permission;
-import me.syari.ss.discord.api.entities.*;
-import me.syari.ss.discord.api.exceptions.InsufficientPermissionException;
+import me.syari.ss.discord.api.entities.MessageChannel;
+import me.syari.ss.discord.api.entities.MessageEmbed;
+import me.syari.ss.discord.api.entities.MessageType;
 import me.syari.ss.discord.api.requests.Request;
 import me.syari.ss.discord.api.requests.Response;
 import me.syari.ss.discord.api.requests.restaction.MessageAction;
@@ -65,7 +65,7 @@ public class MessageActionImpl extends RestActionImpl<Message> implements Messag
     @Override
     public boolean isEmpty() {
         return Helpers.isBlank(content)
-                && (embed == null || embed.isEmpty() || !hasPermission(Permission.MESSAGE_EMBED_LINKS));
+                && (embed == null || embed.isEmpty());
     }
 
     @Override
@@ -240,21 +240,6 @@ public class MessageActionImpl extends RestActionImpl<Message> implements Messag
     protected void checkEdit() {
         if (isEdit())
             throw new IllegalStateException("Cannot add files to an existing message! Edit-Message does not support this operation!");
-    }
-
-    protected void checkPermission() {
-        if (!hasPermission(Permission.MESSAGE_ATTACH_FILES)) {
-            TextChannel channel = (TextChannel) this.channel;
-            throw new InsufficientPermissionException(channel, Permission.MESSAGE_ATTACH_FILES);
-        }
-    }
-
-    protected boolean hasPermission(Permission perm) {
-        if (channel.getType() != ChannelType.TEXT)
-            return true;
-        TextChannel text = (TextChannel) channel;
-        Member self = text.getGuild().getSelfMember();
-        return self.hasPermission(text, perm);
     }
 
     @Override
