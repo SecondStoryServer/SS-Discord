@@ -18,7 +18,7 @@ public class GuildBanEvent extends GenericGuildEvent
         this.user = user;
     }
 
-    
+
     @Nonnull
     public User getUser()
     {

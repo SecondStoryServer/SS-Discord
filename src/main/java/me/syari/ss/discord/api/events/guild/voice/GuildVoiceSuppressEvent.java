@@ -18,7 +18,7 @@ public class GuildVoiceSuppressEvent extends GenericGuildVoiceEvent
         this.suppressed = member.getVoiceState().isSuppressed();
     }
 
-    
+
     public boolean isSuppressed()
     {
         return suppressed;

@@ -24,27 +24,27 @@ public class RoleUpdatePermissionsEvent extends GenericRoleUpdateEvent<EnumSet<P
         this.newPermissionsRaw = role.getPermissionsRaw();
     }
 
-    
+
     @Nonnull
     public EnumSet<Permission> getOldPermissions()
     {
         return getOldValue();
     }
 
-    
+
     public long getOldPermissionsRaw()
     {
         return oldPermissionsRaw;
     }
 
-    
+
     @Nonnull
     public EnumSet<Permission> getNewPermissions()
     {
         return getNewValue();
     }
 
-    
+
     public long getNewPermissionsRaw()
     {
         return newPermissionsRaw;

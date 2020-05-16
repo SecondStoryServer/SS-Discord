@@ -19,14 +19,14 @@ public class TextChannelUpdateParentEvent extends GenericTextChannelUpdateEvent<
         super(api, responseNumber, channel, oldParent, channel.getParent(), IDENTIFIER);
     }
 
-    
+
     @Nullable
     public Category getOldParent()
     {
         return getOldValue();
     }
 
-    
+
     @Nullable
     public Category getNewParent()
     {

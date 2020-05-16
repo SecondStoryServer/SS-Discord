@@ -19,7 +19,7 @@ public class GuildMessageEmbedEvent extends GenericGuildMessageEvent
         this.embeds = embeds;
     }
 
-    
+
     @Nonnull
     public List<MessageEmbed> getMessageEmbeds()
     {

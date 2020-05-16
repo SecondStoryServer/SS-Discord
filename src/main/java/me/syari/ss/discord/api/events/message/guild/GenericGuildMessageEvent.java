@@ -20,20 +20,20 @@ public abstract class GenericGuildMessageEvent extends GenericGuildEvent
         this.channel = channel;
     }
 
-    
+
     @Nonnull
     public String getMessageId()
     {
         return Long.toUnsignedString(messageId);
     }
 
-    
+
     public long getMessageIdLong()
     {
         return messageId;
     }
 
-    
+
     @Nonnull
     public TextChannel getChannel()
     {

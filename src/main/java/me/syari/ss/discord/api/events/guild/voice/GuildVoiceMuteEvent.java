@@ -18,7 +18,7 @@ public class GuildVoiceMuteEvent extends GenericGuildVoiceEvent
         this.muted = member.getVoiceState().isMuted();
     }
 
-    
+
     public boolean isMuted()
     {
         return muted;

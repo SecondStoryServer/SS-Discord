@@ -17,14 +17,14 @@ public class GuildUpdateMFALevelEvent extends GenericGuildUpdateEvent<Guild.MFAL
         super(api, responseNumber, guild, oldMFALevel, guild.getRequiredMFALevel(), IDENTIFIER);
     }
 
-    
+
     @Nonnull
     public Guild.MFALevel getOldMFALevel()
     {
         return getOldValue();
     }
 
-    
+
     @Nonnull
     public Guild.MFALevel getNewMFALevel()
     {

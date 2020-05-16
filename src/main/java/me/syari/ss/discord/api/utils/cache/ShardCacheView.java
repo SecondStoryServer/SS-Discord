@@ -9,11 +9,11 @@ import javax.annotation.Nullable;
 
 public interface ShardCacheView extends CacheView<JDA>
 {
-    
+
     @Nullable
     JDA getElementById(int id);
 
-    
+
     @Nullable
     default JDA getElementById(@Nonnull String id)
     {

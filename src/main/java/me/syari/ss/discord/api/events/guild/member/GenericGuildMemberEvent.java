@@ -19,14 +19,14 @@ public abstract class GenericGuildMemberEvent extends GenericGuildEvent
         this.member = member;
     }
 
-    
+
     @Nonnull
     public User getUser()
     {
         return getMember().getUser();
     }
 
-    
+
     @Nonnull
     public Member getMember()
     {

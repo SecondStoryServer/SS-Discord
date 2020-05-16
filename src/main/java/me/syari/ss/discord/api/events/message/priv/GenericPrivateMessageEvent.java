@@ -20,21 +20,21 @@ public abstract class GenericPrivateMessageEvent extends Event
         this.channel = channel;
     }
 
-    
+
     @Nonnull
     public PrivateChannel getChannel()
     {
         return channel;
     }
 
-    
+
     @Nonnull
     public String getMessageId()
     {
         return Long.toUnsignedString(messageId);
     }
 
-    
+
     public long getMessageIdLong()
     {
         return messageId;

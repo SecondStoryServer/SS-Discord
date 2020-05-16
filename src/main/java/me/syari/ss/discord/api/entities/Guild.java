@@ -18,7 +18,8 @@ import me.syari.ss.discord.internal.utils.Checks;
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.List;
+import java.util.Set;
 
 
 public interface Guild extends ISnowflake

@@ -10,13 +10,10 @@ import me.syari.ss.discord.api.entities.Webhook;
 import me.syari.ss.discord.internal.entities.GuildImpl;
 import me.syari.ss.discord.internal.entities.UserImpl;
 import me.syari.ss.discord.internal.entities.WebhookImpl;
-import me.syari.ss.discord.internal.utils.Checks;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 

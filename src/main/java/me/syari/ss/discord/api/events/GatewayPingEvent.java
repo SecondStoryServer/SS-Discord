@@ -19,13 +19,13 @@ public class GatewayPingEvent extends Event implements UpdateEvent<JDA, Long>
         this.prev = old;
     }
 
-    
+
     public long getNewPing()
     {
         return next;
     }
 
-    
+
     public long getOldPing()
     {
         return prev;

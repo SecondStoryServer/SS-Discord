@@ -38,14 +38,14 @@ public class UserUpdateOnlineStatusEvent extends GenericUserUpdateEvent<OnlineSt
         return member;
     }
 
-    
+
     @Nonnull
     public OnlineStatus getOldOnlineStatus()
     {
         return getOldValue();
     }
 
-    
+
     @Nonnull
     public OnlineStatus getNewOnlineStatus()
     {

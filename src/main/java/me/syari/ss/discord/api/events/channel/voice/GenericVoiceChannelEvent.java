@@ -19,14 +19,14 @@ public abstract class GenericVoiceChannelEvent extends Event
         this.channel = channel;
     }
 
-    
+
     @Nonnull
     public VoiceChannel getChannel()
     {
         return channel;
     }
 
-    
+
     @Nonnull
     public Guild getGuild()
     {

@@ -16,14 +16,14 @@ public class SelfUpdateNameEvent extends GenericSelfUpdateEvent<String>
         super(api, responseNumber, oldName, api.getSelfUser().getName(), IDENTIFIER);
     }
 
-    
+
     @Nonnull
     public String getOldName()
     {
         return getOldValue();
     }
 
-    
+
     @Nonnull
     public String getNewName()
     {

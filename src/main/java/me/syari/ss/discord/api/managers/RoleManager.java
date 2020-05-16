@@ -28,38 +28,38 @@ public interface RoleManager extends Manager<RoleManager>
 
     long MENTIONABLE = 0x10;
 
-    
+
     @Nonnull
     @Override
     RoleManager reset(long fields);
 
-    
+
     @Nonnull
     @Override
     RoleManager reset(long... fields);
 
-    
+
     @Nonnull
     Role getRole();
 
-    
+
     @Nonnull
     default Guild getGuild()
     {
         return getRole().getGuild();
     }
 
-    
+
     @Nonnull
     @CheckReturnValue
     RoleManager setName(@Nonnull String name);
 
-    
+
     @Nonnull
     @CheckReturnValue
     RoleManager setPermissions(long perms);
 
-    
+
     @Nonnull
     @CheckReturnValue
     default RoleManager setPermissions(@Nonnull Permission... permissions)
@@ -68,7 +68,7 @@ public interface RoleManager extends Manager<RoleManager>
         return setPermissions(Arrays.asList(permissions));
     }
 
-    
+
     @Nonnull
     @CheckReturnValue
     default RoleManager setPermissions(@Nonnull Collection<Permission> permissions)
@@ -77,7 +77,7 @@ public interface RoleManager extends Manager<RoleManager>
         return setPermissions(Permission.getRaw(permissions));
     }
 
-    
+
     @Nonnull
     @CheckReturnValue
     default RoleManager setColor(@Nullable Color color)
@@ -85,22 +85,22 @@ public interface RoleManager extends Manager<RoleManager>
         return setColor(color == null ? Role.DEFAULT_COLOR_RAW : color.getRGB());
     }
 
-    
+
     @Nonnull
     @CheckReturnValue
     RoleManager setColor(int rgb);
 
-    
+
     @Nonnull
     @CheckReturnValue
     RoleManager setHoisted(boolean hoisted);
 
-    
+
     @Nonnull
     @CheckReturnValue
     RoleManager setMentionable(boolean mentionable);
 
-    
+
     @Nonnull
     @CheckReturnValue
     default RoleManager givePermissions(@Nonnull Permission... perms)
@@ -109,12 +109,12 @@ public interface RoleManager extends Manager<RoleManager>
         return givePermissions(Arrays.asList(perms));
     }
 
-    
+
     @Nonnull
     @CheckReturnValue
     RoleManager givePermissions(@Nonnull Collection<Permission> perms);
 
-    
+
     @Nonnull
     @CheckReturnValue
     default RoleManager revokePermissions(@Nonnull Permission... perms)
@@ -123,7 +123,7 @@ public interface RoleManager extends Manager<RoleManager>
         return revokePermissions(Arrays.asList(perms));
     }
 
-    
+
     @Nonnull
     @CheckReturnValue
     RoleManager revokePermissions(@Nonnull Collection<Permission> perms);

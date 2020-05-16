@@ -16,7 +16,7 @@ public enum Compression
         this.key = key;
     }
 
-    
+
     public String getKey()
     {
         return key;

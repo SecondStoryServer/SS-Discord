@@ -29,41 +29,41 @@ public class GenericMessageReactionEvent extends GenericMessageEvent
         this.reaction = reaction;
     }
 
-    
+
     @Nonnull
     public String getUserId()
     {
         return Long.toUnsignedString(userId);
     }
 
-    
+
     public long getUserIdLong()
     {
         return userId;
     }
 
-    
+
     @Nullable
     public User getUser()
     {
         return issuer;
     }
 
-    
+
     @Nullable
     public Member getMember()
     {
         return member;
     }
 
-    
+
     @Nonnull
     public MessageReaction getReaction()
     {
         return reaction;
     }
 
-    
+
     @Nonnull
     public MessageReaction.ReactionEmote getReactionEmote()
     {

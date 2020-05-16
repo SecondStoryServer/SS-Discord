@@ -16,7 +16,7 @@ public class SelfUpdateMobileEvent extends GenericSelfUpdateEvent<Boolean>
         super(api, responseNumber, wasMobile, !wasMobile, IDENTIFIER);
     }
 
-    
+
     public boolean wasMobile()
     {
         return getOldValue();

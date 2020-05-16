@@ -10,48 +10,48 @@ import java.util.Objects;
 
 public interface RichPresence extends Activity
 {
-    
+
     long getApplicationIdLong();
 
-    
+
     @Nonnull
     String getApplicationId();
 
-    
+
     @Nullable
     String getSessionId();
 
-    
+
     @Nullable
     String getSyncId();
 
-    
+
     int getFlags();
 
-    
+
     EnumSet<ActivityFlag> getFlagSet();
 
-    
+
     @Nullable
     String getState();
 
-    
+
     @Nullable
     String getDetails();
 
-    
+
     @Nullable
     Party getParty();
 
-    
+
     @Nullable
     Image getLargeImage();
 
-    
+
     @Nullable
     Image getSmallImage();
 
-    
+
     class Image
     {
         protected final String key;
@@ -65,21 +65,21 @@ public interface RichPresence extends Activity
             this.text = text;
         }
 
-        
+
         @Nonnull
         public String getKey()
         {
             return key;
         }
 
-        
+
         @Nullable
         public String getText()
         {
             return text;
         }
 
-        
+
         @Nonnull
         public String getUrl()
         {
@@ -112,7 +112,7 @@ public interface RichPresence extends Activity
         }
     }
 
-    
+
     class Party
     {
         protected final String id;
@@ -126,20 +126,20 @@ public interface RichPresence extends Activity
             this.max = max;
         }
 
-        
+
         @Nullable
         public String getId()
         {
             return id;
         }
 
-        
+
         public long getSize()
         {
             return size;
         }
 
-        
+
         public long getMax()
         {
             return max;

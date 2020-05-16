@@ -16,14 +16,14 @@ public class VoiceChannelUpdateNameEvent extends GenericVoiceChannelUpdateEvent<
         super(api, responseNumber, channel, oldName, channel.getName(), IDENTIFIER);
     }
 
-    
+
     @Nonnull
     public String getOldName()
     {
         return getOldValue();
     }
 
-    
+
     @Nonnull
     public String getNewName()
     {

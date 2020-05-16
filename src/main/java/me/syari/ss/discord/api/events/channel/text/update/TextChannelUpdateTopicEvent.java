@@ -17,14 +17,14 @@ public class TextChannelUpdateTopicEvent extends GenericTextChannelUpdateEvent<S
         super(api, responseNumber, channel, oldTopic, channel.getTopic(), IDENTIFIER);
     }
 
-    
+
     @Nullable
     public String getOldTopic()
     {
         return getOldValue();
     }
 
-    
+
     @Nullable
     public String getNewTopic()
     {

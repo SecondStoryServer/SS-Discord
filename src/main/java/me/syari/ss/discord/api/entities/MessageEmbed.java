@@ -2,7 +2,6 @@
 package me.syari.ss.discord.api.entities;
 
 import me.syari.ss.discord.api.AccountType;
-import me.syari.ss.discord.api.EmbedBuilder;
 import me.syari.ss.discord.api.utils.data.DataArray;
 import me.syari.ss.discord.api.utils.data.DataObject;
 import me.syari.ss.discord.api.utils.data.SerializableData;
@@ -11,12 +10,12 @@ import me.syari.ss.discord.internal.utils.Helpers;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.awt.*;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 
 public class MessageEmbed implements SerializableData
@@ -101,24 +100,10 @@ public class MessageEmbed implements SerializableData
     }
 
 
-    @Nonnull
-    public EmbedType getType()
-    {
-        return type;
-    }
-
-
     @Nullable
     public Thumbnail getThumbnail()
     {
         return thumbnail;
-    }
-
-
-    @Nullable
-    public Provider getSiteProvider()
-    {
-        return siteProvider;
     }
 
 
@@ -128,13 +113,6 @@ public class MessageEmbed implements SerializableData
         return author;
     }
 
-
-    @Nullable
-    public VideoInfo getVideoInfo()
-    {
-        return videoInfo;
-    }
-    
 
     @Nullable
     public Footer getFooter()
@@ -154,13 +132,6 @@ public class MessageEmbed implements SerializableData
     public List<Field> getFields()
     {
         return fields;
-    }
-    
-
-    @Nullable
-    public Color getColor()
-    {
-        return color != Role.DEFAULT_COLOR_RAW ? new Color(color) : null;
     }
 
 
@@ -352,24 +323,6 @@ public class MessageEmbed implements SerializableData
         }
 
 
-        @Nullable
-        public String getProxyUrl()
-        {
-            return proxyUrl;
-        }
-
-
-        public int getWidth()
-        {
-            return width;
-        }
-
-
-        public int getHeight()
-        {
-            return height;
-        }
-
         @Override
         public boolean equals(Object obj)
         {
@@ -442,17 +395,6 @@ public class MessageEmbed implements SerializableData
         }
 
 
-        public int getWidth()
-        {
-            return width;
-        }
-
-
-        public int getHeight()
-        {
-            return height;
-        }
-
         @Override
         public boolean equals(Object obj)
         {
@@ -487,25 +429,7 @@ public class MessageEmbed implements SerializableData
         {
             return url;
         }
-        
 
-        @Nullable
-        public String getProxyUrl()
-        {
-            return proxyUrl;
-        }
-
-
-        public int getWidth()
-        {
-            return width;
-        }
-
-
-        public int getHeight()
-        {
-            return height;
-        }
 
         @Override
         public boolean equals(Object obj)
@@ -556,13 +480,7 @@ public class MessageEmbed implements SerializableData
         {
             return iconUrl;
         }
-        
 
-        @Nullable
-        public String getProxyIconUrl()
-        {
-            return proxyIconUrl;
-        }
 
         @Override
         public boolean equals(Object obj)
@@ -604,13 +522,7 @@ public class MessageEmbed implements SerializableData
         {
             return iconUrl;
         }
-        
 
-        @Nullable
-        public String getProxyIconUrl()
-        {
-            return proxyIconUrl;
-        }
 
         @Override
         public boolean equals(Object obj)
@@ -623,7 +535,9 @@ public class MessageEmbed implements SerializableData
                 && Objects.equals(footer.proxyIconUrl, proxyIconUrl));
         }
     }
-    
+
+    private final static String ZERO_WIDTH_SPACE = "\u200E";
+    private final static Pattern URL_PATTERN = Pattern.compile("\\s*(https?|attachment)://\\S+\\s*", Pattern.CASE_INSENSITIVE);
 
     public static class Field
     {
@@ -644,21 +558,20 @@ public class MessageEmbed implements SerializableData
                 name = name.trim();
                 value = value.trim();
                 if (name.isEmpty())
-                    this.name = EmbedBuilder.ZERO_WIDTH_SPACE;
+                    this.name = ZERO_WIDTH_SPACE;
                 else
                     this.name = name;
                 if (value.isEmpty())
-                    this.value = EmbedBuilder.ZERO_WIDTH_SPACE;
+                    this.value = ZERO_WIDTH_SPACE;
                 else
                     this.value = value;
-                this.inline = inline;
             }
             else
             {
                 this.name = name;
                 this.value = value;
-                this.inline = inline;
             }
+            this.inline = inline;
         }
         
         public Field(String name, String value, boolean inline)

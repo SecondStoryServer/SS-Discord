@@ -67,10 +67,6 @@ public enum Permission
             .filter(Permission::isChannel).collect(Collectors.toSet()));
 
 
-    public static final long ALL_GUILD_PERMISSIONS = Permission.getRaw(Arrays.stream(values())
-            .filter(Permission::isGuild).collect(Collectors.toSet()));
-
-
     public static final long ALL_TEXT_PERMISSIONS
             = Permission.getRaw(MESSAGE_ADD_REACTION, MESSAGE_WRITE, MESSAGE_TTS,
                                 MESSAGE_MANAGE, MESSAGE_EMBED_LINKS, MESSAGE_ATTACH_FILES,
@@ -81,14 +77,12 @@ public enum Permission
             = Permission.getRaw(VOICE_STREAM, VOICE_CONNECT, VOICE_SPEAK, VOICE_MUTE_OTHERS,
                                 VOICE_DEAF_OTHERS, VOICE_MOVE_OTHERS, VOICE_USE_VAD);
 
-    private final int offset;
     private final long raw;
     private final boolean isGuild, isChannel;
     private final String name;
 
     Permission(int offset, boolean isGuild, boolean isChannel, @Nonnull String name)
     {
-        this.offset = offset;
         this.raw = 1 << offset;
         this.isGuild = isGuild;
         this.isChannel = isChannel;
@@ -100,12 +94,6 @@ public enum Permission
     public String getName()
     {
         return this.name;
-    }
-
-
-    public int getOffset()
-    {
-        return offset;
     }
 
 
@@ -136,18 +124,6 @@ public enum Permission
     public boolean isVoice()
     {
         return (raw & ALL_VOICE_PERMISSIONS) == raw;
-    }
-
-
-    @Nonnull
-    public static Permission getFromOffset(int offset)
-    {
-        for (Permission perm : values())
-        {
-            if (perm.offset == offset)
-                return perm;
-        }
-        return UNKNOWN;
     }
 
 

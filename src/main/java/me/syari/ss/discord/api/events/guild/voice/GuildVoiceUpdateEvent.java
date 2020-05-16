@@ -13,11 +13,11 @@ public interface GuildVoiceUpdateEvent extends UpdateEvent<Member, VoiceChannel>
 {
     String IDENTIFIER = "voice-channel";
 
-    
+
     @Nullable
     VoiceChannel getChannelLeft();
 
-    
+
     @Nullable
     VoiceChannel getChannelJoined();
 }

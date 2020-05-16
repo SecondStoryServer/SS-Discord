@@ -18,17 +18,17 @@ import java.util.List;
 
 public interface TextChannel extends GuildChannel, MessageChannel, IMentionable
 {
-    
+
     int MAX_SLOWMODE = 21600;
 
-    
+
     @Nullable
     String getTopic();
-    
-    
+
+
     boolean isNSFW();
 
-    
+
     int getSlowmode();
 
 
@@ -36,32 +36,32 @@ public interface TextChannel extends GuildChannel, MessageChannel, IMentionable
     @CheckReturnValue
     RestAction<List<Webhook>> retrieveWebhooks();
 
-    
+
     @Nonnull
     @CheckReturnValue
     WebhookAction createWebhook(@Nonnull String name);
 
-    
+
     @Nonnull
     @CheckReturnValue
     RestAction<Void> deleteMessages(@Nonnull Collection<Message> messages);
 
-    
+
     @Nonnull
     @CheckReturnValue
     RestAction<Void> deleteMessagesByIds(@Nonnull Collection<String> messageIds);
 
-    
+
     @Nonnull
     @CheckReturnValue
     AuditableRestAction<Void> deleteWebhookById(@Nonnull String id);
 
-    
+
     @Nonnull
     @CheckReturnValue
     RestAction<Void> clearReactionsById(@Nonnull String messageId);
 
-    
+
     @Nonnull
     @CheckReturnValue
     default RestAction<Void> clearReactionsById(long messageId)
@@ -69,12 +69,12 @@ public interface TextChannel extends GuildChannel, MessageChannel, IMentionable
         return clearReactionsById(Long.toUnsignedString(messageId));
     }
 
-    
+
     @Nonnull
     @CheckReturnValue
     RestAction<Void> removeReactionById(@Nonnull String messageId, @Nonnull String unicode, @Nonnull User user);
 
-    
+
     @Nonnull
     @CheckReturnValue
     default RestAction<Void> removeReactionById(long messageId, @Nonnull String unicode, @Nonnull User user)
@@ -82,7 +82,7 @@ public interface TextChannel extends GuildChannel, MessageChannel, IMentionable
         return removeReactionById(Long.toUnsignedString(messageId), unicode, user);
     }
 
-    
+
     @Nonnull
     @CheckReturnValue
     default RestAction<Void> removeReactionById(@Nonnull String messageId, @Nonnull Emote emote, @Nonnull User user)
@@ -91,7 +91,7 @@ public interface TextChannel extends GuildChannel, MessageChannel, IMentionable
         return removeReactionById(messageId, emote.getName() + ":" + emote.getId(), user);
     }
 
-    
+
     @Nonnull
     @CheckReturnValue
     default RestAction<Void> removeReactionById(long messageId, @Nonnull Emote emote, @Nonnull User user)
@@ -99,10 +99,10 @@ public interface TextChannel extends GuildChannel, MessageChannel, IMentionable
         return removeReactionById(Long.toUnsignedString(messageId), emote, user);
     }
 
-    
+
     boolean canTalk();
 
-    
+
     boolean canTalk(@Nonnull Member member);
 
     @Override

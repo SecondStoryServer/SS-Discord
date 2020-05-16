@@ -18,28 +18,28 @@ public class GuildUpdateIconEvent extends GenericGuildUpdateEvent<String>
         super(api, responseNumber, guild, oldIconId, guild.getIconId(), IDENTIFIER);
     }
 
-    
+
     @Nullable
     public String getOldIconId()
     {
         return getOldValue();
     }
 
-    
+
     @Nullable
     public String getOldIconUrl()
     {
         return previous == null ? null : String.format(Guild.ICON_URL, guild.getId(), previous, previous.startsWith("a_") ? "gif" : "png");
     }
 
-    
+
     @Nullable
     public String getNewIconId()
     {
         return getNewValue();
     }
 
-    
+
     @Nullable
     public String getNewIconUrl()
     {

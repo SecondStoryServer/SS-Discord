@@ -8,10 +8,10 @@ import javax.annotation.Nonnull;
 
 public interface GenericEvent
 {
-    
+
     @Nonnull
     JDA getJDA();
 
-    
+
     long getResponseNumber();
 }

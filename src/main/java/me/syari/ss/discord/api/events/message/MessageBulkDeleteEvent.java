@@ -36,7 +36,7 @@ public class MessageBulkDeleteEvent extends Event
     {
         return channel.getGuild();
     }
-    
+
 
     @Nonnull
     public List<String> getMessageIds()

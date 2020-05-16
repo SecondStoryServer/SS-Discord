@@ -9,6 +9,6 @@ import javax.annotation.Nonnull;
 @FunctionalInterface
 public interface EventListener
 {
-    
+
     void onEvent(@Nonnull GenericEvent event);
 }

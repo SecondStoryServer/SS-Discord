@@ -33,37 +33,37 @@ public interface RestAction<T>
         return RestActionImpl.getDefaultFailure();
     }
 
-    
+
     @Nonnull
     static Consumer<Object> getDefaultSuccess()
     {
         return RestActionImpl.getDefaultSuccess();
     }
 
-    
+
     @Nonnull
     JDA getJDA();
 
-    
+
     @Nonnull
     RestAction<T> setCheck(@Nullable BooleanSupplier checks);
 
-    
+
     default void queue()
     {
         queue(null);
     }
 
-    
+
     default void queue(@Nullable Consumer<? super T> success)
     {
         queue(success, null);
     }
 
-    
+
     void queue(@Nullable Consumer<? super T> success, @Nullable Consumer<? super Throwable> failure);
 
-    
+
     default T complete()
     {
         try
@@ -79,21 +79,21 @@ public interface RestAction<T>
         }
     }
 
-    
+
     T complete(boolean shouldQueue) throws RateLimitedException;
 
-    
+
     @Nonnull
     default CompletableFuture<T> submit()
     {
         return submit(true);
     }
 
-    
+
     @Nonnull
     CompletableFuture<T> submit(boolean shouldQueue);
 
-    
+
     @Nonnull
     @CheckReturnValue
     default <O> RestAction<O> map(@Nonnull Function<? super T, ? extends O> map)

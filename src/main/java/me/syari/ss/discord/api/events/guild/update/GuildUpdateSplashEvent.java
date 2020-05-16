@@ -18,28 +18,28 @@ public class GuildUpdateSplashEvent extends GenericGuildUpdateEvent<String>
         super(api, responseNumber, guild, oldSplashId, guild.getSplashId(), IDENTIFIER);
     }
 
-    
+
     @Nullable
     public String getOldSplashId()
     {
         return getOldValue();
     }
 
-    
+
     @Nullable
     public String getOldSplashUrl()
     {
         return previous == null ? null : String.format(Guild.SPLASH_URL, guild.getId(), previous);
     }
 
-    
+
     @Nullable
     public String getNewSplashId()
     {
         return getNewValue();
     }
 
-    
+
     @Nullable
     public String getNewSplashUrl()
     {
