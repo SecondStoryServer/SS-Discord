@@ -12,8 +12,6 @@ public enum ChannelType {
 
     CATEGORY(4, 2, true),
 
-    STORE(6, 0, true),
-
     UNKNOWN(-1, -2);
 
     private final int sortBucket;

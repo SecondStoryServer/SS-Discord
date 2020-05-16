@@ -197,8 +197,6 @@ public interface JDA {
         switch (type) {
             case TEXT:
                 return getTextChannelById(id);
-            case STORE:
-                return getStoreChannelById(id);
             case CATEGORY:
                 return getCategoryById(id);
         }
@@ -213,16 +211,6 @@ public interface JDA {
     @Nullable
     default Category getCategoryById(long id) {
         return getCategoryCache().getElementById(id);
-    }
-
-
-    @Nonnull
-    SnowflakeCacheView<StoreChannel> getStoreChannelCache();
-
-
-    @Nullable
-    default StoreChannel getStoreChannelById(long id) {
-        return getStoreChannelCache().getElementById(id);
     }
 
 

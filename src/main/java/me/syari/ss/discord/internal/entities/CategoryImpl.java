@@ -43,19 +43,9 @@ public class CategoryImpl extends AbstractChannelImpl<Category, CategoryImpl> im
     @Nonnull
     @Override
     public List<GuildChannel> getChannels() {
-        List<GuildChannel> channels = new ArrayList<>();
-        channels.addAll(getStoreChannels());
-        channels.addAll(getTextChannels());
+        List<GuildChannel> channels = new ArrayList<>(getTextChannels());
         Collections.sort(channels);
         return Collections.unmodifiableList(channels);
-    }
-
-    @Nonnull
-    @Override
-    public List<StoreChannel> getStoreChannels() {
-        return Collections.unmodifiableList(getGuild().getStoreChannelCache().stream()
-                .filter(channel -> equals(channel.getParent()))
-                .sorted().collect(Collectors.toList()));
     }
 
     @Nonnull

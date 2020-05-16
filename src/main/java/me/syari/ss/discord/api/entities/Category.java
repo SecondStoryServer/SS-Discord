@@ -11,10 +11,6 @@ public interface Category extends GuildChannel {
 
 
     @Nonnull
-    List<StoreChannel> getStoreChannels();
-
-
-    @Nonnull
     List<TextChannel> getTextChannels();
 
 }

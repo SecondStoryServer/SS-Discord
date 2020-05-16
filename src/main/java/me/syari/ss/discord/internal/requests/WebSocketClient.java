@@ -505,7 +505,6 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
         locked(chunkSyncQueue::clear);
 
         api.getTextChannelsView().clear();
-        api.getStoreChannelsView().clear();
         api.getCategoriesView().clear();
         api.getGuildsView().clear();
         api.getUsersView().clear();

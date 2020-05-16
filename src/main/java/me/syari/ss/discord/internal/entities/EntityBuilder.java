@@ -189,9 +189,6 @@ public class EntityBuilder {
             case CATEGORY:
                 createCategory(guildObj, channelData, guildObj.getIdLong());
                 break;
-            case STORE:
-                createStoreChannel(guildObj, channelData, guildObj.getIdLong());
-                break;
             default:
                 LOG.debug("Cannot create channel for type " + channelData.getInt("type"));
         }
@@ -486,37 +483,6 @@ public class EntityBuilder {
             getJDA().getEventCache().playbackCache(EventCache.Type.CHANNEL, id);
     }
 
-    public void createStoreChannel(GuildImpl guild, DataObject json, long guildId) {
-        boolean playbackCache = false;
-        final long id = json.getLong("id");
-        StoreChannelImpl channel = (StoreChannelImpl) getJDA().getStoreChannelsView().get(id);
-        if (channel == null) {
-            if (guild == null)
-                guild = (GuildImpl) getJDA().getGuildById(guildId);
-            SnowflakeCacheViewImpl<StoreChannel>
-                    guildStoreView = guild.getStoreChannelView(),
-                    storeView = getJDA().getStoreChannelsView();
-            try (
-                    UnlockHook glock = guildStoreView.writeLock();
-                    UnlockHook jlock = storeView.writeLock()) {
-                channel = new StoreChannelImpl(id, guild);
-                guildStoreView.getMap().put(id, channel);
-                playbackCache = storeView.getMap().put(id, channel) == null;
-            }
-        }
-
-        if (!json.isNull("permission_overwrites")) {
-            DataArray overrides = json.getArray("permission_overwrites");
-            createOverridesPass(channel, overrides);
-        }
-
-        channel
-                .setParent(json.getLong("parent_id", 0))
-                .setName(json.getString("name"))
-                .setPosition(json.getInt("position"));
-        if (playbackCache)
-            getJDA().getEventCache().playbackCache(EventCache.Type.CHANNEL, id);
-    }
 
     public void createTextChannel(GuildImpl guildObj, DataObject json, long guildId) {
         boolean playbackCache = false;

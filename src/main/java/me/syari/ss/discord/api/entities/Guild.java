@@ -72,8 +72,6 @@ public interface Guild extends ISnowflake {
     default GuildChannel getGuildChannelById(long id) {
         GuildChannel channel = getTextChannelById(id);
         if (channel == null)
-            channel = getStoreChannelById(id);
-        if (channel == null)
             channel = getCategoryById(id);
         return channel;
     }
@@ -87,16 +85,6 @@ public interface Guild extends ISnowflake {
 
     @Nonnull
     SortedSnowflakeCacheView<Category> getCategoryCache();
-
-
-    @Nullable
-    default StoreChannel getStoreChannelById(long id) {
-        return getStoreChannelCache().getElementById(id);
-    }
-
-
-    @Nonnull
-    SortedSnowflakeCacheView<StoreChannel> getStoreChannelCache();
 
 
     @Nullable
