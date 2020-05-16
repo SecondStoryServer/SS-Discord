@@ -17,14 +17,14 @@ public class GuildUpdateNotificationLevelEvent extends GenericGuildUpdateEvent<G
         super(api, responseNumber, guild, oldNotificationLevel, guild.getDefaultNotificationLevel(), IDENTIFIER);
     }
 
-    
+
     @Nonnull
     public Guild.NotificationLevel getOldNotificationLevel()
     {
         return getOldValue();
     }
 
-    
+
     @Nonnull
     public Guild.NotificationLevel getNewNotificationLevel()
     {

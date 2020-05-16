@@ -9,12 +9,6 @@ import java.util.function.Consumer;
 public class ContextException extends Exception
 {
 
-    @Nonnull
-    public static Consumer<Throwable> herePrintingTrace()
-    {
-        return here(Throwable::printStackTrace);
-    }
-
 
     @Nonnull
     public static Consumer<Throwable> here(@Nonnull Consumer<? super Throwable> acceptor)

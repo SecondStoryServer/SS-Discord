@@ -1167,8 +1167,8 @@ public class EntityBuilder
                 throw new IllegalArgumentException(UNKNOWN_MESSAGE_TYPE);
             default:
                 message = new SystemMessage(id, chan, type, fromWebhook,
-                    mentionsEveryone, mentionedUsers, mentionedRoles, tts, pinned,
-                    content, nonce, user, member, activity, editTime, reactions, attachments, embeds, flags);
+                    mentionsEveryone, mentionedUsers, mentionedRoles, tts,
+                        content, nonce, user, member, embeds);
                 break;
         }
 
@@ -1498,7 +1498,7 @@ public class EntityBuilder
             User user = createFakeUser(userJson, false);
             return new TeamMemberImpl(user, state, id);
         });
-        return new ApplicationTeamImpl(iconId, members, id);
+        return new ApplicationTeamImpl(members, id);
     }
 
     public AuditLogEntry createAuditLogEntry(GuildImpl guild, DataObject entryJson, DataObject userJson, DataObject webhookJson)

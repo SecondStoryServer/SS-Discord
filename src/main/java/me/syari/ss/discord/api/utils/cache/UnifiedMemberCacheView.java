@@ -18,40 +18,40 @@ public interface UnifiedMemberCacheView extends CacheView<Member>
     @Nonnull
     List<Member> getElementsById(long id);
 
-    
+
     @Nonnull
     default List<Member> getElementsById(@Nonnull String id)
     {
         return getElementsById(MiscUtil.parseSnowflake(id));
     }
 
-    
+
     @Nonnull
     List<Member> getElementsByUsername(@Nonnull String name, boolean ignoreCase);
 
-    
+
     @Nonnull
     default List<Member> getElementsByUsername(@Nonnull String name)
     {
         return getElementsByUsername(name, false);
     }
 
-    
+
     @Nonnull
     List<Member> getElementsByNickname(@Nullable String name, boolean ignoreCase);
 
-    
+
     @Nonnull
     default List<Member> getElementsByNickname(@Nullable String name)
     {
         return getElementsByNickname(name, false);
     }
 
-    
+
     @Nonnull
     List<Member> getElementsWithRoles(@Nonnull Role... roles);
 
-    
+
     @Nonnull
     List<Member> getElementsWithRoles(@Nonnull Collection<Role> roles);
 }

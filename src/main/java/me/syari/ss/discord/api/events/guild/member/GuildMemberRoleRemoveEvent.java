@@ -20,7 +20,7 @@ public class GuildMemberRoleRemoveEvent extends GenericGuildMemberEvent
         this.removedRoles = Collections.unmodifiableList(removedRoles);
     }
 
-    
+
     public List<Role> getRoles()
     {
         return removedRoles;

@@ -14,13 +14,7 @@ public class PermissionException extends RuntimeException
         this(Permission.UNKNOWN, reason);
     }
 
-    
-    protected PermissionException(Permission permission)
-    {
-        this(permission, "Cannot perform action due to a lack of Permission. Missing permission: " + permission.toString());
-    }
 
-    
     protected PermissionException(Permission permission, String reason)
     {
         super(reason);

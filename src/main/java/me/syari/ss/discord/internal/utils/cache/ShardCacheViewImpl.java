@@ -29,11 +29,6 @@ public class ShardCacheViewImpl extends ReadWriteLockCache<JDA> implements Shard
     protected static final JDA[] EMPTY_ARRAY = new JDA[0];
     protected final TIntObjectMap<JDA> elements;
 
-    public ShardCacheViewImpl()
-    {
-        this.elements = new TIntObjectHashMap<>();
-    }
-
     public ShardCacheViewImpl(int initialCapacity)
     {
         this.elements = new TIntObjectHashMap<>(initialCapacity);

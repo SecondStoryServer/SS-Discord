@@ -8,11 +8,8 @@ import gnu.trove.set.hash.TLongHashSet;
 import me.syari.ss.discord.api.AccountType;
 import me.syari.ss.discord.api.Permission;
 import me.syari.ss.discord.api.entities.*;
-import me.syari.ss.discord.api.exceptions.HierarchyException;
 import me.syari.ss.discord.api.exceptions.InsufficientPermissionException;
-import me.syari.ss.discord.api.managers.GuildManager;
 import me.syari.ss.discord.api.requests.RestAction;
-import me.syari.ss.discord.api.requests.restaction.AuditableRestAction;
 import me.syari.ss.discord.api.requests.restaction.RoleAction;
 import me.syari.ss.discord.api.utils.MiscUtil;
 import me.syari.ss.discord.api.utils.cache.MemberCacheView;
@@ -24,8 +21,6 @@ import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.requests.RestActionImpl;
 import me.syari.ss.discord.internal.requests.Route;
 import me.syari.ss.discord.internal.requests.WebSocketClient;
-import me.syari.ss.discord.internal.requests.WebSocketCode;
-import me.syari.ss.discord.internal.requests.restaction.AuditableRestActionImpl;
 import me.syari.ss.discord.internal.requests.restaction.RoleActionImpl;
 import me.syari.ss.discord.internal.utils.*;
 import me.syari.ss.discord.internal.utils.cache.MemberCacheViewImpl;
@@ -38,7 +33,6 @@ import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -59,8 +53,6 @@ public class GuildImpl implements Guild
     private final TLongObjectMap<TLongObjectMap<DataObject>> overrideMap = MiscUtil.newLongMap();
 
     private final CompletableFuture<Void> chunkingCallback = new CompletableFuture<>();
-    private final ReentrantLock mngLock = new ReentrantLock();
-    private volatile GuildManager manager;
 
     private Member owner;
     private String name;
@@ -455,70 +447,17 @@ public class GuildImpl implements Guild
     }
 
     @Nonnull
-    private AuditableRestAction<Void> kick0(@Nonnull String userId, @Nullable String reason)
-    {
-        Route.CompiledRoute route = Route.Guilds.KICK_MEMBER.compile(getId(), userId);
-        if (!Helpers.isBlank(reason))
-            route = route.withQueryParams("reason", EncodingUtil.encodeUTF8(reason));
-        return new AuditableRestActionImpl<>(getJDA(), route);
-    }
-
-    @Nonnull
-    private AuditableRestAction<Void> ban0(@Nonnull String userId, int delDays, String reason)
-    {
-        Checks.notNegative(delDays, "Deletion Days");
-        Checks.check(delDays <= 7, "Deletion Days must not be bigger than 7.");
-
-        Route.CompiledRoute route = Route.Guilds.BAN.compile(getId(), userId);
-        if (!Helpers.isBlank(reason))
-            route = route.withQueryParams("reason", EncodingUtil.encodeUTF8(reason));
-        if (delDays > 0)
-            route = route.withQueryParams("delete-message-days", Integer.toString(delDays));
-
-        return new AuditableRestActionImpl<>(getJDA(), route);
-    }
-
-    @Nonnull
     @Override
     public RoleAction createRole()
     {
-        checkPermission(Permission.MANAGE_ROLES);
+        checkPermission();
         return new RoleActionImpl(this);
     }
 
-    protected void checkGuild(Guild providedGuild, String comment)
+    protected void checkPermission()
     {
-        if (!equals(providedGuild))
-            throw new IllegalArgumentException("Provided " + comment + " is not part of this Guild!");
-    }
-
-    protected void checkPermission(Permission perm)
-    {
-        if (!getSelfMember().hasPermission(perm))
-            throw new InsufficientPermissionException(this, perm);
-    }
-
-    protected void checkPosition(Member member)
-    {
-        if(!getSelfMember().canInteract(member))
-            throw new HierarchyException("Can't modify a member with higher or equal highest role than yourself!");
-    }
-
-    protected void checkPosition(Role role)
-    {
-        if(!getSelfMember().canInteract(role))
-            throw new HierarchyException("Can't modify a role with higher or equal highest role than yourself! Role: " + role.toString());
-    }
-
-    private void checkRoles(Collection<Role> roles, String type, String preposition)
-    {
-        roles.forEach(role ->
-        {
-            Checks.notNull(role, "Role in roles to " + type);
-            checkGuild(role.getGuild(), "Role: " + role.toString());
-            checkPosition(role);
-            Checks.check(!role.isManaged(), "Cannot %s a managed role %s a Member. Role: %s", type, preposition, role.toString());
-        });
+        if (!getSelfMember().hasPermission(Permission.MANAGE_ROLES))
+            throw new InsufficientPermissionException(this, Permission.MANAGE_ROLES);
     }
 
     // ---- Setters -----
@@ -709,11 +648,6 @@ public class GuildImpl implements Guild
 
     // -- Member Tracking --
 
-    public TLongObjectMap<DataObject> getOverrideMap(long userId)
-    {
-        return overrideMap.get(userId);
-    }
-
     public TLongObjectMap<DataObject> removeOverrideMap(long userId)
     {
         return overrideMap.remove(userId);
@@ -771,28 +705,6 @@ public class GuildImpl implements Guild
         });
         // remove all empty maps
         overrideMap.keySet().removeAll(toRemove);
-    }
-
-    public void startChunking()
-    {
-        if (isLoaded())
-            return;
-        if (!getJDA().isGuildSubscriptions())
-        {
-            chunkingCallback.completeExceptionally(new IllegalStateException("Unable to start member chunking on a guild with disabled guild subscriptions"));
-            return;
-        }
-
-        DataObject request = DataObject.empty()
-            .put("limit", 0)
-            .put("query", "")
-            .put("guild_id", getId());
-
-        DataObject packet = DataObject.empty()
-            .put("op", WebSocketCode.MEMBER_CHUNK_REQUEST)
-            .put("d", request);
-
-        getJDA().getClient().chunkOrSyncRequest(packet);
     }
 
     public void onMemberAdd()

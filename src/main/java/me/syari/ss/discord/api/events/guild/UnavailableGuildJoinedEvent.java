@@ -18,14 +18,14 @@ public class UnavailableGuildJoinedEvent extends Event
         this.guildId = guildId;
     }
 
-    
+
     @Nonnull
     public String getGuildId()
     {
         return Long.toUnsignedString(guildId);
     }
 
-    
+
     public long getGuildIdLong()
     {
         return guildId;

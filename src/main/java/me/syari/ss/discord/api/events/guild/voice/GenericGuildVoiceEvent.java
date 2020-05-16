@@ -27,7 +27,7 @@ public abstract class GenericGuildVoiceEvent extends GenericGuildEvent
         return member;
     }
 
-    
+
     @Nonnull
     public GuildVoiceState getVoiceState()
     {

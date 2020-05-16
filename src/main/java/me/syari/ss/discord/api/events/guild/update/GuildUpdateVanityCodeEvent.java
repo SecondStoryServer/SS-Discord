@@ -25,21 +25,21 @@ public class GuildUpdateVanityCodeEvent extends GenericGuildUpdateEvent<String>
         return getOldValue();
     }
 
-    
+
     @Nullable
     public String getOldVanityUrl()
     {
         return getOldVanityCode() == null ? null : "https://discord.gg/" + getOldVanityCode();
     }
 
-    
+
     @Nullable
     public String getNewVanityCode()
     {
         return getNewValue();
     }
 
-    
+
     @Nullable
     public String getNewVanityUrl()
     {

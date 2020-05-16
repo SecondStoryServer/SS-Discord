@@ -23,11 +23,6 @@ public class DeferredRestAction<T, R extends RestAction<T>> implements Auditable
     private BooleanSupplier isAction;
     private BooleanSupplier transitiveChecks;
 
-    public DeferredRestAction(JDA api, Supplier<R> actionSupplier)
-    {
-        this(api, null, null, actionSupplier);
-    }
-
     public DeferredRestAction(JDA api, Class<T> type,
                               Supplier<T> valueSupplier,
                               Supplier<R> actionSupplier)
@@ -57,12 +52,6 @@ public class DeferredRestAction<T, R extends RestAction<T>> implements Auditable
     public AuditableRestAction<T> setCheck(BooleanSupplier checks)
     {
         this.transitiveChecks = checks;
-        return this;
-    }
-
-    public AuditableRestAction<T> setCacheCheck(BooleanSupplier checks)
-    {
-        this.isAction = checks;
         return this;
     }
 

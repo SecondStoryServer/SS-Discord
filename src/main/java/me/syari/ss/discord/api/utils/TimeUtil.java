@@ -33,7 +33,7 @@ public class TimeUtil
         return OffsetDateTime.ofInstant(gmt.toInstant(), gmt.getTimeZone().toZoneId());
     }
 
-    
+
     @Nonnull
     public static OffsetDateTime getTimeCreated(@Nonnull ISnowflake entity)
     {
@@ -41,7 +41,7 @@ public class TimeUtil
         return getTimeCreated(entity.getIdLong());
     }
 
-    
+
     @Nonnull
     public static String getDateTimeString(@Nonnull OffsetDateTime time)
     {

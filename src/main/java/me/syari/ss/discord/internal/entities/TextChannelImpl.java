@@ -157,7 +157,7 @@ public class TextChannelImpl extends AbstractChannelImpl<TextChannel, TextChanne
     @Override
     public List<CompletableFuture<Void>> purgeMessages(@Nonnull List<? extends Message> messages)
     {
-        if (messages == null || messages.isEmpty())
+        if (messages.isEmpty())
             return Collections.emptyList();
         boolean hasPerms = getGuild().getSelfMember().hasPermission(this, Permission.MESSAGE_MANAGE);
         if (!hasPerms)

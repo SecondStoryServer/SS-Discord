@@ -6,10 +6,6 @@ import java.util.Collection;
 
 public class Checks
 {
-    public static void isSnowflake(final String snowflake)
-    {
-        isSnowflake(snowflake, snowflake);
-    }
 
     public static void isSnowflake(final String snowflake, final String message)
     {

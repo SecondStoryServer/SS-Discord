@@ -20,8 +20,6 @@ public class ErrorResponseException extends RuntimeException
 {
     private final ErrorResponse errorResponse;
     private final Response response;
-    private final String meaning;
-    private final int code;
 
 
     private ErrorResponseException(ErrorResponse errorResponse, Response response, int code, String meaning)
@@ -32,26 +30,6 @@ public class ErrorResponseException extends RuntimeException
         if (response != null && response.getException() != null)
             initCause(response.getException());
         this.errorResponse = errorResponse;
-        this.code = code;
-        this.meaning = meaning;
-    }
-
-
-    public boolean isServerError()
-    {
-        return errorResponse == ErrorResponse.SERVER_ERROR;
-    }
-
-
-    public String getMeaning()
-    {
-        return meaning;
-    }
-
-
-    public int getErrorCode()
-    {
-        return code;
     }
 
 
@@ -108,51 +86,4 @@ public class ErrorResponseException extends RuntimeException
     }
 
 
-    @Nonnull
-    public static Consumer<Throwable> ignore(@Nonnull Collection<ErrorResponse> set)
-    {
-        return ignore(RestAction.getDefaultFailure(), set);
-    }
-
-
-    @Nonnull
-    public static Consumer<Throwable> ignore(@Nonnull ErrorResponse ignored, @Nonnull ErrorResponse... errorResponses)
-    {
-        return ignore(RestAction.getDefaultFailure(), ignored, errorResponses);
-    }
-
-
-    @Nonnull
-    public static Consumer<Throwable> ignore(@Nonnull Consumer<? super Throwable> orElse, @Nonnull ErrorResponse ignored, @Nonnull ErrorResponse... errorResponses)
-    {
-        return ignore(orElse, EnumSet.of(ignored, errorResponses));
-    }
-
-
-    @Nonnull
-    public static Consumer<Throwable> ignore(@Nonnull Consumer<? super Throwable> orElse, @Nonnull Collection<ErrorResponse> set)
-    {
-        Checks.notNull(orElse, "Callback");
-        Checks.notEmpty(set, "Ignored collection");
-        // Make an enum set copy (for performance, memory efficiency, and thread-safety)
-        final EnumSet<ErrorResponse> ignored = EnumSet.copyOf(set);
-        return (throwable) ->
-        {
-            if (throwable instanceof ErrorResponseException)
-            {
-                ErrorResponseException ex = (ErrorResponseException) throwable;
-                if (ignored.contains(ex.getErrorResponse()))
-                    return;
-            }
-
-            try
-            {
-                orElse.accept(throwable);
-            }
-            catch (Exception ex)
-            {
-                JDALogger.getLog(ErrorResponseException.class).error("Uncaught exception in ignore callback", throwable);
-            }
-        };
-    }
 }

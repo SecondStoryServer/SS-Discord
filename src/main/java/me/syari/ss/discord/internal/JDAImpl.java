@@ -336,12 +336,12 @@ public class JDAImpl implements JDA
         if (getAccountType() == AccountType.BOT)
         {
             if (!userResponse.hasKey("bot") || !userResponse.getBoolean("bot"))
-                throw new AccountTypeException(AccountType.BOT, "Attempted to login as a BOT with a CLIENT token!");
+                throw new AccountTypeException("Attempted to login as a BOT with a CLIENT token!");
         }
         else
         {
             if (userResponse.hasKey("bot") && userResponse.getBoolean("bot"))
-                throw new AccountTypeException(AccountType.CLIENT, "Attempted to login as a CLIENT with a BOT token!");
+                throw new AccountTypeException("Attempted to login as a CLIENT with a BOT token!");
         }
     }
 

@@ -19,24 +19,6 @@ public class IOUtil
 {
     private static final Logger log = JDALogger.getLog(IOUtil.class);
 
-    public static void silentClose(AutoCloseable closeable)
-    {
-        try
-        {
-            closeable.close();
-        }
-        catch (Exception ignored) {}
-    }
-
-    public static void silentClose(Closeable closeable)
-    {
-        try
-        {
-            closeable.close();
-        }
-        catch (IOException ignored) {}
-    }
-
     public static String getHost(String uri)
     {
         return URI.create(uri).getHost();

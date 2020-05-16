@@ -7,19 +7,17 @@ import me.syari.ss.discord.api.AccountType;
 
 public class AccountTypeException extends RuntimeException
 {
-    private final AccountType requiredType;
 
 
     public AccountTypeException(AccountType requiredType)
     {
-        this(requiredType, "The current AccountType is not valid for the attempted action. Required AccountType: " + requiredType);
+        this("The current AccountType is not valid for the attempted action. Required AccountType: " + requiredType);
     }
 
 
-    public AccountTypeException(AccountType requiredType, String message)
+    public AccountTypeException(String message)
     {
         super(message);
-        this.requiredType = requiredType;
     }
 
 

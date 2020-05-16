@@ -23,19 +23,19 @@ public interface WebhookAction extends AuditableRestAction<Webhook>
     @Nonnull
     TextChannel getChannel();
 
-    
+
     @Nonnull
     default Guild getGuild()
     {
         return getChannel().getGuild();
     }
 
-    
+
     @Nonnull
     @CheckReturnValue
     WebhookAction setName(@Nonnull String name);
 
-    
+
     @Nonnull
     @CheckReturnValue
     WebhookAction setAvatar(@Nullable Icon icon);

@@ -132,7 +132,7 @@ public enum ActionType
         this.key = key;
     }
 
-    
+
     public int getKey()
     {
         return key;

@@ -13,9 +13,9 @@ public class SystemMessage extends ReceivedMessage
     public SystemMessage(
             long id, MessageChannel channel, MessageType type,
             boolean fromWebhook, boolean mentionsEveryone, TLongSet mentionedUsers, TLongSet mentionedRoles,
-            boolean tts, boolean pinned,
-            String content, String nonce, User author, Member member, MessageActivity activity, OffsetDateTime editTime,
-            List<MessageReaction> reactions, List<Attachment> attachments, List<MessageEmbed> embeds, int flags)
+            boolean tts,
+            String content, String nonce, User author, Member member,
+            List<MessageEmbed> embeds)
     {
         super(id, channel, type, fromWebhook, mentionsEveryone, mentionedUsers, mentionedRoles,
             tts, content, nonce, author, member, embeds);

@@ -70,7 +70,7 @@ public class SelfUserImpl extends UserImpl implements SelfUser
     public String getEmail() throws AccountTypeException
     {
         if (getJDA().getAccountType() != AccountType.CLIENT)
-            throw new AccountTypeException(AccountType.CLIENT, "Email retrieval can only be done on CLIENT accounts!");
+            throw new AccountTypeException("Email retrieval can only be done on CLIENT accounts!");
         return email;
     }
 
@@ -78,7 +78,7 @@ public class SelfUserImpl extends UserImpl implements SelfUser
     public String getPhoneNumber() throws AccountTypeException
     {
         if (getJDA().getAccountType() != AccountType.CLIENT)
-            throw new AccountTypeException(AccountType.CLIENT, "Phone number retrieval can only be done on CLIENT accounts!");
+            throw new AccountTypeException("Phone number retrieval can only be done on CLIENT accounts!");
         return this.phoneNumber;
     }
 
@@ -86,7 +86,7 @@ public class SelfUserImpl extends UserImpl implements SelfUser
     public boolean isMobile() throws AccountTypeException
     {
         if (getJDA().getAccountType() != AccountType.CLIENT)
-            throw new AccountTypeException(AccountType.CLIENT, "Mobile app retrieval can only be done on CLIENT accounts!");
+            throw new AccountTypeException("Mobile app retrieval can only be done on CLIENT accounts!");
         return this.mobile;
     }
 
@@ -94,7 +94,7 @@ public class SelfUserImpl extends UserImpl implements SelfUser
     public boolean isNitro() throws AccountTypeException
     {
         if (getJDA().getAccountType() != AccountType.CLIENT)
-            throw new AccountTypeException(AccountType.CLIENT, "Nitro status retrieval can only be done on CLIENT accounts!");
+            throw new AccountTypeException("Nitro status retrieval can only be done on CLIENT accounts!");
         return this.nitro;
     }
 

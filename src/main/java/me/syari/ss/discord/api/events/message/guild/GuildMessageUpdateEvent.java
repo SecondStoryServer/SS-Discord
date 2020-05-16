@@ -20,21 +20,21 @@ public class GuildMessageUpdateEvent extends GenericGuildMessageEvent
         this.message = message;
     }
 
-    
+
     @Nonnull
     public Message getMessage()
     {
         return message;
     }
 
-    
+
     @Nonnull
     public User getAuthor()
     {
         return message.getAuthor();
     }
 
-    
+
     @Nullable
     public Member getMember()
     {

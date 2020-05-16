@@ -85,7 +85,7 @@ public class PrivateChannelImpl implements PrivateChannel
     @Override
     public List<CompletableFuture<Void>> purgeMessages(@Nonnull List<? extends Message> messages)
     {
-        if (messages == null || messages.isEmpty())
+        if (messages.isEmpty())
             return Collections.emptyList();
         for (Message m : messages)
         {

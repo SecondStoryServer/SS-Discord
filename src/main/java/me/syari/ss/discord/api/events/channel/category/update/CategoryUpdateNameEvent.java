@@ -17,14 +17,14 @@ public class CategoryUpdateNameEvent extends GenericCategoryUpdateEvent<String>
         super(api, responseNumber, category, oldName, category.getName(), IDENTIFIER);
     }
 
-    
+
     @Nonnull
     public String getOldName()
     {
         return getOldValue();
     }
 
-    
+
     @Nonnull
     public String getNewName()
     {

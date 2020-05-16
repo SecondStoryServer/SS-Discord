@@ -16,13 +16,13 @@ public class TextChannelUpdateSlowmodeEvent extends GenericTextChannelUpdateEven
         super(api, responseNumber, channel, oldSlowmode, channel.getSlowmode(), IDENTIFIER);
     }
 
-    
+
     public int getOldSlowmode()
     {
         return getOldValue();
     }
 
-    
+
     public int getNewSlowmode()
     {
         return getNewValue();

@@ -26,7 +26,7 @@ public abstract class GenericTextChannelEvent extends Event
         return channel;
     }
 
-    
+
     @Nonnull
     public Guild getGuild()
     {

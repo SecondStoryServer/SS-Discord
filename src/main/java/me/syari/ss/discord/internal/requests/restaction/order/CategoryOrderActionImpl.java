@@ -17,7 +17,7 @@ public class CategoryOrderActionImpl
 {
     protected final Category category;
 
-    
+
     public CategoryOrderActionImpl(Category category, int bucket)
     {
         super(category.getGuild(), bucket, getChannelsOfType(category, bucket));
