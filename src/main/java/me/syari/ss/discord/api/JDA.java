@@ -210,15 +210,6 @@ public interface JDA {
         return getTextChannelCache().getElementById(id);
     }
 
-    @Nonnull
-    SnowflakeCacheView<PrivateChannel> getPrivateChannelCache();
-
-
-    @Nullable
-    default PrivateChannel getPrivateChannelById(long id) {
-        return getPrivateChannelCache().getElementById(id);
-    }
-
 
     @Nonnull
     SnowflakeCacheView<Emote> getEmoteCache();

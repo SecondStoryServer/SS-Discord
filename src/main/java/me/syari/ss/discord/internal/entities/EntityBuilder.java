@@ -225,15 +225,6 @@ public class EntityBuilder {
                         getJDA().getFakeUserMap().remove(id);
                         userObj.setFake(false);
                         userView.getMap().put(userObj.getIdLong(), userObj);
-                        if (userObj.hasPrivateChannel()) {
-                            PrivateChannelImpl priv = (PrivateChannelImpl) userObj.getPrivateChannel();
-                            priv.setFake(false);
-                            getJDA().getFakePrivateChannelMap().remove(priv.getIdLong());
-                            SnowflakeCacheViewImpl<PrivateChannel> channelView = getJDA().getPrivateChannelsView();
-                            try (UnlockHook hook2 = channelView.writeLock()) {
-                                channelView.getMap().put(priv.getIdLong(), priv);
-                            }
-                        }
                     }
                 } else {
                     userObj = new UserImpl(id, getJDA()).setFake(fake);
@@ -479,47 +470,6 @@ public class EntityBuilder {
             getJDA().getEventCache().playbackCache(EventCache.Type.CHANNEL, id);
     }
 
-    public void createPrivateChannel(DataObject json) {
-        final long channelId = json.getUnsignedLong("id");
-        PrivateChannel channel = api.getPrivateChannelById(channelId);
-        if (channel == null)
-            channel = api.getFakePrivateChannelMap().get(channelId);
-        if (channel != null)
-            return;
-
-        DataObject recipient = json.hasKey("recipients") ?
-                json.getArray("recipients").getObject(0) :
-                json.getObject("recipient");
-        final long userId = recipient.getLong("id");
-        UserImpl user = (UserImpl) getJDA().getUserById(userId);
-        if (user == null) {   //The getJDA() can give us private channels connected to Users that we can no longer communicate with.
-            // As such, make a fake user and fake private channel.
-            user = createFakeUser(recipient, true);
-        }
-
-        createPrivateChannel(json, user);
-    }
-
-    public void createPrivateChannel(DataObject json, UserImpl user) {
-        final long channelId = json.getLong("id");
-        PrivateChannelImpl priv = new PrivateChannelImpl(channelId, user)
-                .setLastMessageId(json.getLong("last_message_id", 0));
-        user.setPrivateChannel(priv);
-
-        if (user.isFake()) {
-            priv.setFake(true);
-            // Promote user and channel to cache of fakers
-            getJDA().getFakePrivateChannelMap().put(channelId, priv);
-            getJDA().getFakeUserMap().put(user.getIdLong(), user);
-        } else if (api.isGuildSubscriptions()) {
-            SnowflakeCacheViewImpl<PrivateChannel> privateView = getJDA().getPrivateChannelsView();
-            try (UnlockHook hook = privateView.writeLock()) {
-                privateView.getMap().put(channelId, priv);
-            }
-            getJDA().getEventCache().playbackCache(EventCache.Type.CHANNEL, channelId);
-        }
-    }
-
     public void createOverridesPass(AbstractChannelImpl<?, ?> channel, DataArray overrides) {
         for (int i = 0; i < overrides.length(); i++) {
             try {
@@ -561,10 +511,6 @@ public class EntityBuilder {
 
         MessageChannel chan = getJDA().getTextChannelById(channelId);
         if (chan == null)
-            chan = getJDA().getPrivateChannelById(channelId);
-        if (chan == null)
-            chan = getJDA().getFakePrivateChannelMap().get(channelId);
-        if (chan == null)
             throw new IllegalArgumentException(MISSING_CHANNEL);
 
         return createMessage(jsonObject, chan, modifyCache);
@@ -601,12 +547,6 @@ public class EntityBuilder {
 
         User user;
         switch (chan.getType()) {
-            case PRIVATE:
-                if (authorId == getJDA().getSelfUser().getIdLong())
-                    user = getJDA().getSelfUser();
-                else
-                    user = ((PrivateChannel) chan).getUser();
-                break;
             case GROUP:
                 throw new IllegalStateException("Cannot build a message for a group channel, how did this even get here?");
             case TEXT:

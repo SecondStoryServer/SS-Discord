@@ -1,6 +1,5 @@
 package me.syari.ss.discord.internal.entities;
 
-import me.syari.ss.discord.api.entities.PrivateChannel;
 import me.syari.ss.discord.api.entities.SelfUser;
 import me.syari.ss.discord.api.managers.AccountManager;
 import me.syari.ss.discord.api.utils.MiscUtil;
@@ -16,16 +15,6 @@ public class SelfUserImpl extends UserImpl implements SelfUser {
 
     public SelfUserImpl(long id, JDAImpl api) {
         super(id, api);
-    }
-
-    @Override
-    public boolean hasPrivateChannel() {
-        return false;
-    }
-
-    @Override
-    public PrivateChannel getPrivateChannel() {
-        throw new UnsupportedOperationException("You cannot get a PrivateChannel with yourself (SelfUser)");
     }
 
     @Nonnull

@@ -47,21 +47,13 @@ public class ReadyHandler extends SocketHandler {
     }
 
     public void handleReady(DataObject content) {
-        EntityBuilder builder = getJDA().getEntityBuilder();
         DataArray privateChannels = content.getArray("private_channels");
 
         for (int i = 0; i < privateChannels.length(); i++) {
             DataObject chan = privateChannels.getObject(i);
             ChannelType type = ChannelType.fromId(chan.getInt("type"));
 
-            //noinspection SwitchStatementWithTooFewBranches
-            switch (type) {
-                case PRIVATE:
-                    builder.createPrivateChannel(chan);
-                    break;
-                default:
-                    WebSocketClient.LOG.warn("Received a Channel in the private_channels array in READY of an unknown type! Type: {}", type);
-            }
+            WebSocketClient.LOG.warn("Received a Channel in the private_channels array in READY of an unknown type! Type: {}", type);
         }
     }
 }

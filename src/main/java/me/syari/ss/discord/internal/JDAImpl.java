@@ -54,10 +54,8 @@ public class JDAImpl implements JDA {
     protected final SnowflakeCacheViewImpl<User> userCache = new SnowflakeCacheViewImpl<>(User.class, User::getName);
     protected final SnowflakeCacheViewImpl<Guild> guildCache = new SnowflakeCacheViewImpl<>(Guild.class, Guild::getName);
     protected final SnowflakeCacheViewImpl<TextChannel> textChannelCache = new SnowflakeCacheViewImpl<>(TextChannel.class, GuildChannel::getName);
-    protected final SnowflakeCacheViewImpl<PrivateChannel> privateChannelCache = new SnowflakeCacheViewImpl<>(PrivateChannel.class, MessageChannel::getName);
 
     protected final TLongObjectMap<User> fakeUsers = MiscUtil.newLongMap();
-    protected final TLongObjectMap<PrivateChannel> fakePrivateChannels = MiscUtil.newLongMap();
 
     protected final PresenceImpl presence;
     protected final Thread shutdownHook;
@@ -376,11 +374,6 @@ public class JDAImpl implements JDA {
         return textChannelCache;
     }
 
-    @Nonnull
-    @Override
-    public SnowflakeCacheView<PrivateChannel> getPrivateChannelCache() {
-        return privateChannelCache;
-    }
 
     @Nonnull
     @Override
@@ -508,16 +501,8 @@ public class JDAImpl implements JDA {
         return textChannelCache;
     }
 
-    public SnowflakeCacheViewImpl<PrivateChannel> getPrivateChannelsView() {
-        return privateChannelCache;
-    }
-
     public TLongObjectMap<User> getFakeUserMap() {
         return fakeUsers;
-    }
-
-    public TLongObjectMap<PrivateChannel> getFakePrivateChannelMap() {
-        return fakePrivateChannels;
     }
 
     public void setSelfUser(SelfUser selfUser) {

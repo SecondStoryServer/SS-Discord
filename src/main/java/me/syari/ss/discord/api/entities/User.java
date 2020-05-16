@@ -26,9 +26,6 @@ public interface User extends IMentionable, IFakeable {
     String getAsTag();
 
 
-    boolean hasPrivateChannel();
-
-
     boolean isBot();
 
 

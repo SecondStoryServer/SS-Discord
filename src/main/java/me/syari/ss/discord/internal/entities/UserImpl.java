@@ -1,6 +1,5 @@
 package me.syari.ss.discord.internal.entities;
 
-import me.syari.ss.discord.api.entities.PrivateChannel;
 import me.syari.ss.discord.api.entities.User;
 import me.syari.ss.discord.api.utils.MiscUtil;
 import me.syari.ss.discord.internal.JDAImpl;
@@ -16,7 +15,6 @@ public class UserImpl implements User {
     protected short discriminator;
     protected String name;
     protected String avatarId;
-    protected PrivateChannel privateChannel;
     protected boolean bot;
     protected boolean fake = false;
 
@@ -48,17 +46,6 @@ public class UserImpl implements User {
         return getName() + '#' + getDiscriminator();
     }
 
-    @Override
-    public boolean hasPrivateChannel() {
-        return privateChannel != null;
-    }
-
-    public PrivateChannel getPrivateChannel() {
-        if (!hasPrivateChannel())
-            throw new IllegalStateException("There is no PrivateChannel for this user yet! Use User#openPrivateChannel() first!");
-
-        return privateChannel;
-    }
 
     @Override
     public boolean isBot() {
@@ -121,11 +108,6 @@ public class UserImpl implements User {
 
     public UserImpl setAvatarId(String avatarId) {
         this.avatarId = avatarId;
-        return this;
-    }
-
-    public UserImpl setPrivateChannel(PrivateChannel privateChannel) {
-        this.privateChannel = privateChannel;
         return this;
     }
 
