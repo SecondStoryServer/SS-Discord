@@ -1,6 +1,5 @@
 package me.syari.ss.discord.internal.managers;
 
-import me.syari.ss.discord.api.entities.Icon;
 import me.syari.ss.discord.api.entities.SelfUser;
 import me.syari.ss.discord.api.managers.AccountManager;
 import me.syari.ss.discord.api.requests.Request;
@@ -19,7 +18,6 @@ public class AccountManagerImpl extends ManagerBase<AccountManager> implements A
     protected String currentPassword;
 
     protected String name;
-    protected Icon avatar;
 
 
     public AccountManagerImpl(SelfUser selfUser) {
@@ -31,33 +29,6 @@ public class AccountManagerImpl extends ManagerBase<AccountManager> implements A
     @Override
     public SelfUser getSelfUser() {
         return selfUser;
-    }
-
-    @Nonnull
-    @Override
-    @CheckReturnValue
-    public AccountManagerImpl reset(long fields) {
-        super.reset(fields);
-        if ((fields & AVATAR) == AVATAR)
-            avatar = null;
-        return this;
-    }
-
-    @Nonnull
-    @Override
-    @CheckReturnValue
-    public AccountManagerImpl reset(long... fields) {
-        super.reset(fields);
-        return this;
-    }
-
-    @Nonnull
-    @Override
-    @CheckReturnValue
-    public AccountManagerImpl reset() {
-        super.reset();
-        avatar = null;
-        return this;
     }
 
     @Nonnull
@@ -82,8 +53,6 @@ public class AccountManagerImpl extends ManagerBase<AccountManager> implements A
 
         if (shouldUpdate(NAME))
             body.put("username", name);
-        if (shouldUpdate(AVATAR))
-            body.put("avatar", avatar == null ? null : avatar.getEncoding());
 
         reset();
         return getRequestBody(body);

@@ -13,10 +13,6 @@ public interface IPermissionHolder extends ISnowflake {
     Guild getGuild();
 
 
-    @Nonnull
-    EnumSet<Permission> getPermissions();
-
-
     boolean hasPermission(@Nonnull Permission... permissions);
 
 

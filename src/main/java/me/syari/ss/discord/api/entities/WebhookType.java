@@ -1,7 +1,5 @@
 package me.syari.ss.discord.api.entities;
 
-import javax.annotation.Nonnull;
-
 public enum WebhookType {
 
     UNKNOWN(-1),
@@ -22,12 +20,4 @@ public enum WebhookType {
     }
 
 
-    @Nonnull
-    public static WebhookType fromKey(int key) {
-        for (WebhookType type : values()) {
-            if (type.key == key)
-                return type;
-        }
-        return UNKNOWN;
-    }
 }

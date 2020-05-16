@@ -80,12 +80,6 @@ public class MemberImpl implements Member {
         return Collections.unmodifiableList(roleList);
     }
 
-    @Nonnull
-    @Override
-    public EnumSet<Permission> getPermissions() {
-        return Permission.getPermissions(PermissionUtil.getEffectivePermission(this));
-    }
-
     @Override
     public boolean hasPermission(@Nonnull Permission... permissions) {
         return PermissionUtil.checkPermission(this, permissions);

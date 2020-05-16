@@ -11,8 +11,6 @@ public interface AccountManager extends Manager<AccountManager> {
 
     long NAME = 0x1;
 
-    long AVATAR = 0x2;
-
 
     @Nonnull
     SelfUser getSelfUser();

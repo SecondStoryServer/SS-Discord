@@ -59,17 +59,6 @@ public class DataObject implements SerializableData {
 
 
     @Nonnull
-    public static DataObject fromJson(@Nonnull InputStream stream) {
-        try {
-            Map<String, Object> map = mapper.readValue(stream, mapType);
-            return new DataObject(map);
-        } catch (IOException ex) {
-            throw new ParsingException(ex);
-        }
-    }
-
-
-    @Nonnull
     public static DataObject fromJson(@Nonnull Reader stream) {
         try {
             Map<String, Object> map = mapper.readValue(stream, mapType);
@@ -224,10 +213,8 @@ public class DataObject implements SerializableData {
     }
 
 
-    @Nonnull
-    public DataObject putNull(@Nonnull String key) {
+    public void putNull(@Nonnull String key) {
         data.put(key, null);
-        return this;
     }
 
 
@@ -263,11 +250,6 @@ public class DataObject implements SerializableData {
         }
     }
 
-
-    @Nonnull
-    public Map<String, Object> toMap() {
-        return data;
-    }
 
     @Nonnull
     @Override

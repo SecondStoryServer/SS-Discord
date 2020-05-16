@@ -22,7 +22,6 @@ import me.syari.ss.discord.internal.utils.cache.SortedSnowflakeCacheViewImpl;
 import javax.annotation.Nonnull;
 import java.time.OffsetDateTime;
 import java.util.Collection;
-import java.util.EnumSet;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class RoleImpl implements Role {
@@ -74,12 +73,6 @@ public class RoleImpl implements Role {
     @Override
     public long getPermissionsRaw() {
         return rawPermissions;
-    }
-
-    @Nonnull
-    @Override
-    public EnumSet<Permission> getPermissions() {
-        return Permission.getPermissions(rawPermissions);
     }
 
     @Override
