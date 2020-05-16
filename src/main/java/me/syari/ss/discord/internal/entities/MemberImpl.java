@@ -9,22 +9,18 @@ import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.utils.cache.SnowflakeReference;
 
 import javax.annotation.Nonnull;
-import java.time.Instant;
-import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class MemberImpl implements Member {
-    private static final ZoneOffset OFFSET = ZoneOffset.of("+00:00");
     private final SnowflakeReference<Guild> guild;
     private final User user;
     private final JDAImpl api;
     private final Set<Role> roles = ConcurrentHashMap.newKeySet();
 
     private String nickname;
-    private long joinDate, boostDate;
+    private long boostDate;
 
     public MemberImpl(GuildImpl guild, User user) {
         this.api = (JDAImpl) user.getJDA();
@@ -50,12 +46,6 @@ public class MemberImpl implements Member {
         return api;
     }
 
-    @Nonnull
-    @Override
-    public OffsetDateTime getTimeJoined() {
-        return OffsetDateTime.ofInstant(Instant.ofEpochMilli(joinDate), OFFSET);
-    }
-
     @Override
     public String getNickname() {
         return nickname;
@@ -65,11 +55,6 @@ public class MemberImpl implements Member {
     @Override
     public String getDisplayName() {
         return nickname != null ? nickname : getUser().getName();
-    }
-
-    @Override
-    public boolean isOwner() {
-        return this.user.getIdLong() == getGuild().getOwnerIdLong();
     }
 
     @Override
@@ -86,11 +71,6 @@ public class MemberImpl implements Member {
         this.nickname = nickname;
     }
 
-    public MemberImpl setJoinDate(long joinDate) {
-        this.joinDate = joinDate;
-        return this;
-    }
-
     public void setBoostDate(long boostDate) {
         this.boostDate = boostDate;
     }
@@ -101,11 +81,6 @@ public class MemberImpl implements Member {
 
     public long getBoostDateRaw() {
         return boostDate;
-    }
-
-    public boolean isIncomplete() {
-        // the joined_at is only present on complete members, this implies the member is completely loaded
-        return !isOwner() && Objects.equals(getGuild().getTimeCreated(), getTimeJoined());
     }
 
     @Override

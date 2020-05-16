@@ -4,7 +4,6 @@ import me.syari.ss.discord.api.JDA;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.time.OffsetDateTime;
 
 public interface Member extends IMentionable, IFakeable {
 
@@ -20,10 +19,6 @@ public interface Member extends IMentionable, IFakeable {
     JDA getJDA();
 
 
-    @Nonnull
-    OffsetDateTime getTimeJoined();
-
-
     @Nullable
     String getNickname();
 
@@ -32,5 +27,4 @@ public interface Member extends IMentionable, IFakeable {
     String getDisplayName();
 
 
-    boolean isOwner();
 }

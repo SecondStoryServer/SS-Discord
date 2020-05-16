@@ -237,12 +237,7 @@ public class EntityBuilder {
             member.setBoostDate(Instant.from(boostDate).toEpochMilli());
         }
 
-        //In some contexts this is missing (PRESENCE_UPDATE and GUILD_MEMBER_UPDATE)
-        // we call this incomplete and load the joined_at later through a MESSAGE_CREATE (if we get one)
-        String joinedAtRaw = memberJson.opt("joined_at").map(String::valueOf).orElseGet(() -> guild.getTimeCreated().toString());
-        TemporalAccessor joinedAt = DateTimeFormatter.ISO_OFFSET_DATE_TIME.parse(joinedAtRaw);
-        member.setJoinDate(Instant.from(joinedAt).toEpochMilli())
-                .setNickname(memberJson.getString("nick", null));
+        member.setNickname(memberJson.getString("nick", null));
 
         DataArray rolesJson = memberJson.getArray("roles");
         for (int k = 0; k < rolesJson.length(); k++) {
