@@ -13,7 +13,7 @@ public class SystemMessage extends ReceivedMessage {
             String content, String nonce, User author, Member member,
             List<MessageEmbed> embeds) {
         super(id, channel, type, fromWebhook, mentionsEveryone, mentionedUsers, mentionedRoles,
-                tts, content, nonce, author, member, embeds);
+                tts, content, author, member, embeds);
     }
 
     @Override

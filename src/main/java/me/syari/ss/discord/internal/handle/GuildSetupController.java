@@ -9,7 +9,6 @@ import gnu.trove.map.hash.TLongLongHashMap;
 import gnu.trove.map.hash.TLongObjectHashMap;
 import gnu.trove.set.TLongSet;
 import gnu.trove.set.hash.TLongHashSet;
-import me.syari.ss.discord.api.AccountType;
 import me.syari.ss.discord.api.utils.MiscUtil;
 import me.syari.ss.discord.api.utils.data.DataArray;
 import me.syari.ss.discord.api.utils.data.DataObject;
@@ -46,18 +45,11 @@ public class GuildSetupController {
 
     public GuildSetupController(JDAImpl api) {
         this.api = api;
-        if (isClient())
-            syncingGuilds = new TLongHashSet();
-        else
-            syncingGuilds = null;
+        syncingGuilds = null;
     }
 
     JDAImpl getJDA() {
         return api;
-    }
-
-    boolean isClient() {
-        return getJDA().getAccountType() == AccountType.CLIENT;
     }
 
     void addGuildForChunking(long id, boolean join) {
@@ -75,8 +67,6 @@ public class GuildSetupController {
     }
 
     void addGuildForSyncing(long id, boolean join) {
-        if (!isClient())
-            return;
         log.trace("Adding guild for syncing ID: {}", id);
         if (join || incompleteCount <= 0) {
             if (incompleteCount <= 0) {

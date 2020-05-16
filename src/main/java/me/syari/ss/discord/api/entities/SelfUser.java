@@ -8,19 +8,7 @@ import javax.annotation.Nullable;
 
 public interface SelfUser extends User {
 
-
     boolean isVerified();
-
-
-    boolean isNitro();
-
-
-    @Nullable
-    String getPhoneNumber();
-
-
-    long getAllowedFileSize();
-
 
     @Nonnull
     AccountManager getManager();

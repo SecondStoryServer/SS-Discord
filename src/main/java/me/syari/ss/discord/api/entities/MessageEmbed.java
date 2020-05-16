@@ -1,6 +1,5 @@
 package me.syari.ss.discord.api.entities;
 
-import me.syari.ss.discord.api.AccountType;
 import me.syari.ss.discord.api.utils.data.DataArray;
 import me.syari.ss.discord.api.utils.data.DataObject;
 import me.syari.ss.discord.api.utils.data.SerializableData;
@@ -116,20 +115,11 @@ public class MessageEmbed implements SerializableData {
     }
 
 
-    public boolean isSendable(@Nonnull AccountType type) {
+    public boolean isSendable() {
         Checks.notNull(type, "AccountType");
+        if (isEmpty()) return false;
         final int length = getLength();
-        if (isEmpty())
-            return false;
-
-        switch (type) {
-            case BOT:
-                return length <= EMBED_MAX_LENGTH_BOT;
-            case CLIENT:
-                return length <= EMBED_MAX_LENGTH_CLIENT;
-            default:
-                throw new IllegalArgumentException(String.format("Cannot check against AccountType '%s'!", type));
-        }
+        return length <= EMBED_MAX_LENGTH_BOT;
     }
 
     @Override

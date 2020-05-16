@@ -40,7 +40,7 @@ public class ReceivedMessage extends AbstractMessage {
     public ReceivedMessage(
             long id, MessageChannel channel, MessageType type,
             boolean fromWebhook, boolean mentionsEveryone, TLongSet mentionedUsers, TLongSet mentionedRoles, boolean tts,
-            String content, String nonce, User author, Member member,
+            String content, User author, Member member,
             List<MessageEmbed> embeds) {
         super(content, tts);
         this.id = id;

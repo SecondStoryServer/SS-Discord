@@ -1,7 +1,6 @@
 package me.syari.ss.discord.api;
 
 import com.neovisionaries.ws.client.WebSocketFactory;
-import me.syari.ss.discord.annotations.Incubating;
 import me.syari.ss.discord.api.entities.Activity;
 import me.syari.ss.discord.api.hooks.IEventManager;
 import me.syari.ss.discord.api.utils.ChunkingFilter;
@@ -32,8 +31,7 @@ import java.util.concurrent.ScheduledExecutorService;
 
 
 public class JDABuilder {
-    protected final List<Object> listeners;
-    protected final AccountType accountType;
+    protected final List<Object> listeners = new LinkedList<>();
 
     protected ScheduledExecutorService rateLimitPool = null;
     protected boolean shutdownRateLimitPool = true;
@@ -47,7 +45,7 @@ public class JDABuilder {
     protected OkHttpClient.Builder httpClientBuilder = null;
     protected OkHttpClient httpClient = null;
     protected WebSocketFactory wsFactory = null;
-    protected String token = null;
+    protected String token;
     protected IEventManager eventManager = null;
     protected JDA.ShardInfo shardInfo = null;
     protected Compression compression = Compression.ZLIB;
@@ -61,32 +59,9 @@ public class JDABuilder {
     protected ChunkingFilter chunkingFilter = ChunkingFilter.ALL;
 
 
-    public JDABuilder() {
-        this(AccountType.BOT);
-    }
-
-
     public JDABuilder(@Nullable String token) {
-        this();
-        setToken(token);
-    }
-
-
-    @Incubating
-    public JDABuilder(@Nonnull AccountType accountType) {
-        Checks.notNull(accountType, "accountType");
-
-        this.accountType = accountType;
-        this.listeners = new LinkedList<>();
-    }
-
-
-    @Nonnull
-    public JDABuilder setToken(@Nullable String token) {
         this.token = token;
-        return this;
     }
-
 
     @Nonnull
     public JDABuilder setActivity(@Nullable Activity activity) {
@@ -128,7 +103,7 @@ public class JDABuilder {
         if (controller == null && shardInfo != null)
             controller = new SessionControllerAdapter();
 
-        AuthorizationConfig authConfig = new AuthorizationConfig(accountType, token);
+        AuthorizationConfig authConfig = new AuthorizationConfig(token);
         ThreadingConfig threadingConfig = new ThreadingConfig();
         threadingConfig.setCallbackPool(callbackPool, shutdownCallbackPool);
         threadingConfig.setGatewayPool(mainWsPool, shutdownMainWsPool);

@@ -1,6 +1,5 @@
 package me.syari.ss.discord.internal.entities;
 
-import me.syari.ss.discord.api.AccountType;
 import me.syari.ss.discord.api.Permission;
 import me.syari.ss.discord.api.entities.*;
 import me.syari.ss.discord.api.exceptions.InsufficientPermissionException;
@@ -65,8 +64,7 @@ public class TextChannelImpl extends AbstractChannelImpl<TextChannel, TextChanne
     public List<CompletableFuture<Void>> purgeMessagesById(@Nonnull long... messageIds) {
         if (messageIds == null || messageIds.length == 0)
             return Collections.emptyList();
-        if (getJDA().getAccountType() != AccountType.BOT
-                || !getGuild().getSelfMember().hasPermission(this, Permission.MESSAGE_MANAGE))
+        if (!getGuild().getSelfMember().hasPermission(this, Permission.MESSAGE_MANAGE))
             return TextChannel.super.purgeMessagesById(messageIds);
 
         // remove duplicates and sort messages

@@ -1,6 +1,5 @@
 package me.syari.ss.discord.internal.managers;
 
-import me.syari.ss.discord.api.AccountType;
 import me.syari.ss.discord.api.entities.Icon;
 import me.syari.ss.discord.api.entities.SelfUser;
 import me.syari.ss.discord.api.managers.AccountManager;
@@ -77,10 +76,6 @@ public class AccountManagerImpl extends ManagerBase<AccountManager> implements A
 
     @Override
     protected RequestBody finalizeData() {
-        boolean isClient = getJDA().getAccountType() == AccountType.CLIENT;
-        Checks.check(!isClient || (currentPassword != null && !currentPassword.isEmpty()),
-                "Provided client account password to be used in auth is null or empty!");
-
         DataObject body = DataObject.empty();
 
         //Required fields. Populate with current values..
@@ -91,17 +86,6 @@ public class AccountManagerImpl extends ManagerBase<AccountManager> implements A
             body.put("username", name);
         if (shouldUpdate(AVATAR))
             body.put("avatar", avatar == null ? null : avatar.getEncoding());
-
-        if (isClient) {
-            //Required fields. Populate with current values.
-            body.put("password", currentPassword);
-            body.put("email", email);
-
-            if (shouldUpdate(EMAIL))
-                body.put("email", email);
-            if (shouldUpdate(PASSWORD))
-                body.put("new_password", password);
-        }
 
         reset();
         return getRequestBody(body);

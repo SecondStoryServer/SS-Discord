@@ -67,8 +67,7 @@ public class PermissionUtil {
             if (issuer.getUser() instanceof SelfUser) {
                 // If they don't have nitro, we immediately return
                 // false, otherwise we proceed with the remaining checks.
-                if (!((SelfUser) issuer.getUser()).isNitro())
-                    return false;
+                return false;
             }
         }
 
@@ -89,7 +88,7 @@ public class PermissionUtil {
             return false;
         // external means it is available outside of its own guild - works for bots or if its managed
         // currently we cannot check whether other users have nitro, we assume no here
-        final boolean external = emote.isManaged() || (issuer.isBot() && botOverride) || isNitro(issuer);
+        final boolean external = emote.isManaged() || (issuer.isBot() && botOverride);
         if (channel.getType() == ChannelType.TEXT) {
             TextChannel text = (TextChannel) channel;
             member = text.getGuild().getMemberById(issuer.getIdLong());
@@ -97,10 +96,6 @@ public class PermissionUtil {
                     || (external && member != null && member.hasPermission(text, Permission.MESSAGE_EXT_EMOJI)); // in different guild
         }
         return external; // In Group or Private it only needs to be external
-    }
-
-    private static boolean isNitro(User issuer) {
-        return issuer instanceof SelfUser && ((SelfUser) issuer).isNitro();
     }
 
 

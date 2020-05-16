@@ -3,7 +3,6 @@ package me.syari.ss.discord.internal.entities;
 import gnu.trove.map.TLongObjectMap;
 import gnu.trove.set.TLongSet;
 import gnu.trove.set.hash.TLongHashSet;
-import me.syari.ss.discord.api.AccountType;
 import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.OnlineStatus;
 import me.syari.ss.discord.api.audit.ActionType;
@@ -78,24 +77,10 @@ public class EntityBuilder {
         }
 
         selfUser.setVerified(self.getBoolean("verified"))
-                .setMfaEnabled(self.getBoolean("mfa_enabled"))
                 .setName(self.getString("username"))
                 .setDiscriminator(self.getString("discriminator"))
                 .setAvatarId(self.getString("avatar", null))
                 .setBot(self.getBoolean("bot"));
-
-        if (this.getJDA().getAccountType() == AccountType.CLIENT) {
-            selfUser
-                    .setEmail(self.getString("email", null))
-                    .setMobile(self.getBoolean("mobile"))
-                    .setNitro(self.getBoolean("premium"))
-                    .setPhoneNumber(self.getString("phone", null));
-        }
-
-    }
-
-    public static Activity createActivity(String name, String url, Activity.ActivityType type) {
-        return new ActivityImpl(name, url, type);
     }
 
     private void createGuildEmotePass(GuildImpl guildObj, DataArray array) {
@@ -929,7 +914,7 @@ public class EntityBuilder {
             case DEFAULT:
                 message = new ReceivedMessage(id, chan, type, fromWebhook,
                         mentionsEveryone, mentionedUsers, mentionedRoles, tts,
-                        content, nonce, user, member, embeds);
+                        content, user, member, embeds);
                 break;
             case UNKNOWN:
                 throw new IllegalArgumentException(UNKNOWN_MESSAGE_TYPE);

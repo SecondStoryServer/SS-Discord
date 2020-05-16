@@ -1,7 +1,6 @@
 package me.syari.ss.discord.internal.requests;
 
 import com.neovisionaries.ws.client.*;
-import me.syari.ss.discord.api.AccountType;
 import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.exceptions.ParsingException;
 import me.syari.ss.discord.api.requests.CloseCode;
@@ -518,9 +517,7 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
     }
 
     protected String getToken() {
-        if (api.getAccountType() == AccountType.BOT)
-            return api.getToken().substring("Bot ".length());
-        return api.getToken();
+        return api.getToken().substring("Bot ".length());
     }
 
     protected List<DataObject> convertPresencesReplace(long responseTotal, DataArray array) {
@@ -815,19 +812,6 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
         handlers.put("GUILD_INTEGRATIONS_UPDATE", nopHandler);
         handlers.put("PRESENCES_REPLACE", nopHandler);
         handlers.put("WEBHOOKS_UPDATE", nopHandler);
-
-        if (api.getAccountType() == AccountType.CLIENT) {
-            handlers.put("CALL_CREATE", nopHandler);
-            handlers.put("CALL_DELETE", nopHandler);
-            handlers.put("CALL_UPDATE", nopHandler);
-            handlers.put("CHANNEL_RECIPIENT_ADD", nopHandler);
-            handlers.put("CHANNEL_RECIPIENT_REMOVE", nopHandler);
-            handlers.put("RELATIONSHIP_ADD", nopHandler);
-            handlers.put("RELATIONSHIP_REMOVE", nopHandler);
-
-            // Unused client events
-            handlers.put("MESSAGE_ACK", nopHandler);
-        }
     }
 
     protected abstract class ConnectNode implements SessionController.SessionConnectNode {

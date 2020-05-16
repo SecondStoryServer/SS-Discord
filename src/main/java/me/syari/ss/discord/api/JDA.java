@@ -305,20 +305,4 @@ public interface JDA {
 
 
     void shutdownNow();
-
-    //
-    // * Installs an auxiliary cable into the given port of your system.
-    // *
-    // * @param  port
-    // *         The port in which the cable should be installed.
-    // *
-    // * @return {@link me.syari.ss.discord.api.requests.restaction.AuditableRestAction AuditableRestAction}{@literal <}{@link Void}{@literal >}
-    // */
-    //AuditableRestAction<Void> installAuxiliaryCable(int port);
-
-
-    @Nonnull
-    AccountType getAccountType();
-
-
 }

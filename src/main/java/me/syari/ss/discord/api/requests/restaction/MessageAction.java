@@ -86,52 +86,12 @@ public interface MessageAction extends RestAction<Message>, Appendable {
 
     @Nonnull
     @CheckReturnValue
-    default MessageAction appendFormat(@Nonnull final String format, final Object... args) {
-        return append(String.format(format, args));
-    }
-
-
-    @Nonnull
-    @CheckReturnValue
     MessageAction addFile(@Nonnull final InputStream data, @Nonnull final String name, @Nonnull AttachmentOption... options);
 
 
     @Nonnull
     @CheckReturnValue
-    default MessageAction addFile(@Nonnull final byte[] data, @Nonnull final String name, @Nonnull AttachmentOption... options) {
-        Checks.notNull(data, "Data");
-        final long maxSize = getJDA().getSelfUser().getAllowedFileSize();
-        Checks.check(data.length <= maxSize, "File may not exceed the maximum file length of %d bytes!", maxSize);
-        return addFile(new ByteArrayInputStream(data), name, options);
-    }
-
-
-    @Nonnull
-    @CheckReturnValue
-    default MessageAction addFile(@Nonnull final File file, @Nonnull AttachmentOption... options) {
-        Checks.notNull(file, "File");
-        return addFile(file, file.getName(), options);
-    }
-
-
-    @Nonnull
-    @CheckReturnValue
-    MessageAction addFile(@Nonnull final File file, @Nonnull final String name, @Nonnull AttachmentOption... options);
-
-
-    @Nonnull
-    @CheckReturnValue
     MessageAction clearFiles();
-
-
-    @Nonnull
-    @CheckReturnValue
-    MessageAction clearFiles(@Nonnull BiConsumer<String, InputStream> finalizer);
-
-
-    @Nonnull
-    @CheckReturnValue
-    MessageAction clearFiles(@Nonnull Consumer<InputStream> finalizer);
 
 
     @Nonnull

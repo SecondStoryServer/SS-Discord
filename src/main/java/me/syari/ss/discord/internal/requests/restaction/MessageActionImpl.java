@@ -1,6 +1,5 @@
 package me.syari.ss.discord.internal.requests.restaction;
 
-import me.syari.ss.discord.api.AccountType;
 import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.Permission;
 import me.syari.ss.discord.api.entities.*;
@@ -24,9 +23,7 @@ import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import java.io.*;
 import java.util.*;
-import java.util.function.BiConsumer;
 import java.util.function.BooleanSupplier;
-import java.util.function.Consumer;
 
 public class MessageActionImpl extends RestActionImpl<Message> implements MessageAction {
     private static final String CONTENT_TOO_BIG = String.format("A message may not exceed %d characters. Please limit your input!", Message.MAX_CONTENT_LENGTH);
@@ -130,10 +127,9 @@ public class MessageActionImpl extends RestActionImpl<Message> implements Messag
     @CheckReturnValue
     public MessageActionImpl embed(final MessageEmbed embed) {
         if (embed != null) {
-            final AccountType type = getJDA().getAccountType();
-            Checks.check(embed.isSendable(type),
-                    "Provided Message contains an empty embed or an embed with a length greater than %d characters, which is the max for %s accounts!",
-                    type == AccountType.BOT ? MessageEmbed.EMBED_MAX_LENGTH_BOT : MessageEmbed.EMBED_MAX_LENGTH_CLIENT, type);
+            Checks.check(embed.isSendable(),
+                    "Provided Message contains an empty embed or an embed with a length greater than %d characters, which is the max for Bot accounts!",
+                    MessageEmbed.EMBED_MAX_LENGTH_BOT);
         }
         this.embed = embed;
         return this;
@@ -177,54 +173,8 @@ public class MessageActionImpl extends RestActionImpl<Message> implements Messag
     @Nonnull
     @Override
     @CheckReturnValue
-    public MessageActionImpl addFile(@Nonnull final File file, @Nonnull String name, @Nonnull AttachmentOption... options) {
-        Checks.notNull(file, "File");
-        Checks.noneNull(options, "Options");
-        Checks.check(file.exists() && file.canRead(), "Provided file either does not exist or cannot be read from!");
-        final long maxSize = getJDA().getSelfUser().getAllowedFileSize();
-        Checks.check(file.length() <= maxSize, "File may not exceed the maximum file length of %d bytes!", maxSize);
-        try {
-            FileInputStream data = new FileInputStream(file);
-            ownedResources.add(data);
-            name = applyOptions(name, options);
-            return addFile(data, name);
-        } catch (FileNotFoundException e) {
-            throw new IllegalArgumentException(e);
-        }
-    }
-
-    @Nonnull
-    @Override
-    @CheckReturnValue
     public MessageActionImpl clearFiles() {
         files.clear();
-        clearResources();
-        return this;
-    }
-
-    @Nonnull
-    @Override
-    @CheckReturnValue
-    public MessageActionImpl clearFiles(@Nonnull BiConsumer<String, InputStream> finalizer) {
-        Checks.notNull(finalizer, "Finalizer");
-        for (Iterator<Map.Entry<String, InputStream>> it = files.entrySet().iterator(); it.hasNext(); ) {
-            Map.Entry<String, InputStream> entry = it.next();
-            finalizer.accept(entry.getKey(), entry.getValue());
-            it.remove();
-        }
-        clearResources();
-        return this;
-    }
-
-    @Nonnull
-    @Override
-    @CheckReturnValue
-    public MessageActionImpl clearFiles(@Nonnull Consumer<InputStream> finalizer) {
-        Checks.notNull(finalizer, "Finalizer");
-        for (Iterator<InputStream> it = files.values().iterator(); it.hasNext(); ) {
-            finalizer.accept(it.next());
-            it.remove();
-        }
         clearResources();
         return this;
     }

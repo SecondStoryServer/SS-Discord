@@ -1,6 +1,5 @@
 package me.syari.ss.discord.internal.entities;
 
-import me.syari.ss.discord.api.AccountType;
 import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.entities.*;
 import me.syari.ss.discord.api.requests.RestAction;
@@ -18,7 +17,6 @@ import java.util.concurrent.CompletableFuture;
 public class PrivateChannelImpl implements PrivateChannel {
     private final long id;
     private final User user;
-    private long lastMessageId;
     private boolean fake = false;
 
     public PrivateChannelImpl(long id, User user) {
@@ -114,7 +112,6 @@ public class PrivateChannelImpl implements PrivateChannel {
     }
 
     public PrivateChannelImpl setLastMessageId(long id) {
-        this.lastMessageId = id;
         return this;
     }
 
@@ -142,7 +139,7 @@ public class PrivateChannelImpl implements PrivateChannel {
     }
 
     private void checkBot() {
-        if (getUser().isBot() && getJDA().getAccountType() == AccountType.BOT)
+        if (getUser().isBot())
             throw new UnsupportedOperationException("Cannot send a private message between bots.");
     }
 }

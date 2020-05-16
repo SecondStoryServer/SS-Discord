@@ -36,7 +36,7 @@ public class GuildSetupNode {
         this.id = id;
         this.controller = controller;
         this.type = type;
-        this.sync = controller.isClient();
+        this.sync = false;
     }
 
     public long getIdLong() {

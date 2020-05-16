@@ -1,6 +1,5 @@
 package me.syari.ss.discord.internal.requests;
 
-import me.syari.ss.discord.api.AccountType;
 import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.JDAInfo;
 import me.syari.ss.discord.api.requests.Request;
@@ -57,10 +56,7 @@ public class Requester {
 
         this.authConfig = authConfig;
         this.api = (JDAImpl) api;
-        if (authConfig.getAccountType() == AccountType.BOT)
-            rateLimiter = new BotRateLimiter(this);
-        else
-            rateLimiter = new ClientRateLimiter(this);
+        rateLimiter = new BotRateLimiter(this);
 
         this.httpClient = this.api.getHttpClient();
     }

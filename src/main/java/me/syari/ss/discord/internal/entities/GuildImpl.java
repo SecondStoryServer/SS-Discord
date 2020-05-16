@@ -1,7 +1,6 @@
 package me.syari.ss.discord.internal.entities;
 
 import gnu.trove.map.TLongObjectMap;
-import me.syari.ss.discord.api.AccountType;
 import me.syari.ss.discord.api.Permission;
 import me.syari.ss.discord.api.entities.*;
 import me.syari.ss.discord.api.exceptions.InsufficientPermissionException;
@@ -322,33 +321,7 @@ public class GuildImpl implements Guild {
 
     @Override
     public boolean checkVerification() {
-        if (getJDA().getAccountType() == AccountType.BOT)
-            return true;
-        if (canSendVerification)
-            return true;
-
-        if (getJDA().getSelfUser().getPhoneNumber() != null)
-            return canSendVerification = true;
-
-        switch (verificationLevel) {
-            case VERY_HIGH:
-                break; // we already checked for a verified phone number
-            case HIGH:
-                if (ChronoUnit.MINUTES.between(getSelfMember().getTimeJoined(), OffsetDateTime.now()) < 10)
-                    break;
-            case MEDIUM:
-                if (ChronoUnit.MINUTES.between(getJDA().getSelfUser().getTimeCreated(), OffsetDateTime.now()) < 5)
-                    break;
-            case LOW:
-                if (!getJDA().getSelfUser().isVerified())
-                    break;
-            case NONE:
-                canSendVerification = true;
-                return true;
-            case UNKNOWN:
-                return true; // try and let discord decide
-        }
-        return false;
+        return true;
     }
 
     @Override

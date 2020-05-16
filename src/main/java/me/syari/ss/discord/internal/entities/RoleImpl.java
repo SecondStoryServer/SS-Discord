@@ -35,7 +35,6 @@ public class RoleImpl implements Role {
 
     private String name;
     private boolean managed;
-    private boolean hoisted;
     private boolean mentionable;
     private long rawPermissions;
     private int color;
@@ -250,7 +249,6 @@ public class RoleImpl implements Role {
     }
 
     public RoleImpl setHoisted(boolean hoisted) {
-        this.hoisted = hoisted;
         return this;
     }
 

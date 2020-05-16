@@ -1,9 +1,7 @@
 package me.syari.ss.discord.api.utils;
 
 import com.neovisionaries.ws.client.OpeningHandshakeException;
-import me.syari.ss.discord.api.AccountType;
 import me.syari.ss.discord.api.JDA;
-import me.syari.ss.discord.api.exceptions.AccountTypeException;
 import me.syari.ss.discord.api.requests.Request;
 import me.syari.ss.discord.api.requests.Response;
 import me.syari.ss.discord.api.utils.data.DataObject;
@@ -66,7 +64,6 @@ public class SessionControllerAdapter implements SessionController {
     @Nonnull
     @Override
     public ShardedGateway getShardedGateway(@Nonnull JDA api) {
-        AccountTypeException.check(api.getAccountType(), AccountType.BOT);
         return new RestActionImpl<ShardedGateway>(api, Route.Misc.GATEWAY_BOT.compile()) {
             @Override
             public void handleResponse(Response response, Request<ShardedGateway> request) {

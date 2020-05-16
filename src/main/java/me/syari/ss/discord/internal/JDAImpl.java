@@ -2,11 +2,9 @@ package me.syari.ss.discord.internal;
 
 import com.neovisionaries.ws.client.WebSocketFactory;
 import gnu.trove.map.TLongObjectMap;
-import me.syari.ss.discord.api.AccountType;
 import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.entities.*;
 import me.syari.ss.discord.api.events.GenericEvent;
-import me.syari.ss.discord.api.exceptions.AccountTypeException;
 import me.syari.ss.discord.api.exceptions.RateLimitedException;
 import me.syari.ss.discord.api.hooks.IEventManager;
 import me.syari.ss.discord.api.hooks.InterfacedEventManager;
@@ -86,8 +84,6 @@ public class JDAImpl implements JDA {
     protected String gatewayUrl;
     protected ChunkingFilter chunkingFilter;
 
-    protected String clientId = null;
-
     public JDAImpl(AuthorizationConfig authConfig) {
         this(authConfig, null, null, null);
     }
@@ -109,10 +105,6 @@ public class JDAImpl implements JDA {
 
     public void handleEvent(@Nonnull GenericEvent event) {
         eventManager.handle(event);
-    }
-
-    public boolean isRawEvents() {
-        return sessionConfig.isRawEvents();
     }
 
     public boolean isRelativeRateLimit() {
@@ -253,7 +245,6 @@ public class JDAImpl implements JDA {
         if (!alreadyFailed) {
             userResponse = checkToken(login);
             if (userResponse != null) {
-                verifyAccountType(userResponse);
                 getEntityBuilder().createSelfUser(userResponse);
                 return;
             }
@@ -267,34 +258,16 @@ public class JDAImpl implements JDA {
         // or if the developer attempted to login with a token using the wrong AccountType.
 
         //If we attempted to login as a Bot, remove the "Bot " prefix and set the Requester to be a client.
-        String token;
-        if (getAccountType() == AccountType.BOT) {
-            token = getToken().substring("Bot ".length());
-            requester = new Requester(this, new AuthorizationConfig(AccountType.CLIENT, token));
-        } else    //If we attempted to login as a Client, prepend the "Bot " prefix and set the Requester to be a Bot
-        {
-            requester = new Requester(this, new AuthorizationConfig(AccountType.BOT, getToken()));
-        }
 
         userResponse = checkToken(login);
         shutdownNow();
 
         //If the response isn't null (thus it didn't 401) send it to the secondary verify method to determine
         // which account type the developer wrongly attempted to login as
-        if (userResponse != null)
-            verifyAccountType(userResponse);
-        else    //We 401'd again. This is an invalid token
+        if (userResponse == null) {
             throw new LoginException("The provided token is invalid!");
-    }
-
-    private void verifyAccountType(DataObject userResponse) {
-        if (getAccountType() == AccountType.BOT) {
-            if (!userResponse.hasKey("bot") || !userResponse.getBoolean("bot"))
-                throw new AccountTypeException("Attempted to login as a BOT with a CLIENT token!");
-        } else {
-            if (userResponse.hasKey("bot") && userResponse.getBoolean("bot"))
-                throw new AccountTypeException("Attempted to login as a CLIENT with a BOT token!");
         }
+
     }
 
     private DataObject checkToken(RestActionImpl<DataObject> login) throws LoginException {
@@ -516,12 +489,6 @@ public class JDAImpl implements JDA {
     @Override
     public IEventManager getEventManager() {
         return eventManager.getSubject();
-    }
-
-    @Nonnull
-    @Override
-    public AccountType getAccountType() {
-        return authConfig.getAccountType();
     }
 
     @Override

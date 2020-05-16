@@ -1,8 +1,6 @@
 package me.syari.ss.discord.api.entities;
 
-import me.syari.ss.discord.api.AccountType;
 import me.syari.ss.discord.api.JDA;
-import me.syari.ss.discord.api.exceptions.AccountTypeException;
 import me.syari.ss.discord.api.requests.RestAction;
 import me.syari.ss.discord.api.requests.restaction.AuditableRestAction;
 import me.syari.ss.discord.api.requests.restaction.MessageAction;
@@ -113,7 +111,6 @@ public interface MessageChannel extends ISnowflake, Formattable {
     @Nonnull
     @CheckReturnValue
     default RestAction<Message> retrieveMessageById(@Nonnull String messageId) {
-        AccountTypeException.check(getJDA().getAccountType(), AccountType.BOT);
         Checks.isSnowflake(messageId, "Message ID");
 
         JDAImpl jda = (JDAImpl) getJDA();
