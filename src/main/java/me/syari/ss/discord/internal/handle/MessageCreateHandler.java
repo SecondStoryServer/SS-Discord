@@ -3,13 +3,9 @@ package me.syari.ss.discord.internal.handle;
 import me.syari.ss.discord.api.entities.Message;
 import me.syari.ss.discord.api.entities.MessageType;
 import me.syari.ss.discord.api.events.message.MessageReceivedEvent;
-import me.syari.ss.discord.api.events.message.guild.GuildMessageReceivedEvent;
-import me.syari.ss.discord.api.events.message.priv.PrivateMessageReceivedEvent;
 import me.syari.ss.discord.api.utils.data.DataObject;
 import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.entities.EntityBuilder;
-import me.syari.ss.discord.internal.entities.PrivateChannelImpl;
-import me.syari.ss.discord.internal.entities.TextChannelImpl;
 import me.syari.ss.discord.internal.requests.WebSocketClient;
 
 public class MessageCreateHandler extends SocketHandler {
@@ -60,40 +56,7 @@ public class MessageCreateHandler extends SocketHandler {
             }
         }
 
-        switch (message.getChannelType()) {
-            case TEXT: {
-                TextChannelImpl channel = (TextChannelImpl) message.getTextChannel();
-                if (jda.getGuildSetupController().isLocked(channel.getGuild().getIdLong()))
-                    return channel.getGuild().getIdLong();
-                channel.setLastMessageId(message.getIdLong());
-                jda.handleEvent(
-                        new GuildMessageReceivedEvent(
-                                jda, responseNumber,
-                                message));
-                break;
-            }
-            case PRIVATE: {
-                PrivateChannelImpl channel = (PrivateChannelImpl) message.getPrivateChannel();
-                channel.setLastMessageId(message.getIdLong());
-                jda.handleEvent(
-                        new PrivateMessageReceivedEvent(
-                                jda, responseNumber,
-                                message));
-                break;
-            }
-            case GROUP:
-                WebSocketClient.LOG.error("Received a MESSAGE_CREATE for a group channel which should not be possible");
-                return null;
-            default:
-                WebSocketClient.LOG.warn("Received a MESSAGE_CREATE with a unknown MessageChannel ChannelType. JSON: {}", content);
-                return null;
-        }
-
-        //Combo event
-        jda.handleEvent(
-                new MessageReceivedEvent(
-                        jda, responseNumber,
-                        message));
+        jda.handleEvent(new MessageReceivedEvent(jda, responseNumber, message));
         return null;
     }
 }
