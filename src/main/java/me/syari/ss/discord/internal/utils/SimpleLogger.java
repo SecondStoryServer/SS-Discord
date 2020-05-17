@@ -1,5 +1,6 @@
 package me.syari.ss.discord.internal.utils;
 
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.helpers.FormattingTuple;
 import org.slf4j.helpers.MarkerIgnoringBase;
 import org.slf4j.helpers.MessageFormatter;
@@ -124,7 +125,6 @@ class SimpleLogger extends MarkerIgnoringBase {
     }
 
     private static void loadProperties() {
-        // Add props from the resource Loggerger.properties
         InputStream in = AccessController.doPrivileged((PrivilegedAction<InputStream>) () -> {
             ClassLoader threadCL = Thread.currentThread().getContextClassLoader();
             if (threadCL != null) {
@@ -184,7 +184,6 @@ class SimpleLogger extends MarkerIgnoringBase {
         } else if ("error".equalsIgnoreCase(levelStr)) {
             return LOG_LEVEL_ERROR;
         }
-        // assume INFO by default
         return LOG_LEVEL_INFO;
     }
 
@@ -195,7 +194,6 @@ class SimpleLogger extends MarkerIgnoringBase {
 
         StringBuilder buf = new StringBuilder(32);
 
-        // Append date-time if so configured
         if (SHOW_DATE_TIME) {
             if (DATE_FORMATTER != null) {
                 buf.append(getFormattedDate());
@@ -205,17 +203,16 @@ class SimpleLogger extends MarkerIgnoringBase {
             buf.append(' ');
         }
 
-        // Append current thread name if so configured
         if (SHOW_THREAD_NAME) {
             buf.append('[');
             buf.append(Thread.currentThread().getName());
             buf.append("] ");
         }
 
-        if (LEVEL_IN_BRACKETS)
+        if (LEVEL_IN_BRACKETS) {
             buf.append('[');
+        }
 
-        // Append a readable representation of the log level
         switch (level) {
             case LOG_LEVEL_TRACE:
                 buf.append("TRACE");
@@ -233,11 +230,11 @@ class SimpleLogger extends MarkerIgnoringBase {
                 buf.append("ERROR");
                 break;
         }
-        if (LEVEL_IN_BRACKETS)
+        if (LEVEL_IN_BRACKETS) {
             buf.append(']');
+        }
         buf.append(' ');
 
-        // Append the name of the log instance if so configured
         if (SHOW_SHORT_LOG_NAME) {
             if (shortLogName == null)
                 shortLogName = computeShortName();
@@ -246,14 +243,13 @@ class SimpleLogger extends MarkerIgnoringBase {
             buf.append(name).append(" - ");
         }
 
-        // Append the message
         buf.append(message);
 
         write(buf, t);
 
     }
 
-    void write(StringBuilder buf, Throwable t) {
+    void write(@NotNull StringBuilder buf, Throwable t) {
         TARGET_STREAM.println(buf.toString());
         if (t != null) {
             t.printStackTrace(TARGET_STREAM);
@@ -270,7 +266,7 @@ class SimpleLogger extends MarkerIgnoringBase {
         return dateText;
     }
 
-    private String computeShortName() {
+    private @NotNull String computeShortName() {
         return name.substring(name.lastIndexOf(".") + 1);
     }
 
@@ -291,8 +287,6 @@ class SimpleLogger extends MarkerIgnoringBase {
     }
 
     protected boolean isLevelEnabled(int logLevel) {
-        // log level are numerically ordered so can use simple numeric
-        // comparison
         return (logLevel >= currentLogLevel);
     }
 

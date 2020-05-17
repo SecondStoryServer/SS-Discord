@@ -1,5 +1,7 @@
 package me.syari.ss.discord.internal.utils.config.flags;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.EnumSet;
 
 public enum ConfigFlag {
@@ -18,7 +20,7 @@ public enum ConfigFlag {
         this.isDefault = isDefault;
     }
 
-    public static EnumSet<ConfigFlag> getDefault() {
+    public static @NotNull EnumSet<ConfigFlag> getDefault() {
         EnumSet<ConfigFlag> set = EnumSet.noneOf(ConfigFlag.class);
         for (ConfigFlag flag : values()) {
             if (flag.isDefault)

@@ -14,7 +14,7 @@ public abstract class AbstractChannelImpl<T extends AbstractChannelImpl<T>> impl
     protected String name;
     protected int rawPosition;
 
-    public AbstractChannelImpl(long id, Guild guild) {
+    public AbstractChannelImpl(long id, @NotNull Guild guild) {
         this.id = id;
         this.api = guild.getJDA();
         this.guild = new SnowflakeReference<>(guild, api::getGuildById);

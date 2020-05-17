@@ -31,17 +31,16 @@ public class ChainedClosableIterator<T> implements ClosableIterator<T> {
 
     @Override
     public boolean hasNext() {
-        if (item != null)
+        if (item != null) {
             return true;
-        // get next item from current iterator if exists
+        }
         if (currentIterator != null) {
-            if (currentIterator.hasNext()) {
-                if (findNext()) return true;
+            if (currentIterator.hasNext() && findNext()) {
+                return true;
             }
             currentIterator.close();
             currentIterator = null;
         }
-        // get next iterator in chain
         return processChain();
     }
 
@@ -50,16 +49,19 @@ public class ChainedClosableIterator<T> implements ClosableIterator<T> {
             CacheView<T> view = null;
             while (generator.hasNext()) {
                 view = generator.next();
-                if (!view.isEmpty())
+                if (!view.isEmpty()) {
                     break;
+                }
                 view = null;
             }
-            if (view == null)
+            if (view == null) {
                 return false;
+            }
 
-            // find next item in this iterator
             currentIterator = view.lockedIterator();
-            if (findNext()) break;
+            if (findNext()) {
+                break;
+            }
         }
         return true;
     }
@@ -70,7 +72,7 @@ public class ChainedClosableIterator<T> implements ClosableIterator<T> {
             if (items.contains(next))
                 continue;
             item = next;
-            items.add(item); // avoid duplicates
+            items.add(item);
             return true;
         }
         return false;
@@ -78,8 +80,9 @@ public class ChainedClosableIterator<T> implements ClosableIterator<T> {
 
     @Override
     public T next() {
-        if (!hasNext())
+        if (!hasNext()) {
             throw new NoSuchElementException();
+        }
         T tmp = item;
         item = null;
         return tmp;

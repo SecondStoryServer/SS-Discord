@@ -12,6 +12,7 @@ import me.syari.ss.discord.internal.utils.JDALogger;
 import me.syari.ss.discord.internal.utils.UnlockHook;
 import me.syari.ss.discord.internal.utils.cache.MemberCacheView;
 import me.syari.ss.discord.internal.utils.cache.SnowflakeCacheViewImpl;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
 import java.time.Instant;
@@ -313,7 +314,7 @@ public class EntityBuilder {
             getJDA().getEventCache().playbackCache(EventCache.Type.CHANNEL, id);
     }
 
-    public Role createRole(Guild guild, DataObject roleJson, long guildId) {
+    public Role createRole(Guild guild, @NotNull DataObject roleJson, long guildId) {
         boolean playbackCache = false;
         final long id = roleJson.getLong("id");
         if (guild == null)
@@ -332,7 +333,7 @@ public class EntityBuilder {
         return role;
     }
 
-    public Message createMessage(DataObject jsonObject, boolean modifyCache) {
+    public Message createMessage(@NotNull DataObject jsonObject, boolean modifyCache) {
         final long channelId = jsonObject.getLong("channel_id");
 
         TextChannel channel = getJDA().getTextChannelById(channelId);
@@ -342,7 +343,7 @@ public class EntityBuilder {
         return createMessage(jsonObject, channel, modifyCache);
     }
 
-    public Message createMessage(DataObject jsonObject, TextChannel channel, boolean modifyCache) {
+    public Message createMessage(@NotNull DataObject jsonObject, TextChannel channel, boolean modifyCache) {
         final long id = jsonObject.getLong("id");
         final DataObject author = jsonObject.getObject("author");
         final long authorId = author.getLong("id");
@@ -430,7 +431,7 @@ public class EntityBuilder {
         return message;
     }
 
-    private <T> List<T> map(DataObject jsonObject, String key, Function<DataObject, T> convert) {
+    private <T> @NotNull List<T> map(@NotNull DataObject jsonObject, String key, Function<DataObject, T> convert) {
         if (jsonObject.isNull(key))
             return Collections.emptyList();
 

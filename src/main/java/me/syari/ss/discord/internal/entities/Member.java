@@ -16,7 +16,7 @@ public class Member implements Mentionable {
     private String nickname;
     private long boostDate;
 
-    public Member(Guild guild, User user) {
+    public Member(Guild guild, @NotNull User user) {
         JDAImpl api = user.getJDA();
         this.guild = new SnowflakeReference<>(guild, api::getGuildById);
         this.user = user;

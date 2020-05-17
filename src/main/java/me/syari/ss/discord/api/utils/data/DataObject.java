@@ -225,8 +225,8 @@ public class DataObject implements SerializableData {
     public String toString() {
         try {
             return mapper.writeValueAsString(data);
-        } catch (JsonProcessingException e) {
-            throw new ParsingException(e);
+        } catch (JsonProcessingException ex) {
+            throw new ParsingException(ex);
         }
     }
 
@@ -253,7 +253,6 @@ public class DataObject implements SerializableData {
             return null;
         if (type.isAssignableFrom(value.getClass()))
             return type.cast(value);
-        // attempt type coercion
         if (value instanceof Number && numberParse != null)
             return numberParse.apply((Number) value);
         else if (value instanceof String && stringParse != null)

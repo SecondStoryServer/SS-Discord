@@ -13,6 +13,7 @@ import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.requests.WebSocketClient;
 import me.syari.ss.discord.internal.requests.WebSocketCode;
 import me.syari.ss.discord.internal.utils.JDALogger;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
 public class GuildSetupController {
@@ -68,7 +69,7 @@ public class GuildSetupController {
             tryChunking();
     }
 
-    public void onCreate(long id, DataObject obj) {
+    public void onCreate(long id, @NotNull DataObject obj) {
         boolean available = obj.isNull("unavailable") || !obj.getBoolean("unavailable");
         log.trace("Received guild create for id: {} available: {}", id, available);
 

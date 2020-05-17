@@ -5,6 +5,7 @@ import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.utils.MiscUtil;
 import me.syari.ss.discord.internal.JDAImpl;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Function;
@@ -112,7 +113,7 @@ public class Message {
         return userMentions;
     }
 
-    private User matchUser(Matcher matcher) {
+    private @Nullable User matchUser(@NotNull Matcher matcher) {
         long userId = MiscUtil.parseSnowflake(matcher.group(1));
         if (!mentionedUsers.contains(userId))
             return null;
@@ -131,7 +132,7 @@ public class Message {
         return channelMentions;
     }
 
-    private TextChannel matchTextChannel(Matcher matcher) {
+    private TextChannel matchTextChannel(@NotNull Matcher matcher) {
         long channelId = MiscUtil.parseSnowflake(matcher.group(1));
         return getJDA().getTextChannelById(channelId);
     }
@@ -143,7 +144,7 @@ public class Message {
         return roleMentions;
     }
 
-    private Role matchRole(Matcher matcher) {
+    private @Nullable Role matchRole(@NotNull Matcher matcher) {
         long roleId = MiscUtil.parseSnowflake(matcher.group(1));
         if (!mentionedRoles.contains(roleId))
             return null;
@@ -157,7 +158,7 @@ public class Message {
         return emoteMentions;
     }
 
-    private Emote matchEmote(Matcher m) {
+    private Emote matchEmote(@NotNull Matcher m) {
         long emoteId = MiscUtil.parseSnowflake(m.group(2));
         String name = m.group(1);
         boolean animated = m.group(0).startsWith("<a:");
@@ -167,7 +168,7 @@ public class Message {
         return emote;
     }
 
-    protected void setMentions(List<User> users, List<Member> members) {
+    protected void setMentions(@NotNull List<User> users, @NotNull List<Member> members) {
         users.sort(Comparator.comparing((user) ->
                 Math.max(content.indexOf("<@" + user.getId() + ">"),
                         content.indexOf("<@!" + user.getId() + ">")

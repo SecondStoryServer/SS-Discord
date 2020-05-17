@@ -117,7 +117,7 @@ public class RestActionImpl<T> implements RestAction<T> {
         return route;
     }
 
-    public void handleResponse(Response response, Request<T> request) {
+    public void handleResponse(@NotNull Response response, Request<T> request) {
         if (response.isOk())
             handleSuccess(response, request);
         else

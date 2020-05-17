@@ -9,6 +9,7 @@ import me.syari.ss.discord.api.utils.data.DataArray;
 import me.syari.ss.discord.api.utils.data.DataObject;
 import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.entities.Guild;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -130,7 +131,7 @@ public class GuildSetupNode {
         return true;
     }
 
-    void cacheEvent(DataObject event) {
+    void cacheEvent(@NotNull DataObject event) {
         GuildSetupController.log.trace("Caching {} event during init. GuildId: {}", event.getString("t"), id);
         cachedEvents.add(event);
         //Check if more than 2000 events cached - suspicious

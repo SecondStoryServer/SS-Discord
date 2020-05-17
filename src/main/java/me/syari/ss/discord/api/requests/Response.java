@@ -105,7 +105,7 @@ public class Response implements Closeable {
             rawResponse.close();
     }
 
-    private String readString(BufferedReader reader) {
+    private String readString(@NotNull BufferedReader reader) {
         return reader.lines().collect(Collectors.joining("\n"));
     }
 

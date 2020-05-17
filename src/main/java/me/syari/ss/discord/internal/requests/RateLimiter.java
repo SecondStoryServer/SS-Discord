@@ -2,13 +2,13 @@ package me.syari.ss.discord.internal.requests;
 
 import me.syari.ss.discord.api.requests.Request;
 import me.syari.ss.discord.internal.utils.JDALogger;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
 import java.util.Iterator;
 import java.util.concurrent.CancellationException;
 
 public abstract class RateLimiter {
-    //Implementations of this class exist in the me.syari.ss.discord.api.requests.ratelimit package.
     protected static final Logger log = JDALogger.getLog(RateLimiter.class);
     protected final Requester requester;
     protected volatile boolean isShutdown = false;
@@ -30,9 +30,9 @@ public abstract class RateLimiter {
         return false;
     }
 
-    private void cancel(Iterator<Request> it, Request request, Throwable exception) {
+    private void cancel(@NotNull Iterator<Request> iterator, @NotNull Request request, Throwable exception) {
         request.onFailure(exception);
-        it.remove();
+        iterator.remove();
     }
 
     // -- Required Implementations --
@@ -50,8 +50,5 @@ public abstract class RateLimiter {
 
     protected void shutdown() {
         isShutdown = true;
-
-//        pool.setKeepAliveTime(time, unit);
-//        pool.allowCoreThreadTimeOut(true);
     }
 }

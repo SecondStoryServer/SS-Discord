@@ -1,5 +1,7 @@
 package me.syari.ss.discord.internal.utils;
 
+import org.jetbrains.annotations.NotNull;
+
 public final class Helpers {
 
     // ## StringUtils ##
@@ -40,7 +42,7 @@ public final class Helpers {
         return input.substring(0, maxWidth);
     }
 
-    public static String rightPad(final String input, final int size) {
+    public static @NotNull String rightPad(final @NotNull String input, final int size) {
         int pads = size - input.length();
         if (pads <= 0)
             return input;
@@ -50,7 +52,7 @@ public final class Helpers {
         return out.toString();
     }
 
-    public static String leftPad(final String input, final int size) {
+    public static @NotNull String leftPad(final @NotNull String input, final int size) {
         int pads = size - input.length();
         if (pads <= 0)
             return input;

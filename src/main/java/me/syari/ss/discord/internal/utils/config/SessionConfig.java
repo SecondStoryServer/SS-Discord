@@ -18,9 +18,7 @@ public class SessionConfig {
     private final EnumSet<ConfigFlag> flags;
     private final int maxReconnectDelay;
 
-    public SessionConfig(
-            @Nullable OkHttpClient httpClient,
-            EnumSet<ConfigFlag> flags, int maxReconnectDelay, int largeThreshold) {
+    public SessionConfig(@Nullable OkHttpClient httpClient, EnumSet<ConfigFlag> flags, int maxReconnectDelay, int largeThreshold) {
         this.sessionController = new SessionControllerAdapter();
         this.httpClient = httpClient;
         this.webSocketFactory = new WebSocketFactory();

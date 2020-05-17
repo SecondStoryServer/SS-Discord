@@ -36,7 +36,7 @@ public class MessageAction extends RestActionImpl<Message> implements RestAction
         this.channel = channel;
     }
 
-    public MessageAction(JDA api, Route.CompiledRoute route, TextChannel channel, StringBuilder contentBuilder) {
+    public MessageAction(JDA api, Route.CompiledRoute route, TextChannel channel, @NotNull StringBuilder contentBuilder) {
         super(api, route);
         Checks.check(contentBuilder.length() <= Message.MAX_CONTENT_LENGTH,
                 "Cannot build a Message with more than %d characters. Please limit your input.", Message.MAX_CONTENT_LENGTH);
@@ -44,8 +44,8 @@ public class MessageAction extends RestActionImpl<Message> implements RestAction
         this.channel = channel;
     }
 
-    private boolean isEmpty() {
-        return Helpers.isBlank(content);
+    private boolean isNotEmpty() {
+        return !Helpers.isBlank(content);
     }
 
     @NotNull
@@ -85,7 +85,7 @@ public class MessageAction extends RestActionImpl<Message> implements RestAction
             final RequestBody body = IOUtil.createRequestBody(Requester.MEDIA_TYPE_OCTET, entry.getValue());
             builder.addFormDataPart("file" + index++, entry.getKey(), body);
         }
-        if (!isEmpty())
+        if (isNotEmpty())
             builder.addFormDataPart("payload_json", getJSON().toString());
         files.clear();
         ownedResources.clear();
@@ -106,13 +106,13 @@ public class MessageAction extends RestActionImpl<Message> implements RestAction
     protected RequestBody finalizeData() {
         if (!files.isEmpty())
             return asMultipart();
-        else if (!isEmpty())
+        else if (isNotEmpty())
             return asJSON();
         throw new IllegalStateException("Cannot build a message without content!");
     }
 
     @Override
-    protected void handleSuccess(Response response, Request<Message> request) {
+    protected void handleSuccess(@NotNull Response response, @NotNull Request<Message> request) {
         request.onSuccess(api.getEntityBuilder().createMessage(response.getObject(), channel, false));
     }
 

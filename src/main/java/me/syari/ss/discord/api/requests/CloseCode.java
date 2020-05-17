@@ -1,5 +1,7 @@
 package me.syari.ss.discord.api.requests;
 
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 
@@ -38,8 +40,9 @@ public enum CloseCode {
         return isReconnect;
     }
 
+    @Contract(pure = true)
     @Override
-    public String toString() {
+    public @NotNull String toString() {
         return "CloseCode(" + code + " / " + meaning + ")";
     }
 

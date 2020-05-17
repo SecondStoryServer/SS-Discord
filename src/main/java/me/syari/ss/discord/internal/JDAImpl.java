@@ -136,8 +136,9 @@ public class JDAImpl implements JDA {
 
         String token = authConfig.getToken();
         setStatus(Status.LOGGING_IN);
-        if (token.isEmpty())
+        if (token.isEmpty()) {
             throw new LoginException("Provided token was null or empty!");
+        }
 
         Map<String, String> previousContext = null;
         ConcurrentMap<String, String> contextMap = metaConfig.getMdcContextMap();
@@ -147,7 +148,6 @@ public class JDAImpl implements JDA {
                 contextMap.put("jda.shard.id", String.valueOf(shardInfo.getShardId()));
                 contextMap.put("jda.shard.total", String.valueOf(shardInfo.getShardTotal()));
             }
-            // set MDC metadata for build thread
             previousContext = MDC.getCopyOfContextMap();
             contextMap.forEach(MDC::put);
         }
@@ -157,7 +157,6 @@ public class JDAImpl implements JDA {
         }
 
         client = new WebSocketClient(this, compression);
-        // remove our MDC metadata when we exit our code
         if (previousContext != null)
             previousContext.forEach(MDC::put);
 
@@ -189,7 +188,7 @@ public class JDAImpl implements JDA {
     public void verifyToken() throws LoginException {
         RestActionImpl<DataObject> login = new RestActionImpl<DataObject>(this, Route.Self.GET_SELF.compile()) {
             @Override
-            public void handleResponse(Response response, Request<DataObject> request) {
+            public void handleResponse(@NotNull Response response, Request<DataObject> request) {
                 if (response.isOk())
                     request.onSuccess(response.getObject());
                 else if (response.isRateLimit())
@@ -220,7 +219,6 @@ public class JDAImpl implements JDA {
         try {
             userResponse = login.complete();
         } catch (RuntimeException e) {
-            //We check if the LoginException is masked inside of a ExecutionException which is masked inside of the RuntimeException
             Throwable ex = e.getCause() instanceof ExecutionException ? e.getCause().getCause() : null;
             if (ex instanceof LoginException)
                 throw new LoginException(ex.getMessage());
@@ -317,14 +315,16 @@ public class JDAImpl implements JDA {
 
     @Override
     public synchronized void shutdown() {
-        if (status == Status.SHUTDOWN || status == Status.SHUTTING_DOWN)
+        if (status == Status.SHUTDOWN || status == Status.SHUTTING_DOWN) {
             return;
+        }
 
         setStatus(Status.SHUTTING_DOWN);
 
         WebSocketClient client = getClient();
-        if (client != null)
+        if (client != null) {
             client.shutdown();
+        }
 
         shutdownInternals();
     }
@@ -334,8 +334,9 @@ public class JDAImpl implements JDA {
     }
 
     public synchronized void shutdownInternals() {
-        if (status == Status.SHUTDOWN)
+        if (status == Status.SHUTDOWN) {
             return;
+        }
 
         getRequester().shutdown();
         threadConfig.shutdown();
@@ -400,10 +401,11 @@ public class JDAImpl implements JDA {
     }
 
     public String getIdentifierString() {
-        if (shardInfo != null)
+        if (shardInfo != null) {
             return "JDA " + shardInfo.getShardString();
-        else
+        } else {
             return "JDA";
+        }
     }
 
     public EventCache getEventCache() {

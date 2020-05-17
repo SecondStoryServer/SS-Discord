@@ -3,6 +3,7 @@ package me.syari.ss.discord.internal.utils;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import okio.Okio;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
 import java.io.*;
@@ -39,14 +40,11 @@ public class IOUtil {
         return new BufferedRequestBody(Okio.source(stream), contentType);
     }
 
-    public static int getIntBigEndian(byte[] arr, int offset) {
-        return arr[offset + 3] & 0xFF
-                | (arr[offset + 2] & 0xFF) << 8
-                | (arr[offset + 1] & 0xFF) << 16
-                | (arr[offset] & 0xFF) << 24;
+    public static int getIntBigEndian(byte @NotNull [] array, int offset) {
+        return array[offset + 3] & 0xFF | (array[offset + 2] & 0xFF) << 8 | (array[offset + 1] & 0xFF) << 16 | (array[offset] & 0xFF) << 24;
     }
 
-    public static ByteBuffer reallocate(ByteBuffer original, int length) {
+    public static @NotNull ByteBuffer reallocate(ByteBuffer original, int length) {
         ByteBuffer buffer = ByteBuffer.allocate(length);
         buffer.put(original);
         return buffer;
@@ -54,18 +52,18 @@ public class IOUtil {
 
 
     @SuppressWarnings("ConstantConditions")
-    // methods here don't return null despite the annotations on them, read the docs
     public static InputStream getBody(okhttp3.Response response) throws IOException {
         String encoding = response.header("content-encoding", "");
         InputStream data = new BufferedInputStream(response.body().byteStream());
         data.mark(256);
         try {
-            if (encoding.equalsIgnoreCase("gzip"))
+            if (encoding.equalsIgnoreCase("gzip")) {
                 return new GZIPInputStream(data);
-            else if (encoding.equalsIgnoreCase("deflate"))
+            } else if (encoding.equalsIgnoreCase("deflate")) {
                 return new InflaterInputStream(data, new Inflater(true));
+            }
         } catch (ZipException | EOFException ex) {
-            data.reset(); // reset to get full content
+            data.reset();
             log.error("Failed to read gzip content for response. Headers: {}\nContent: '{}'",
                     response.headers(), JDALogger.getLazyString(() -> new String(readFully(data))), ex);
             return null;

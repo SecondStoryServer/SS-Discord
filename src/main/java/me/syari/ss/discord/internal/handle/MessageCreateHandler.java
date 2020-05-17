@@ -5,6 +5,7 @@ import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.entities.EntityBuilder;
 import me.syari.ss.discord.internal.entities.Message;
 import me.syari.ss.discord.internal.requests.WebSocketClient;
+import org.jetbrains.annotations.NotNull;
 
 import static me.syari.ss.discord.util.Check.isDefaultMessage;
 
@@ -14,7 +15,7 @@ public class MessageCreateHandler extends SocketHandler {
     }
 
     @Override
-    protected Long handleInternally(DataObject content) {
+    protected Long handleInternally(@NotNull DataObject content) {
         System.out.println(">> MessageCreateHandler");
 
         if (!isDefaultMessage(content.getInt("type"))) {

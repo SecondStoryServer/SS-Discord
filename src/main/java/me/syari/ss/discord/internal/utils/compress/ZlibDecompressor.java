@@ -3,6 +3,7 @@ package me.syari.ss.discord.internal.utils.compress;
 import me.syari.ss.discord.api.utils.Compression;
 import me.syari.ss.discord.internal.utils.IOUtil;
 import me.syari.ss.discord.internal.utils.JDALogger;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -39,9 +40,10 @@ public class ZlibDecompressor implements Decompressor {
         return buffer;
     }
 
-    private boolean isFlush(byte[] data) {
-        if (data.length < 4)
+    private boolean isFlush(byte @NotNull [] data) {
+        if (data.length < 4) {
             return false;
+        }
         int suffix = IOUtil.getIntBigEndian(data, data.length - 4);
         return suffix == Z_SYNC_FLUSH;
     }

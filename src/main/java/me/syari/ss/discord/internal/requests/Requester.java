@@ -60,11 +60,6 @@ public class Requester {
         return e instanceof SocketException || e instanceof SocketTimeoutException || e instanceof SSLPeerUnverifiedException;
     }
 
-    public Long execute(Request<?> apiRequest) {
-        return execute(apiRequest, false);
-    }
-
-
     public Long execute(Request<?> apiRequest, boolean handleOnRateLimit) {
         return execute(apiRequest, false, handleOnRateLimit);
     }
@@ -94,13 +89,9 @@ public class Requester {
                 .header("user-agent", USER_AGENT)
                 .header("accept-encoding", "gzip");
 
-        //adding token to all requests to the discord api or cdn pages
-        //we can check for startsWith(DISCORD_API_PREFIX) because the cdn endpoints don't need any kind of authorization
         if (url.startsWith(DISCORD_API_PREFIX))
             builder.header("authorization", api.getToken());
 
-        // Apply custom headers like X-Audit-Log-Reason
-        // If customHeaders is null this does nothing
         if (apiRequest.getHeaders() != null) {
             for (Entry<String, String> header : apiRequest.getHeaders().entrySet())
                 builder.addHeader(header.getKey(), header.getValue());
@@ -110,16 +101,11 @@ public class Requester {
 
         Set<String> rays = new LinkedHashSet<>();
         okhttp3.Response[] responses = new okhttp3.Response[4];
-        // we have an array of all responses to later close them all at once
-        //the response below this comment is used as the first successful response from the server
         okhttp3.Response lastResponse = null;
         try {
             LOG.trace("Executing request {} {}", apiRequest.getRoute().getMethod(), url);
             int attempt = 0;
             do {
-                //If the request has been canceled via the Future, don't execute.
-                //if (apiRequest.isCanceled())
-                //    return null;
                 Call call = httpClient.newCall(request);
                 lastResponse = call.execute();
                 responses[attempt] = lastResponse;
@@ -128,7 +114,7 @@ public class Requester {
                     rays.add(cfRay);
 
                 if (lastResponse.code() < 500)
-                    break; // break loop, got a successful response!
+                    break;
 
                 attempt++;
                 LOG.debug("Requesting {} -> {} returned status {}... retrying (attempt {})",
@@ -144,7 +130,6 @@ public class Requester {
             LOG.trace("Finished Request {} {} with code {}", route.getMethod(), lastResponse.request().url(), lastResponse.code());
 
             if (lastResponse.code() >= 500) {
-                //Epic failure from other end. Attempted 4 times.
                 Response response = new Response(lastResponse, -1);
                 apiRequest.handleResponse(response);
                 return null;
@@ -169,7 +154,7 @@ public class Requester {
         } catch (Exception e) {
             if (retryOnTimeout && !retried && isRetry(e))
                 return execute(apiRequest, true, handleOnRatelimit);
-            LOG.error("There was an exception while executing a REST request", e); //This originally only printed on DEBUG in 2.x
+            LOG.error("There was an exception while executing a REST request", e);
             apiRequest.handleResponse(new Response(lastResponse, e));
             return null;
         } finally {

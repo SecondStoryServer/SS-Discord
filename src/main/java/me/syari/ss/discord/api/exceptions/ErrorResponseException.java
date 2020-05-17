@@ -3,6 +3,7 @@ package me.syari.ss.discord.api.exceptions;
 import me.syari.ss.discord.api.requests.ErrorResponse;
 import me.syari.ss.discord.api.requests.Response;
 import me.syari.ss.discord.api.utils.data.DataObject;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
@@ -18,7 +19,7 @@ public class ErrorResponseException extends RuntimeException {
     }
 
 
-    public static ErrorResponseException create(ErrorResponse errorResponse, Response response) {
+    public static ErrorResponseException create(@NotNull ErrorResponse errorResponse, @NotNull Response response) {
         Optional<DataObject> optObj = response.optObject();
         String meaning = errorResponse.getMeaning();
         int code = errorResponse.getCode();

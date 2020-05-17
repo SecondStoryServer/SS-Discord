@@ -1,6 +1,7 @@
 package me.syari.ss.discord.internal.requests;
 
 import me.syari.ss.discord.internal.utils.Helpers;
+import org.jetbrains.annotations.NotNull;
 
 public class Route {
     public static class Misc {
@@ -23,7 +24,7 @@ public class Route {
     private Route(Method method, String route) {
         this.method = method;
         this.route = route;
-        this.paramCount = Helpers.countMatches(route, '{'); //All parameters start with {
+        this.paramCount = Helpers.countMatches(route, '{');
 
         if (paramCount != Helpers.countMatches(route, '}'))
             throw new IllegalArgumentException("An argument does not have both {}'s for route: " + method + "  " + route);
@@ -33,13 +34,11 @@ public class Route {
         return route;
     }
 
-    public CompiledRoute compile(String... params) {
+    public CompiledRoute compile(String @NotNull ... params) {
         if (params.length != paramCount) {
             throw new IllegalArgumentException("Error Compiling Route: [" + route + "], incorrect amount of parameters provided." +
                     "Expected: " + paramCount + ", Provided: " + params.length);
         }
-
-        //Compile the route for interfacing with discord.
 
         StringBuilder majorParameter = new StringBuilder(majorParameters);
         StringBuilder compiledRoute = new StringBuilder(route);
@@ -109,13 +108,13 @@ public class Route {
         }
 
         @Override
-        public boolean equals(Object o) {
-            if (!(o instanceof CompiledRoute))
+        public boolean equals(Object object) {
+            if (!(object instanceof CompiledRoute))
                 return false;
 
-            CompiledRoute oCompiled = (CompiledRoute) o;
+            CompiledRoute compiledRoute = (CompiledRoute) object;
 
-            return baseRoute.equals(oCompiled.getBaseRoute()) && compiledRoute.equals(oCompiled.compiledRoute);
+            return baseRoute.equals(compiledRoute.getBaseRoute()) && this.compiledRoute.equals(compiledRoute.compiledRoute);
         }
 
         @Override

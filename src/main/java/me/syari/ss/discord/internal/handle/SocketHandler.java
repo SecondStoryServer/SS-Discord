@@ -2,6 +2,7 @@ package me.syari.ss.discord.internal.handle;
 
 import me.syari.ss.discord.api.utils.data.DataObject;
 import me.syari.ss.discord.internal.JDAImpl;
+import org.jetbrains.annotations.NotNull;
 
 public abstract class SocketHandler {
     protected final JDAImpl api;
@@ -12,12 +13,12 @@ public abstract class SocketHandler {
         this.api = api;
     }
 
-    public final synchronized void handle(long responseTotal, DataObject o) {
-        this.allContent = o;
+    public final synchronized void handle(long responseTotal, @NotNull DataObject object) {
+        this.allContent = object;
         this.responseNumber = responseTotal;
-        final Long guildId = handleInternally(o.getObject("d"));
+        final Long guildId = handleInternally(object.getObject("d"));
         if (guildId != null)
-            getJDA().getGuildSetupController().cacheEvent(guildId, o);
+            getJDA().getGuildSetupController().cacheEvent(guildId, object);
         this.allContent = null;
     }
 

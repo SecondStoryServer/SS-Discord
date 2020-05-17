@@ -65,7 +65,7 @@ public class Request<T> {
         });
     }
 
-    public void onFailure(Response response) {
+    public void onFailure(@NotNull Response response) {
         if (response.code == 429) {
             onFailure(new RateLimitedException(route, response.retryAfter));
         } else {

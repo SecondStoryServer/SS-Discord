@@ -1,6 +1,7 @@
 package me.syari.ss.discord.internal.requests;
 
 import me.syari.ss.discord.internal.JDAImpl;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
 import java.util.Queue;
@@ -24,7 +25,7 @@ class WebSocketSendingThread implements Runnable {
     private boolean attemptedToSend = false;
     private boolean shutdown = false;
 
-    WebSocketSendingThread(WebSocketClient client) {
+    WebSocketSendingThread(@NotNull WebSocketClient client) {
         this.client = client;
         this.api = client.api;
         this.queueLock = client.queueLock;
@@ -64,7 +65,6 @@ class WebSocketSendingThread implements Runnable {
 
     @Override
     public void run() {
-        //Make sure that we don't send any packets before sending auth info.
         if (!client.sentAuthInfo) {
             scheduleIdle();
             return;
@@ -77,21 +77,22 @@ class WebSocketSendingThread implements Runnable {
             queueLock.lockInterruptibly();
 
             String chunkOrSyncRequest = chunkSyncQueue.peek();
-            if (chunkOrSyncRequest != null)
+            if (chunkOrSyncRequest != null) {
                 handleChunkSync(chunkOrSyncRequest);
-            else
+            } else {
                 handleNormalRequest();
+            }
 
-            if (needRateLimit)
+            if (needRateLimit) {
                 scheduleRateLimit();
-            else if (!attemptedToSend)
+            } else if (!attemptedToSend) {
                 scheduleIdle();
-            else
+            } else {
                 scheduleSentMessage();
+            }
         } catch (InterruptedException ignored) {
             LOG.debug("Main WS send thread interrupted. Most likely JDA is disconnecting the websocket.");
         } finally {
-            // on any exception that might cause this lock to not release
             client.maybeUnlock();
         }
     }
@@ -111,7 +112,6 @@ class WebSocketSendingThread implements Runnable {
         }
     }
 
-    //returns true if send was successful
     private boolean send(String request) {
         needRateLimit = !client.send(request, false);
         attemptedToSend = true;

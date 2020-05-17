@@ -6,6 +6,7 @@ import me.syari.ss.discord.api.utils.data.DataArray;
 import me.syari.ss.discord.api.utils.data.DataObject;
 import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.requests.WebSocketClient;
+import org.jetbrains.annotations.NotNull;
 
 public class ReadyHandler extends SocketHandler {
 
@@ -14,7 +15,7 @@ public class ReadyHandler extends SocketHandler {
     }
 
     @Override
-    protected Long handleInternally(DataObject content) {
+    protected Long handleInternally(@NotNull DataObject content) {
         System.out.println(">> ReadyHandler");
         DataArray guilds = content.getArray("guilds");
         TLongObjectMap<DataObject> distinctGuilds = new TLongObjectHashMap<>();
