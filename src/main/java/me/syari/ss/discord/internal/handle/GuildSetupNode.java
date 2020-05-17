@@ -8,7 +8,7 @@ import gnu.trove.set.hash.TLongHashSet;
 import me.syari.ss.discord.api.utils.data.DataArray;
 import me.syari.ss.discord.api.utils.data.DataObject;
 import me.syari.ss.discord.internal.JDAImpl;
-import me.syari.ss.discord.internal.entities.GuildImpl;
+import me.syari.ss.discord.internal.entities.Guild;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -157,7 +157,7 @@ public class GuildSetupNode {
         for (TLongIterator it = removedMembers.iterator(); it.hasNext(); )
             members.remove(it.next());
         removedMembers.clear();
-        GuildImpl guild = api.getEntityBuilder().createGuild(id, partialGuild, expectedMemberCount);
+        Guild guild = api.getEntityBuilder().createGuild(id, partialGuild, expectedMemberCount);
         switch (type) {
             case AVAILABLE:
                 getController().remove(id);

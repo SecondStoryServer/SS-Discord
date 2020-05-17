@@ -1,6 +1,5 @@
 package me.syari.ss.discord.internal.entities;
 
-import me.syari.ss.discord.api.entities.Guild;
 import me.syari.ss.discord.api.entities.Role;
 import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.utils.cache.SnowflakeReference;
@@ -16,7 +15,7 @@ public class RoleImpl implements Role {
 
     public RoleImpl(long id, Guild guild) {
         this.id = id;
-        JDAImpl api = (JDAImpl) guild.getJDA();
+        JDAImpl api = guild.getJDA();
         this.guild = new SnowflakeReference<>(guild, api::getGuildById);
     }
 

@@ -1,5 +1,7 @@
 package me.syari.ss.discord.api.entities;
 
+import me.syari.ss.discord.internal.entities.Guild;
+
 import javax.annotation.Nonnull;
 
 

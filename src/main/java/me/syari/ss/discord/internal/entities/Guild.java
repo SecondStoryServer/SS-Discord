@@ -12,10 +12,11 @@ import me.syari.ss.discord.internal.utils.cache.SnowflakeCacheViewImpl;
 import me.syari.ss.discord.internal.utils.cache.SortedSnowflakeCacheViewImpl;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Comparator;
 import java.util.concurrent.CompletableFuture;
 
-public class GuildImpl implements Guild {
+public class Guild implements ISnowflake {
     private final long id;
     private final JDAImpl api;
 
@@ -31,7 +32,7 @@ public class GuildImpl implements Guild {
     private long ownerId;
     private int memberCount;
 
-    public GuildImpl(JDAImpl api, long id) {
+    public Guild(JDAImpl api, long id) {
         this.id = id;
         this.api = api;
     }
@@ -57,37 +58,31 @@ public class GuildImpl implements Guild {
         return ownerId;
     }
 
-    @Override
     public boolean isMember(@Nonnull User user) {
         return memberCache.get(user.getIdLong()) != null;
     }
 
-    @Override
     public Member getMember(@Nonnull User user) {
         Checks.notNull(user, "User");
         return getMemberById(user.getIdLong());
     }
 
     @Nonnull
-    @Override
     public MemberCacheView getMemberCache() {
         return memberCache;
     }
 
     @Nonnull
-    @Override
     public SortedSnowflakeCacheView<Role> getRoleCache() {
         return roleCache;
     }
 
     @Nonnull
-    @Override
     public SnowflakeCacheView<Emote> getEmoteCache() {
         return emoteCache;
     }
 
     @Nonnull
-    @Override
     public JDAImpl getJDA() {
         return api;
     }
@@ -97,6 +92,27 @@ public class GuildImpl implements Guild {
         return id;
     }
 
+
+    @Nullable
+    public Member getMemberById(long userId) {
+        return getMemberCache().getElementById(userId);
+    }
+
+    @Nullable
+    public Role getRoleById(@Nonnull String id) {
+        return getRoleCache().getElementById(id);
+    }
+
+    @Nullable
+    public Role getRoleById(long id) {
+        return getRoleCache().getElementById(id);
+    }
+
+    @Nullable
+    public Emote getEmoteById(long id) {
+        return getEmoteCache().getElementById(id);
+    }
+
     // ---- Setters -----
 
     public void setOwner(Member owner) {
@@ -104,13 +120,13 @@ public class GuildImpl implements Guild {
             this.owner = owner;
     }
 
-    public GuildImpl setName(String name) {
+    public Guild setName(String name) {
         this.name = name;
         return this;
     }
 
 
-    public GuildImpl setOwnerId(long ownerId) {
+    public Guild setOwnerId(long ownerId) {
         this.ownerId = ownerId;
         return this;
     }
@@ -152,9 +168,9 @@ public class GuildImpl implements Guild {
     public boolean equals(Object o) {
         if (o == this)
             return true;
-        if (!(o instanceof GuildImpl))
+        if (!(o instanceof Guild))
             return false;
-        GuildImpl oGuild = (GuildImpl) o;
+        Guild oGuild = (Guild) o;
         return this.id == oGuild.id;
     }
 

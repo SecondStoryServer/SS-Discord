@@ -1,6 +1,5 @@
 package me.syari.ss.discord.internal.entities;
 
-import me.syari.ss.discord.api.entities.Guild;
 import me.syari.ss.discord.api.entities.GuildChannel;
 import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.utils.Checks;
@@ -16,7 +15,7 @@ public abstract class AbstractChannelImpl<T extends GuildChannel, M extends Abst
     protected String name;
     protected int rawPosition;
 
-    public AbstractChannelImpl(long id, GuildImpl guild) {
+    public AbstractChannelImpl(long id, Guild guild) {
         this.id = id;
         this.api = guild.getJDA();
         this.guild = new SnowflakeReference<>(guild, api::getGuildById);
@@ -38,8 +37,8 @@ public abstract class AbstractChannelImpl<T extends GuildChannel, M extends Abst
 
     @Nonnull
     @Override
-    public GuildImpl getGuild() {
-        return (GuildImpl) guild.resolve();
+    public Guild getGuild() {
+        return (Guild) guild.resolve();
     }
 
     @Override

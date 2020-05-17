@@ -1,14 +1,13 @@
 package me.syari.ss.discord.internal.entities;
 
 import me.syari.ss.discord.api.JDA;
-import me.syari.ss.discord.api.entities.ChannelType;
 import me.syari.ss.discord.api.entities.TextChannel;
 
 import javax.annotation.Nonnull;
 
 public class TextChannelImpl extends AbstractChannelImpl<TextChannel, TextChannelImpl> implements TextChannel {
 
-    public TextChannelImpl(long id, GuildImpl guild) {
+    public TextChannelImpl(long id, Guild guild) {
         super(id, guild);
     }
 

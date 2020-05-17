@@ -2,7 +2,7 @@ package me.syari.ss.discord.internal.handle;
 
 import me.syari.ss.discord.api.utils.data.DataObject;
 import me.syari.ss.discord.internal.JDAImpl;
-import me.syari.ss.discord.internal.entities.GuildImpl;
+import me.syari.ss.discord.internal.entities.Guild;
 
 public class GuildCreateHandler extends SocketHandler {
 
@@ -14,7 +14,7 @@ public class GuildCreateHandler extends SocketHandler {
     protected Long handleInternally(DataObject content) {
         System.out.println(">> GuildCreateHandler");
         final long id = content.getLong("id");
-        GuildImpl guild = (GuildImpl) getJDA().getGuildById(id);
+        Guild guild = (Guild) getJDA().getGuildById(id);
         if (guild == null) {
             getJDA().getGuildSetupController().onCreate(id, content);
         }

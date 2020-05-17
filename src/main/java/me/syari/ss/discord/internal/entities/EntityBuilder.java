@@ -37,7 +37,7 @@ public class EntityBuilder {
         return api;
     }
 
-    private void createGuildEmotePass(GuildImpl guildObj, DataArray array) {
+    private void createGuildEmotePass(Guild guildObj, DataArray array) {
         SnowflakeCacheViewImpl<Emote> emoteView = guildObj.getEmotesView();
         try (UnlockHook hook = emoteView.writeLock()) {
             TLongObjectMap<Emote> emoteMap = emoteView.getMap();
@@ -53,8 +53,8 @@ public class EntityBuilder {
         }
     }
 
-    public GuildImpl createGuild(long guildId, DataObject guildJson, int memberCount) {
-        final GuildImpl guildObj = new GuildImpl(getJDA(), guildId);
+    public Guild createGuild(long guildId, DataObject guildJson, int memberCount) {
+        final Guild guildObj = new Guild(getJDA(), guildId);
         final String name = guildJson.getString("name", "");
         final DataArray roleArray = guildJson.getArray("roles");
         final DataArray channelArray = guildJson.getArray("channels");
@@ -93,7 +93,7 @@ public class EntityBuilder {
         return guildObj;
     }
 
-    private void createTextChannel(GuildImpl guildObj, DataObject channelData) {
+    private void createTextChannel(Guild guildObj, DataObject channelData) {
         if (ChannelType.isTextChannel(channelData.getInt("type"))) {
             createTextChannel(guildObj, channelData, guildObj.getIdLong());
         }
@@ -164,7 +164,7 @@ public class EntityBuilder {
         }
     }
 
-    public Member createMember(GuildImpl guild, DataObject memberJson) {
+    public Member createMember(Guild guild, DataObject memberJson) {
         boolean playbackCache = false;
         User user = createUser(memberJson.getObject("user"));
         Member member = (Member) guild.getMember(user);
@@ -200,7 +200,7 @@ public class EntityBuilder {
         return member;
     }
 
-    private void loadMember(GuildImpl guild, DataObject memberJson, Member member) {
+    private void loadMember(Guild guild, DataObject memberJson, Member member) {
         if (!memberJson.isNull("premium_since")) {
             TemporalAccessor boostDate = DateTimeFormatter.ISO_OFFSET_DATE_TIME.parse(memberJson.getString("premium_since"));
             member.setBoostDate(Instant.from(boostDate).toEpochMilli());
@@ -266,7 +266,7 @@ public class EntityBuilder {
             currentRoles.addAll(newRoles);
     }
 
-    public Emote createEmote(GuildImpl guildObj, DataObject json) {
+    public Emote createEmote(Guild guildObj, DataObject json) {
         DataArray emoteRoles = json.optArray("roles").orElseGet(DataArray::empty);
         final long emoteId = json.getLong("id");
         Emote emoteObj = (Emote) guildObj.getEmoteById(emoteId);
@@ -286,13 +286,13 @@ public class EntityBuilder {
     }
 
 
-    public void createTextChannel(GuildImpl guildObj, DataObject json, long guildId) {
+    public void createTextChannel(Guild guildObj, DataObject json, long guildId) {
         boolean playbackCache = false;
         final long id = json.getLong("id");
         TextChannelImpl channel = (TextChannelImpl) getJDA().getTextChannelsView().get(id);
         if (channel == null) {
             if (guildObj == null)
-                guildObj = (GuildImpl) getJDA().getGuildsView().get(guildId);
+                guildObj = (Guild) getJDA().getGuildsView().get(guildId);
             SnowflakeCacheViewImpl<TextChannel>
                     guildTextView = guildObj.getTextChannelsView(),
                     textView = getJDA().getTextChannelsView();
@@ -311,11 +311,11 @@ public class EntityBuilder {
             getJDA().getEventCache().playbackCache(EventCache.Type.CHANNEL, id);
     }
 
-    public Role createRole(GuildImpl guild, DataObject roleJson, long guildId) {
+    public Role createRole(Guild guild, DataObject roleJson, long guildId) {
         boolean playbackCache = false;
         final long id = roleJson.getLong("id");
         if (guild == null)
-            guild = (GuildImpl) getJDA().getGuildsView().get(guildId);
+            guild = (Guild) getJDA().getGuildsView().get(guildId);
         RoleImpl role = (RoleImpl) guild.getRolesView().get(id);
         if (role == null) {
             SnowflakeCacheViewImpl<Role> roleView = guild.getRolesView();
@@ -353,7 +353,7 @@ public class EntityBuilder {
                 DataObject memberJson = jsonObject.getObject("member");
                 memberJson.put("user", author);
                 LOG.trace("Initializing member from message create {}", memberJson);
-                member = createMember((GuildImpl) guild, memberJson);
+                member = createMember(guild, memberJson);
             } else {
                 member = cachedMember;
             }
@@ -395,7 +395,7 @@ public class EntityBuilder {
             throw new IllegalArgumentException(UNKNOWN_MESSAGE_TYPE);
         }
 
-        GuildImpl guildImpl = (GuildImpl) message.getGuild();
+        Guild guildImpl = (Guild) message.getGuild();
 
         if (guildImpl.isLoaded())
             return message;
