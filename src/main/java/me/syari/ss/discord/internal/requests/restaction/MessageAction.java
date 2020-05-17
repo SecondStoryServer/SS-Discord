@@ -3,7 +3,7 @@ package me.syari.ss.discord.internal.requests.restaction;
 import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.requests.Request;
 import me.syari.ss.discord.api.requests.Response;
-import me.syari.ss.discord.api.requests.restaction.MessageAction;
+import me.syari.ss.discord.api.requests.RestAction;
 import me.syari.ss.discord.api.utils.data.DataObject;
 import me.syari.ss.discord.internal.entities.Message;
 import me.syari.ss.discord.internal.entities.TextChannel;
@@ -25,19 +25,19 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class MessageActionImpl extends RestActionImpl<Message> implements MessageAction {
+public class MessageAction extends RestActionImpl<Message> implements RestAction<Message>, Appendable {
     protected final Map<String, InputStream> files = new HashMap<>();
     protected final Set<InputStream> ownedResources = new HashSet<>();
     protected final StringBuilder content;
     protected final TextChannel channel;
 
-    public MessageActionImpl(JDA api, Route.CompiledRoute route, TextChannel channel) {
+    public MessageAction(JDA api, Route.CompiledRoute route, TextChannel channel) {
         super(api, route);
         this.content = new StringBuilder();
         this.channel = channel;
     }
 
-    public MessageActionImpl(JDA api, Route.CompiledRoute route, TextChannel channel, StringBuilder contentBuilder) {
+    public MessageAction(JDA api, Route.CompiledRoute route, TextChannel channel, StringBuilder contentBuilder) {
         super(api, route);
         Checks.check(contentBuilder.length() <= Message.MAX_CONTENT_LENGTH,
                 "Cannot build a Message with more than %d characters. Please limit your input.", Message.MAX_CONTENT_LENGTH);
@@ -52,7 +52,7 @@ public class MessageActionImpl extends RestActionImpl<Message> implements Messag
     @Nonnull
     @Override
     @CheckReturnValue
-    public MessageActionImpl append(final CharSequence csq, final int start, final int end) {
+    public MessageAction append(final CharSequence csq, final int start, final int end) {
         if (content.length() + end - start > Message.MAX_CONTENT_LENGTH)
             throw new IllegalArgumentException("A message may not exceed 2000 characters. Please limit your input!");
         content.append(csq, start, end);
@@ -62,7 +62,7 @@ public class MessageActionImpl extends RestActionImpl<Message> implements Messag
     @Nonnull
     @Override
     @CheckReturnValue
-    public MessageActionImpl append(final char c) {
+    public MessageAction append(final char c) {
         if (content.length() == Message.MAX_CONTENT_LENGTH)
             throw new IllegalArgumentException("A message may not exceed 2000 characters. Please limit your input!");
         content.append(c);
@@ -125,5 +125,12 @@ public class MessageActionImpl extends RestActionImpl<Message> implements Messag
             return;
         LOG.warn("Found unclosed resources in MessageAction instance, closing on finalization step!");
         clearResources();
+    }
+
+    @Nonnull
+    @Override
+    @CheckReturnValue
+    public MessageAction append(@Nonnull final CharSequence csq) {
+        return append(csq, 0, csq.length());
     }
 }

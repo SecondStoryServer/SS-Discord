@@ -4,10 +4,9 @@ import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.entities.GuildChannel;
 import me.syari.ss.discord.api.entities.ISnowflake;
 import me.syari.ss.discord.api.entities.Mentionable;
-import me.syari.ss.discord.api.requests.restaction.MessageAction;
 import me.syari.ss.discord.api.utils.MiscUtil;
 import me.syari.ss.discord.internal.requests.Route;
-import me.syari.ss.discord.internal.requests.restaction.MessageActionImpl;
+import me.syari.ss.discord.internal.requests.restaction.MessageAction;
 import me.syari.ss.discord.internal.utils.Checks;
 
 import javax.annotation.CheckReturnValue;
@@ -53,9 +52,9 @@ public class TextChannel extends AbstractChannelImpl<TextChannel> implements ISn
 
         Route.CompiledRoute route = Route.Messages.SEND_MESSAGE.compile(getId());
         if (text instanceof StringBuilder)
-            return new MessageActionImpl(getJDA(), route, this, (StringBuilder) text);
+            return new MessageAction(getJDA(), route, this, (StringBuilder) text);
         else
-            return new MessageActionImpl(getJDA(), route, this).append(text);
+            return new MessageAction(getJDA(), route, this).append(text);
     }
 
 
