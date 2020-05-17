@@ -3,7 +3,7 @@ package me.syari.ss.discord.internal.utils.config.flags;
 import java.util.EnumSet;
 
 public enum ConfigFlag {
-    RAW_EVENTS,
+    RAW_EVENTS(false),
     USE_RELATIVE_RATELIMIT(true),
     RETRY_TIMEOUT(true),
     BULK_DELETE_SPLIT(true),
@@ -13,10 +13,6 @@ public enum ConfigFlag {
     GUILD_SUBSCRIPTIONS(true);
 
     private final boolean isDefault;
-
-    ConfigFlag() {
-        this(false);
-    }
 
     ConfigFlag(boolean isDefault) {
         this.isDefault = isDefault;

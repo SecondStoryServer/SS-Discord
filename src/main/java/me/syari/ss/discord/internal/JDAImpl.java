@@ -348,7 +348,7 @@ public class JDAImpl implements JDA {
         shutdownInternals();
     }
 
-    public void callMessageReceiveEvent(Message message){
+    public void callMessageReceiveEvent(Message message) {
         messageReceivedEvent.accept(new MessageReceivedEvent(message));
     }
 

@@ -9,17 +9,17 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 public class MetaConfig {
-    private static final MetaConfig defaultConfig = new MetaConfig(2048, null, ConfigFlag.getDefault());
+    private static final MetaConfig defaultConfig = new MetaConfig(2048, ConfigFlag.getDefault());
     private final ConcurrentMap<String, String> mdcContextMap;
     private final boolean useShutdownHook;
     private final boolean guildSubscriptions;
     private final int maxBufferSize;
 
-    public MetaConfig(int maxBufferSize, @Nullable ConcurrentMap<String, String> mdcContextMap, EnumSet<ConfigFlag> flags) {
+    public MetaConfig(int maxBufferSize, EnumSet<ConfigFlag> flags) {
         this.maxBufferSize = maxBufferSize;
         boolean enableMDC = flags.contains(ConfigFlag.MDC_CONTEXT);
         if (enableMDC)
-            this.mdcContextMap = mdcContextMap == null ? new ConcurrentHashMap<>() : null;
+            this.mdcContextMap = new ConcurrentHashMap<>();
         else
             this.mdcContextMap = null;
         this.useShutdownHook = flags.contains(ConfigFlag.SHUTDOWN_HOOK);

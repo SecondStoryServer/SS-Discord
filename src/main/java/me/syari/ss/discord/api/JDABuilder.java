@@ -55,8 +55,8 @@ public class JDABuilder {
         threadingConfig.setCallbackPool(null, shutdownCallbackPool);
         threadingConfig.setGatewayPool(null, shutdownMainWsPool);
         threadingConfig.setRateLimitPool(null, shutdownRateLimitPool);
-        SessionConfig sessionConfig = new SessionConfig(controller, httpClient, wsFactory, flags, maxReconnectDelay, largeThreshold);
-        MetaConfig metaConfig = new MetaConfig(maxBufferSize, null, flags);
+        SessionConfig sessionConfig = new SessionConfig(null, httpClient, wsFactory, flags, maxReconnectDelay, largeThreshold);
+        MetaConfig metaConfig = new MetaConfig(maxBufferSize, flags);
 
         JDAImpl jda = new JDAImpl(authConfig, sessionConfig, threadingConfig, metaConfig, messageReceivedEvent);
         jda.setChunkingFilter(chunkingFilter);
