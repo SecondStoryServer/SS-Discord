@@ -12,10 +12,6 @@ import java.util.function.Consumer;
 public interface RestAction<T> {
 
 
-    @Nonnull
-    RestAction<T> setCheck(@Nullable BooleanSupplier checks);
-
-
     default void queue() {
         queue(null);
     }
@@ -39,10 +35,6 @@ public interface RestAction<T> {
 
 
     T complete(boolean shouldQueue) throws RateLimitedException;
-
-
-    @Nonnull
-    CompletableFuture<T> submit(boolean shouldQueue);
 
 
 }

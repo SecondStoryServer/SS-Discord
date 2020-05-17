@@ -7,30 +7,9 @@ import me.syari.ss.discord.internal.entities.Message;
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.function.BooleanSupplier;
 
 
 public interface MessageAction extends RestAction<Message>, Appendable {
-    @Nonnull
-    @Override
-    MessageAction setCheck(@Nullable BooleanSupplier checks);
-
-
-    @Nonnull
-    MessageChannel getChannel();
-
-
-    boolean isEmpty();
-
-
-    @Nonnull
-    @CheckReturnValue
-    MessageAction apply(@Nullable final Message message);
-
-
-    @Nonnull
-    @CheckReturnValue
-    MessageAction content(@Nullable final String content);
 
 
     @Nonnull

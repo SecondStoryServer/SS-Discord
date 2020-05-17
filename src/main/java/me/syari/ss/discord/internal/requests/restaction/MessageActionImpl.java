@@ -2,7 +2,6 @@ package me.syari.ss.discord.internal.requests.restaction;
 
 import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.entities.MessageChannel;
-import me.syari.ss.discord.api.entities.MessageType;
 import me.syari.ss.discord.api.requests.Request;
 import me.syari.ss.discord.api.requests.Response;
 import me.syari.ss.discord.api.requests.restaction.MessageAction;
@@ -25,7 +24,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.BooleanSupplier;
 
 public class MessageActionImpl extends RestActionImpl<Message> implements MessageAction {
     private static final String CONTENT_TOO_BIG = String.format("A message may not exceed %d characters. Please limit your input!", Message.MAX_CONTENT_LENGTH);
@@ -48,45 +46,8 @@ public class MessageActionImpl extends RestActionImpl<Message> implements Messag
         this.channel = channel;
     }
 
-    @Nonnull
-    @Override
-    public MessageAction setCheck(BooleanSupplier checks) {
-        return (MessageAction) super.setCheck(checks);
-    }
-
-    @Nonnull
-    @Override
-    public MessageChannel getChannel() {
-        return channel;
-    }
-
-    @Override
-    public boolean isEmpty() {
+    private boolean isEmpty() {
         return Helpers.isBlank(content);
-    }
-
-    @Nonnull
-    @Override
-    @CheckReturnValue
-    public MessageActionImpl apply(final Message message) {
-        if (message == null || message.getType() != MessageType.DEFAULT)
-            return this;
-        files.clear();
-
-        return content(message.getContentRaw());
-    }
-
-    @Nonnull
-    @Override
-    @CheckReturnValue
-    public MessageActionImpl content(final String content) {
-        if (content == null || content.isEmpty())
-            this.content.setLength(0);
-        else if (content.length() <= Message.MAX_CONTENT_LENGTH)
-            this.content.replace(0, this.content.length(), content);
-        else
-            throw new IllegalArgumentException(CONTENT_TOO_BIG);
-        return this;
     }
 
     @Nonnull

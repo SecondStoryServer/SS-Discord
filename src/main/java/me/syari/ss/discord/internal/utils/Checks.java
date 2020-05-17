@@ -23,12 +23,6 @@ public class Checks {
             throw new IllegalArgumentException(name + " may not be empty");
     }
 
-    public static void noWhitespace(final CharSequence argument, final String name) {
-        notNull(argument, name);
-        if (Helpers.containsWhitespace(argument))
-            throw new IllegalArgumentException(name + " may not contain blanks");
-    }
-
     public static void notNegative(final int n, final String name) {
         if (n < 0)
             throw new IllegalArgumentException(name + " may not be negative");

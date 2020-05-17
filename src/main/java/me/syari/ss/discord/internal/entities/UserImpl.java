@@ -29,14 +29,12 @@ public class UserImpl implements User {
     }
 
     @Nonnull
-    @Override
     public String getDiscriminator() {
         return String.format("%04d", discriminator);
     }
 
     @Nonnull
-    @Override
-    public String getAsTag() {
+    private String getAsTag() {
         return getName() + '#' + getDiscriminator();
     }
 

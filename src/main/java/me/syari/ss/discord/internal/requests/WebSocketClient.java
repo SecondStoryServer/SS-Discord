@@ -150,8 +150,7 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
             this.printedRateLimitMessage = false;
         }
 
-        //Allows 115 messages to be sent before limiting.
-        if (this.messagesSent.get() <= 115 || (skipQueue && this.messagesSent.get() <= 119))   //technically we could go to 120, but we aren't going to chance it
+        if (this.messagesSent.get() <= 115 || (skipQueue && this.messagesSent.get() <= 119))
         {
             LOG.trace("<- {}", message);
             socket.sendText(message);

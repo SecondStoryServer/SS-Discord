@@ -8,14 +8,10 @@ import me.syari.ss.discord.internal.JDAImpl;
 import javax.annotation.Nonnull;
 
 public class EventManagerProxy implements IEventManager {
-    private IEventManager subject;
+    private final IEventManager subject;
 
     public EventManagerProxy(IEventManager subject) {
         this.subject = subject;
-    }
-
-    public void setSubject(IEventManager subject) {
-        this.subject = subject == null ? new InterfacedEventManager() : subject;
     }
 
     @Override

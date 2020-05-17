@@ -72,13 +72,6 @@ public class RestActionImpl<T> implements RestAction<T> {
         return api;
     }
 
-    @Nonnull
-    @Override
-    public RestAction<T> setCheck(BooleanSupplier checks) {
-        this.checks = checks;
-        return this;
-    }
-
     @Override
     public void queue(Consumer<? super T> success, Consumer<? super Throwable> failure) {
         Route.CompiledRoute route = finalizeRoute();
@@ -93,8 +86,7 @@ public class RestActionImpl<T> implements RestAction<T> {
     }
 
     @Nonnull
-    @Override
-    public CompletableFuture<T> submit(boolean shouldQueue) {
+    private CompletableFuture<T> submit(boolean shouldQueue) {
         Route.CompiledRoute route = finalizeRoute();
         Checks.notNull(route, "Route");
         RequestBody data = finalizeData();

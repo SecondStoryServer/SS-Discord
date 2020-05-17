@@ -45,14 +45,6 @@ public class SortedSnowflakeCacheViewImpl<T extends ISnowflake & Comparable<? su
         }
     }
 
-    @Nonnull
-    @Override
-    public List<T> getElementsByName(@Nonnull String name, boolean ignoreCase) {
-        List<T> filtered = super.getElementsByName(name, ignoreCase);
-        filtered.sort(comparator);
-        return filtered;
-    }
-
     @Override
     public Spliterator<T> spliterator() {
         try (UnlockHook hook = readLock()) {
@@ -64,12 +56,6 @@ public class SortedSnowflakeCacheViewImpl<T extends ISnowflake & Comparable<? su
     @Override
     public Stream<T> stream() {
         return super.stream().sorted(comparator);
-    }
-
-    @Nonnull
-    @Override
-    public Stream<T> parallelStream() {
-        return super.parallelStream().sorted(comparator);
     }
 
     @Nonnull

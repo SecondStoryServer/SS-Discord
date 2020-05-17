@@ -28,15 +28,7 @@ public interface CacheView<T> extends Iterable<T> {
 
 
     @Nonnull
-    List<T> getElementsByName(@Nonnull String name, boolean ignoreCase);
-
-
-    @Nonnull
     Stream<T> stream();
-
-
-    @Nonnull
-    Stream<T> parallelStream();
 
 
     @Nonnull

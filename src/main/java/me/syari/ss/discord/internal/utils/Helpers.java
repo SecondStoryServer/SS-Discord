@@ -74,21 +74,4 @@ public final class Helpers {
             out.append(' ');
         return out.append(input).toString();
     }
-
-    // ## CollectionUtils ##
-
-    public static boolean deepEquals(Collection<?> first, Collection<?> second) {
-        if (first == second)
-            return true;
-        if (first == null || second == null || first.size() != second.size())
-            return false;
-        for (Iterator<?> itFirst = first.iterator(), itSecond = second.iterator(); itFirst.hasNext(); ) {
-            Object elementFirst = itFirst.next();
-            Object elementSecond = itSecond.next();
-            if (!Objects.equals(elementFirst, elementSecond))
-                return false;
-        }
-        return true;
-    }
-
 }

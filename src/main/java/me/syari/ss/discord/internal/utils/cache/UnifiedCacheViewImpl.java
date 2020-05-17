@@ -10,7 +10,6 @@ import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class UnifiedCacheViewImpl<T, E extends CacheView<T>> implements CacheView<T> {
@@ -56,23 +55,8 @@ public class UnifiedCacheViewImpl<T, E extends CacheView<T>> implements CacheVie
 
     @Nonnull
     @Override
-    public List<T> getElementsByName(@Nonnull String name, boolean ignoreCase) {
-        return Collections.unmodifiableList(distinctStream()
-                .flatMap(view -> view.getElementsByName(name, ignoreCase).stream())
-                .distinct()
-                .collect(Collectors.toList()));
-    }
-
-    @Nonnull
-    @Override
     public Stream<T> stream() {
         return distinctStream().flatMap(CacheView::stream).distinct();
-    }
-
-    @Nonnull
-    @Override
-    public Stream<T> parallelStream() {
-        return distinctStream().flatMap(CacheView::parallelStream).distinct();
     }
 
     @Nonnull

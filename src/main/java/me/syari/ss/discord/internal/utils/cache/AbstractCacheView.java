@@ -4,7 +4,6 @@ import gnu.trove.map.TLongObjectMap;
 import gnu.trove.map.hash.TLongObjectHashMap;
 import me.syari.ss.discord.api.utils.LockIterator;
 import me.syari.ss.discord.api.utils.cache.CacheView;
-import me.syari.ss.discord.internal.utils.Checks;
 import me.syari.ss.discord.internal.utils.UnlockHook;
 import org.apache.commons.collections4.iterators.ObjectArrayIterator;
 
@@ -95,26 +94,6 @@ public abstract class AbstractCacheView<T> extends ReadWriteLockCache<T> impleme
         return elements.isEmpty();
     }
 
-    @Nonnull
-    @Override
-    public List<T> getElementsByName(@Nonnull String name, boolean ignoreCase) {
-        Checks.notEmpty(name, "Name");
-        if (elements.isEmpty())
-            return Collections.emptyList();
-        if (nameMapper == null) // no getName method available
-            throw new UnsupportedOperationException("The contained elements are not assigned with names.");
-        if (isEmpty())
-            return Collections.emptyList();
-        List<T> list = new ArrayList<>();
-        forEach(elem ->
-        {
-            String elementName = nameMapper.apply(elem);
-            if (elementName != null && equals(ignoreCase, elementName, name))
-                list.add(elem);
-        });
-        return list; // must be modifiable because of SortedSnowflakeCacheView
-    }
-
     @Override
     public Spliterator<T> spliterator() {
         try (UnlockHook hook = readLock()) {
@@ -126,12 +105,6 @@ public abstract class AbstractCacheView<T> extends ReadWriteLockCache<T> impleme
     @Override
     public Stream<T> stream() {
         return StreamSupport.stream(spliterator(), false);
-    }
-
-    @Nonnull
-    @Override
-    public Stream<T> parallelStream() {
-        return StreamSupport.stream(spliterator(), true);
     }
 
     @Nonnull

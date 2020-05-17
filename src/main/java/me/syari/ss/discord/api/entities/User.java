@@ -11,14 +11,6 @@ public interface User extends IMentionable {
     String getName();
 
 
-    @Nonnull
-    String getDiscriminator();
-
-
-    @Nonnull
-    String getAsTag();
-
-
     boolean isBot();
 
 

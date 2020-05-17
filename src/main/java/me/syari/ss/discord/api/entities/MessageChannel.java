@@ -42,15 +42,6 @@ public interface MessageChannel extends ISnowflake, Formattable {
             return new MessageActionImpl(getJDA(), route, this).append(text);
     }
 
-    @Nonnull
-    @CheckReturnValue
-    default MessageAction sendMessage(@Nonnull Message msg) {
-        Checks.notNull(msg, "Message");
-
-        Route.CompiledRoute route = Route.Messages.SEND_MESSAGE.compile(getId());
-        return new MessageActionImpl(getJDA(), route, this).apply(msg);
-    }
-
     @Override
     default void formatTo(Formatter formatter, int flags, int width, int precision) {
         boolean leftJustified = (flags & FormattableFlags.LEFT_JUSTIFY) == FormattableFlags.LEFT_JUSTIFY;

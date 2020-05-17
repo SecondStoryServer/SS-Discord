@@ -366,7 +366,6 @@ public class EntityBuilder {
 
         final String content = jsonObject.getString("content", "");
         final boolean fromWebhook = jsonObject.hasKey("webhook_id");
-        final boolean tts = jsonObject.getBoolean("tts");
 
         User user;
         switch (chan.getType()) {
