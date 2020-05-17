@@ -59,9 +59,4 @@ public interface MessageAction extends RestAction<Message>, Appendable {
     @Override
     @CheckReturnValue
     MessageAction append(final char c);
-
-
-    @Nonnull
-    @CheckReturnValue
-    MessageAction override(final boolean bool);
 }

@@ -31,7 +31,7 @@ public class MessageActionImpl extends RestActionImpl<Message> implements Messag
     protected final Set<InputStream> ownedResources = new HashSet<>();
     protected final StringBuilder content;
     protected final MessageChannel channel;
-    protected boolean tts = false, override = false;
+    protected boolean tts = false;
 
     public MessageActionImpl(JDA api, Route.CompiledRoute route, MessageChannel channel) {
         super(api, route);
@@ -121,14 +121,6 @@ public class MessageActionImpl extends RestActionImpl<Message> implements Messag
         return this;
     }
 
-    @Nonnull
-    @Override
-    @CheckReturnValue
-    public MessageActionImpl override(final boolean bool) {
-        this.override = isEdit() && bool;
-        return this;
-    }
-
     private void clearResources() {
         for (InputStream ownedResource : ownedResources) {
             try {
@@ -162,18 +154,8 @@ public class MessageActionImpl extends RestActionImpl<Message> implements Messag
 
     protected DataObject getJSON() {
         final DataObject obj = DataObject.empty();
-        if (override) {
-            obj.putNull("embed");
-            if (content.length() == 0)
-                obj.putNull("content");
-            else
-                obj.put("content", content.toString());
-            obj.putNull("nonce");
-            obj.put("tts", tts);
-        } else {
-            obj.put("content", content.toString());
-            obj.put("tts", tts);
-        }
+        obj.put("content", content.toString());
+        obj.put("tts", tts);
         return obj;
     }
 
