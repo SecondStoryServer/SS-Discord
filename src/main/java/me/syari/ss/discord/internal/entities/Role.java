@@ -1,26 +1,25 @@
 package me.syari.ss.discord.internal.entities;
 
-import me.syari.ss.discord.api.entities.Role;
+import me.syari.ss.discord.api.entities.Mentionable;
 import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.utils.cache.SnowflakeReference;
 
 import javax.annotation.Nonnull;
 import java.time.OffsetDateTime;
 
-public class RoleImpl implements Role {
+public class Role implements Mentionable, Comparable<Role> {
     private final long id;
     private final SnowflakeReference<Guild> guild;
 
     private String name;
 
-    public RoleImpl(long id, Guild guild) {
+    public Role(long id, Guild guild) {
         this.id = id;
         JDAImpl api = guild.getJDA();
         this.guild = new SnowflakeReference<>(guild, api::getGuildById);
     }
 
     @Nonnull
-    @Override
     public String getName() {
         return name;
     }
@@ -57,18 +56,15 @@ public class RoleImpl implements Role {
     }
 
     @Override
-    public int compareTo(@Nonnull Role r) {
-        if (this == r)
+    public int compareTo(@Nonnull Role role) {
+        if (this == role)
             return 0;
-        if (!(r instanceof RoleImpl))
-            throw new IllegalArgumentException("Cannot compare different role implementations");
-        RoleImpl impl = (RoleImpl) r;
 
-        if (this.guild.getIdLong() != impl.guild.getIdLong())
+        if (this.guild.getIdLong() != role.guild.getIdLong())
             throw new IllegalArgumentException("Cannot compare roles that aren't from the same guild!");
 
         OffsetDateTime thisTime = this.getTimeCreated();
-        OffsetDateTime rTime = r.getTimeCreated();
+        OffsetDateTime rTime = role.getTimeCreated();
 
         //We compare the provided role's time to this's time instead of the reverse as one would expect due to how
         // discord deals with hierarchy. The more recent a role was created, the lower its hierarchy ranking when

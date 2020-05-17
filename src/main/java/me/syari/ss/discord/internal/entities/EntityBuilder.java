@@ -315,12 +315,12 @@ public class EntityBuilder {
         boolean playbackCache = false;
         final long id = roleJson.getLong("id");
         if (guild == null)
-            guild = (Guild) getJDA().getGuildsView().get(guildId);
-        RoleImpl role = (RoleImpl) guild.getRolesView().get(id);
+            guild = getJDA().getGuildsView().get(guildId);
+        Role role = guild.getRolesView().get(id);
         if (role == null) {
             SnowflakeCacheViewImpl<Role> roleView = guild.getRolesView();
             try (UnlockHook hook = roleView.writeLock()) {
-                role = new RoleImpl(id, guild);
+                role = new Role(id, guild);
                 playbackCache = roleView.getMap().put(id, role) == null;
             }
         }
