@@ -27,7 +27,6 @@ public class Message {
     protected final TLongSet mentionedUsers;
     protected final TLongSet mentionedRoles;
     protected final String content;
-    protected final boolean isTTS;
 
     protected String altContent = null;
 
@@ -38,10 +37,9 @@ public class Message {
 
     public Message(
             long id, MessageChannel channel, MessageType type,
-            TLongSet mentionedUsers, TLongSet mentionedRoles, boolean tts,
+            TLongSet mentionedUsers, TLongSet mentionedRoles,
             String content, User author, Member member) {
         this.content = content;
-        this.isTTS = tts;
         this.id = id;
         this.channel = channel;
         this.type = type;
@@ -195,10 +193,6 @@ public class Message {
         if (this.emoteMentions == null)
             emoteMentions = Collections.unmodifiableList(processMentions(Message.MentionType.EMOTE, new ArrayList<>(), this::matchEmote));
         return emoteMentions;
-    }
-
-    public boolean isTTS() {
-        return isTTS;
     }
 
     @Override

@@ -17,7 +17,6 @@ import me.syari.ss.discord.internal.utils.cache.SnowflakeCacheViewImpl;
 import org.slf4j.Logger;
 
 import java.time.Instant;
-import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAccessor;
 import java.util.*;
@@ -408,7 +407,7 @@ public class EntityBuilder {
         Message message;
         if (type == MessageType.DEFAULT) {
             message = new Message(id, chan, type,
-                    mentionedUsers, mentionedRoles, tts,
+                    mentionedUsers, mentionedRoles,
                     content, user, member);
         } else {
             throw new IllegalArgumentException(UNKNOWN_MESSAGE_TYPE);
