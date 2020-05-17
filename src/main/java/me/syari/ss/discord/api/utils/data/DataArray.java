@@ -115,8 +115,7 @@ public class DataArray implements Iterable<Object> {
         }
         if (stringMapper != null && value instanceof String) {
             return stringMapper.apply((String) value);
-        }
-        else if (numberMapper != null && value instanceof Number) {
+        } else if (numberMapper != null && value instanceof Number) {
             return numberMapper.apply((Number) value);
         }
 

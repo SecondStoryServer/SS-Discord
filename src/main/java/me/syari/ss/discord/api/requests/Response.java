@@ -66,8 +66,7 @@ public class Response implements Closeable {
 
     @NotNull
     public String getString() {
-        return parseBody(String.class, this::readString)
-                .orElseGet(() -> fallbackString == null ? "N/A" : fallbackString);
+        return parseBody(String.class, this::readString).orElseGet(() -> fallbackString == null ? "N/A" : fallbackString);
     }
 
     @NotNull
@@ -101,8 +100,9 @@ public class Response implements Closeable {
 
     @Override
     public void close() {
-        if (rawResponse != null)
+        if (rawResponse != null) {
             rawResponse.close();
+        }
     }
 
     private String readString(@NotNull BufferedReader reader) {
@@ -122,8 +122,9 @@ public class Response implements Closeable {
         }
 
         attemptedParsing = true;
-        if (body == null || rawResponse == null || rawResponse.body().contentLength() == 0)
+        if (body == null || rawResponse == null || rawResponse.body().contentLength() == 0) {
             return Optional.empty();
+        }
 
         BufferedReader reader = null;
         try {
@@ -139,10 +140,11 @@ public class Response implements Closeable {
                 reader.close();
             } catch (NullPointerException | IOException ignored) {
             }
-            if (opt && e instanceof ParsingException)
+            if (opt && e instanceof ParsingException) {
                 return Optional.empty();
-            else
+            } else {
                 throw new IllegalStateException("An error occurred while parsing the response for a RestAction", e);
+            }
         }
     }
 }

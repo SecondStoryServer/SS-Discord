@@ -22,7 +22,8 @@ import java.util.function.Consumer;
 public class RestAction<T> {
     public static final Logger LOG = JDALogger.getLog(RestAction.class);
 
-    private static final Consumer<Object> DEFAULT_SUCCESS = o -> { };
+    private static final Consumer<Object> DEFAULT_SUCCESS = o -> {
+    };
 
     private static final Consumer<? super Throwable> DEFAULT_FAILURE = t ->
     {

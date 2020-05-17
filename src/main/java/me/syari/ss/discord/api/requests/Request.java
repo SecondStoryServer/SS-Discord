@@ -35,12 +35,13 @@ public class Request<T> {
                    Route.CompiledRoute route) {
         this.restAction = restAction;
         this.onSuccess = onSuccess;
-        if (onFailure instanceof ContextException.ContextConsumer)
+        if (onFailure instanceof ContextException.ContextConsumer) {
             this.onFailure = onFailure;
-        else if (RestAction.isPassContext())
+        } else if (RestAction.isPassContext()) {
             this.onFailure = ContextException.here(onFailure);
-        else
+        } else {
             this.onFailure = onFailure;
+        }
         this.shouldQueue = shouldQueue;
         this.body = body;
         this.route = route;

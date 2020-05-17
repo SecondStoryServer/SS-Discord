@@ -20,8 +20,9 @@ public class RestFuture<T> extends CompletableFuture<T> {
 
     @Override
     public boolean cancel(final boolean mayInterrupt) {
-        if (this.request != null)
+        if (this.request != null) {
             this.request.cancel();
+        }
 
         return (!isDone() && !isCancelled()) && super.cancel(mayInterrupt);
     }

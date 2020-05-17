@@ -4,6 +4,7 @@ import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import okio.Okio;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
 import java.io.*;
@@ -21,7 +22,6 @@ public class IOUtil {
         return URI.create(uri).getHost();
     }
 
-
     public static byte[] readFully(InputStream stream) throws IOException {
         Checks.notNull(stream, "InputStream");
 
@@ -34,7 +34,6 @@ public class IOUtil {
             return bos.toByteArray();
         }
     }
-
 
     public static RequestBody createRequestBody(final MediaType contentType, final InputStream stream) {
         return new BufferedRequestBody(Okio.source(stream), contentType);
@@ -50,9 +49,8 @@ public class IOUtil {
         return buffer;
     }
 
-
     @SuppressWarnings("ConstantConditions")
-    public static InputStream getBody(okhttp3.Response response) throws IOException {
+    public static @Nullable InputStream getBody(okhttp3.@NotNull Response response) throws IOException {
         String encoding = response.header("content-encoding", "");
         InputStream data = new BufferedInputStream(response.body().byteStream());
         data.mark(256);

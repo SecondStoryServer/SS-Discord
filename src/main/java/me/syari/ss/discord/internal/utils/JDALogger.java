@@ -9,17 +9,13 @@ import java.io.StringWriter;
 import java.util.Map;
 import java.util.ServiceLoader;
 
-
 public class JDALogger {
-
     public static final boolean SLF4J_ENABLED;
 
     static {
         boolean tmp;
-
         try {
             Class.forName("org.slf4j.impl.StaticLoggerBinder");
-
             tmp = true;
         } catch (ClassNotFoundException eStatic) {
             try {
@@ -27,7 +23,6 @@ public class JDALogger {
                 tmp = ServiceLoader.load(serviceProviderInterface).iterator().hasNext();
             } catch (ClassNotFoundException eService) {
                 LoggerFactory.getLogger(JDALogger.class);
-
                 tmp = false;
             }
         }
@@ -40,7 +35,6 @@ public class JDALogger {
     private JDALogger() {
     }
 
-
     public static Logger getLog(Class<?> clazz) {
         synchronized (LOGS) {
             if (SLF4J_ENABLED)
@@ -48,7 +42,6 @@ public class JDALogger {
             return LOGS.computeIfAbsent(clazz.getName(), (n) -> new SimpleLogger(clazz.getSimpleName()));
         }
     }
-
 
     public static Object getLazyString(LazyEvaluation lazyLambda) {
         return new Object() {
@@ -64,7 +57,6 @@ public class JDALogger {
             }
         };
     }
-
 
     @FunctionalInterface
     public interface LazyEvaluation {

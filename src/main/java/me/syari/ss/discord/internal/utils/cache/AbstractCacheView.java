@@ -81,7 +81,6 @@ public abstract class AbstractCacheView<T> extends ReadWriteLockCache<T> impleme
         }
     }
 
-    @Override
     public long size() {
         return elements.size();
     }

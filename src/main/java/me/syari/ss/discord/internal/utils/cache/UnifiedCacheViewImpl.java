@@ -20,11 +20,6 @@ public class UnifiedCacheViewImpl<T, E extends CacheView<T>> implements CacheVie
     }
 
     @Override
-    public long size() {
-        return distinctStream().mapToLong(CacheView::size).sum();
-    }
-
-    @Override
     public boolean isEmpty() {
         return distinctStream().allMatch(CacheView::isEmpty);
     }

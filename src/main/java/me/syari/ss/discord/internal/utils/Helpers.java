@@ -3,9 +3,6 @@ package me.syari.ss.discord.internal.utils;
 import org.jetbrains.annotations.NotNull;
 
 public final class Helpers {
-
-    // ## StringUtils ##
-
     public static boolean isEmpty(final CharSequence seq) {
         return seq == null || seq.length() == 0;
     }
@@ -14,31 +11,37 @@ public final class Helpers {
         if (isEmpty(seq))
             return true;
         for (int i = 0; i < seq.length(); i++) {
-            if (!Character.isWhitespace(seq.charAt(i)))
+            if (!Character.isWhitespace(seq.charAt(i))) {
                 return false;
+            }
         }
         return true;
     }
 
     public static int countMatches(final CharSequence seq, final char c) {
-        if (isEmpty(seq))
+        if (isEmpty(seq)) {
             return 0;
+        }
         int count = 0;
         for (int i = 0; i < seq.length(); i++) {
-            if (seq.charAt(i) == c)
+            if (seq.charAt(i) == c) {
                 count++;
+            }
         }
         return count;
     }
 
     public static String truncate(final String input, final int maxWidth) {
-        if (input == null)
+        if (input == null) {
             return null;
+        }
         Checks.notNegative(maxWidth, "maxWidth");
-        if (input.length() <= maxWidth)
+        if (input.length() <= maxWidth) {
             return input;
-        if (maxWidth == 0)
+        }
+        if (maxWidth == 0) {
             return "";
+        }
         return input.substring(0, maxWidth);
     }
 

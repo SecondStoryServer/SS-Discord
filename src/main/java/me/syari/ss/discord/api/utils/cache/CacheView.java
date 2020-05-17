@@ -17,8 +17,6 @@ public interface CacheView<T> extends Iterable<T> {
     @NotNull
     ClosableIterator<T> lockedIterator();
 
-    long size();
-
     boolean isEmpty();
 
     @NotNull
