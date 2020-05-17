@@ -8,7 +8,6 @@ import me.syari.ss.discord.api.exceptions.RateLimitedException;
 import me.syari.ss.discord.api.requests.Request;
 import me.syari.ss.discord.api.requests.Response;
 import me.syari.ss.discord.api.utils.ChunkingFilter;
-import me.syari.ss.discord.api.utils.Compression;
 import me.syari.ss.discord.api.utils.MiscUtil;
 import me.syari.ss.discord.api.utils.SessionController;
 import me.syari.ss.discord.api.utils.cache.CacheView;
@@ -344,11 +343,6 @@ public class JDAImpl implements JDA {
 
     public int getMaxReconnectDelay() {
         return sessionConfig.getMaxReconnectDelay();
-    }
-
-    @NotNull
-    public ShardInfo getShardInfo() {
-        return ShardInfo.SINGLE;
     }
 
     public EntityBuilder getEntityBuilder() {

@@ -4,7 +4,6 @@ import com.neovisionaries.ws.client.*;
 import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.exceptions.ParsingException;
 import me.syari.ss.discord.api.requests.CloseCode;
-import me.syari.ss.discord.api.utils.Compression;
 import me.syari.ss.discord.api.utils.SessionController;
 import me.syari.ss.discord.api.utils.data.DataArray;
 import me.syari.ss.discord.api.utils.data.DataObject;
@@ -75,7 +74,7 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
     public WebSocketClient(@NotNull JDAImpl api) {
         this.api = api;
         this.executor = api.getGatewayPool();
-        this.shardInfo = api.getShardInfo();
+        this.shardInfo = JDA.ShardInfo.SINGLE;
         this.shouldReconnect = api.isAutoReconnect();
         this.connectNode = new StartingNode();
         setupHandlers();
@@ -190,9 +189,8 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
             throw new RejectedExecutionException("JDA is shutdown!");
         initiating = true;
 
-        String url = api.getGatewayUrl() + "?encoding=json&v=" + DISCORD_GATEWAY_VERSION;
-        url += "&compress=" + Compression.ZLIB.getKey();
-        if (decompressor == null || decompressor.getType() != Compression.ZLIB)
+        String url = api.getGatewayUrl() + "?encoding=json&v=" + DISCORD_GATEWAY_VERSION + "&compress=zlib-stream";
+        if (decompressor == null)
             decompressor = new ZlibDecompressor(api.getMaxBufferSize());
 
         try {
@@ -607,7 +605,7 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
 
     protected DataObject handleBinary(byte[] binary) throws DataFormatException {
         if (decompressor == null) {
-            throw new IllegalStateException("Cannot decompress binary message due to unknown compression algorithm: " + Compression.ZLIB);
+            throw new IllegalStateException("Cannot decompress binary message due to unknown compression algorithm: ZLIB");
         }
         String jsonString;
         try {

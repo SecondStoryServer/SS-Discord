@@ -1,6 +1,5 @@
 package me.syari.ss.discord.internal.utils.compress;
 
-import me.syari.ss.discord.api.utils.Compression;
 import me.syari.ss.discord.internal.utils.IOUtil;
 import me.syari.ss.discord.internal.utils.JDALogger;
 import org.jetbrains.annotations.NotNull;
@@ -62,11 +61,6 @@ public class ZlibDecompressor implements Decompressor {
 
     private Object lazy(byte[] data) {
         return JDALogger.getLazyString(() -> Arrays.toString(data));
-    }
-
-    @Override
-    public Compression getType() {
-        return Compression.ZLIB;
     }
 
     @Override

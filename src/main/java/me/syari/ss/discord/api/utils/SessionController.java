@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class SessionController {
-    public static int IDENTIFY_DELAY = 5;
+    public final static int IDENTIFY_DELAY = 5;
     protected static final Logger log = JDALogger.getLog(SessionController.class);
     protected final Object lock = new Object();
     protected final Queue<SessionConnectNode> connectQueue;

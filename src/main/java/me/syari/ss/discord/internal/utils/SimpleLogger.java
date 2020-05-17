@@ -19,8 +19,6 @@ import java.util.Date;
 import java.util.Properties;
 
 class SimpleLogger extends MarkerIgnoringBase {
-
-    private static final long serialVersionUID = -632788891211436180L;
     private static final String CONFIGURATION_FILE = "Loggerger.properties";
 
     private static final long START_TIME = System.currentTimeMillis();

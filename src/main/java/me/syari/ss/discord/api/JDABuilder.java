@@ -2,7 +2,6 @@ package me.syari.ss.discord.api;
 
 import me.syari.ss.discord.api.event.MessageReceivedEvent;
 import me.syari.ss.discord.api.utils.ChunkingFilter;
-import me.syari.ss.discord.api.utils.Compression;
 import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.utils.config.AuthorizationConfig;
 import me.syari.ss.discord.internal.utils.config.MetaConfig;
@@ -20,7 +19,6 @@ public class JDABuilder {
     protected final String token;
     protected final Consumer<MessageReceivedEvent> messageReceivedEvent;
     protected OkHttpClient.Builder httpClientBuilder = null;
-    protected final Compression compression = Compression.ZLIB;
     protected final int maxReconnectDelay = 900;
     protected final int largeThreshold = 250;
     protected final int maxBufferSize = 2048;

@@ -1,15 +1,12 @@
 package me.syari.ss.discord.api.utils;
 
-import me.syari.ss.discord.internal.utils.JDALogger;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.concurrent.locks.Lock;
 
 public class LockIterator<T> implements ClosableIterator<T> {
-    private final static Logger log = JDALogger.getLog(ClosableIterator.class);
     private final Iterator<? extends T> it;
     private Lock lock;
 
@@ -41,14 +38,5 @@ public class LockIterator<T> implements ClosableIterator<T> {
         if (lock == null)
             throw new NoSuchElementException();
         return it.next();
-    }
-
-    @Override
-    @Deprecated
-    protected void finalize() {
-        if (lock != null) {
-            log.error("Finalizing without closing, performing force close on lock");
-            close();
-        }
     }
 }
