@@ -14,7 +14,7 @@ public class GuildCreateHandler extends SocketHandler {
     protected Long handleInternally(DataObject content) {
         System.out.println(">> GuildCreateHandler");
         final long id = content.getLong("id");
-        Guild guild = (Guild) getJDA().getGuildById(id);
+        Guild guild = getJDA().getGuildById(id);
         if (guild == null) {
             getJDA().getGuildSetupController().onCreate(id, content);
         }

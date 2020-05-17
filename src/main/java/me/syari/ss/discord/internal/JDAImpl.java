@@ -5,8 +5,6 @@ import gnu.trove.map.TLongObjectMap;
 import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.events.MessageReceivedEvent;
 import me.syari.ss.discord.api.exceptions.RateLimitedException;
-import me.syari.ss.discord.api.hooks.InterfacedEventManager;
-import me.syari.ss.discord.api.hooks.ListenerAdapter;
 import me.syari.ss.discord.api.requests.Request;
 import me.syari.ss.discord.api.requests.Response;
 import me.syari.ss.discord.api.utils.ChunkingFilter;
@@ -19,7 +17,6 @@ import me.syari.ss.discord.api.utils.data.DataObject;
 import me.syari.ss.discord.internal.entities.*;
 import me.syari.ss.discord.internal.handle.EventCache;
 import me.syari.ss.discord.internal.handle.GuildSetupController;
-import me.syari.ss.discord.internal.hooks.EventManagerProxy;
 import me.syari.ss.discord.internal.requests.Requester;
 import me.syari.ss.discord.internal.requests.RestActionImpl;
 import me.syari.ss.discord.internal.requests.Route;
@@ -41,6 +38,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
+import java.util.function.Consumer;
 
 public class JDAImpl implements JDA {
     public static final Logger LOG = JDALogger.getLog(JDA.class);
@@ -54,7 +52,6 @@ public class JDAImpl implements JDA {
     protected final Thread shutdownHook;
     protected final EntityBuilder entityBuilder = new EntityBuilder(this);
     protected final EventCache eventCache;
-    protected final EventManagerProxy eventManager = new EventManagerProxy(new InterfacedEventManager());
 
     protected final GuildSetupController guildSetupController;
 
@@ -62,6 +59,7 @@ public class JDAImpl implements JDA {
     protected final ThreadingConfig threadConfig;
     protected final SessionConfig sessionConfig;
     protected final MetaConfig metaConfig;
+    private final Consumer<MessageReceivedEvent> messageReceivedEvent;
 
     protected WebSocketClient client;
     protected final Requester requester;
@@ -71,20 +69,17 @@ public class JDAImpl implements JDA {
     protected String gatewayUrl;
     protected ChunkingFilter chunkingFilter;
 
-    public JDAImpl(AuthorizationConfig authConfig, SessionConfig sessionConfig, ThreadingConfig threadConfig, MetaConfig metaConfig) {
+    public JDAImpl(AuthorizationConfig authConfig, SessionConfig sessionConfig, ThreadingConfig threadConfig, MetaConfig metaConfig, Consumer<MessageReceivedEvent> messageReceivedEvent) {
         this.authConfig = authConfig;
         this.threadConfig = threadConfig == null ? ThreadingConfig.getDefault() : threadConfig;
         this.sessionConfig = sessionConfig == null ? SessionConfig.getDefault() : sessionConfig;
         this.metaConfig = metaConfig == null ? MetaConfig.getDefault() : metaConfig;
+        this.messageReceivedEvent = messageReceivedEvent;
         this.shutdownHook = this.metaConfig.isUseShutdownHook() ? new Thread(this::shutdown, "JDA Shutdown Hook") : null;
         this.requester = new Requester(this);
         this.requester.setRetryOnTimeout(this.sessionConfig.isRetryOnTimeout());
         this.guildSetupController = new GuildSetupController(this);
         this.eventCache = new EventCache(isGuildSubscriptions());
-    }
-
-    public void handleEvent(@Nonnull MessageReceivedEvent event) {
-        eventManager.handle(event);
     }
 
     public boolean isRelativeRateLimit() {
@@ -192,7 +187,6 @@ public class JDAImpl implements JDA {
         this.verifyToken(false);
     }
 
-    // @param alreadyFailed If has already been a failed attempt with the current configuration
     public void verifyToken(boolean alreadyFailed) throws LoginException {
 
         RestActionImpl<DataObject> login = new RestActionImpl<DataObject>(this, Route.Self.GET_SELF.compile()) {
@@ -354,6 +348,10 @@ public class JDAImpl implements JDA {
         shutdownInternals();
     }
 
+    public void callMessageReceiveEvent(Message message){
+        messageReceivedEvent.accept(new MessageReceivedEvent(message));
+    }
+
     public synchronized void shutdownInternals() {
         if (status == Status.SHUTDOWN)
             return;
@@ -382,10 +380,6 @@ public class JDAImpl implements JDA {
     @Nonnull
     public ShardInfo getShardInfo() {
         return shardInfo == null ? ShardInfo.SINGLE : shardInfo;
-    }
-
-    public void setEventListener(@Nonnull ListenerAdapter listener) {
-        eventManager.register(listener);
     }
 
     public EntityBuilder getEntityBuilder() {

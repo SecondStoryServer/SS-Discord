@@ -9,7 +9,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
-//Helper class delegated to WebSocketClient
 class WebSocketSendingThread implements Runnable {
     private static final Logger LOG = WebSocketClient.LOG;
 

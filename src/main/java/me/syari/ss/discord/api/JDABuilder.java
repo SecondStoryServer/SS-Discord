@@ -1,7 +1,7 @@
 package me.syari.ss.discord.api;
 
 import com.neovisionaries.ws.client.WebSocketFactory;
-import me.syari.ss.discord.api.hooks.ListenerAdapter;
+import me.syari.ss.discord.api.events.MessageReceivedEvent;
 import me.syari.ss.discord.api.utils.ChunkingFilter;
 import me.syari.ss.discord.api.utils.Compression;
 import me.syari.ss.discord.api.utils.SessionController;
@@ -16,15 +16,16 @@ import okhttp3.OkHttpClient;
 import javax.annotation.Nonnull;
 import javax.security.auth.login.LoginException;
 import java.util.EnumSet;
+import java.util.function.Consumer;
 
 
 public class JDABuilder {
     protected final String token;
-    protected final ListenerAdapter listener;
+    protected final Consumer<MessageReceivedEvent> messageReceivedEvent;
     protected final boolean shutdownRateLimitPool = true;
     protected final boolean shutdownMainWsPool = true;
     protected final boolean shutdownCallbackPool = true;
-    protected SessionController controller = null;
+    protected final SessionController controller = null;
     protected OkHttpClient.Builder httpClientBuilder = null;
     protected final Compression compression = Compression.ZLIB;
     protected final int maxReconnectDelay = 900;
@@ -34,9 +35,9 @@ public class JDABuilder {
     protected final ChunkingFilter chunkingFilter = ChunkingFilter.ALL;
 
 
-    public JDABuilder(@Nonnull String token, ListenerAdapter listener) {
+    public JDABuilder(@Nonnull String token, Consumer<MessageReceivedEvent> messageReceivedEvent) {
         this.token = token;
-        this.listener = listener;
+        this.messageReceivedEvent = messageReceivedEvent;
     }
 
 
@@ -57,11 +58,9 @@ public class JDABuilder {
         SessionConfig sessionConfig = new SessionConfig(controller, httpClient, wsFactory, flags, maxReconnectDelay, largeThreshold);
         MetaConfig metaConfig = new MetaConfig(maxBufferSize, null, flags);
 
-        JDAImpl jda = new JDAImpl(authConfig, sessionConfig, threadingConfig, metaConfig);
+        JDAImpl jda = new JDAImpl(authConfig, sessionConfig, threadingConfig, metaConfig, messageReceivedEvent);
         jda.setChunkingFilter(chunkingFilter);
 
-
-        jda.setEventListener(listener);
         jda.setStatus(JDA.Status.INITIALIZED);
 
         jda.login(null, compression, true);

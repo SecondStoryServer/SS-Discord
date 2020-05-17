@@ -270,7 +270,7 @@ public class EntityBuilder {
     public Emote createEmote(Guild guildObj, DataObject json) {
         DataArray emoteRoles = json.optArray("roles").orElseGet(DataArray::empty);
         final long emoteId = json.getLong("id");
-        Emote emoteObj = (Emote) guildObj.getEmoteById(emoteId);
+        Emote emoteObj = guildObj.getEmoteById(emoteId);
         if (emoteObj == null)
             emoteObj = new Emote(emoteId);
         Set<Role> roleSet = emoteObj.getRoleSet();
