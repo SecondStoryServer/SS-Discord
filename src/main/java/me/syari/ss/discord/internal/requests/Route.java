@@ -1,12 +1,7 @@
 package me.syari.ss.discord.internal.requests;
 
-import me.syari.ss.discord.internal.utils.Checks;
 import me.syari.ss.discord.internal.utils.Helpers;
 
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nonnull;
-
-@SuppressWarnings("unused")
 public class Route {
     public static class Misc {
         public static final Route GATEWAY = new Route(Method.GET, "gateway");
@@ -18,39 +13,6 @@ public class Route {
 
     public static class Messages {
         public static final Route SEND_MESSAGE = new Route(Method.POST, "channels/{channel_id}/messages");
-    }
-
-    @Nonnull
-    public static Route custom(@Nonnull Method method, @Nonnull String route) {
-        Checks.notNull(method, "Method");
-        Checks.notEmpty(route, "Route");
-        Checks.noWhitespace(route, "Route");
-        return new Route(method, route);
-    }
-
-    @Nonnull
-    public static Route delete(@Nonnull String route) {
-        return custom(Method.DELETE, route);
-    }
-
-    @Nonnull
-    public static Route post(@Nonnull String route) {
-        return custom(Method.POST, route);
-    }
-
-    @Nonnull
-    public static Route put(@Nonnull String route) {
-        return custom(Method.PUT, route);
-    }
-
-    @Nonnull
-    public static Route patch(@Nonnull String route) {
-        return custom(Method.PATCH, route);
-    }
-
-    @Nonnull
-    public static Route get(@Nonnull String route) {
-        return custom(Method.GET, route);
     }
 
     private static final String majorParameters = "guild_id:channel_id:webhook_id";
@@ -67,16 +29,8 @@ public class Route {
             throw new IllegalArgumentException("An argument does not have both {}'s for route: " + method + "  " + route);
     }
 
-    public Method getMethod() {
-        return method;
-    }
-
     public String getRoute() {
         return route;
-    }
-
-    public int getParamCount() {
-        return paramCount;
     }
 
     public CompiledRoute compile(String... params) {
@@ -126,31 +80,11 @@ public class Route {
         private final Route baseRoute;
         private final String major;
         private final String compiledRoute;
-        private final boolean hasQueryParams;
 
-        private CompiledRoute(Route baseRoute, String compiledRoute, String major, boolean hasQueryParams) {
+        private CompiledRoute(Route baseRoute, String compiledRoute, String major) {
             this.baseRoute = baseRoute;
             this.compiledRoute = compiledRoute;
             this.major = major;
-            this.hasQueryParams = hasQueryParams;
-        }
-
-        private CompiledRoute(Route baseRoute, String compiledRoute, String major) {
-            this(baseRoute, compiledRoute, major, false);
-        }
-
-        @Nonnull
-        @CheckReturnValue
-        public CompiledRoute withQueryParams(String... params) {
-            Checks.check(params.length >= 2, "params length must be at least 2");
-            Checks.check(params.length % 2 == 0, "params length must be a multiple of 2");
-
-            StringBuilder newRoute = new StringBuilder(compiledRoute);
-
-            for (int i = 0; i < params.length; i++)
-                newRoute.append(!hasQueryParams && i == 0 ? '?' : '&').append(params[i]).append('=').append(params[++i]);
-
-            return new CompiledRoute(baseRoute, newRoute.toString(), major, true);
         }
 
         public String getMajorParameters() {
