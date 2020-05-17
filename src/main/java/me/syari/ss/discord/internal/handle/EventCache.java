@@ -37,7 +37,6 @@ public class EventCache {
                 iterator.advance();
                 long triggerId = iterator.key();
                 List<CacheNode> cache = iterator.value();
-                //Remove when this node is more than 100 events ago
                 cache.removeIf(node ->
                 {
                     boolean remove = responseTotal - node.responseTotal > TIMEOUT_AMOUNT;

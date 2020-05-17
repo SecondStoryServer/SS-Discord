@@ -23,7 +23,6 @@ import me.syari.ss.discord.internal.requests.WebSocketClient;
 import me.syari.ss.discord.internal.utils.Checks;
 import me.syari.ss.discord.internal.utils.JDALogger;
 import me.syari.ss.discord.internal.utils.cache.SnowflakeCacheViewImpl;
-import me.syari.ss.discord.internal.utils.config.AuthorizationConfig;
 import me.syari.ss.discord.internal.utils.config.MetaConfig;
 import me.syari.ss.discord.internal.utils.config.SessionConfig;
 import me.syari.ss.discord.internal.utils.config.ThreadingConfig;
@@ -54,7 +53,7 @@ public class JDAImpl implements JDA {
 
     protected final GuildSetupController guildSetupController;
 
-    protected final AuthorizationConfig authConfig;
+    protected final String token;
     protected final ThreadingConfig threadConfig;
     protected final SessionConfig sessionConfig;
     protected final MetaConfig metaConfig;
@@ -67,12 +66,12 @@ public class JDAImpl implements JDA {
     protected String gatewayUrl;
     protected ChunkingFilter chunkingFilter;
 
-    public JDAImpl(@NotNull AuthorizationConfig authConfig,
+    public JDAImpl(@NotNull String token,
                    @NotNull SessionConfig sessionConfig,
                    @NotNull ThreadingConfig threadConfig,
                    @NotNull MetaConfig metaConfig,
                    @NotNull Consumer<MessageReceivedEvent> messageReceivedEvent) {
-        this.authConfig = authConfig;
+        this.token = "Bot " + token;
         this.threadConfig = threadConfig;
         this.sessionConfig = sessionConfig;
         this.metaConfig = metaConfig;
@@ -127,11 +126,7 @@ public class JDAImpl implements JDA {
         this.gatewayUrl = getGateway();
         Checks.notNull(this.gatewayUrl, "Gateway URL");
 
-        String token = authConfig.getToken();
         setStatus(Status.LOGGING_IN);
-        if (token.isEmpty()) {
-            throw new LoginException("Provided token was null or empty!");
-        }
 
         Map<String, String> previousContext = null;
         ConcurrentMap<String, String> contextMap = metaConfig.getMdcContextMap();
@@ -216,7 +211,7 @@ public class JDAImpl implements JDA {
 
     @NotNull
     public String getToken() {
-        return authConfig.getToken();
+        return token;
     }
 
 

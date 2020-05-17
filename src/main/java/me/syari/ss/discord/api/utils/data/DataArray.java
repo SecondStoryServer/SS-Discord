@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import me.syari.ss.discord.api.exceptions.ParsingException;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -95,7 +96,8 @@ public class DataArray implements Iterable<Object> {
         }
     }
 
-    private ParsingException valueError(int index, String expectedType) {
+    @Contract("_, _ -> new")
+    private @NotNull ParsingException valueError(int index, String expectedType) {
         return new ParsingException("Unable to resolve value at " + index + " to type " + expectedType + ": " + data.get(index));
     }
 

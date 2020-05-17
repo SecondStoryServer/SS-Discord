@@ -27,7 +27,7 @@ public final class ThreadLocalReason {
 
     @NotNull
     public static Closable closable(@Nullable String reason) {
-        return new ThreadLocalReason.Closable(reason);
+        return new Closable(reason);
     }
 
     public static class Closable implements AutoCloseable {

@@ -2,6 +2,7 @@ package me.syari.ss.discord.internal.utils.compress;
 
 import me.syari.ss.discord.internal.utils.IOUtil;
 import me.syari.ss.discord.internal.utils.JDALogger;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.ByteArrayOutputStream;
@@ -25,7 +26,8 @@ public class ZlibDecompressor implements Decompressor {
         this.maxBufferSize = maxBufferSize;
     }
 
-    private SoftReference<ByteArrayOutputStream> newDecompressBuffer() {
+    @Contract(" -> new")
+    private @NotNull SoftReference<ByteArrayOutputStream> newDecompressBuffer() {
         return new SoftReference<>(new ByteArrayOutputStream(Math.min(1024, maxBufferSize)));
     }
 
@@ -59,7 +61,8 @@ public class ZlibDecompressor implements Decompressor {
         flushBuffer.put(data);
     }
 
-    private Object lazy(byte[] data) {
+    @Contract(pure = true)
+    private @NotNull Object lazy(byte[] data) {
         return JDALogger.getLazyString(() -> Arrays.toString(data));
     }
 

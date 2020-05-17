@@ -212,7 +212,8 @@ public class DataObject implements SerializableData {
         return this;
     }
 
-    private ParsingException valueError(String key, String expectedType) {
+    @Contract("_, _ -> new")
+    private @NotNull ParsingException valueError(String key, String expectedType) {
         return new ParsingException("Unable to resolve value with key " + key + " to type " + expectedType + ": " + data.get(key));
     }
 
