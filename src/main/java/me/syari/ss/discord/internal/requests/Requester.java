@@ -17,7 +17,6 @@ import javax.net.ssl.SSLPeerUnverifiedException;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.util.LinkedHashSet;
-import java.util.Map.Entry;
 import java.util.Set;
 
 public class Requester {
@@ -91,11 +90,6 @@ public class Requester {
 
         if (url.startsWith(DISCORD_API_PREFIX))
             builder.header("authorization", api.getToken());
-
-        if (apiRequest.getHeaders() != null) {
-            for (Entry<String, String> header : apiRequest.getHeaders().entrySet())
-                builder.addHeader(header.getKey(), header.getValue());
-        }
 
         okhttp3.Request request = builder.build();
 

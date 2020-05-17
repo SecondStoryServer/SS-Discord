@@ -9,7 +9,6 @@ import me.syari.ss.discord.internal.requests.CallbackContext;
 import me.syari.ss.discord.internal.requests.RestActionImpl;
 import me.syari.ss.discord.internal.requests.Route;
 import okhttp3.RequestBody;
-import org.apache.commons.collections4.map.CaseInsensitiveMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,7 +22,6 @@ public class Request<T> {
     private final boolean shouldQueue;
     private final Route.CompiledRoute route;
     private final RequestBody body;
-    private final CaseInsensitiveMap<String, String> headers;
 
     private final String localReason;
 
@@ -34,8 +32,7 @@ public class Request<T> {
                    Consumer<? super Throwable> onFailure,
                    boolean shouldQueue,
                    RequestBody body,
-                   Route.CompiledRoute route,
-                   CaseInsensitiveMap<String, String> headers) {
+                   Route.CompiledRoute route) {
         this.restAction = restAction;
         this.onSuccess = onSuccess;
         if (onFailure instanceof ContextException.ContextConsumer)
@@ -47,7 +44,6 @@ public class Request<T> {
         this.shouldQueue = shouldQueue;
         this.body = body;
         this.route = route;
-        this.headers = headers;
 
         this.api = (JDAImpl) restAction.getJDA();
         this.localReason = ThreadLocalReason.getCurrent();
@@ -69,8 +65,7 @@ public class Request<T> {
         if (response.code == 429) {
             onFailure(new RateLimitedException(route, response.retryAfter));
         } else {
-            onFailure(ErrorResponseException.create(
-                    ErrorResponse.fromJSON(response.optObject().orElse(null)), response));
+            onFailure(ErrorResponseException.create(ErrorResponse.fromJSON(response.optObject().orElse(null)), response));
         }
     }
 
@@ -84,11 +79,6 @@ public class Request<T> {
                 RestActionImpl.LOG.error("Encountered error while processing failure consumer", t);
             }
         });
-    }
-
-    @Nullable
-    public CaseInsensitiveMap<String, String> getHeaders() {
-        return headers;
     }
 
     @NotNull

@@ -70,15 +70,11 @@ public class RestActionImpl<T> implements RestAction<T> {
     }
 
     @Override
-    public void queue(Consumer<? super T> success, Consumer<? super Throwable> failure) {
+    public void queue() {
         Route.CompiledRoute route = finalizeRoute();
         Checks.notNull(route, "Route");
         RequestBody data = finalizeData();
-        if (success == null)
-            success = DEFAULT_SUCCESS;
-        if (failure == null)
-            failure = DEFAULT_FAILURE;
-        api.getRequester().request(new Request<>(this, success, failure, true, data, route, null));
+        api.getRequester().request(new Request<>(this, DEFAULT_SUCCESS, DEFAULT_FAILURE, true, data, route));
     }
 
     @NotNull
@@ -86,7 +82,7 @@ public class RestActionImpl<T> implements RestAction<T> {
         Route.CompiledRoute route = finalizeRoute();
         Checks.notNull(route, "Route");
         RequestBody data = finalizeData();
-        return new RestFuture<>(this, shouldQueue, data, route, null);
+        return new RestFuture<>(this, shouldQueue, data, route);
     }
 
     @Override

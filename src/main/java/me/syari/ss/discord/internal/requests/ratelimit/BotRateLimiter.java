@@ -6,7 +6,6 @@ import me.syari.ss.discord.internal.requests.RateLimiter;
 import me.syari.ss.discord.internal.requests.Requester;
 import me.syari.ss.discord.internal.requests.Route;
 import okhttp3.Headers;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
@@ -130,8 +129,7 @@ public class BotRateLimiter extends RateLimiter {
                     long retryAfter = parseLong(retryAfterHeader);
                     requester.getJDA().getSessionController().setGlobalRatelimit(now + retryAfter);
                     log.error("Encountered global rate limit! Retry-After: {} ms", retryAfter);
-                }
-                else if (response.code() == 429) {
+                } else if (response.code() == 429) {
                     String retryAfterHeader = headers.get(RETRY_AFTER_HEADER);
                     long retryAfter = parseLong(retryAfterHeader);
                     bucket.remaining = 0;
