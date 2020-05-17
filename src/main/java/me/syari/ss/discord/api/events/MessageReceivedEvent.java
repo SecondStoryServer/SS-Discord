@@ -1,9 +1,9 @@
 package me.syari.ss.discord.api.events;
 
-import me.syari.ss.discord.api.entities.TextChannel;
 import me.syari.ss.discord.api.entities.User;
 import me.syari.ss.discord.internal.entities.Member;
 import me.syari.ss.discord.internal.entities.Message;
+import me.syari.ss.discord.internal.entities.TextChannel;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

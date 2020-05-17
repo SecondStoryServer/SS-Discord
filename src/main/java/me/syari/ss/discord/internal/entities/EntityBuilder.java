@@ -289,17 +289,17 @@ public class EntityBuilder {
     public void createTextChannel(Guild guildObj, DataObject json, long guildId) {
         boolean playbackCache = false;
         final long id = json.getLong("id");
-        TextChannelImpl channel = (TextChannelImpl) getJDA().getTextChannelsView().get(id);
+        TextChannel channel = getJDA().getTextChannelsView().get(id);
         if (channel == null) {
             if (guildObj == null)
-                guildObj = (Guild) getJDA().getGuildsView().get(guildId);
+                guildObj = getJDA().getGuildsView().get(guildId);
             SnowflakeCacheViewImpl<TextChannel>
                     guildTextView = guildObj.getTextChannelsView(),
                     textView = getJDA().getTextChannelsView();
             try (
                     UnlockHook glock = guildTextView.writeLock();
                     UnlockHook jlock = textView.writeLock()) {
-                channel = new TextChannelImpl(id, guildObj);
+                channel = new TextChannel(id, guildObj);
                 guildTextView.getMap().put(id, channel);
                 playbackCache = textView.getMap().put(id, channel) == null;
             }

@@ -20,6 +20,7 @@ import me.syari.ss.discord.api.utils.data.DataObject;
 import me.syari.ss.discord.internal.entities.Emote;
 import me.syari.ss.discord.internal.entities.EntityBuilder;
 import me.syari.ss.discord.internal.entities.Guild;
+import me.syari.ss.discord.internal.entities.TextChannel;
 import me.syari.ss.discord.internal.handle.EventCache;
 import me.syari.ss.discord.internal.handle.GuildSetupController;
 import me.syari.ss.discord.internal.hooks.EventManagerProxy;

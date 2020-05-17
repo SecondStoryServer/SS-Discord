@@ -4,6 +4,7 @@ import me.syari.ss.discord.api.entities.*;
 import me.syari.ss.discord.api.utils.cache.SnowflakeCacheView;
 import me.syari.ss.discord.internal.entities.Emote;
 import me.syari.ss.discord.internal.entities.Guild;
+import me.syari.ss.discord.internal.entities.TextChannel;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
