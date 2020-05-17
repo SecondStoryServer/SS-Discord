@@ -19,7 +19,7 @@ public abstract class RateLimiter {
 
     protected boolean isSkipped(Iterator<Request> it, Request request) {
         try {
-            if (request.isCanceled() || !request.runChecks()) {
+            if (request.isCanceled()) {
                 cancel(it, request, new CancellationException("RestAction has been cancelled"));
                 return true;
             }

@@ -45,8 +45,6 @@ public class RestActionImpl<T> implements RestAction<T> {
     private final RequestBody data;
     private final BiFunction<Response, Request<T>, T> handler;
 
-    private BooleanSupplier checks;
-
     public static boolean isPassContext() {
         return passContext;
     }
@@ -77,12 +75,11 @@ public class RestActionImpl<T> implements RestAction<T> {
         Route.CompiledRoute route = finalizeRoute();
         Checks.notNull(route, "Route");
         RequestBody data = finalizeData();
-        BooleanSupplier finisher = getFinisher();
         if (success == null)
             success = DEFAULT_SUCCESS;
         if (failure == null)
             failure = DEFAULT_FAILURE;
-        api.getRequester().request(new Request<>(this, success, failure, finisher, true, data, route, null));
+        api.getRequester().request(new Request<>(this, success, failure, true, data, route, null));
     }
 
     @Nonnull
@@ -90,8 +87,7 @@ public class RestActionImpl<T> implements RestAction<T> {
         Route.CompiledRoute route = finalizeRoute();
         Checks.notNull(route, "Route");
         RequestBody data = finalizeData();
-        BooleanSupplier finisher = getFinisher();
-        return new RestFuture<>(this, shouldQueue, finisher, data, route, null);
+        return new RestFuture(this, shouldQueue, data, route, null);
     }
 
     @Override
@@ -122,16 +118,6 @@ public class RestActionImpl<T> implements RestAction<T> {
         return route;
     }
 
-    protected BooleanSupplier finalizeChecks() {
-        return null;
-    }
-
-    private CheckWrapper getFinisher() {
-        BooleanSupplier pre = finalizeChecks();
-        BooleanSupplier wrapped = this.checks;
-        return (pre != null || wrapped != null) ? new CheckWrapper(wrapped, pre) : CheckWrapper.EMPTY;
-    }
-
     public void handleResponse(Response response, Request<T> request) {
         if (response.isOk())
             handleSuccess(response, request);
@@ -144,44 +130,5 @@ public class RestActionImpl<T> implements RestAction<T> {
             request.onSuccess(null);
         else
             request.onSuccess(handler.apply(response, request));
-    }
-
-    /*
-        useful for final permission checks:
-
-        @Override
-        protected BooleanSupplier finalizeChecks()
-        {
-            // throw exception, if missing perms
-            return () -> hasPermission(Permission.MESSAGE_WRITE);
-        }
-     */
-    protected static class CheckWrapper implements BooleanSupplier {
-        public static final CheckWrapper EMPTY = new CheckWrapper(null, null) {
-            public boolean getAsBoolean() {
-                return true;
-            }
-        };
-
-        protected final BooleanSupplier pre;
-        protected final BooleanSupplier wrapped;
-
-        public CheckWrapper(BooleanSupplier wrapped, BooleanSupplier pre) {
-            this.pre = pre;
-            this.wrapped = wrapped;
-        }
-
-        public boolean pre() {
-            return pre == null || pre.getAsBoolean();
-        }
-
-        public boolean test() {
-            return wrapped == null || wrapped.getAsBoolean();
-        }
-
-        @Override
-        public boolean getAsBoolean() {
-            return pre() && test();
-        }
     }
 }

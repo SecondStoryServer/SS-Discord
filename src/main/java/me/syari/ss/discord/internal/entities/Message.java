@@ -20,7 +20,6 @@ public class Message {
 
     protected final JDAImpl api;
     protected final long id;
-    protected final MessageType type;
     protected final MessageChannel channel;
     protected final User author;
     protected final Member member;
@@ -42,7 +41,6 @@ public class Message {
         this.content = content;
         this.id = id;
         this.channel = channel;
-        this.type = type;
         this.api = (channel != null) ? (JDAImpl) channel.getJDA() : null;
         this.author = author;
         this.member = member;
@@ -55,11 +53,6 @@ public class Message {
         return api;
     }
 
-
-    @Nonnull
-    public MessageType getType() {
-        return type;
-    }
 
     private User matchUser(Matcher matcher) {
         long userId = MiscUtil.parseSnowflake(matcher.group(1));

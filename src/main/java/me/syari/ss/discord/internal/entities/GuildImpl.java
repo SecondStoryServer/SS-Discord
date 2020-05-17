@@ -19,9 +19,9 @@ public class GuildImpl implements Guild {
     private final long id;
     private final JDAImpl api;
 
-    private final SortedSnowflakeCacheViewImpl<TextChannel> textChannelCache = new SortedSnowflakeCacheViewImpl<>(TextChannel.class, GuildChannel::getName, Comparator.naturalOrder());
-    private final SortedSnowflakeCacheViewImpl<Role> roleCache = new SortedSnowflakeCacheViewImpl<>(Role.class, Role::getName, Comparator.reverseOrder());
-    private final SnowflakeCacheViewImpl<Emote> emoteCache = new SnowflakeCacheViewImpl<>(Emote.class, Emote::getName);
+    private final SortedSnowflakeCacheViewImpl<TextChannel> textChannelCache = new SortedSnowflakeCacheViewImpl<>(TextChannel.class, Comparator.naturalOrder());
+    private final SortedSnowflakeCacheViewImpl<Role> roleCache = new SortedSnowflakeCacheViewImpl<>(Role.class, Comparator.reverseOrder());
+    private final SnowflakeCacheViewImpl<Emote> emoteCache = new SnowflakeCacheViewImpl<>(Emote.class);
     private final MemberCacheViewImpl memberCache = new MemberCacheViewImpl();
 
     private final CompletableFuture<Void> chunkingCallback = new CompletableFuture<>();
@@ -45,8 +45,7 @@ public class GuildImpl implements Guild {
     }
 
     @Nonnull
-    @Override
-    public String getName() {
+    private String getName() {
         return name;
     }
 

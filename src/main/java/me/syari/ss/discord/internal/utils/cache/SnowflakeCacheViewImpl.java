@@ -6,8 +6,8 @@ import me.syari.ss.discord.api.utils.cache.SnowflakeCacheView;
 import java.util.function.Function;
 
 public class SnowflakeCacheViewImpl<T extends ISnowflake> extends AbstractCacheView<T> implements SnowflakeCacheView<T> {
-    public SnowflakeCacheViewImpl(Class<T> type, Function<T, String> nameMapper) {
-        super(type, nameMapper);
+    public SnowflakeCacheViewImpl(Class<T> type) {
+        super(type);
     }
 
     @Override

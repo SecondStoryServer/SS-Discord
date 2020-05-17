@@ -13,16 +13,6 @@ public final class Helpers {
         return seq == null || seq.length() == 0;
     }
 
-    public static boolean containsWhitespace(final CharSequence seq) {
-        if (isEmpty(seq))
-            return false;
-        for (int i = 0; i < seq.length(); i++) {
-            if (Character.isWhitespace(seq.charAt(i)))
-                return true;
-        }
-        return false;
-    }
-
     public static boolean isBlank(final CharSequence seq) {
         if (isEmpty(seq))
             return true;

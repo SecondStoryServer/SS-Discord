@@ -12,10 +12,6 @@ import javax.annotation.Nullable;
 public interface Guild extends ISnowflake {
 
 
-    @Nonnull
-    String getName();
-
-
     boolean isMember(@Nonnull User user);
 
 

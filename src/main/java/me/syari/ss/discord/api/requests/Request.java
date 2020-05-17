@@ -21,7 +21,6 @@ public class Request<T> {
     private final RestActionImpl<T> restAction;
     private final Consumer<? super T> onSuccess;
     private final Consumer<? super Throwable> onFailure;
-    private final BooleanSupplier checks;
     private final boolean shouldQueue;
     private final Route.CompiledRoute route;
     private final RequestBody body;
@@ -31,10 +30,13 @@ public class Request<T> {
 
     private boolean isCanceled = false;
 
-    public Request(
-            RestActionImpl<T> restAction, Consumer<? super T> onSuccess, Consumer<? super Throwable> onFailure,
-            BooleanSupplier checks, boolean shouldQueue, RequestBody body,
-            Route.CompiledRoute route, CaseInsensitiveMap<String, String> headers) {
+    public Request(RestActionImpl<T> restAction,
+                   Consumer<? super T> onSuccess,
+                   Consumer<? super Throwable> onFailure,
+                   boolean shouldQueue,
+                   RequestBody body,
+                   Route.CompiledRoute route,
+                   CaseInsensitiveMap<String, String> headers) {
         this.restAction = restAction;
         this.onSuccess = onSuccess;
         if (onFailure instanceof ContextException.ContextConsumer)
@@ -43,7 +45,6 @@ public class Request<T> {
             this.onFailure = ContextException.here(onFailure);
         else
             this.onFailure = onFailure;
-        this.checks = checks;
         this.shouldQueue = shouldQueue;
         this.body = body;
         this.route = route;
@@ -84,10 +85,6 @@ public class Request<T> {
                 RestActionImpl.LOG.error("Encountered error while processing failure consumer", t);
             }
         });
-    }
-
-    public boolean runChecks() {
-        return checks == null || checks.getAsBoolean();
     }
 
     @Nullable

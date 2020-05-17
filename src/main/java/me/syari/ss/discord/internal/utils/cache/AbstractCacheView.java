@@ -19,11 +19,9 @@ import java.util.stream.StreamSupport;
 public abstract class AbstractCacheView<T> extends ReadWriteLockCache<T> implements CacheView<T> {
     protected final TLongObjectMap<T> elements = new TLongObjectHashMap<>();
     protected final T[] emptyArray;
-    protected final Function<T, String> nameMapper;
 
     @SuppressWarnings("unchecked")
-    protected AbstractCacheView(Class<T> type, Function<T, String> nameMapper) {
-        this.nameMapper = nameMapper;
+    protected AbstractCacheView(Class<T> type) {
         this.emptyArray = (T[]) Array.newInstance(type, 0);
     }
 
@@ -139,7 +137,4 @@ public abstract class AbstractCacheView<T> extends ReadWriteLockCache<T> impleme
         }
     }
 
-    protected boolean equals(boolean ignoreCase, String first, String second) {
-        return ignoreCase ? first.equalsIgnoreCase(second) : first.equals(second);
-    }
 }

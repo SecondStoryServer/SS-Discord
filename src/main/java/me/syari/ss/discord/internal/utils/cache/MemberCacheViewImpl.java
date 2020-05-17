@@ -5,7 +5,7 @@ import me.syari.ss.discord.api.utils.cache.MemberCacheView;
 
 public class MemberCacheViewImpl extends SnowflakeCacheViewImpl<Member> implements MemberCacheView {
     public MemberCacheViewImpl() {
-        super(Member.class, Member::getDisplayName);
+        super(Member.class);
     }
 
     @Override
