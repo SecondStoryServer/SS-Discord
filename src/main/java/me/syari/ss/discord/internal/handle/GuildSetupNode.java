@@ -191,10 +191,6 @@ public class GuildSetupNode {
             getController().addGuildForChunking(id, isJoin());
             requestedChunk = true;
         } else if (handleMemberChunk(memberArray) && !requestedChunk) {
-            // Discord sent us enough members to satisfy the member_count
-            //  but we found duplicates and still didn't reach enough to satisfy the count
-            //  in this case we try to do chunking instead
-            // This is caused by lazy guilds and intended behavior according to jake
             GuildSetupController.log.trace(
                     "Received suspicious members with a guild payload. Attempting to chunk. " +
                             "member_count: {} members: {} actual_members: {} guild_id: {}",

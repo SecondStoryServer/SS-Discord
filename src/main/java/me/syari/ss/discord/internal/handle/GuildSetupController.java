@@ -101,13 +101,9 @@ public class GuildSetupController {
 
         GuildSetupNode node = setupNodes.get(id);
         if (node == null) {
-            // this is a join event
             node = new GuildSetupNode(id, this, GuildSetupNode.Type.JOIN);
             setupNodes.put(id, node);
-            // do not increment incomplete counter, it is only relevant to init guilds
         } else if (node.markedUnavailable && available && incompleteCount > 0) {
-            //Looks like this guild decided to become available again during startup
-            // that means we can now consider it for ReadyEvent status again!
             if (node.sync)
                 syncingCount++;
             incompleteCount++;
