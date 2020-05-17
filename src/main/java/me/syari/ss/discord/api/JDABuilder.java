@@ -1,7 +1,7 @@
 package me.syari.ss.discord.api;
 
 import com.neovisionaries.ws.client.WebSocketFactory;
-import me.syari.ss.discord.api.events.MessageReceivedEvent;
+import me.syari.ss.discord.api.event.MessageReceivedEvent;
 import me.syari.ss.discord.api.utils.ChunkingFilter;
 import me.syari.ss.discord.api.utils.Compression;
 import me.syari.ss.discord.api.utils.SessionController;
@@ -25,7 +25,6 @@ public class JDABuilder {
     protected final boolean shutdownRateLimitPool = true;
     protected final boolean shutdownMainWsPool = true;
     protected final boolean shutdownCallbackPool = true;
-    protected final SessionController controller = null;
     protected OkHttpClient.Builder httpClientBuilder = null;
     protected final Compression compression = Compression.ZLIB;
     protected final int maxReconnectDelay = 900;

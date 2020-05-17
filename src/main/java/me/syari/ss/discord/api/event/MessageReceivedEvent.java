@@ -1,4 +1,4 @@
-package me.syari.ss.discord.api.events;
+package me.syari.ss.discord.api.event;
 
 import me.syari.ss.discord.internal.entities.Member;
 import me.syari.ss.discord.internal.entities.Message;
