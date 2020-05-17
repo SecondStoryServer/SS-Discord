@@ -6,8 +6,8 @@ import me.syari.ss.discord.api.utils.SessionControllerAdapter;
 import me.syari.ss.discord.internal.utils.config.flags.ConfigFlag;
 import okhttp3.OkHttpClient;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.EnumSet;
 
 public class SessionConfig {
@@ -30,7 +30,7 @@ public class SessionConfig {
         this.largeThreshold = largeThreshold;
     }
 
-    @Nonnull
+    @NotNull
     public SessionController getSessionController() {
         return sessionController;
     }
@@ -40,7 +40,7 @@ public class SessionConfig {
         return httpClient;
     }
 
-    @Nonnull
+    @NotNull
     public WebSocketFactory getWebSocketFactory() {
         return webSocketFactory;
     }
@@ -65,7 +65,7 @@ public class SessionConfig {
         return largeThreshold;
     }
 
-    @Nonnull
+    @NotNull
     public static SessionConfig getDefault() {
         return new SessionConfig(null, new OkHttpClient(), null, ConfigFlag.getDefault(), 900, 250);
     }

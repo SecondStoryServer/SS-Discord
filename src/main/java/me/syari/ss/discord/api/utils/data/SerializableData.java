@@ -1,10 +1,10 @@
 package me.syari.ss.discord.api.utils.data;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 
 public interface SerializableData {
 
-    @Nonnull
+    @NotNull
     DataObject toData();
 }

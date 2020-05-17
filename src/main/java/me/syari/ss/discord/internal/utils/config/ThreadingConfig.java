@@ -2,8 +2,8 @@ package me.syari.ss.discord.internal.utils.config;
 
 import me.syari.ss.discord.internal.utils.concurrent.CountingThreadFactory;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.concurrent.*;
 import java.util.function.Supplier;
 
@@ -39,7 +39,7 @@ public class ThreadingConfig {
         this.shutdownCallbackPool = shutdown;
     }
 
-    public void init(@Nonnull Supplier<String> identifier) {
+    public void init(@NotNull Supplier<String> identifier) {
         if (this.rateLimitPool == null)
             this.rateLimitPool = newScheduler(5, identifier, "RateLimit");
         if (this.gatewayPool == null)
@@ -71,27 +71,27 @@ public class ThreadingConfig {
             rateLimitPool.shutdownNow();
     }
 
-    @Nonnull
+    @NotNull
     public ScheduledExecutorService getRateLimitPool() {
         return rateLimitPool;
     }
 
-    @Nonnull
+    @NotNull
     public ScheduledExecutorService getGatewayPool() {
         return gatewayPool;
     }
 
-    @Nonnull
+    @NotNull
     public ExecutorService getCallbackPool() {
         return callbackPool;
     }
 
-    @Nonnull
+    @NotNull
     public static ScheduledThreadPoolExecutor newScheduler(int coreSize, Supplier<String> identifier, String baseName) {
         return new ScheduledThreadPoolExecutor(coreSize, new CountingThreadFactory(identifier, baseName));
     }
 
-    @Nonnull
+    @NotNull
     public static ThreadingConfig getDefault() {
         return new ThreadingConfig();
     }

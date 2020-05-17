@@ -10,9 +10,9 @@ import me.syari.ss.discord.internal.utils.JDALogger;
 import me.syari.ss.discord.internal.utils.cache.MemberCacheViewImpl;
 import me.syari.ss.discord.internal.utils.cache.SnowflakeCacheViewImpl;
 import me.syari.ss.discord.internal.utils.cache.SortedSnowflakeCacheViewImpl;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Comparator;
 import java.util.concurrent.CompletableFuture;
 
@@ -45,7 +45,7 @@ public class Guild implements ISnowflake {
         return memberCount;
     }
 
-    @Nonnull
+    @NotNull
     private String getName() {
         return name;
     }
@@ -58,31 +58,31 @@ public class Guild implements ISnowflake {
         return ownerId;
     }
 
-    public boolean isMember(@Nonnull User user) {
+    public boolean isMember(@NotNull User user) {
         return memberCache.get(user.getIdLong()) != null;
     }
 
-    public Member getMember(@Nonnull User user) {
+    public Member getMember(@NotNull User user) {
         Checks.notNull(user, "User");
         return getMemberById(user.getIdLong());
     }
 
-    @Nonnull
+    @NotNull
     public MemberCacheView getMemberCache() {
         return memberCache;
     }
 
-    @Nonnull
+    @NotNull
     public SortedSnowflakeCacheView<Role> getRoleCache() {
         return roleCache;
     }
 
-    @Nonnull
+    @NotNull
     public SnowflakeCacheView<Emote> getEmoteCache() {
         return emoteCache;
     }
 
-    @Nonnull
+    @NotNull
     public JDAImpl getJDA() {
         return api;
     }
@@ -99,7 +99,7 @@ public class Guild implements ISnowflake {
     }
 
     @Nullable
-    public Role getRoleById(@Nonnull String id) {
+    public Role getRoleById(@NotNull String id) {
         return getRoleCache().getElementById(id);
     }
 

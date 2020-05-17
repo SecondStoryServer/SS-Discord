@@ -1,8 +1,7 @@
 package me.syari.ss.discord.api.audit;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public final class ThreadLocalReason {
     private static ThreadLocal<String> currentReason;
@@ -29,7 +28,7 @@ public final class ThreadLocalReason {
     }
 
 
-    @Nonnull
+    @NotNull
     public static Closable closable(@Nullable String reason) {
         return new ThreadLocalReason.Closable(reason);
     }

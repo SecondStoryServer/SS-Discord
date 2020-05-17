@@ -3,7 +3,7 @@ package me.syari.ss.discord.api.utils;
 import me.syari.ss.discord.internal.utils.JDALogger;
 import org.slf4j.Logger;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.concurrent.locks.Lock;
@@ -14,7 +14,7 @@ public class LockIterator<T> implements ClosableIterator<T> {
     private final Iterator<? extends T> it;
     private Lock lock;
 
-    public LockIterator(@Nonnull Iterator<? extends T> it, Lock lock) {
+    public LockIterator(@NotNull Iterator<? extends T> it, Lock lock) {
         this.it = it;
         this.lock = lock;
     }
@@ -36,7 +36,7 @@ public class LockIterator<T> implements ClosableIterator<T> {
         return hasNext;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public T next() {
         if (lock == null)

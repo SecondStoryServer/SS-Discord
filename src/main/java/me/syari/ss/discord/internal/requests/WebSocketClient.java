@@ -18,7 +18,7 @@ import me.syari.ss.discord.internal.utils.compress.ZlibDecompressor;
 import org.slf4j.Logger;
 import org.slf4j.MDC;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.*;
@@ -787,7 +787,7 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
     }
 
     protected abstract class ConnectNode implements SessionController.SessionConnectNode {
-        @Nonnull
+        @NotNull
         JDA getJDA() {
             return api;
         }

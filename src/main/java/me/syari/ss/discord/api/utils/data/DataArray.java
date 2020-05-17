@@ -7,8 +7,8 @@ import me.syari.ss.discord.api.exceptions.ParsingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
@@ -34,7 +34,7 @@ public class DataArray implements Iterable<Object> {
     }
 
 
-    @Nonnull
+    @NotNull
     public static DataArray empty() {
         return new DataArray(new ArrayList<>());
     }
@@ -45,7 +45,7 @@ public class DataArray implements Iterable<Object> {
     }
 
 
-    @Nonnull
+    @NotNull
     @SuppressWarnings("unchecked")
     public DataObject getObject(int index) {
         Map<String, Object> child = null;
@@ -60,7 +60,7 @@ public class DataArray implements Iterable<Object> {
     }
 
 
-    @Nonnull
+    @NotNull
     public String getString(int index) {
         String value = get(String.class, index, UnaryOperator.identity(), String::valueOf);
         if (value == null)
@@ -85,7 +85,7 @@ public class DataArray implements Iterable<Object> {
     }
 
 
-    @Nonnull
+    @NotNull
     public DataArray add(@Nullable Object value) {
         if (value instanceof SerializableData)
             data.add(((SerializableData) value).toData().data);
@@ -111,12 +111,12 @@ public class DataArray implements Iterable<Object> {
     }
 
     @Nullable
-    private <T> T get(@Nonnull Class<T> type, int index) {
+    private <T> T get(@NotNull Class<T> type, int index) {
         return get(type, index, null, null);
     }
 
     @Nullable
-    private <T> T get(@Nonnull Class<T> type, int index, @Nullable Function<String, T> stringMapper, @Nullable Function<Number, T> numberMapper) {
+    private <T> T get(@NotNull Class<T> type, int index, @Nullable Function<String, T> stringMapper, @Nullable Function<Number, T> numberMapper) {
         Object value = data.get(index);
         if (value == null)
             return null;
@@ -132,7 +132,7 @@ public class DataArray implements Iterable<Object> {
                 index, type.getSimpleName(), value, value.getClass().getSimpleName()));
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Iterator<Object> iterator() {
         return data.iterator();

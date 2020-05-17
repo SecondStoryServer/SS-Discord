@@ -16,8 +16,7 @@ import me.syari.ss.discord.internal.utils.IOUtil;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -49,9 +48,8 @@ public class MessageAction extends RestActionImpl<Message> implements RestAction
         return Helpers.isBlank(content);
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    @CheckReturnValue
     public MessageAction append(final CharSequence csq, final int start, final int end) {
         if (content.length() + end - start > Message.MAX_CONTENT_LENGTH)
             throw new IllegalArgumentException("A message may not exceed 2000 characters. Please limit your input!");
@@ -59,9 +57,8 @@ public class MessageAction extends RestActionImpl<Message> implements RestAction
         return this;
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    @CheckReturnValue
     public MessageAction append(final char c) {
         if (content.length() == Message.MAX_CONTENT_LENGTH)
             throw new IllegalArgumentException("A message may not exceed 2000 characters. Please limit your input!");
@@ -127,10 +124,9 @@ public class MessageAction extends RestActionImpl<Message> implements RestAction
         clearResources();
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    @CheckReturnValue
-    public MessageAction append(@Nonnull final CharSequence csq) {
+    public MessageAction append(@NotNull final CharSequence csq) {
         return append(csq, 0, csq.length());
     }
 }

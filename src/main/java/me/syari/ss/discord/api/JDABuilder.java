@@ -13,7 +13,7 @@ import me.syari.ss.discord.internal.utils.config.ThreadingConfig;
 import me.syari.ss.discord.internal.utils.config.flags.ConfigFlag;
 import okhttp3.OkHttpClient;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import javax.security.auth.login.LoginException;
 import java.util.EnumSet;
 import java.util.function.Consumer;
@@ -34,13 +34,13 @@ public class JDABuilder {
     protected final ChunkingFilter chunkingFilter = ChunkingFilter.ALL;
 
 
-    public JDABuilder(@Nonnull String token, Consumer<MessageReceivedEvent> messageReceivedEvent) {
+    public JDABuilder(@NotNull String token, Consumer<MessageReceivedEvent> messageReceivedEvent) {
         this.token = token;
         this.messageReceivedEvent = messageReceivedEvent;
     }
 
 
-    @Nonnull
+    @NotNull
     public JDA build() throws LoginException {
         if (this.httpClientBuilder == null)
             this.httpClientBuilder = new OkHttpClient.Builder();

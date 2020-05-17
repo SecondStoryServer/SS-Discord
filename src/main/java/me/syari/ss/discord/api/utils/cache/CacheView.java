@@ -5,7 +5,7 @@ import me.syari.ss.discord.api.utils.ClosableIterator;
 import me.syari.ss.discord.internal.utils.Checks;
 import me.syari.ss.discord.internal.utils.cache.UnifiedCacheViewImpl;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -13,11 +13,11 @@ import java.util.stream.Stream;
 
 public interface CacheView<T> extends Iterable<T> {
 
-    @Nonnull
+    @NotNull
     List<T> asList();
 
 
-    @Nonnull
+    @NotNull
     ClosableIterator<T> lockedIterator();
 
 
@@ -27,12 +27,12 @@ public interface CacheView<T> extends Iterable<T> {
     boolean isEmpty();
 
 
-    @Nonnull
+    @NotNull
     Stream<T> stream();
 
 
-    @Nonnull
-    static <E extends ISnowflake> SnowflakeCacheView<E> allSnowflakes(@Nonnull Supplier<? extends Stream<? extends SnowflakeCacheView<E>>> generator) {
+    @NotNull
+    static <E extends ISnowflake> SnowflakeCacheView<E> allSnowflakes(@NotNull Supplier<? extends Stream<? extends SnowflakeCacheView<E>>> generator) {
         Checks.notNull(generator, "Generator");
         return new UnifiedCacheViewImpl.UnifiedSnowflakeCacheView<>(generator);
     }

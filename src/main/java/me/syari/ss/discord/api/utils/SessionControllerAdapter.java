@@ -7,7 +7,7 @@ import me.syari.ss.discord.internal.requests.Route;
 import me.syari.ss.discord.internal.utils.JDALogger;
 import org.slf4j.Logger;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
@@ -27,14 +27,14 @@ public class SessionControllerAdapter implements SessionController {
     }
 
     @Override
-    public void appendSession(@Nonnull SessionConnectNode node) {
+    public void appendSession(@NotNull SessionConnectNode node) {
         removeSession(node);
         connectQueue.add(node);
         runWorker();
     }
 
     @Override
-    public void removeSession(@Nonnull SessionConnectNode node) {
+    public void removeSession(@NotNull SessionConnectNode node) {
         connectQueue.remove(node);
     }
 
@@ -48,9 +48,9 @@ public class SessionControllerAdapter implements SessionController {
         globalRatelimit.set(ratelimit);
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public String getGateway(@Nonnull JDA api) {
+    public String getGateway(@NotNull JDA api) {
         Route.CompiledRoute route = Route.Misc.GATEWAY.compile();
         return new RestActionImpl<String>(api, route,
                 (response, request) -> response.getObject().getString("url")).complete();

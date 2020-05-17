@@ -29,10 +29,10 @@ import me.syari.ss.discord.internal.utils.config.MetaConfig;
 import me.syari.ss.discord.internal.utils.config.SessionConfig;
 import me.syari.ss.discord.internal.utils.config.ThreadingConfig;
 import okhttp3.OkHttpClient;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.MDC;
 
-import javax.annotation.Nonnull;
 import javax.security.auth.login.LoginException;
 import java.util.Arrays;
 import java.util.List;
@@ -248,7 +248,7 @@ public class JDAImpl implements JDA {
         return userResponse;
     }
 
-    @Nonnull
+    @NotNull
     public String getToken() {
         return authConfig.getToken();
     }
@@ -258,13 +258,13 @@ public class JDAImpl implements JDA {
         return sessionConfig.isAutoReconnect();
     }
 
-    @Nonnull
+    @NotNull
     public Status getStatus() {
         return status;
     }
 
     @Override
-    public void awaitStatus(@Nonnull Status status, @Nonnull Status... failOn) throws InterruptedException {
+    public void awaitStatus(@NotNull Status status, @NotNull Status... failOn) throws InterruptedException {
         Checks.notNull(status, "Status");
         Checks.check(status.isInit(), "Cannot await the status %s as it is not part of the login cycle!", status);
         if (getStatus() == Status.CONNECTED)
@@ -279,28 +279,27 @@ public class JDAImpl implements JDA {
         }
     }
 
-    @Nonnull
+    @NotNull
     public ScheduledExecutorService getRateLimitPool() {
         return threadConfig.getRateLimitPool();
     }
 
-    @Nonnull
+    @NotNull
     public ScheduledExecutorService getGatewayPool() {
         return threadConfig.getGatewayPool();
     }
 
-    @Nonnull
+    @NotNull
     public ExecutorService getCallbackPool() {
         return threadConfig.getCallbackPool();
     }
 
-    @Nonnull
-    @SuppressWarnings("ConstantConditions")
+    @NotNull
     public OkHttpClient getHttpClient() {
         return sessionConfig.getHttpClient();
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public SnowflakeCacheView<Guild> getGuildCache() {
         return guildCache;
@@ -310,20 +309,20 @@ public class JDAImpl implements JDA {
         return guildSetupController.isUnavailable(guildId);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public SnowflakeCacheView<Emote> getEmoteCache() {
         return CacheView.allSnowflakes(() -> guildCache.stream().map(Guild::getEmoteCache));
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public SnowflakeCacheView<TextChannel> getTextChannelCache() {
         return textChannelCache;
     }
 
 
-    @Nonnull
+    @NotNull
     @Override
     public SnowflakeCacheView<User> getUserCache() {
         return userCache;
@@ -377,7 +376,7 @@ public class JDAImpl implements JDA {
         return sessionConfig.getMaxReconnectDelay();
     }
 
-    @Nonnull
+    @NotNull
     public ShardInfo getShardInfo() {
         return shardInfo == null ? ShardInfo.SINGLE : shardInfo;
     }

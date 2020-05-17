@@ -5,25 +5,25 @@ import me.syari.ss.discord.internal.entities.Message;
 import me.syari.ss.discord.internal.entities.TextChannel;
 import me.syari.ss.discord.internal.entities.User;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class MessageReceivedEvent {
     protected final TextChannel channel;
     private final Message message;
 
-    public MessageReceivedEvent(@Nonnull Message message) {
+    public MessageReceivedEvent(@NotNull Message message) {
         this.channel = message.getChannel();
         this.message = message;
     }
 
-    @Nonnull
+    @NotNull
     public Message getMessage() {
         return message;
     }
 
 
-    @Nonnull
+    @NotNull
     public User getAuthor() {
         return message.getAuthor();
     }
@@ -34,7 +34,7 @@ public class MessageReceivedEvent {
         return message.getMember();
     }
 
-    @Nonnull
+    @NotNull
     public TextChannel getChannel() {
         return channel;
     }

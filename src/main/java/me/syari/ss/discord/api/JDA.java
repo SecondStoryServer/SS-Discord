@@ -5,9 +5,9 @@ import me.syari.ss.discord.internal.entities.Emote;
 import me.syari.ss.discord.internal.entities.Guild;
 import me.syari.ss.discord.internal.entities.TextChannel;
 import me.syari.ss.discord.internal.entities.User;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.List;
 
 
@@ -98,12 +98,12 @@ public interface JDA {
     }
 
 
-    default void awaitStatus(@Nonnull Status status) throws InterruptedException {
+    default void awaitStatus(@NotNull Status status) throws InterruptedException {
         awaitStatus(status, new Status[0]);
     }
 
 
-    void awaitStatus(@Nonnull Status status, @Nonnull Status... failOn) throws InterruptedException;
+    void awaitStatus(@NotNull Status status, @NotNull Status... failOn) throws InterruptedException;
 
 
     default void awaitReady() throws InterruptedException {
@@ -111,7 +111,7 @@ public interface JDA {
     }
 
 
-    @Nonnull
+    @NotNull
     SnowflakeCacheView<User> getUserCache();
 
 
@@ -121,11 +121,11 @@ public interface JDA {
     }
 
 
-    @Nonnull
+    @NotNull
     SnowflakeCacheView<Guild> getGuildCache();
 
 
-    @Nonnull
+    @NotNull
     default List<Guild> getGuilds() {
         return getGuildCache().asList();
     }
@@ -137,7 +137,7 @@ public interface JDA {
     }
 
 
-    @Nonnull
+    @NotNull
     SnowflakeCacheView<TextChannel> getTextChannelCache();
 
 
@@ -147,7 +147,7 @@ public interface JDA {
     }
 
 
-    @Nonnull
+    @NotNull
     SnowflakeCacheView<Emote> getEmoteCache();
 
 

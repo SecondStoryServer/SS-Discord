@@ -6,7 +6,7 @@ import me.syari.ss.discord.api.utils.cache.CacheView;
 import me.syari.ss.discord.api.utils.cache.SnowflakeCacheView;
 import me.syari.ss.discord.internal.utils.ChainedClosableIterator;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -38,7 +38,7 @@ public class UnifiedCacheViewImpl<T, E extends CacheView<T>> implements CacheVie
         }
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public List<T> asList() {
         List<T> list = new LinkedList<>();
@@ -46,20 +46,20 @@ public class UnifiedCacheViewImpl<T, E extends CacheView<T>> implements CacheVie
         return Collections.unmodifiableList(list);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public ChainedClosableIterator<T> lockedIterator() {
         Iterator<? extends E> gen = generator.get().iterator();
         return new ChainedClosableIterator<>(gen);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Stream<T> stream() {
         return distinctStream().flatMap(CacheView::stream).distinct();
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Iterator<T> iterator() {
         return stream().iterator();

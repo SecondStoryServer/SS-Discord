@@ -4,8 +4,7 @@ import me.syari.ss.discord.api.entities.GuildChannel;
 import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.utils.Checks;
 import me.syari.ss.discord.internal.utils.cache.SnowflakeReference;
-
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public abstract class AbstractChannelImpl<T extends AbstractChannelImpl<T>> implements GuildChannel {
     protected final long id;
@@ -22,20 +21,20 @@ public abstract class AbstractChannelImpl<T extends AbstractChannelImpl<T>> impl
     }
 
     @Override
-    public int compareTo(@Nonnull GuildChannel o) {
+    public int compareTo(@NotNull GuildChannel o) {
         Checks.notNull(o, "Channel");
         if (getPositionRaw() != o.getPositionRaw())
             return Integer.compare(getPositionRaw(), o.getPositionRaw());
         return Long.compareUnsigned(id, o.getIdLong());
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getName() {
         return name;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Guild getGuild() {
         return guild.resolve();

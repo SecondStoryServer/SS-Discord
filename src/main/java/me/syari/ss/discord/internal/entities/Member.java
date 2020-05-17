@@ -4,7 +4,7 @@ import me.syari.ss.discord.api.entities.Mentionable;
 import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.utils.cache.SnowflakeReference;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -22,12 +22,12 @@ public class Member implements Mentionable {
         this.user = user;
     }
 
-    @Nonnull
+    @NotNull
     public User getUser() {
         return user;
     }
 
-    @Nonnull
+    @NotNull
     private Guild getGuild() {
         return guild.resolve();
     }
@@ -36,7 +36,7 @@ public class Member implements Mentionable {
         return nickname;
     }
 
-    @Nonnull
+    @NotNull
     public String getDisplayName() {
         return nickname != null ? nickname : getUser().getName();
     }
@@ -84,7 +84,7 @@ public class Member implements Mentionable {
         return "MB:" + getDisplayName() + '(' + getUser().toString() + " / " + getGuild().toString() + ')';
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getAsMention() {
         return (nickname == null ? "<@" : "<@!") + user.getId() + '>';

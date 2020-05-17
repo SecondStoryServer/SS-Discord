@@ -11,8 +11,8 @@ import me.syari.ss.discord.internal.requests.Route;
 import okhttp3.RequestBody;
 import org.apache.commons.collections4.map.CaseInsensitiveMap;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.function.Consumer;
 
 public class Request<T> {
@@ -91,7 +91,7 @@ public class Request<T> {
         return headers;
     }
 
-    @Nonnull
+    @NotNull
     public Route.CompiledRoute getRoute() {
         return route;
     }
@@ -113,7 +113,7 @@ public class Request<T> {
         return isCanceled;
     }
 
-    public void handleResponse(@Nonnull Response response) {
+    public void handleResponse(@NotNull Response response) {
         restAction.handleResponse(response, this);
     }
 }

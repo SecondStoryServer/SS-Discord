@@ -4,7 +4,7 @@ import me.syari.ss.discord.api.utils.Compression;
 import me.syari.ss.discord.internal.utils.JDALogger;
 import org.slf4j.Logger;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.util.zip.DataFormatException;
 
 public interface Decompressor {

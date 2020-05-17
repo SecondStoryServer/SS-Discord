@@ -14,7 +14,7 @@ import me.syari.ss.discord.internal.utils.JDALogger;
 import okhttp3.RequestBody;
 import org.slf4j.Logger;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.function.BiFunction;
@@ -64,7 +64,7 @@ public class RestActionImpl<T> implements RestAction<T> {
         this.handler = handler;
     }
 
-    @Nonnull
+    @NotNull
     public JDA getJDA() {
         return api;
     }
@@ -81,7 +81,7 @@ public class RestActionImpl<T> implements RestAction<T> {
         api.getRequester().request(new Request<>(this, success, failure, true, data, route, null));
     }
 
-    @Nonnull
+    @NotNull
     private CompletableFuture<T> submit(boolean shouldQueue) {
         Route.CompiledRoute route = finalizeRoute();
         Checks.notNull(route, "Route");

@@ -4,8 +4,8 @@ import me.syari.ss.discord.api.entities.ISnowflake;
 import me.syari.ss.discord.api.utils.cache.SortedSnowflakeCacheView;
 import me.syari.ss.discord.internal.utils.UnlockHook;
 import org.apache.commons.collections4.iterators.ObjectArrayIterator;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
@@ -22,13 +22,13 @@ public class SortedSnowflakeCacheViewImpl<T extends ISnowflake & Comparable<? su
     }
 
     @Override
-    public void forEach(@Nonnull Consumer<? super T> action) {
+    public void forEach(@NotNull Consumer<? super T> action) {
         try (UnlockHook hook = readLock()) {
             iterator().forEachRemaining(action);
         }
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public List<T> asList() {
         if (isEmpty())
@@ -51,13 +51,13 @@ public class SortedSnowflakeCacheViewImpl<T extends ISnowflake & Comparable<? su
         }
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Stream<T> stream() {
         return super.stream().sorted(comparator);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Iterator<T> iterator() {
         try (UnlockHook hook = readLock()) {

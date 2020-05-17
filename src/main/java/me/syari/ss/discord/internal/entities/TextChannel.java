@@ -9,8 +9,7 @@ import me.syari.ss.discord.internal.requests.Route;
 import me.syari.ss.discord.internal.requests.restaction.MessageAction;
 import me.syari.ss.discord.internal.utils.Checks;
 
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import java.util.Formattable;
 import java.util.FormattableFlags;
 import java.util.Formatter;
@@ -27,14 +26,14 @@ public class TextChannel extends AbstractChannelImpl<TextChannel> implements ISn
         return super.setPosition(rawPosition);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getAsMention() {
         return "<#" + id + '>';
     }
 
 
-    @Nonnull
+    @NotNull
     public JDA getJDA() {
         return api;
     }
@@ -44,9 +43,8 @@ public class TextChannel extends AbstractChannelImpl<TextChannel> implements ISn
         return "TC:" + getName() + '(' + id + ')';
     }
 
-    @Nonnull
-    @CheckReturnValue
-    public MessageAction sendMessage(@Nonnull CharSequence text) {
+    @NotNull
+    public MessageAction sendMessage(@NotNull CharSequence text) {
         Checks.notEmpty(text, "Provided text for message");
         Checks.check(text.length() <= 2000, "Provided text for message must be less than 2000 characters in length");
 

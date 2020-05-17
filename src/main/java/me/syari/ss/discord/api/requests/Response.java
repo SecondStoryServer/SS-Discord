@@ -5,8 +5,8 @@ import me.syari.ss.discord.api.utils.IOFunction;
 import me.syari.ss.discord.api.utils.data.DataObject;
 import me.syari.ss.discord.internal.utils.IOUtil;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.io.*;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -24,7 +24,7 @@ public class Response implements Closeable {
     private boolean attemptedParsing = false;
     private Exception exception;
 
-    public Response(@Nullable final okhttp3.Response response, @Nonnull final Exception exception) {
+    public Response(@Nullable final okhttp3.Response response, @NotNull final Exception exception) {
         this(response, response != null ? response.code() : ERROR_CODE, -1);
         this.exception = exception;
     }
@@ -50,27 +50,27 @@ public class Response implements Closeable {
         this(null, 429, retryAfter);
     }
 
-    public Response(@Nonnull final okhttp3.Response response, final long retryAfter) {
+    public Response(@NotNull final okhttp3.Response response, final long retryAfter) {
         this(response, response.code(), retryAfter);
     }
 
-    @Nonnull
+    @NotNull
     public DataObject getObject() {
         return get(DataObject.class, JSON_SERIALIZE_OBJECT);
     }
 
-    @Nonnull
+    @NotNull
     public Optional<DataObject> optObject() {
         return parseBody(true, DataObject.class, JSON_SERIALIZE_OBJECT);
     }
 
-    @Nonnull
+    @NotNull
     public String getString() {
         return parseBody(String.class, this::readString)
                 .orElseGet(() -> fallbackString == null ? "N/A" : fallbackString);
     }
 
-    @Nonnull
+    @NotNull
     public <T> T get(Class<T> clazz, IOFunction<BufferedReader, T> parser) {
         return parseBody(clazz, parser).orElseThrow(IllegalStateException::new);
     }

@@ -4,7 +4,7 @@ import me.syari.ss.discord.api.entities.Mentionable;
 import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.utils.cache.SnowflakeReference;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import java.time.OffsetDateTime;
 
 public class Role implements Mentionable, Comparable<Role> {
@@ -19,12 +19,12 @@ public class Role implements Mentionable, Comparable<Role> {
         this.guild = new SnowflakeReference<>(guild, api::getGuildById);
     }
 
-    @Nonnull
+    @NotNull
     public String getName() {
         return name;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getAsMention() {
         return "<@&" + getId() + '>';
@@ -56,7 +56,7 @@ public class Role implements Mentionable, Comparable<Role> {
     }
 
     @Override
-    public int compareTo(@Nonnull Role role) {
+    public int compareTo(@NotNull Role role) {
         if (this == role)
             return 0;
 

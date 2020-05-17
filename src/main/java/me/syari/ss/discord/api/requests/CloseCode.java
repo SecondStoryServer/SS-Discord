@@ -1,6 +1,6 @@
 package me.syari.ss.discord.api.requests;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 
 public enum CloseCode {

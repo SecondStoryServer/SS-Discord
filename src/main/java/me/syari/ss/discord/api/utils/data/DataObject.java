@@ -9,8 +9,8 @@ import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.*;
@@ -35,19 +35,19 @@ public class DataObject implements SerializableData {
 
     protected final Map<String, Object> data;
 
-    protected DataObject(@Nonnull Map<String, Object> data) {
+    protected DataObject(@NotNull Map<String, Object> data) {
         this.data = data;
     }
 
 
-    @Nonnull
+    @NotNull
     public static DataObject empty() {
         return new DataObject(new HashMap<>());
     }
 
 
-    @Nonnull
-    public static DataObject fromJson(@Nonnull String json) {
+    @NotNull
+    public static DataObject fromJson(@NotNull String json) {
         try {
             Map<String, Object> map = mapper.readValue(json, mapType);
             return new DataObject(map);
@@ -57,8 +57,8 @@ public class DataObject implements SerializableData {
     }
 
 
-    @Nonnull
-    public static DataObject fromJson(@Nonnull Reader stream) {
+    @NotNull
+    public static DataObject fromJson(@NotNull Reader stream) {
         try {
             Map<String, Object> map = mapper.readValue(stream, mapType);
             return new DataObject(map);
@@ -68,30 +68,30 @@ public class DataObject implements SerializableData {
     }
 
 
-    public boolean hasKey(@Nonnull String key) {
+    public boolean hasKey(@NotNull String key) {
         return data.containsKey(key);
     }
 
 
-    public boolean isNull(@Nonnull String key) {
+    public boolean isNull(@NotNull String key) {
         return data.get(key) == null;
     }
 
 
-    public boolean isType(@Nonnull String key, @Nonnull DataType type) {
+    public boolean isType(@NotNull String key, @NotNull DataType type) {
         return type.isType(data.get(key));
     }
 
 
-    @Nonnull
-    public DataObject getObject(@Nonnull String key) {
+    @NotNull
+    public DataObject getObject(@NotNull String key) {
         return optObject(key).orElseThrow(() -> valueError(key, "DataObject"));
     }
 
 
-    @Nonnull
+    @NotNull
     @SuppressWarnings("unchecked")
-    public Optional<DataObject> optObject(@Nonnull String key) {
+    public Optional<DataObject> optObject(@NotNull String key) {
         Map<String, Object> child = null;
         try {
             child = (Map<String, Object>) get(Map.class, key);
@@ -102,15 +102,15 @@ public class DataObject implements SerializableData {
     }
 
 
-    @Nonnull
-    public DataArray getArray(@Nonnull String key) {
+    @NotNull
+    public DataArray getArray(@NotNull String key) {
         return optArray(key).orElseThrow(() -> valueError(key, "DataArray"));
     }
 
 
-    @Nonnull
+    @NotNull
     @SuppressWarnings("unchecked")
-    public Optional<DataArray> optArray(@Nonnull String key) {
+    public Optional<DataArray> optArray(@NotNull String key) {
         List<Object> child = null;
         try {
             child = (List<Object>) get(List.class, key);
@@ -121,14 +121,14 @@ public class DataObject implements SerializableData {
     }
 
 
-    @Nonnull
-    public Optional<Object> opt(@Nonnull String key) {
+    @NotNull
+    public Optional<Object> opt(@NotNull String key) {
         return Optional.ofNullable(data.get(key));
     }
 
 
-    @Nonnull
-    public Object get(@Nonnull String key) {
+    @NotNull
+    public Object get(@NotNull String key) {
         Object value = data.get(key);
         if (value == null)
             throw valueError(key, "any");
@@ -136,8 +136,8 @@ public class DataObject implements SerializableData {
     }
 
 
-    @Nonnull
-    public String getString(@Nonnull String key) {
+    @NotNull
+    public String getString(@NotNull String key) {
         String value = getString(key, null);
         if (value == null)
             throw valueError(key, "String");
@@ -146,24 +146,24 @@ public class DataObject implements SerializableData {
 
 
     @Contract("_, !null -> !null")
-    public String getString(@Nonnull String key, @Nullable String defaultValue) {
+    public String getString(@NotNull String key, @Nullable String defaultValue) {
         String value = get(String.class, key, UnaryOperator.identity(), String::valueOf);
         return value == null ? defaultValue : value;
     }
 
 
-    public boolean getBoolean(@Nonnull String key) {
+    public boolean getBoolean(@NotNull String key) {
         return getBoolean(key, false);
     }
 
 
-    public boolean getBoolean(@Nonnull String key, boolean defaultValue) {
+    public boolean getBoolean(@NotNull String key, boolean defaultValue) {
         Boolean value = get(Boolean.class, key, Boolean::parseBoolean, null);
         return value == null ? defaultValue : value;
     }
 
 
-    public long getLong(@Nonnull String key) {
+    public long getLong(@NotNull String key) {
         Long value = get(Long.class, key, Long::parseLong, Number::longValue);
         if (value == null)
             throw valueError(key, "long");
@@ -171,13 +171,13 @@ public class DataObject implements SerializableData {
     }
 
 
-    public long getLong(@Nonnull String key, long defaultValue) {
+    public long getLong(@NotNull String key, long defaultValue) {
         Long value = get(Long.class, key, Long::parseLong, Number::longValue);
         return value == null ? defaultValue : value;
     }
 
 
-    public long getUnsignedLong(@Nonnull String key) {
+    public long getUnsignedLong(@NotNull String key) {
         Long value = get(Long.class, key, Long::parseUnsignedLong, Number::longValue);
         if (value == null)
             throw valueError(key, "unsigned long");
@@ -185,13 +185,13 @@ public class DataObject implements SerializableData {
     }
 
 
-    public long getUnsignedLong(@Nonnull String key, long defaultValue) {
+    public long getUnsignedLong(@NotNull String key, long defaultValue) {
         Long value = get(Long.class, key, Long::parseUnsignedLong, Number::longValue);
         return value == null ? defaultValue : value;
     }
 
 
-    public int getInt(@Nonnull String key) {
+    public int getInt(@NotNull String key) {
         Integer value = get(Integer.class, key, Integer::parseInt, Number::intValue);
         if (value == null)
             throw valueError(key, "int");
@@ -199,13 +199,13 @@ public class DataObject implements SerializableData {
     }
 
 
-    public void remove(@Nonnull String key) {
+    public void remove(@NotNull String key) {
         data.remove(key);
     }
 
 
-    @Nonnull
-    public DataObject put(@Nonnull String key, @Nullable Object value) {
+    @NotNull
+    public DataObject put(@NotNull String key, @Nullable Object value) {
         if (value instanceof SerializableData)
             data.put(key, ((SerializableData) value).toData().data);
         else if (value instanceof DataArray)
@@ -216,7 +216,7 @@ public class DataObject implements SerializableData {
     }
 
 
-    @Nonnull
+    @NotNull
     public Set<String> keys() {
         return data.keySet();
     }
@@ -231,7 +231,7 @@ public class DataObject implements SerializableData {
     }
 
 
-    @Nonnull
+    @NotNull
     @Override
     public DataObject toData() {
         return this;
@@ -242,12 +242,12 @@ public class DataObject implements SerializableData {
     }
 
     @Nullable
-    private <T> T get(@Nonnull Class<T> type, @Nonnull String key) {
+    private <T> T get(@NotNull Class<T> type, @NotNull String key) {
         return get(type, key, null, null);
     }
 
     @Nullable
-    private <T> T get(@Nonnull Class<T> type, @Nonnull String key, @Nullable Function<String, T> stringParse, @Nullable Function<Number, T> numberParse) {
+    private <T> T get(@NotNull Class<T> type, @NotNull String key, @Nullable Function<String, T> stringParse, @Nullable Function<Number, T> numberParse) {
         Object value = data.get(key);
         if (value == null)
             return null;

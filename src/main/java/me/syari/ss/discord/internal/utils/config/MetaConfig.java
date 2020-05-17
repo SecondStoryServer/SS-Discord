@@ -2,8 +2,8 @@ package me.syari.ss.discord.internal.utils.config;
 
 import me.syari.ss.discord.internal.utils.config.flags.ConfigFlag;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.EnumSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -43,7 +43,7 @@ public class MetaConfig {
         return maxBufferSize;
     }
 
-    @Nonnull
+    @NotNull
     public static MetaConfig getDefault() {
         return defaultConfig;
     }

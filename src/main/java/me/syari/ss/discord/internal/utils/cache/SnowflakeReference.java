@@ -2,7 +2,7 @@ package me.syari.ss.discord.internal.utils.cache;
 
 import me.syari.ss.discord.api.entities.ISnowflake;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import java.lang.ref.WeakReference;
 import java.util.function.LongFunction;
 
@@ -18,7 +18,7 @@ public class SnowflakeReference<T extends ISnowflake> implements ISnowflake {
         this.id = referent.getIdLong();
     }
 
-    @Nonnull
+    @NotNull
     public T resolve() {
         T referent = reference.get();
         if (referent == null) {

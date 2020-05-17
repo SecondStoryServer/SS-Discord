@@ -2,7 +2,7 @@ package me.syari.ss.discord.internal.entities;
 
 import me.syari.ss.discord.api.entities.Mentionable;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import java.util.Set;
 
 public class Emote implements Mentionable {
@@ -17,7 +17,7 @@ public class Emote implements Mentionable {
         this.roles = null;
     }
 
-    @Nonnull
+    @NotNull
     public String getName() {
         return name;
     }
@@ -32,7 +32,7 @@ public class Emote implements Mentionable {
         return animated;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getAsMention() {
         return (isAnimated() ? "<a:" : "<:") + getName() + ":" + getId() + ">";

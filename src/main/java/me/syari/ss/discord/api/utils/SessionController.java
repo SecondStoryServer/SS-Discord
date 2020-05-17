@@ -2,7 +2,7 @@ package me.syari.ss.discord.api.utils;
 
 import me.syari.ss.discord.api.JDA;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 
 public interface SessionController {
@@ -10,10 +10,10 @@ public interface SessionController {
     int IDENTIFY_DELAY = 5;
 
 
-    void appendSession(@Nonnull SessionConnectNode node);
+    void appendSession(@NotNull SessionConnectNode node);
 
 
-    void removeSession(@Nonnull SessionConnectNode node);
+    void removeSession(@NotNull SessionConnectNode node);
 
 
     long getGlobalRatelimit();
@@ -22,8 +22,8 @@ public interface SessionController {
     void setGlobalRatelimit(long ratelimit);
 
 
-    @Nonnull
-    String getGateway(@Nonnull JDA api);
+    @NotNull
+    String getGateway(@NotNull JDA api);
 
 
     interface SessionConnectNode {

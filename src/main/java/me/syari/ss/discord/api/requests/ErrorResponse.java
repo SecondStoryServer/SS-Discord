@@ -2,8 +2,8 @@ package me.syari.ss.discord.api.requests;
 
 import me.syari.ss.discord.api.utils.data.DataObject;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public enum ErrorResponse {
     UNKNOWN_ACCOUNT(10001, "Unknown Account"),
@@ -79,12 +79,12 @@ public enum ErrorResponse {
         return code;
     }
 
-    @Nonnull
+    @NotNull
     public String getMeaning() {
         return meaning;
     }
 
-    @Nonnull
+    @NotNull
     public static ErrorResponse fromCode(int code) {
         for (ErrorResponse error : values()) {
             if (code == error.getCode())
@@ -93,7 +93,7 @@ public enum ErrorResponse {
         return SERVER_ERROR;
     }
 
-    @Nonnull
+    @NotNull
     public static ErrorResponse fromJSON(@Nullable DataObject obj) {
         if (obj == null || obj.isNull("code"))
             return SERVER_ERROR;

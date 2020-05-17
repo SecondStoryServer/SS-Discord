@@ -1,6 +1,6 @@
 package me.syari.ss.discord.api.utils;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import java.time.OffsetDateTime;
 import java.util.Calendar;
 import java.util.TimeZone;
@@ -10,7 +10,7 @@ public class TimeUtil {
     public static final long TIMESTAMP_OFFSET = 22;
 
 
-    @Nonnull
+    @NotNull
     public static OffsetDateTime getTimeCreated(long entityId) {
         long timestamp = (entityId >>> TIMESTAMP_OFFSET) + DISCORD_EPOCH;
         Calendar gmt = Calendar.getInstance(TimeZone.getTimeZone("GMT"));

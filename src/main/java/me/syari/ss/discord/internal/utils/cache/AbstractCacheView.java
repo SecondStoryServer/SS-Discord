@@ -7,7 +7,7 @@ import me.syari.ss.discord.api.utils.cache.CacheView;
 import me.syari.ss.discord.internal.utils.UnlockHook;
 import org.apache.commons.collections4.iterators.ObjectArrayIterator;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import java.lang.reflect.Array;
 import java.util.*;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -52,7 +52,7 @@ public abstract class AbstractCacheView<T> extends ReadWriteLockCache<T> impleme
         }
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public LockIterator<T> lockedIterator() {
         ReentrantReadWriteLock.ReadLock readLock = lock.readLock();
@@ -66,7 +66,7 @@ public abstract class AbstractCacheView<T> extends ReadWriteLockCache<T> impleme
         }
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public List<T> asList() {
         if (isEmpty())
@@ -98,13 +98,13 @@ public abstract class AbstractCacheView<T> extends ReadWriteLockCache<T> impleme
         }
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Stream<T> stream() {
         return StreamSupport.stream(spliterator(), false);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public Iterator<T> iterator() {
         try (UnlockHook hook = readLock()) {

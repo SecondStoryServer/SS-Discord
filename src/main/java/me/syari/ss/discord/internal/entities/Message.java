@@ -5,7 +5,7 @@ import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.utils.MiscUtil;
 import me.syari.ss.discord.internal.JDAImpl;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.function.Function;
 import java.util.regex.Matcher;
@@ -47,58 +47,12 @@ public class Message {
         this.mentionedRoles = mentionedRoles;
     }
 
-    @Nonnull
+    @NotNull
     public JDA getJDA() {
         return api;
     }
 
-
-    private User matchUser(Matcher matcher) {
-        long userId = MiscUtil.parseSnowflake(matcher.group(1));
-        if (!mentionedUsers.contains(userId))
-            return null;
-        User user = getJDA().getUserById(userId);
-        if (user == null)
-            user = api.getFakeUserMap().get(userId);
-        if (user == null && userMentions != null)
-            user = userMentions.stream().filter(it -> it.getIdLong() == userId).findFirst().orElse(null);
-        return user;
-    }
-
-    @Nonnull
-    public synchronized List<User> getMentionedUsers() {
-        if (userMentions == null)
-            userMentions = Collections.unmodifiableList(processMentions(Message.MentionType.USER, new ArrayList<>(), this::matchUser));
-        return userMentions;
-    }
-
-    private TextChannel matchTextChannel(Matcher matcher) {
-        long channelId = MiscUtil.parseSnowflake(matcher.group(1));
-        return getJDA().getTextChannelById(channelId);
-    }
-
-    @Nonnull
-    public synchronized List<TextChannel> getMentionedChannels() {
-        if (channelMentions == null)
-            channelMentions = Collections.unmodifiableList(processMentions(Message.MentionType.CHANNEL, new ArrayList<>(), this::matchTextChannel));
-        return channelMentions;
-    }
-
-    private Role matchRole(Matcher matcher) {
-        long roleId = MiscUtil.parseSnowflake(matcher.group(1));
-        if (!mentionedRoles.contains(roleId))
-            return null;
-        return getGuild().getRoleById(roleId);
-    }
-
-    @Nonnull
-    public synchronized List<Role> getMentionedRoles() {
-        if (roleMentions == null)
-            roleMentions = Collections.unmodifiableList(processMentions(Message.MentionType.ROLE, new ArrayList<>(), this::matchRole));
-        return roleMentions;
-    }
-
-    @Nonnull
+    @NotNull
     public User getAuthor() {
         return author;
     }
@@ -107,7 +61,7 @@ public class Message {
         return member;
     }
 
-    @Nonnull
+    @NotNull
     public String getContentDisplay() {
         if (altContent != null)
             return altContent;
@@ -136,20 +90,71 @@ public class Message {
         }
     }
 
-    @Nonnull
+    @NotNull
     public String getContentRaw() {
         return content;
     }
 
-
-    @Nonnull
+    @NotNull
     public TextChannel getChannel() {
         return channel;
     }
 
-    @Nonnull
+    @NotNull
     public Guild getGuild() {
         return getChannel().getGuild();
+    }
+
+    @NotNull
+    private synchronized List<User> getMentionedUsers() {
+        if (userMentions == null)
+            userMentions = Collections.unmodifiableList(processMentions(Message.MentionType.USER, new ArrayList<>(), this::matchUser));
+        return userMentions;
+    }
+
+    private User matchUser(Matcher matcher) {
+        long userId = MiscUtil.parseSnowflake(matcher.group(1));
+        if (!mentionedUsers.contains(userId))
+            return null;
+        User user = getJDA().getUserById(userId);
+        if (user == null)
+            user = api.getFakeUserMap().get(userId);
+        if (user == null && userMentions != null)
+            user = userMentions.stream().filter(it -> it.getIdLong() == userId).findFirst().orElse(null);
+        return user;
+    }
+
+    @NotNull
+    private synchronized List<TextChannel> getMentionedChannels() {
+        if (channelMentions == null)
+            channelMentions = Collections.unmodifiableList(processMentions(Message.MentionType.CHANNEL, new ArrayList<>(), this::matchTextChannel));
+        return channelMentions;
+    }
+
+    private TextChannel matchTextChannel(Matcher matcher) {
+        long channelId = MiscUtil.parseSnowflake(matcher.group(1));
+        return getJDA().getTextChannelById(channelId);
+    }
+
+    @NotNull
+    private synchronized List<Role> getMentionedRoles() {
+        if (roleMentions == null)
+            roleMentions = Collections.unmodifiableList(processMentions(Message.MentionType.ROLE, new ArrayList<>(), this::matchRole));
+        return roleMentions;
+    }
+
+    private Role matchRole(Matcher matcher) {
+        long roleId = MiscUtil.parseSnowflake(matcher.group(1));
+        if (!mentionedRoles.contains(roleId))
+            return null;
+        return getGuild().getRoleById(roleId);
+    }
+
+    @NotNull
+    private synchronized List<Emote> getEmotes() {
+        if (this.emoteMentions == null)
+            emoteMentions = Collections.unmodifiableList(processMentions(Message.MentionType.EMOTE, new ArrayList<>(), this::matchEmote));
+        return emoteMentions;
     }
 
     private Emote matchEmote(Matcher m) {
@@ -162,36 +167,7 @@ public class Message {
         return emote;
     }
 
-    @Nonnull
-    public synchronized List<Emote> getEmotes() {
-        if (this.emoteMentions == null)
-            emoteMentions = Collections.unmodifiableList(processMentions(Message.MentionType.EMOTE, new ArrayList<>(), this::matchEmote));
-        return emoteMentions;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (o == this)
-            return true;
-        if (!(o instanceof Message))
-            return false;
-        Message oMsg = (Message) o;
-        return this.id == oMsg.id;
-    }
-
-    @Override
-    public int hashCode() {
-        return Long.hashCode(id);
-    }
-
-    @Override
-    public String toString() {
-        return author != null
-                ? String.format("M:%#s:%.20s(%s)", author, this, id)
-                : String.format("M:%.20s", this); // this message was made using MessageBuilder
-    }
-
-    public void setMentions(List<User> users, List<Member> members) {
+    protected void setMentions(List<User> users, List<Member> members) {
         users.sort(Comparator.comparing((user) ->
                 Math.max(content.indexOf("<@" + user.getId() + ">"),
                         content.indexOf("<@!" + user.getId() + ">")
@@ -218,8 +194,29 @@ public class Message {
         return collection;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == this)
+            return true;
+        if (!(o instanceof Message))
+            return false;
+        Message oMsg = (Message) o;
+        return this.id == oMsg.id;
+    }
 
-    enum MentionType {
+    @Override
+    public int hashCode() {
+        return Long.hashCode(id);
+    }
+
+    @Override
+    public String toString() {
+        return author != null
+                ? String.format("M:%#s:%.20s(%s)", author, this, id)
+                : String.format("M:%.20s", this); // this message was made using MessageBuilder
+    }
+
+    private enum MentionType {
 
         USER("<@!?(\\d+)>"),
 
@@ -235,7 +232,7 @@ public class Message {
             this.pattern = Pattern.compile(regex);
         }
 
-        @Nonnull
+        @NotNull
         public Pattern getPattern() {
             return pattern;
         }

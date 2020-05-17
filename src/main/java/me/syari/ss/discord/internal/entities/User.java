@@ -4,7 +4,7 @@ import me.syari.ss.discord.api.entities.Mentionable;
 import me.syari.ss.discord.api.utils.MiscUtil;
 import me.syari.ss.discord.internal.JDAImpl;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import java.util.FormattableFlags;
 import java.util.Formatter;
 
@@ -22,17 +22,17 @@ public class User implements Mentionable {
         this.api = api;
     }
 
-    @Nonnull
+    @NotNull
     public String getName() {
         return name;
     }
 
-    @Nonnull
+    @NotNull
     public String getDiscriminator() {
         return String.format("%04d", discriminator);
     }
 
-    @Nonnull
+    @NotNull
     private String getAsTag() {
         return getName() + '#' + getDiscriminator();
     }
@@ -41,12 +41,12 @@ public class User implements Mentionable {
         return bot;
     }
 
-    @Nonnull
+    @NotNull
     public JDAImpl getJDA() {
         return api;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getAsMention() {
         return "<@" + getId() + '>';
