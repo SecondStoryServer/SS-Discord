@@ -1,7 +1,6 @@
 package me.syari.ss.discord.api.requests;
 
 import me.syari.ss.discord.api.utils.data.DataObject;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

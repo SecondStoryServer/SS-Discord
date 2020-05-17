@@ -1,6 +1,7 @@
 package me.syari.ss.discord.api.exceptions;
 
 import org.jetbrains.annotations.NotNull;
+
 import java.util.function.Consumer;
 
 

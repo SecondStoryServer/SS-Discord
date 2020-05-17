@@ -3,8 +3,8 @@ package me.syari.ss.discord.internal.entities;
 import me.syari.ss.discord.api.entities.Mentionable;
 import me.syari.ss.discord.api.utils.MiscUtil;
 import me.syari.ss.discord.internal.JDAImpl;
-
 import org.jetbrains.annotations.NotNull;
+
 import java.util.FormattableFlags;
 import java.util.Formatter;
 

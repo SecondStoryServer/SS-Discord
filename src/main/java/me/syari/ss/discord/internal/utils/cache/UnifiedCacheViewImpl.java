@@ -5,8 +5,8 @@ import me.syari.ss.discord.api.utils.ClosableIterator;
 import me.syari.ss.discord.api.utils.cache.CacheView;
 import me.syari.ss.discord.api.utils.cache.SnowflakeCacheView;
 import me.syari.ss.discord.internal.utils.ChainedClosableIterator;
-
 import org.jetbrains.annotations.NotNull;
+
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;

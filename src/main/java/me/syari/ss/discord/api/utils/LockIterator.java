@@ -1,9 +1,9 @@
 package me.syari.ss.discord.api.utils;
 
 import me.syari.ss.discord.internal.utils.JDALogger;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
-import org.jetbrains.annotations.NotNull;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.concurrent.locks.Lock;
