@@ -5,6 +5,7 @@ import gnu.trove.map.TLongObjectMap;
 import gnu.trove.map.hash.TLongObjectHashMap;
 import me.syari.ss.discord.internal.utils.Checks;
 import me.syari.ss.discord.internal.utils.Helpers;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -29,7 +30,7 @@ public class MiscUtil {
         }
     }
 
-    public static <E> E locked(ReentrantLock lock, Supplier<E> task) {
+    public static <E> E locked(@NotNull ReentrantLock lock, @NotNull Supplier<E> task) {
         try {
             lock.lockInterruptibly();
             return task.get();
@@ -41,7 +42,7 @@ public class MiscUtil {
         }
     }
 
-    public static void locked(ReentrantLock lock, Runnable task) {
+    public static void locked(@NotNull ReentrantLock lock, @NotNull Runnable task) {
         try {
             lock.lockInterruptibly();
             task.run();
@@ -54,7 +55,7 @@ public class MiscUtil {
     }
 
 
-    public static void appendTo(Formatter formatter, int width, int precision, boolean leftJustified, String out) {
+    public static void appendTo(@NotNull Formatter formatter, int width, int precision, boolean leftJustified, String out) {
         try {
             Appendable appendable = formatter.out();
             if (precision > -1 && out.length() > precision) {

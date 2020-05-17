@@ -86,7 +86,7 @@ public class RestActionImpl<T> implements RestAction<T> {
         Route.CompiledRoute route = finalizeRoute();
         Checks.notNull(route, "Route");
         RequestBody data = finalizeData();
-        return new RestFuture(this, shouldQueue, data, route, null);
+        return new RestFuture<>(this, shouldQueue, data, route, null);
     }
 
     @Override

@@ -66,9 +66,6 @@ public class Role implements Mentionable, Comparable<Role> {
         OffsetDateTime thisTime = this.getTimeCreated();
         OffsetDateTime rTime = role.getTimeCreated();
 
-        //We compare the provided role's time to this's time instead of the reverse as one would expect due to how
-        // discord deals with hierarchy. The more recent a role was created, the lower its hierarchy ranking when
-        // it shares the same position as another role.
         return rTime.compareTo(thisTime);
     }
 
