@@ -1,6 +1,6 @@
 package me.syari.ss.discord.internal.entities;
 
-import me.syari.ss.discord.api.entities.User;
+import me.syari.ss.discord.api.entities.Mentionable;
 import me.syari.ss.discord.api.utils.MiscUtil;
 import me.syari.ss.discord.internal.JDAImpl;
 
@@ -8,7 +8,7 @@ import javax.annotation.Nonnull;
 import java.util.FormattableFlags;
 import java.util.Formatter;
 
-public class UserImpl implements User {
+public class User implements Mentionable {
     protected final long id;
     protected final JDAImpl api;
 
@@ -17,13 +17,12 @@ public class UserImpl implements User {
     protected boolean bot;
     protected boolean fake = false;
 
-    public UserImpl(long id, JDAImpl api) {
+    public User(long id, JDAImpl api) {
         this.id = id;
         this.api = api;
     }
 
     @Nonnull
-    @Override
     public String getName() {
         return name;
     }
@@ -38,14 +37,11 @@ public class UserImpl implements User {
         return getName() + '#' + getDiscriminator();
     }
 
-
-    @Override
     public boolean isBot() {
         return bot;
     }
 
     @Nonnull
-    @Override
     public JDAImpl getJDA() {
         return api;
     }
@@ -69,9 +65,9 @@ public class UserImpl implements User {
     public boolean equals(Object o) {
         if (o == this)
             return true;
-        if (!(o instanceof UserImpl))
+        if (!(o instanceof User))
             return false;
-        UserImpl oUser = (UserImpl) o;
+        User oUser = (User) o;
         return this.id == oUser.id;
     }
 
@@ -87,12 +83,12 @@ public class UserImpl implements User {
 
     // -- Setters --
 
-    public UserImpl setName(String name) {
+    public User setName(String name) {
         this.name = name;
         return this;
     }
 
-    public UserImpl setDiscriminator(String discriminator) {
+    public User setDiscriminator(String discriminator) {
         this.discriminator = Short.parseShort(discriminator);
         return this;
     }
@@ -101,7 +97,7 @@ public class UserImpl implements User {
         this.bot = bot;
     }
 
-    public UserImpl setFake(boolean fake) {
+    public User setFake(boolean fake) {
         this.fake = fake;
         return this;
     }

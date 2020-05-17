@@ -99,23 +99,23 @@ public class EntityBuilder {
         }
     }
 
-    public UserImpl createFakeUser(DataObject user, boolean modifyCache) {
+    public User createFakeUser(DataObject user, boolean modifyCache) {
         return createUser(user, true, modifyCache);
     }
 
-    public UserImpl createUser(DataObject user) {
+    public User createUser(DataObject user) {
         return createUser(user, false, true);
     }
 
-    private UserImpl createUser(DataObject user, boolean fake, boolean modifyCache) {
+    private User createUser(DataObject user, boolean fake, boolean modifyCache) {
         final long id = user.getLong("id");
-        UserImpl userObj;
+        User userObj;
 
         SnowflakeCacheViewImpl<User> userView = getJDA().getUsersView();
         try (UnlockHook hook = userView.writeLock()) {
-            userObj = (UserImpl) userView.getElementById(id);
+            userObj = userView.getElementById(id);
             if (userObj == null) {
-                userObj = (UserImpl) getJDA().getFakeUserMap().get(id);
+                userObj = getJDA().getFakeUserMap().get(id);
                 if (userObj != null) {
                     if (!fake && modifyCache) {
                         getJDA().getFakeUserMap().remove(id);
@@ -123,7 +123,7 @@ public class EntityBuilder {
                         userView.getMap().put(userObj.getIdLong(), userObj);
                     }
                 } else {
-                    userObj = new UserImpl(id, getJDA()).setFake(fake);
+                    userObj = new User(id, getJDA()).setFake(fake);
                     // Cache user if guild subscriptions are enabled
                     if (modifyCache && getJDA().isGuildSubscriptions()) {
                         if (fake)
@@ -149,7 +149,7 @@ public class EntityBuilder {
         return userObj;
     }
 
-    public void updateUser(UserImpl userObj, DataObject user) {
+    public void updateUser(User userObj, DataObject user) {
         String oldName = userObj.getName();
         String newName = user.getString("username");
         String oldDiscriminator = userObj.getDiscriminator();
@@ -167,7 +167,7 @@ public class EntityBuilder {
     public Member createMember(Guild guild, DataObject memberJson) {
         boolean playbackCache = false;
         User user = createUser(memberJson.getObject("user"));
-        Member member = (Member) guild.getMember(user);
+        Member member = guild.getMember(user);
         if (member == null) {
             MemberCacheViewImpl memberView = guild.getMembersView();
             try (UnlockHook hook = memberView.writeLock()) {
@@ -375,7 +375,7 @@ public class EntityBuilder {
         }
 
         if (modifyCache && !fromWebhook)
-            updateUser((UserImpl) user, author);
+            updateUser((User) user, author);
 
         TLongSet mentionedRoles = new TLongHashSet();
         TLongSet mentionedUsers = new TLongHashSet(map(jsonObject, "mentions", (o) -> o.getLong("id")));
@@ -395,7 +395,7 @@ public class EntityBuilder {
             throw new IllegalArgumentException(UNKNOWN_MESSAGE_TYPE);
         }
 
-        Guild guildImpl = (Guild) message.getGuild();
+        Guild guildImpl = message.getGuild();
 
         if (guildImpl.isLoaded())
             return message;
