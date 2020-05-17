@@ -2,6 +2,7 @@ package me.syari.ss.discord.api;
 
 import me.syari.ss.discord.api.entities.*;
 import me.syari.ss.discord.api.utils.cache.SnowflakeCacheView;
+import me.syari.ss.discord.internal.entities.Emote;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -131,16 +132,6 @@ public interface JDA {
     @Nullable
     default Guild getGuildById(long id) {
         return getGuildCache().getElementById(id);
-    }
-
-
-    @Nonnull
-    SnowflakeCacheView<Role> getRoleCache();
-
-
-    @Nullable
-    default Role getRoleById(long id) {
-        return getRoleCache().getElementById(id);
     }
 
 

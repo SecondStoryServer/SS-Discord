@@ -6,7 +6,7 @@ import me.syari.ss.discord.api.JDA;
 import javax.annotation.Nonnull;
 
 
-public interface User extends IMentionable {
+public interface User extends Mentionable {
     @Nonnull
     String getName();
 

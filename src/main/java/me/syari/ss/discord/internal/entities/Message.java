@@ -159,7 +159,7 @@ public class Message {
         boolean animated = m.group(0).startsWith("<a:");
         Emote emote = getJDA().getEmoteById(emoteId);
         if (emote == null)
-            emote = new EmoteImpl(emoteId).setName(name).setAnimated(animated);
+            emote = new Emote(emoteId).setName(name).setAnimated(animated);
         return emote;
     }
 

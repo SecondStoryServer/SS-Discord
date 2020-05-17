@@ -8,7 +8,7 @@ import java.util.FormattableFlags;
 import java.util.Formatter;
 
 
-public interface IMentionable extends Formattable, ISnowflake {
+public interface Mentionable extends Formattable, ISnowflake {
 
     @Nonnull
     String getAsMention();

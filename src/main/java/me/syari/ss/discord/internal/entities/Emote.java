@@ -1,25 +1,24 @@
 package me.syari.ss.discord.internal.entities;
 
-import me.syari.ss.discord.api.entities.Emote;
+import me.syari.ss.discord.api.entities.Mentionable;
 import me.syari.ss.discord.api.entities.Role;
 
 import javax.annotation.Nonnull;
 import java.util.Set;
 
-public class EmoteImpl implements Emote {
+public class Emote implements Mentionable {
     private final long id;
     private final Set<Role> roles;
 
     private boolean animated = false;
     private String name;
 
-    public EmoteImpl(long id) {
+    public Emote(long id) {
         this.id = id;
         this.roles = null;
     }
 
     @Nonnull
-    @Override
     public String getName() {
         return name;
     }
@@ -29,19 +28,25 @@ public class EmoteImpl implements Emote {
         return id;
     }
 
-    @Override
+
     public boolean isAnimated() {
         return animated;
     }
 
+    @Nonnull
+    @Override
+    public String getAsMention() {
+        return (isAnimated() ? "<a:" : "<:") + getName() + ":" + getId() + ">";
+    }
+
     // -- Setters --
 
-    public EmoteImpl setName(String name) {
+    public Emote setName(String name) {
         this.name = name;
         return this;
     }
 
-    public EmoteImpl setAnimated(boolean animated) {
+    public Emote setAnimated(boolean animated) {
         this.animated = animated;
         return this;
     }
@@ -58,10 +63,10 @@ public class EmoteImpl implements Emote {
     public boolean equals(Object obj) {
         if (obj == this)
             return true;
-        if (!(obj instanceof EmoteImpl))
+        if (!(obj instanceof Emote))
             return false;
 
-        EmoteImpl oEmote = (EmoteImpl) obj;
+        Emote oEmote = (Emote) obj;
         return this.id == oEmote.id && getName().equals(oEmote.getName());
     }
 

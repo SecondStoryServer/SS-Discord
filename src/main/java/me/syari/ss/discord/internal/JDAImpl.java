@@ -17,6 +17,7 @@ import me.syari.ss.discord.api.utils.SessionController;
 import me.syari.ss.discord.api.utils.cache.CacheView;
 import me.syari.ss.discord.api.utils.cache.SnowflakeCacheView;
 import me.syari.ss.discord.api.utils.data.DataObject;
+import me.syari.ss.discord.internal.entities.Emote;
 import me.syari.ss.discord.internal.entities.EntityBuilder;
 import me.syari.ss.discord.internal.handle.EventCache;
 import me.syari.ss.discord.internal.handle.GuildSetupController;
@@ -315,12 +316,6 @@ public class JDAImpl implements JDA {
 
     public boolean isUnavailable(long guildId) {
         return guildSetupController.isUnavailable(guildId);
-    }
-
-    @Nonnull
-    @Override
-    public SnowflakeCacheView<Role> getRoleCache() {
-        return CacheView.allSnowflakes(() -> guildCache.stream().map(Guild::getRoleCache));
     }
 
     @Nonnull

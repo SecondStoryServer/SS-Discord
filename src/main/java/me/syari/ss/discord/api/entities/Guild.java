@@ -4,6 +4,7 @@ import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.utils.cache.MemberCacheView;
 import me.syari.ss.discord.api.utils.cache.SnowflakeCacheView;
 import me.syari.ss.discord.api.utils.cache.SortedSnowflakeCacheView;
+import me.syari.ss.discord.internal.entities.Emote;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

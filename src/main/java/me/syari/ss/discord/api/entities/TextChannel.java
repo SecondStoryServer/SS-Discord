@@ -13,7 +13,7 @@ import java.util.Formattable;
 import java.util.FormattableFlags;
 import java.util.Formatter;
 
-public interface TextChannel extends ISnowflake, Formattable, GuildChannel, IMentionable {
+public interface TextChannel extends ISnowflake, Formattable, GuildChannel, Mentionable {
 
     @Nonnull
     String getName();
