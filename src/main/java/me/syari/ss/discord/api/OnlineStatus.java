@@ -2,11 +2,7 @@ package me.syari.ss.discord.api;
 
 public enum OnlineStatus {
 
-    ONLINE("online"),
-
-    INVISIBLE("invisible"),
-
-    OFFLINE("offline");
+    ONLINE("online");
 
     private final String key;
 

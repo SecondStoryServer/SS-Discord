@@ -11,7 +11,6 @@ import me.syari.ss.discord.api.utils.data.DataObject;
 import me.syari.ss.discord.api.utils.data.DataType;
 import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.handle.*;
-import me.syari.ss.discord.internal.managers.PresenceImpl;
 import me.syari.ss.discord.internal.utils.IOUtil;
 import me.syari.ss.discord.internal.utils.JDALogger;
 import me.syari.ss.discord.internal.utils.compress.Decompressor;
@@ -443,7 +442,6 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
 
     protected void sendIdentify() {
         LOG.debug("Sending Identify-packet...");
-        PresenceImpl presenceObj = (PresenceImpl) api.getPresence();
         DataObject connectionProperties = DataObject.empty()
                 .put("$os", System.getProperty("os.name"))
                 .put("$browser", "JDA")
@@ -451,7 +449,6 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
                 .put("$referring_domain", "")
                 .put("$referrer", "");
         DataObject payload = DataObject.empty()
-                .put("presence", presenceObj.getFullPresence())
                 .put("token", getToken())
                 .put("properties", connectionProperties)
                 .put("v", DISCORD_GATEWAY_VERSION)

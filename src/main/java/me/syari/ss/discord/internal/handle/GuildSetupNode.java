@@ -21,7 +21,6 @@ public class GuildSetupNode {
     private TLongSet removedMembers;
     private DataObject partialGuild;
     private int expectedMemberCount = 1;
-    private boolean requestedSync;
     boolean requestedChunk;
 
     final Type type;
@@ -56,7 +55,6 @@ public class GuildSetupNode {
         return "GuildSetupNode[" + id + "|" + status + ']' +
                 '{' +
                 "expectedMemberCount=" + expectedMemberCount + ", " +
-                "requestedSync=" + requestedSync + ", " +
                 "requestedChunk=" + requestedChunk + ", " +
                 "type=" + type + ", " +
                 "sync=" + sync + ", " +
@@ -101,7 +99,6 @@ public class GuildSetupNode {
             }
         }
         boolean unavailable = partialGuild.getBoolean("unavailable");
-        boolean wasMarkedUnavailable = this.markedUnavailable;
         this.markedUnavailable = unavailable;
         if (unavailable) {
             if (!firedUnavailableJoin && isJoin()) {
@@ -109,15 +106,6 @@ public class GuildSetupNode {
             }
             return;
         }
-        if (wasMarkedUnavailable && sync && !requestedSync) {
-            // We are using a client-account and joined a guild
-            //  in that case we need to sync before doing anything
-            updateStatus(GuildSetupController.Status.SYNCING);
-            getController().addGuildForSyncing(id, isJoin());
-            requestedSync = true;
-            return;
-        }
-
         ensureMembers();
     }
 

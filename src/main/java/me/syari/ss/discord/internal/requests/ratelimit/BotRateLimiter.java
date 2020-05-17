@@ -22,7 +22,7 @@ public class BotRateLimiter extends RateLimiter {
     private static final String GLOBAL_HEADER = "X-RateLimit-Global";
     private static final String HASH_HEADER = "X-RateLimit-Bucket";
     private static final String RETRY_AFTER_HEADER = "Retry-After";
-    private static final String UNLIMITED_BUCKET = "unlimited"; // we generate an unlimited bucket for every major parameter configuration
+    private static final String UNLIMITED_BUCKET = "unlimited";
 
     private final ReentrantLock bucketLock = new ReentrantLock();
     private final Map<Route, String> hash = new ConcurrentHashMap<>();

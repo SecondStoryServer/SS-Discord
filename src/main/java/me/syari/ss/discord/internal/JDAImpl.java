@@ -9,7 +9,6 @@ import me.syari.ss.discord.api.exceptions.RateLimitedException;
 import me.syari.ss.discord.api.hooks.IEventManager;
 import me.syari.ss.discord.api.hooks.InterfacedEventManager;
 import me.syari.ss.discord.api.hooks.ListenerAdapter;
-import me.syari.ss.discord.api.managers.Presence;
 import me.syari.ss.discord.api.requests.Request;
 import me.syari.ss.discord.api.requests.Response;
 import me.syari.ss.discord.api.utils.ChunkingFilter;
@@ -24,7 +23,6 @@ import me.syari.ss.discord.internal.entities.EntityBuilder;
 import me.syari.ss.discord.internal.handle.EventCache;
 import me.syari.ss.discord.internal.handle.GuildSetupController;
 import me.syari.ss.discord.internal.hooks.EventManagerProxy;
-import me.syari.ss.discord.internal.managers.PresenceImpl;
 import me.syari.ss.discord.internal.requests.Requester;
 import me.syari.ss.discord.internal.requests.RestActionImpl;
 import me.syari.ss.discord.internal.requests.Route;
@@ -56,7 +54,6 @@ public class JDAImpl implements JDA {
 
     protected final TLongObjectMap<User> fakeUsers = MiscUtil.newLongMap();
 
-    protected final PresenceImpl presence;
     protected final Thread shutdownHook;
     protected final EntityBuilder entityBuilder = new EntityBuilder(this);
     protected final EventCache eventCache;
@@ -86,7 +83,6 @@ public class JDAImpl implements JDA {
         this.sessionConfig = sessionConfig == null ? SessionConfig.getDefault() : sessionConfig;
         this.metaConfig = metaConfig == null ? MetaConfig.getDefault() : metaConfig;
         this.shutdownHook = this.metaConfig.isUseShutdownHook() ? new Thread(this::shutdown, "JDA Shutdown Hook") : null;
-        this.presence = new PresenceImpl();
         this.requester = new Requester(this);
         this.requester.setRetryOnTimeout(this.sessionConfig.isRetryOnTimeout());
         this.guildSetupController = new GuildSetupController(this);
@@ -404,11 +400,6 @@ public class JDAImpl implements JDA {
     @Nonnull
     public ShardInfo getShardInfo() {
         return shardInfo == null ? ShardInfo.SINGLE : shardInfo;
-    }
-
-    @Nonnull
-    public Presence getPresence() {
-        return presence;
     }
 
     public void setEventManager(IEventManager eventManager) {

@@ -17,7 +17,6 @@ import org.slf4j.Logger;
 
 import java.util.concurrent.Future;
 
-@SuppressWarnings("WeakerAccess")
 public class GuildSetupController {
     protected static final int CHUNK_TIMEOUT = 10000;
     protected static final Logger log = JDALogger.getLog(GuildSetupController.class);
@@ -26,7 +25,7 @@ public class GuildSetupController {
     private final TLongObjectMap<GuildSetupNode> setupNodes = new TLongObjectHashMap<>();
     private final TLongSet chunkingGuilds = new TLongHashSet();
     private final TLongLongMap pendingChunks = new TLongLongHashMap();
-    private final TLongSet syncingGuilds;
+    private final TLongSet syncingGuilds = null;
     private final TLongSet unavailableGuilds = new TLongHashSet();
 
     private int incompleteCount = 0;
@@ -38,7 +37,6 @@ public class GuildSetupController {
 
     public GuildSetupController(JDAImpl api) {
         this.api = api;
-        syncingGuilds = null;
     }
 
     JDAImpl getJDA() {
@@ -80,8 +78,6 @@ public class GuildSetupController {
         synchronized (pendingChunks) {
             pendingChunks.remove(id);
         }
-        if (syncingGuilds != null)
-            syncingGuilds.remove(id);
     }
 
     public void ready(long id) {
@@ -219,7 +215,6 @@ public class GuildSetupController {
 
     private void trySyncing() {
         if (syncingGuilds.size() >= 50) {
-            // request chunks
             final DataArray subset = DataArray.empty();
             for (final TLongIterator it = syncingGuilds.iterator(); subset.length() < 50; ) {
                 subset.add(it.next());
