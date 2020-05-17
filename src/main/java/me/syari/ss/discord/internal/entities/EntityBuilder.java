@@ -402,7 +402,7 @@ public class EntityBuilder {
         MessageType type = MessageType.fromId(jsonObject.getInt("type"));
         Message message;
         if (type == MessageType.DEFAULT) {
-            message = new Message(id, chan, type,
+            message = new Message(id, chan,
                     mentionedUsers, mentionedRoles,
                     content, user, member);
         } else {

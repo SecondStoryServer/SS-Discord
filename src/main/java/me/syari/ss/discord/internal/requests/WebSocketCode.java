@@ -11,5 +11,4 @@ public final class WebSocketCode {
     public static final int INVALIDATE_SESSION = 9;
     public static final int HELLO = 10;
     public static final int HEARTBEAT_ACK = 11;
-    public static final int GUILD_SYNC = 12;
 }

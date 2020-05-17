@@ -35,7 +35,7 @@ public class Message {
     protected List<TextChannel> channelMentions = null;
 
     public Message(
-            long id, MessageChannel channel, MessageType type,
+            long id, MessageChannel channel,
             TLongSet mentionedUsers, TLongSet mentionedRoles,
             String content, User author, Member member) {
         this.content = content;

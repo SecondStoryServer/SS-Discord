@@ -9,12 +9,12 @@ public interface TextChannel extends GuildChannel, MessageChannel, IMentionable 
     @Override
     default void formatTo(Formatter formatter, int flags, int width, int precision) {
         boolean leftJustified = (flags & FormattableFlags.LEFT_JUSTIFY) == FormattableFlags.LEFT_JUSTIFY;
-        boolean upper = (flags & FormattableFlags.UPPERCASE) == FormattableFlags.UPPERCASE;
-        boolean alt = (flags & FormattableFlags.ALTERNATE) == FormattableFlags.ALTERNATE;
+        boolean uppercase = (flags & FormattableFlags.UPPERCASE) == FormattableFlags.UPPERCASE;
+        boolean alternate = (flags & FormattableFlags.ALTERNATE) == FormattableFlags.ALTERNATE;
         String out;
 
-        if (alt)
-            out = "#" + (upper ? getName().toUpperCase(formatter.locale()) : getName());
+        if (alternate)
+            out = "#" + (uppercase ? getName().toUpperCase(formatter.locale()) : getName());
         else
             out = getAsMention();
 

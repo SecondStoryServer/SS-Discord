@@ -20,13 +20,12 @@ public class MiscUtil {
     public static long parseSnowflake(String input) {
         Checks.notEmpty(input, "ID");
         try {
-            if (!input.startsWith("-")) // if not negative -> parse unsigned
+            if (!input.startsWith("-"))
                 return Long.parseUnsignedLong(input);
-            else // if negative -> parse normal
+            else
                 return Long.parseLong(input);
         } catch (NumberFormatException ex) {
-            throw new NumberFormatException(
-                    String.format("The specified ID is not a valid snowflake (%s). Expecting a valid long value!", input));
+            throw new NumberFormatException(String.format("The specified ID is not a valid snowflake (%s). Expecting a valid long value!", input));
         }
     }
 

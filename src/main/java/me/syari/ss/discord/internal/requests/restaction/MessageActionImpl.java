@@ -26,7 +26,6 @@ import java.util.Map;
 import java.util.Set;
 
 public class MessageActionImpl extends RestActionImpl<Message> implements MessageAction {
-    private static final String CONTENT_TOO_BIG = String.format("A message may not exceed %d characters. Please limit your input!", Message.MAX_CONTENT_LENGTH);
     protected final Map<String, InputStream> files = new HashMap<>();
     protected final Set<InputStream> ownedResources = new HashSet<>();
     protected final StringBuilder content;

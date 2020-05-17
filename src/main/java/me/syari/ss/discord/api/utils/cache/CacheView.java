@@ -36,6 +36,4 @@ public interface CacheView<T> extends Iterable<T> {
         Checks.notNull(generator, "Generator");
         return new UnifiedCacheViewImpl.UnifiedSnowflakeCacheView<>(generator);
     }
-
-
 }

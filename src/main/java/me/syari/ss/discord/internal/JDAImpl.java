@@ -69,13 +69,10 @@ public class JDAImpl implements JDA {
     protected Status status = Status.INITIALIZING;
     protected ShardInfo shardInfo;
     protected long responseTotal;
-    protected long gatewayPing = -1;
     protected String gatewayUrl;
     protected ChunkingFilter chunkingFilter;
 
-    public JDAImpl(
-            AuthorizationConfig authConfig, SessionConfig sessionConfig,
-            ThreadingConfig threadConfig, MetaConfig metaConfig) {
+    public JDAImpl(AuthorizationConfig authConfig, SessionConfig sessionConfig, ThreadingConfig threadConfig, MetaConfig metaConfig) {
         this.authConfig = authConfig;
         this.threadConfig = threadConfig == null ? ThreadingConfig.getDefault() : threadConfig;
         this.sessionConfig = sessionConfig == null ? SessionConfig.getDefault() : sessionConfig;
@@ -400,10 +397,6 @@ public class JDAImpl implements JDA {
 
     public EntityBuilder getEntityBuilder() {
         return entityBuilder;
-    }
-
-    public void setGatewayPing(long ping) {
-        this.gatewayPing = ping;
     }
 
     public Requester getRequester() {

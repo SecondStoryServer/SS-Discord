@@ -28,26 +28,22 @@ public interface JDA {
 
         CONNECTED(true),
 
-        DISCONNECTED,
+        DISCONNECTED(false),
 
-        RECONNECT_QUEUED,
+        RECONNECT_QUEUED(false),
 
-        WAITING_TO_RECONNECT,
+        WAITING_TO_RECONNECT(false),
 
-        ATTEMPTING_TO_RECONNECT,
+        ATTEMPTING_TO_RECONNECT(false),
 
-        SHUTTING_DOWN,
+        SHUTTING_DOWN(false),
 
-        SHUTDOWN;
+        SHUTDOWN(false);
 
         private final boolean isInit;
 
         Status(boolean isInit) {
             this.isInit = isInit;
-        }
-
-        Status() {
-            this.isInit = false;
         }
 
         public boolean isInit() {

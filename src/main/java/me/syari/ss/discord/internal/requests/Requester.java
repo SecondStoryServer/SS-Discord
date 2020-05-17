@@ -23,8 +23,8 @@ import java.util.Set;
 
 public class Requester {
     public static final Logger LOG = JDALogger.getLog(Requester.class);
-    public static final String DISCORD_API_PREFIX = String.format("https://discordapp.com/api/v%d/", JDAInfo.DISCORD_REST_VERSION);
-    public static final String USER_AGENT = "DiscordBot (" + JDAInfo.GITHUB + ", " + JDAInfo.VERSION + ")";
+    public static final String DISCORD_API_PREFIX = "https://discordapp.com/api/v6/";
+    public static final String USER_AGENT = "SS-Discord";
     public static final RequestBody EMPTY_BODY = RequestBody.create(null, new byte[0]);
     public static final MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json; charset=utf-8");
     public static final MediaType MEDIA_TYPE_OCTET = MediaType.parse("application/octet-stream; charset=utf-8");
@@ -58,9 +58,7 @@ public class Requester {
     }
 
     private static boolean isRetry(Throwable e) {
-        return e instanceof SocketException             // Socket couldn't be created or access failed
-                || e instanceof SocketTimeoutException      // Connection timed out
-                || e instanceof SSLPeerUnverifiedException; // SSL Certificate was wrong
+        return e instanceof SocketException || e instanceof SocketTimeoutException || e instanceof SSLPeerUnverifiedException;
     }
 
     public Long execute(Request<?> apiRequest) {

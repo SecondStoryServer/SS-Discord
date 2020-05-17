@@ -562,10 +562,6 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
                 final DataObject data = content.getObject("d");
                 setupKeepAlive(data.getLong("heartbeat_interval"));
                 break;
-            case WebSocketCode.HEARTBEAT_ACK:
-                LOG.trace("Got Heartbeat Ack (OP 11).");
-                api.setGatewayPing(System.currentTimeMillis() - heartbeatStartTime);
-                break;
             default:
                 LOG.debug("Got unknown op-code: {} with content: {}", opCode, content);
         }

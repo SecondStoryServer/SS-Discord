@@ -9,8 +9,6 @@ import javax.annotation.Nullable;
 
 
 public interface MessageAction extends RestAction<Message>, Appendable {
-
-
     @Nonnull
     @Override
     @CheckReturnValue
