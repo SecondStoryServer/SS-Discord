@@ -10,33 +10,12 @@ import java.util.function.Supplier;
 public class ThreadingConfig {
     private ScheduledExecutorService rateLimitPool;
     private ScheduledExecutorService gatewayPool;
-    private ExecutorService callbackPool;
-
-    private boolean shutdownRateLimitPool;
-    private boolean shutdownGatewayPool;
-    private boolean shutdownCallbackPool;
+    private final ExecutorService callbackPool;
 
     public ThreadingConfig() {
         this.callbackPool = ForkJoinPool.commonPool();
-
-        this.shutdownRateLimitPool = true;
-        this.shutdownGatewayPool = true;
-        this.shutdownCallbackPool = false;
-    }
-
-    public void setRateLimitPool(@Nullable ScheduledExecutorService executor, boolean shutdown) {
-        this.rateLimitPool = executor;
-        this.shutdownRateLimitPool = shutdown;
-    }
-
-    public void setGatewayPool(@Nullable ScheduledExecutorService executor, boolean shutdown) {
-        this.gatewayPool = executor;
-        this.shutdownGatewayPool = shutdown;
-    }
-
-    public void setCallbackPool(@Nullable ExecutorService executor, boolean shutdown) {
-        this.callbackPool = executor == null ? ForkJoinPool.commonPool() : executor;
-        this.shutdownCallbackPool = shutdown;
+        this.rateLimitPool = null;
+        this.gatewayPool = null;
     }
 
     public void init(@NotNull Supplier<String> identifier) {
@@ -47,28 +26,21 @@ public class ThreadingConfig {
     }
 
     public void shutdown() {
-        if (shutdownCallbackPool)
-            callbackPool.shutdown();
-        if (shutdownGatewayPool)
-            gatewayPool.shutdown();
-        if (shutdownRateLimitPool) {
-            if (rateLimitPool instanceof ScheduledThreadPoolExecutor) {
-                ScheduledThreadPoolExecutor executor = (ScheduledThreadPoolExecutor) rateLimitPool;
-                executor.setKeepAliveTime(5L, TimeUnit.SECONDS);
-                executor.allowCoreThreadTimeOut(true);
-            } else {
-                rateLimitPool.shutdown();
-            }
+        callbackPool.shutdown();
+        gatewayPool.shutdown();
+        if (rateLimitPool instanceof ScheduledThreadPoolExecutor) {
+            ScheduledThreadPoolExecutor executor = (ScheduledThreadPoolExecutor) rateLimitPool;
+            executor.setKeepAliveTime(5L, TimeUnit.SECONDS);
+            executor.allowCoreThreadTimeOut(true);
+        } else {
+            rateLimitPool.shutdown();
         }
     }
 
     public void shutdownNow() {
-        if (shutdownCallbackPool)
-            callbackPool.shutdownNow();
-        if (shutdownGatewayPool)
-            gatewayPool.shutdownNow();
-        if (shutdownRateLimitPool)
-            rateLimitPool.shutdownNow();
+        callbackPool.shutdownNow();
+        gatewayPool.shutdownNow();
+        rateLimitPool.shutdownNow();
     }
 
     @NotNull
@@ -91,8 +63,4 @@ public class ThreadingConfig {
         return new ScheduledThreadPoolExecutor(coreSize, new CountingThreadFactory(identifier, baseName));
     }
 
-    @NotNull
-    public static ThreadingConfig getDefault() {
-        return new ThreadingConfig();
-    }
 }

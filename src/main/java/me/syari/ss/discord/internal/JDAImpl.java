@@ -69,11 +69,15 @@ public class JDAImpl implements JDA {
     protected String gatewayUrl;
     protected ChunkingFilter chunkingFilter;
 
-    public JDAImpl(AuthorizationConfig authConfig, SessionConfig sessionConfig, ThreadingConfig threadConfig, MetaConfig metaConfig, Consumer<MessageReceivedEvent> messageReceivedEvent) {
+    public JDAImpl(@NotNull AuthorizationConfig authConfig,
+                   @NotNull SessionConfig sessionConfig,
+                   @NotNull ThreadingConfig threadConfig,
+                   @NotNull MetaConfig metaConfig,
+                   @NotNull Consumer<MessageReceivedEvent> messageReceivedEvent) {
         this.authConfig = authConfig;
-        this.threadConfig = threadConfig == null ? ThreadingConfig.getDefault() : threadConfig;
-        this.sessionConfig = sessionConfig == null ? SessionConfig.getDefault() : sessionConfig;
-        this.metaConfig = metaConfig == null ? MetaConfig.getDefault() : metaConfig;
+        this.threadConfig = threadConfig;
+        this.sessionConfig = sessionConfig;
+        this.metaConfig = metaConfig;
         this.messageReceivedEvent = messageReceivedEvent;
         this.shutdownHook = this.metaConfig.isUseShutdownHook() ? new Thread(this::shutdown, "JDA Shutdown Hook") : null;
         this.requester = new Requester(this);

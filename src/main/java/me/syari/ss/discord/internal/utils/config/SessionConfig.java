@@ -19,12 +19,11 @@ public class SessionConfig {
     private final int maxReconnectDelay;
 
     public SessionConfig(
-            @Nullable SessionController sessionController, @Nullable OkHttpClient httpClient,
-            @Nullable WebSocketFactory webSocketFactory,
+            @Nullable OkHttpClient httpClient,
             EnumSet<ConfigFlag> flags, int maxReconnectDelay, int largeThreshold) {
-        this.sessionController = sessionController == null ? new SessionControllerAdapter() : sessionController;
+        this.sessionController = new SessionControllerAdapter();
         this.httpClient = httpClient;
-        this.webSocketFactory = webSocketFactory == null ? new WebSocketFactory() : webSocketFactory;
+        this.webSocketFactory = new WebSocketFactory();
         this.flags = flags;
         this.maxReconnectDelay = maxReconnectDelay;
         this.largeThreshold = largeThreshold;
@@ -65,8 +64,4 @@ public class SessionConfig {
         return largeThreshold;
     }
 
-    @NotNull
-    public static SessionConfig getDefault() {
-        return new SessionConfig(null, new OkHttpClient(), null, ConfigFlag.getDefault(), 900, 250);
-    }
 }

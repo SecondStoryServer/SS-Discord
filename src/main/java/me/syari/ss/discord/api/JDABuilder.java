@@ -1,10 +1,8 @@
 package me.syari.ss.discord.api;
 
-import com.neovisionaries.ws.client.WebSocketFactory;
 import me.syari.ss.discord.api.event.MessageReceivedEvent;
 import me.syari.ss.discord.api.utils.ChunkingFilter;
 import me.syari.ss.discord.api.utils.Compression;
-import me.syari.ss.discord.api.utils.SessionController;
 import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.utils.config.AuthorizationConfig;
 import me.syari.ss.discord.internal.utils.config.MetaConfig;
@@ -22,9 +20,6 @@ import java.util.function.Consumer;
 public class JDABuilder {
     protected final String token;
     protected final Consumer<MessageReceivedEvent> messageReceivedEvent;
-    protected final boolean shutdownRateLimitPool = true;
-    protected final boolean shutdownMainWsPool = true;
-    protected final boolean shutdownCallbackPool = true;
     protected OkHttpClient.Builder httpClientBuilder = null;
     protected final Compression compression = Compression.ZLIB;
     protected final int maxReconnectDelay = 900;
@@ -46,15 +41,9 @@ public class JDABuilder {
             this.httpClientBuilder = new OkHttpClient.Builder();
 
         OkHttpClient httpClient = this.httpClientBuilder.build();
-
-        WebSocketFactory wsFactory = new WebSocketFactory();
-
         AuthorizationConfig authConfig = new AuthorizationConfig(token);
         ThreadingConfig threadingConfig = new ThreadingConfig();
-        threadingConfig.setCallbackPool(null, shutdownCallbackPool);
-        threadingConfig.setGatewayPool(null, shutdownMainWsPool);
-        threadingConfig.setRateLimitPool(null, shutdownRateLimitPool);
-        SessionConfig sessionConfig = new SessionConfig(null, httpClient, wsFactory, flags, maxReconnectDelay, largeThreshold);
+        SessionConfig sessionConfig = new SessionConfig(httpClient, flags, maxReconnectDelay, largeThreshold);
         MetaConfig metaConfig = new MetaConfig(maxBufferSize, flags);
 
         JDAImpl jda = new JDAImpl(authConfig, sessionConfig, threadingConfig, metaConfig, messageReceivedEvent);
