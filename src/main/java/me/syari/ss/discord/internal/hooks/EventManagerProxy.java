@@ -1,15 +1,15 @@
 package me.syari.ss.discord.internal.hooks;
 
 import me.syari.ss.discord.api.events.MessageReceivedEvent;
-import me.syari.ss.discord.api.hooks.IEventManager;
+import me.syari.ss.discord.api.hooks.EventManager;
 import me.syari.ss.discord.internal.JDAImpl;
 
 import javax.annotation.Nonnull;
 
-public class EventManagerProxy implements IEventManager {
-    private final IEventManager subject;
+public class EventManagerProxy implements EventManager {
+    private final EventManager subject;
 
-    public EventManagerProxy(IEventManager subject) {
+    public EventManagerProxy(EventManager subject) {
         this.subject = subject;
     }
 

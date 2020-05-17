@@ -14,7 +14,7 @@ public class RestFuture<T> extends CompletableFuture<T> {
     public RestFuture(final RestActionImpl<T> restAction, final boolean shouldQueue,
                       final RequestBody data,
                       final Route.CompiledRoute route, final CaseInsensitiveMap<String, String> headers) {
-        this.request = new Request<T>(restAction, this::complete, this::completeExceptionally, shouldQueue, data, route, headers);
+        this.request = new Request<>(restAction, this::complete, this::completeExceptionally, shouldQueue, data, route, headers);
         ((JDAImpl) restAction.getJDA()).getRequester().request(this.request);
     }
 

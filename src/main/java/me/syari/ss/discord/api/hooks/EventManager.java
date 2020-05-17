@@ -5,7 +5,7 @@ import me.syari.ss.discord.api.events.MessageReceivedEvent;
 import javax.annotation.Nonnull;
 
 
-public interface IEventManager {
+public interface EventManager {
 
     void register(@Nonnull Object listener);
 

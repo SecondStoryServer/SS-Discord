@@ -7,7 +7,7 @@ import javax.annotation.Nonnull;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 
-public class InterfacedEventManager implements IEventManager {
+public class InterfacedEventManager implements EventManager {
     private final CopyOnWriteArrayList<ListenerAdapter> listeners = new CopyOnWriteArrayList<>();
 
     public InterfacedEventManager() {

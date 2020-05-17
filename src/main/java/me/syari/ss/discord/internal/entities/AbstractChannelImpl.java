@@ -7,7 +7,7 @@ import me.syari.ss.discord.internal.utils.cache.SnowflakeReference;
 
 import javax.annotation.Nonnull;
 
-public abstract class AbstractChannelImpl<T extends GuildChannel, M extends AbstractChannelImpl<T, M>> implements GuildChannel {
+public abstract class AbstractChannelImpl<T extends AbstractChannelImpl<T>> implements GuildChannel {
     protected final long id;
     protected final SnowflakeReference<Guild> guild;
     protected final JDAImpl api;
@@ -38,7 +38,7 @@ public abstract class AbstractChannelImpl<T extends GuildChannel, M extends Abst
     @Nonnull
     @Override
     public Guild getGuild() {
-        return (Guild) guild.resolve();
+        return guild.resolve();
     }
 
     @Override
@@ -68,14 +68,14 @@ public abstract class AbstractChannelImpl<T extends GuildChannel, M extends Abst
     }
 
     @SuppressWarnings("unchecked")
-    public M setName(String name) {
+    public T setName(String name) {
         this.name = name;
-        return (M) this;
+        return (T) this;
     }
 
     @SuppressWarnings("unchecked")
-    public M setPosition(int rawPosition) {
+    public T setPosition(int rawPosition) {
         this.rawPosition = rawPosition;
-        return (M) this;
+        return (T) this;
     }
 }

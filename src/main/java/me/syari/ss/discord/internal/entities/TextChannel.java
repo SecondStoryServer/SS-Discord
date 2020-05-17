@@ -16,7 +16,7 @@ import java.util.Formattable;
 import java.util.FormattableFlags;
 import java.util.Formatter;
 
-public class TextChannel extends AbstractChannelImpl<TextChannel, TextChannel> implements ISnowflake, Formattable, GuildChannel, Mentionable {
+public class TextChannel extends AbstractChannelImpl<TextChannel> implements ISnowflake, Formattable, GuildChannel, Mentionable {
 
     public TextChannel(long id, Guild guild) {
         super(id, guild);

@@ -375,7 +375,7 @@ public class EntityBuilder {
         }
 
         if (modifyCache && !fromWebhook)
-            updateUser((User) user, author);
+            updateUser(user, author);
 
         TLongSet mentionedRoles = new TLongHashSet();
         TLongSet mentionedUsers = new TLongHashSet(map(jsonObject, "mentions", (o) -> o.getLong("id")));
