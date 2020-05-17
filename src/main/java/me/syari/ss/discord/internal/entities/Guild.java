@@ -1,13 +1,12 @@
 package me.syari.ss.discord.internal.entities;
 
 import me.syari.ss.discord.api.entities.ISnowflake;
-import me.syari.ss.discord.api.utils.cache.MemberCacheView;
 import me.syari.ss.discord.api.utils.cache.SnowflakeCacheView;
 import me.syari.ss.discord.api.utils.cache.SortedSnowflakeCacheView;
 import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.utils.Checks;
 import me.syari.ss.discord.internal.utils.JDALogger;
-import me.syari.ss.discord.internal.utils.cache.MemberCacheViewImpl;
+import me.syari.ss.discord.internal.utils.cache.MemberCacheView;
 import me.syari.ss.discord.internal.utils.cache.SnowflakeCacheViewImpl;
 import me.syari.ss.discord.internal.utils.cache.SortedSnowflakeCacheViewImpl;
 import org.jetbrains.annotations.NotNull;
@@ -23,7 +22,7 @@ public class Guild implements ISnowflake {
     private final SortedSnowflakeCacheViewImpl<TextChannel> textChannelCache = new SortedSnowflakeCacheViewImpl<>(TextChannel.class, Comparator.naturalOrder());
     private final SortedSnowflakeCacheViewImpl<Role> roleCache = new SortedSnowflakeCacheViewImpl<>(Role.class, Comparator.reverseOrder());
     private final SnowflakeCacheViewImpl<Emote> emoteCache = new SnowflakeCacheViewImpl<>(Emote.class);
-    private final MemberCacheViewImpl memberCache = new MemberCacheViewImpl();
+    private final MemberCacheView memberCache = new MemberCacheView();
 
     private final CompletableFuture<Void> chunkingCallback = new CompletableFuture<>();
 
@@ -149,7 +148,7 @@ public class Guild implements ISnowflake {
         return emoteCache;
     }
 
-    public MemberCacheViewImpl getMembersView() {
+    public MemberCacheView getMembersView() {
         return memberCache;
     }
 

@@ -10,7 +10,7 @@ import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.handle.EventCache;
 import me.syari.ss.discord.internal.utils.JDALogger;
 import me.syari.ss.discord.internal.utils.UnlockHook;
-import me.syari.ss.discord.internal.utils.cache.MemberCacheViewImpl;
+import me.syari.ss.discord.internal.utils.cache.MemberCacheView;
 import me.syari.ss.discord.internal.utils.cache.SnowflakeCacheViewImpl;
 import org.slf4j.Logger;
 
@@ -171,7 +171,7 @@ public class EntityBuilder {
         User user = createUser(memberJson.getObject("user"));
         Member member = guild.getMember(user);
         if (member == null) {
-            MemberCacheViewImpl memberView = guild.getMembersView();
+            MemberCacheView memberView = guild.getMembersView();
             try (UnlockHook hook = memberView.writeLock()) {
                 member = new Member(guild, user);
                 playbackCache = true;
