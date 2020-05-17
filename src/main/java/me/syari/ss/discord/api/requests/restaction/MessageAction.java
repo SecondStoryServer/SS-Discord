@@ -1,6 +1,5 @@
 package me.syari.ss.discord.api.requests.restaction;
 
-import me.syari.ss.discord.api.entities.MessageChannel;
 import me.syari.ss.discord.api.requests.RestAction;
 import me.syari.ss.discord.internal.entities.Message;
 

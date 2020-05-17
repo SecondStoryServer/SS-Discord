@@ -7,7 +7,6 @@ import okhttp3.RequestBody;
 import org.apache.commons.collections4.map.CaseInsensitiveMap;
 
 import java.util.concurrent.CompletableFuture;
-import java.util.function.BooleanSupplier;
 
 public class RestFuture<T> extends CompletableFuture<T> {
     final Request<T> request;

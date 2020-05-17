@@ -18,7 +18,6 @@ import javax.annotation.Nonnull;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.function.BiFunction;
-import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
 public class RestActionImpl<T> implements RestAction<T> {

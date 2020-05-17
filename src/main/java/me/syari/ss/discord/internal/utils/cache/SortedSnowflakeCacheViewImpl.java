@@ -8,7 +8,6 @@ import org.apache.commons.collections4.iterators.ObjectArrayIterator;
 import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.stream.Stream;
 
 public class SortedSnowflakeCacheViewImpl<T extends ISnowflake & Comparable<? super T>>

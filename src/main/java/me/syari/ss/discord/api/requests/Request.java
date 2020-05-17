@@ -13,7 +13,6 @@ import org.apache.commons.collections4.map.CaseInsensitiveMap;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
 public class Request<T> {

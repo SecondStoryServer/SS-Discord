@@ -150,8 +150,7 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
             this.printedRateLimitMessage = false;
         }
 
-        if (this.messagesSent.get() <= 115 || (skipQueue && this.messagesSent.get() <= 119))
-        {
+        if (this.messagesSent.get() <= 115 || (skipQueue && this.messagesSent.get() <= 119)) {
             LOG.trace("<- {}", message);
             socket.sendText(message);
             this.messagesSent.getAndIncrement();

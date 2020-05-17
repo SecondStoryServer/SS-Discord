@@ -3,7 +3,6 @@ package me.syari.ss.discord.api.entities;
 import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.requests.restaction.MessageAction;
 import me.syari.ss.discord.api.utils.MiscUtil;
-import me.syari.ss.discord.internal.entities.Message;
 import me.syari.ss.discord.internal.requests.Route;
 import me.syari.ss.discord.internal.requests.restaction.MessageActionImpl;
 import me.syari.ss.discord.internal.utils.Checks;
