@@ -42,17 +42,6 @@ public interface MessageChannel extends ISnowflake, Formattable {
             return new MessageActionImpl(getJDA(), route, this).append(text);
     }
 
-
-    @Nonnull
-    @CheckReturnValue
-    default MessageAction sendMessage(@Nonnull MessageEmbed embed) {
-        Checks.notNull(embed, "Provided embed");
-
-        Route.CompiledRoute route = Route.Messages.SEND_MESSAGE.compile(getId());
-        return new MessageActionImpl(getJDA(), route, this).embed(embed);
-    }
-
-
     @Nonnull
     @CheckReturnValue
     default MessageAction sendMessage(@Nonnull Message msg) {

@@ -2,7 +2,6 @@ package me.syari.ss.discord.internal.requests.restaction;
 
 import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.entities.MessageChannel;
-import me.syari.ss.discord.api.entities.MessageEmbed;
 import me.syari.ss.discord.api.entities.MessageType;
 import me.syari.ss.discord.api.requests.Request;
 import me.syari.ss.discord.api.requests.Response;
@@ -32,7 +31,6 @@ public class MessageActionImpl extends RestActionImpl<Message> implements Messag
     protected final Set<InputStream> ownedResources = new HashSet<>();
     protected final StringBuilder content;
     protected final MessageChannel channel;
-    protected MessageEmbed embed = null;
     protected boolean tts = false, override = false;
 
     public MessageActionImpl(JDA api, Route.CompiledRoute route, MessageChannel channel) {
@@ -63,8 +61,7 @@ public class MessageActionImpl extends RestActionImpl<Message> implements Messag
 
     @Override
     public boolean isEmpty() {
-        return Helpers.isBlank(content)
-                && (embed == null || embed.isEmpty());
+        return Helpers.isBlank(content);
     }
 
     @Override
@@ -78,9 +75,6 @@ public class MessageActionImpl extends RestActionImpl<Message> implements Messag
     public MessageActionImpl apply(final Message message) {
         if (message == null || message.getType() != MessageType.DEFAULT)
             return this;
-        final List<MessageEmbed> embeds = message.getEmbeds();
-        if (!embeds.isEmpty())
-            embed(embeds.get(0));
         files.clear();
 
         return content(message.getContentRaw()).tts(message.isTTS());
@@ -104,19 +98,6 @@ public class MessageActionImpl extends RestActionImpl<Message> implements Messag
             this.content.replace(0, this.content.length(), content);
         else
             throw new IllegalArgumentException(CONTENT_TOO_BIG);
-        return this;
-    }
-
-    @Nonnull
-    @Override
-    @CheckReturnValue
-    public MessageActionImpl embed(final MessageEmbed embed) {
-        if (embed != null) {
-            Checks.check(embed.isSendable(),
-                    "Provided Message contains an empty embed or an embed with a length greater than %d characters, which is the max for Bot accounts!",
-                    MessageEmbed.EMBED_MAX_LENGTH_BOT);
-        }
-        this.embed = embed;
         return this;
     }
 
@@ -182,10 +163,7 @@ public class MessageActionImpl extends RestActionImpl<Message> implements Messag
     protected DataObject getJSON() {
         final DataObject obj = DataObject.empty();
         if (override) {
-            if (embed == null)
-                obj.putNull("embed");
-            else
-                obj.put("embed", embed);
+            obj.putNull("embed");
             if (content.length() == 0)
                 obj.putNull("content");
             else
@@ -193,10 +171,7 @@ public class MessageActionImpl extends RestActionImpl<Message> implements Messag
             obj.putNull("nonce");
             obj.put("tts", tts);
         } else {
-            if (embed != null)
-                obj.put("embed", embed);
-            if (content.length() > 0)
-                obj.put("content", content.toString());
+            obj.put("content", content.toString());
             obj.put("tts", tts);
         }
         return obj;

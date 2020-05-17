@@ -2,7 +2,6 @@ package me.syari.ss.discord.internal.entities;
 
 import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.entities.ChannelType;
-import me.syari.ss.discord.api.entities.MessageEmbed;
 import me.syari.ss.discord.api.entities.TextChannel;
 import me.syari.ss.discord.api.requests.restaction.MessageAction;
 import me.syari.ss.discord.internal.utils.Checks;
@@ -43,12 +42,6 @@ public class TextChannelImpl extends AbstractChannelImpl<TextChannel, TextChanne
     @Override
     public MessageAction sendMessage(@Nonnull CharSequence text) {
         return TextChannel.super.sendMessage(text);
-    }
-
-    @Nonnull
-    @Override
-    public MessageAction sendMessage(@Nonnull MessageEmbed embed) {
-        return TextChannel.super.sendMessage(embed);
     }
 
     @Nonnull

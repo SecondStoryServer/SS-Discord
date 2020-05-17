@@ -24,7 +24,6 @@ public class Message {
     protected final MessageChannel channel;
     protected final User author;
     protected final Member member;
-    protected final List<MessageEmbed> embeds;
     protected final TLongSet mentionedUsers;
     protected final TLongSet mentionedRoles;
     protected final String content;
@@ -40,8 +39,7 @@ public class Message {
     public Message(
             long id, MessageChannel channel, MessageType type,
             TLongSet mentionedUsers, TLongSet mentionedRoles, boolean tts,
-            String content, User author, Member member,
-            List<MessageEmbed> embeds) {
+            String content, User author, Member member) {
         this.content = content;
         this.isTTS = tts;
         this.id = id;
@@ -50,7 +48,6 @@ public class Message {
         this.api = (channel != null) ? (JDAImpl) channel.getJDA() : null;
         this.author = author;
         this.member = member;
-        this.embeds = Collections.unmodifiableList(embeds);
         this.mentionedUsers = mentionedUsers;
         this.mentionedRoles = mentionedRoles;
     }
@@ -181,11 +178,6 @@ public class Message {
     @Nonnull
     public Guild getGuild() {
         return getTextChannel().getGuild();
-    }
-
-    @Nonnull
-    public List<MessageEmbed> getEmbeds() {
-        return embeds;
     }
 
     private Emote matchEmote(Matcher m) {

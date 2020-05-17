@@ -50,8 +50,6 @@ import java.util.concurrent.*;
 public class JDAImpl implements JDA {
     public static final Logger LOG = JDALogger.getLog(JDA.class);
 
-    protected ScheduledThreadPoolExecutor audioLifeCyclePool;
-
     protected final SnowflakeCacheViewImpl<User> userCache = new SnowflakeCacheViewImpl<>(User.class, User::getName);
     protected final SnowflakeCacheViewImpl<Guild> guildCache = new SnowflakeCacheViewImpl<>(Guild.class, Guild::getName);
     protected final SnowflakeCacheViewImpl<TextChannel> textChannelCache = new SnowflakeCacheViewImpl<>(TextChannel.class, GuildChannel::getName);
@@ -383,8 +381,6 @@ public class JDAImpl implements JDA {
         guildSetupController.close();
 
         getRequester().shutdown();
-        if (audioLifeCyclePool != null)
-            audioLifeCyclePool.shutdownNow();
         threadConfig.shutdown();
 
         if (shutdownHook != null) {

@@ -12,7 +12,6 @@ import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.utils.Checks;
 import me.syari.ss.discord.internal.utils.JDALogger;
 import okhttp3.RequestBody;
-import org.apache.commons.collections4.map.CaseInsensitiveMap;
 import org.slf4j.Logger;
 
 import javax.annotation.Nonnull;
@@ -85,13 +84,12 @@ public class RestActionImpl<T> implements RestAction<T> {
         Route.CompiledRoute route = finalizeRoute();
         Checks.notNull(route, "Route");
         RequestBody data = finalizeData();
-        CaseInsensitiveMap<String, String> headers = finalizeHeaders();
         BooleanSupplier finisher = getFinisher();
         if (success == null)
             success = DEFAULT_SUCCESS;
         if (failure == null)
             failure = DEFAULT_FAILURE;
-        api.getRequester().request(new Request<>(this, success, failure, finisher, true, data, route, headers));
+        api.getRequester().request(new Request<>(this, success, failure, finisher, true, data, route, null));
     }
 
     @Nonnull
@@ -100,9 +98,8 @@ public class RestActionImpl<T> implements RestAction<T> {
         Route.CompiledRoute route = finalizeRoute();
         Checks.notNull(route, "Route");
         RequestBody data = finalizeData();
-        CaseInsensitiveMap<String, String> headers = finalizeHeaders();
         BooleanSupplier finisher = getFinisher();
-        return new RestFuture<>(this, shouldQueue, finisher, data, route, headers);
+        return new RestFuture<>(this, shouldQueue, finisher, data, route, null);
     }
 
     @Override
@@ -131,10 +128,6 @@ public class RestActionImpl<T> implements RestAction<T> {
 
     protected Route.CompiledRoute finalizeRoute() {
         return route;
-    }
-
-    protected CaseInsensitiveMap<String, String> finalizeHeaders() {
-        return null;
     }
 
     protected BooleanSupplier finalizeChecks() {

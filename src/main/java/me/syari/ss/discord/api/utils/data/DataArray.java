@@ -3,7 +3,6 @@ package me.syari.ss.discord.api.utils.data;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.databind.type.CollectionType;
 import me.syari.ss.discord.api.exceptions.ParsingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +18,6 @@ public class DataArray implements Iterable<Object> {
     private static final Logger log = LoggerFactory.getLogger(DataObject.class);
     private static final ObjectMapper mapper;
     private static final SimpleModule module;
-    private static final CollectionType listType;
 
     static {
         mapper = new ObjectMapper();
@@ -27,7 +25,6 @@ public class DataArray implements Iterable<Object> {
         module.addAbstractTypeMapping(Map.class, HashMap.class);
         module.addAbstractTypeMapping(List.class, ArrayList.class);
         mapper.registerModule(module);
-        listType = mapper.getTypeFactory().constructRawCollectionType(ArrayList.class);
     }
 
     protected final List<Object> data;

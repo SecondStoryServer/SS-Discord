@@ -25,11 +25,11 @@ public abstract class AbstractChannelImpl<T extends GuildChannel, M extends Abst
     @Override
     public int compareTo(@Nonnull GuildChannel o) {
         Checks.notNull(o, "Channel");
-        if (getType().getSortBucket() != o.getType().getSortBucket()) // if bucket matters
+        if (getType().getSortBucket() != o.getType().getSortBucket())
             return Integer.compare(getType().getSortBucket(), o.getType().getSortBucket());
-        if (getPositionRaw() != o.getPositionRaw())                   // if position matters
+        if (getPositionRaw() != o.getPositionRaw())
             return Integer.compare(getPositionRaw(), o.getPositionRaw());
-        return Long.compareUnsigned(id, o.getIdLong());               // last resort by id
+        return Long.compareUnsigned(id, o.getIdLong());
     }
 
     @Nonnull

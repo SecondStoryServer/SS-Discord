@@ -1,7 +1,6 @@
 package me.syari.ss.discord.api.requests.restaction;
 
 import me.syari.ss.discord.api.entities.MessageChannel;
-import me.syari.ss.discord.api.entities.MessageEmbed;
 import me.syari.ss.discord.api.requests.RestAction;
 import me.syari.ss.discord.internal.entities.Message;
 
@@ -40,11 +39,6 @@ public interface MessageAction extends RestAction<Message>, Appendable {
     @Nonnull
     @CheckReturnValue
     MessageAction content(@Nullable final String content);
-
-
-    @Nonnull
-    @CheckReturnValue
-    MessageAction embed(@Nullable final MessageEmbed embed);
 
 
     @Nonnull

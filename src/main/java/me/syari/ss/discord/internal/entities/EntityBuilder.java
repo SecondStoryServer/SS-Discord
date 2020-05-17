@@ -372,8 +372,6 @@ public class EntityBuilder {
         final boolean fromWebhook = jsonObject.hasKey("webhook_id");
         final boolean tts = jsonObject.getBoolean("tts");
 
-        final List<MessageEmbed> embeds = map(jsonObject, "embeds", this::createMessageEmbed);
-
         User user;
         switch (chan.getType()) {
             case GROUP:
@@ -387,14 +385,14 @@ public class EntityBuilder {
                     if (fromWebhook || !modifyCache)
                         user = createFakeUser(author, false);
                     else
-                        throw new IllegalArgumentException(MISSING_USER); // Specifically for MESSAGE_CREATE
+                        throw new IllegalArgumentException(MISSING_USER);
                 }
                 break;
             default:
                 throw new IllegalArgumentException("Invalid Channel for creating a Message [" + chan.getType() + ']');
         }
 
-        if (modifyCache && !fromWebhook) // update the user information on message receive
+        if (modifyCache && !fromWebhook)
             updateUser((UserImpl) user, author);
 
         TLongSet mentionedRoles = new TLongHashSet();
@@ -411,7 +409,7 @@ public class EntityBuilder {
         if (type == MessageType.DEFAULT) {
             message = new Message(id, chan, type,
                     mentionedUsers, mentionedRoles, tts,
-                    content, user, member, embeds);
+                    content, user, member);
         } else {
             throw new IllegalArgumentException(UNKNOWN_MESSAGE_TYPE);
         }
@@ -421,11 +419,9 @@ public class EntityBuilder {
 
         GuildImpl guild = (GuildImpl) message.getGuild();
 
-        // Don't do more computations when members are loaded already
         if (guild.isLoaded())
             return message;
 
-        // Load users/members from message object through mentions
         List<User> mentionedUsersList = new ArrayList<>();
         List<Member> mentionedMembersList = new ArrayList<>();
         DataArray userMentions = jsonObject.getArray("mentions");
@@ -433,7 +429,6 @@ public class EntityBuilder {
         for (int i = 0; i < userMentions.length(); i++) {
             DataObject mentionJson = userMentions.getObject(i);
             if (mentionJson.isNull("member")) {
-                // Can't load user without member context so fake them if possible
                 User mentionedUser = createFakeUser(mentionJson, false);
                 mentionedUsersList.add(mentionedUser);
                 Member mentionedMember = guild.getMember(mentionedUser);
@@ -442,7 +437,6 @@ public class EntityBuilder {
                 continue;
             }
 
-            // Load member/user from mention (gateway messages only)
             DataObject memberJson = mentionJson.getObject("member");
             mentionJson.remove("member");
             memberJson.put("user", mentionJson);
@@ -454,96 +448,6 @@ public class EntityBuilder {
         if (!mentionedUsersList.isEmpty())
             message.setMentions(mentionedUsersList, mentionedMembersList);
         return message;
-    }
-
-    public MessageEmbed createMessageEmbed(DataObject content) {
-        if (content.isNull("type"))
-            throw new IllegalStateException("Encountered embed object with missing/null type field for Json: " + content);
-        EmbedType type = EmbedType.fromKey(content.getString("type"));
-        final String url = content.getString("url", null);
-        final String title = content.getString("title", null);
-        final String description = content.getString("description", null);
-        final OffsetDateTime timestamp = content.isNull("timestamp") ? null : OffsetDateTime.parse(content.getString("timestamp"));
-        final int color = content.getInt("color");
-
-        final MessageEmbed.Thumbnail thumbnail;
-        if (content.isNull("thumbnail")) {
-            thumbnail = null;
-        } else {
-            DataObject obj = content.getObject("thumbnail");
-            thumbnail = new MessageEmbed.Thumbnail(obj.getString("url", null),
-                    obj.getString("proxy_url", null),
-                    obj.getInt("width", -1),
-                    obj.getInt("height", -1));
-        }
-
-        final MessageEmbed.Provider provider;
-        if (content.isNull("provider")) {
-            provider = null;
-        } else {
-            DataObject obj = content.getObject("provider");
-            provider = new MessageEmbed.Provider(obj.getString("name", null),
-                    obj.getString("url", null));
-        }
-
-        final MessageEmbed.AuthorInfo author;
-        if (content.isNull("author")) {
-            author = null;
-        } else {
-            DataObject obj = content.getObject("author");
-            author = new MessageEmbed.AuthorInfo(obj.getString("name", null),
-                    obj.getString("url", null),
-                    obj.getString("icon_url", null),
-                    obj.getString("proxy_icon_url", null));
-        }
-
-        final MessageEmbed.VideoInfo video;
-        if (content.isNull("video")) {
-            video = null;
-        } else {
-            DataObject obj = content.getObject("video");
-            video = new MessageEmbed.VideoInfo(obj.getString("url", null),
-                    obj.getInt("width", -1),
-                    obj.getInt("height", -1));
-        }
-
-        final MessageEmbed.Footer footer;
-        if (content.isNull("footer")) {
-            footer = null;
-        } else {
-            DataObject obj = content.getObject("footer");
-            footer = new MessageEmbed.Footer(obj.getString("text", null),
-                    obj.getString("icon_url", null),
-                    obj.getString("proxy_icon_url", null));
-        }
-
-        final MessageEmbed.ImageInfo image;
-        if (content.isNull("image")) {
-            image = null;
-        } else {
-            DataObject obj = content.getObject("image");
-            image = new MessageEmbed.ImageInfo(obj.getString("url", null),
-                    obj.getString("proxy_url", null),
-                    obj.getInt("width", -1),
-                    obj.getInt("height", -1));
-        }
-
-        final List<MessageEmbed.Field> fields = map(content, "fields", (obj) ->
-                new MessageEmbed.Field(obj.getString("name", null),
-                        obj.getString("value", null),
-                        obj.getBoolean("inline"),
-                        false)
-        );
-
-        return createMessageEmbed(url, title, description, type, timestamp,
-                color, thumbnail, provider, author, video, footer, image, fields);
-    }
-
-    public static MessageEmbed createMessageEmbed(String url, String title, String description, EmbedType type, OffsetDateTime timestamp,
-                                                  int color, MessageEmbed.Thumbnail thumbnail, MessageEmbed.Provider siteProvider, MessageEmbed.AuthorInfo author,
-                                                  MessageEmbed.VideoInfo videoInfo, MessageEmbed.Footer footer, MessageEmbed.ImageInfo image, List<MessageEmbed.Field> fields) {
-        return new MessageEmbed(url, title, description, type, timestamp,
-                color, thumbnail, siteProvider, author, videoInfo, footer, image, fields);
     }
 
     private <T> List<T> map(DataObject jsonObject, String key, Function<DataObject, T> convert) {
