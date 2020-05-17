@@ -1,7 +1,7 @@
 package me.syari.ss.discord.api.utils.cache;
 
-import me.syari.ss.discord.api.entities.Member;
 import me.syari.ss.discord.api.utils.MiscUtil;
+import me.syari.ss.discord.internal.entities.Member;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

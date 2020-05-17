@@ -1,9 +1,6 @@
 package me.syari.ss.discord.internal.entities;
 
-import me.syari.ss.discord.api.entities.Guild;
-import me.syari.ss.discord.api.entities.Member;
-import me.syari.ss.discord.api.entities.Role;
-import me.syari.ss.discord.api.entities.User;
+import me.syari.ss.discord.api.entities.*;
 import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.utils.cache.SnowflakeReference;
 
@@ -11,7 +8,7 @@ import javax.annotation.Nonnull;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class MemberImpl implements Member {
+public class Member implements Mentionable {
     private final SnowflakeReference<Guild> guild;
     private final User user;
     private final Set<Role> roles = ConcurrentHashMap.newKeySet();
@@ -19,14 +16,13 @@ public class MemberImpl implements Member {
     private String nickname;
     private long boostDate;
 
-    public MemberImpl(GuildImpl guild, User user) {
+    public Member(GuildImpl guild, User user) {
         JDAImpl api = (JDAImpl) user.getJDA();
         this.guild = new SnowflakeReference<>(guild, api::getGuildById);
         this.user = user;
     }
 
     @Nonnull
-    @Override
     public User getUser() {
         return user;
     }
@@ -36,13 +32,11 @@ public class MemberImpl implements Member {
         return (GuildImpl) guild.resolve();
     }
 
-    @Override
     public String getNickname() {
         return nickname;
     }
 
     @Nonnull
-    @Override
     public String getDisplayName() {
         return nickname != null ? nickname : getUser().getName();
     }
@@ -72,10 +66,10 @@ public class MemberImpl implements Member {
     public boolean equals(Object o) {
         if (o == this)
             return true;
-        if (!(o instanceof MemberImpl))
+        if (!(o instanceof Member))
             return false;
 
-        MemberImpl oMember = (MemberImpl) o;
+        Member oMember = (Member) o;
         return oMember.user.getIdLong() == user.getIdLong()
                 && oMember.guild.getIdLong() == guild.getIdLong();
     }

@@ -164,14 +164,14 @@ public class EntityBuilder {
         }
     }
 
-    public MemberImpl createMember(GuildImpl guild, DataObject memberJson) {
+    public Member createMember(GuildImpl guild, DataObject memberJson) {
         boolean playbackCache = false;
         User user = createUser(memberJson.getObject("user"));
-        MemberImpl member = (MemberImpl) guild.getMember(user);
+        Member member = (Member) guild.getMember(user);
         if (member == null) {
             MemberCacheViewImpl memberView = guild.getMembersView();
             try (UnlockHook hook = memberView.writeLock()) {
-                member = new MemberImpl(guild, user);
+                member = new Member(guild, user);
                 playbackCache = true;
             }
             if (guild.getOwnerIdLong() == user.getIdLong()) {
@@ -200,7 +200,7 @@ public class EntityBuilder {
         return member;
     }
 
-    private void loadMember(GuildImpl guild, DataObject memberJson, MemberImpl member) {
+    private void loadMember(GuildImpl guild, DataObject memberJson, Member member) {
         if (!memberJson.isNull("premium_since")) {
             TemporalAccessor boostDate = DateTimeFormatter.ISO_OFFSET_DATE_TIME.parse(memberJson.getString("premium_since"));
             member.setBoostDate(Instant.from(boostDate).toEpochMilli());
@@ -221,7 +221,7 @@ public class EntityBuilder {
         }
     }
 
-    public void updateMember(MemberImpl member, DataObject content, List<Role> newRoles) {
+    public void updateMember(Member member, DataObject content, List<Role> newRoles) {
         if (newRoles != null) {
             updateMemberRoles(member, newRoles);
         }
@@ -244,7 +244,7 @@ public class EntityBuilder {
         }
     }
 
-    private void updateMemberRoles(MemberImpl member, List<Role> newRoles) {
+    private void updateMemberRoles(Member member, List<Role> newRoles) {
         Set<Role> currentRoles = member.getRoleSet();
         //Find the roles removed.
         List<Role> removedRoles = new LinkedList<>();
@@ -348,7 +348,7 @@ public class EntityBuilder {
 
         if (!jsonObject.isNull("member") && modifyCache) {
             Guild guild = channel.getGuild();
-            MemberImpl cachedMember = (MemberImpl) guild.getMemberById(authorId);
+            Member cachedMember = guild.getMemberById(authorId);
             if (cachedMember == null) {
                 DataObject memberJson = jsonObject.getObject("member");
                 memberJson.put("user", author);
