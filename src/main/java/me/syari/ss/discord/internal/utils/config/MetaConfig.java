@@ -17,10 +17,11 @@ public class MetaConfig {
     public MetaConfig(int maxBufferSize, @NotNull EnumSet<ConfigFlag> flags) {
         this.maxBufferSize = maxBufferSize;
         boolean enableMDC = flags.contains(ConfigFlag.MDC_CONTEXT);
-        if (enableMDC)
+        if (enableMDC) {
             this.mdcContextMap = new ConcurrentHashMap<>();
-        else
+        } else {
             this.mdcContextMap = null;
+        }
         this.useShutdownHook = flags.contains(ConfigFlag.SHUTDOWN_HOOK);
         this.guildSubscriptions = flags.contains(ConfigFlag.GUILD_SUBSCRIPTIONS);
     }
