@@ -12,7 +12,6 @@ import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.handle.*;
 import me.syari.ss.discord.internal.utils.IOUtil;
 import me.syari.ss.discord.internal.utils.JDALogger;
-import me.syari.ss.discord.internal.utils.compress.Decompressor;
 import me.syari.ss.discord.internal.utils.compress.ZlibDecompressor;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -40,7 +39,7 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
     public WebSocket socket;
     protected String sessionId = null;
     protected final Object readLock = new Object();
-    protected Decompressor decompressor;
+    protected ZlibDecompressor decompressor;
 
     protected final ReentrantLock queueLock = new ReentrantLock();
     protected final ScheduledExecutorService executor;
@@ -75,7 +74,7 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
         this.executor = api.getGatewayPool();
         this.shouldReconnect = api.isAutoReconnect();
         this.connectNode = new StartingNode();
-        this.handlers = new HashMap<String, SocketHandler>(){
+        this.handlers = new HashMap<String, SocketHandler>() {
             {
                 put("GUILD_CREATE", new GuildCreateHandler(api));
                 put("MESSAGE_CREATE", new MessageCreateHandler(api));

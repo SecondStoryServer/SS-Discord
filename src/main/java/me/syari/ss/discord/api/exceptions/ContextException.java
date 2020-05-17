@@ -22,11 +22,13 @@ public class ContextException extends Exception {
         @Override
         public void accept(Throwable throwable) {
             Throwable cause = throwable;
-            while (cause.getCause() != null)
+            while (cause.getCause() != null) {
                 cause = cause.getCause();
+            }
             cause.initCause(context);
-            if (callback != null)
+            if (callback != null) {
                 callback.accept(throwable);
+            }
         }
     }
 }

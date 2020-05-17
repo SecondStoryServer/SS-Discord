@@ -27,6 +27,7 @@ import me.syari.ss.discord.internal.utils.config.MetaConfig;
 import me.syari.ss.discord.internal.utils.config.SessionConfig;
 import me.syari.ss.discord.internal.utils.config.ThreadingConfig;
 import okhttp3.OkHttpClient;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.MDC;
@@ -121,7 +122,7 @@ public class JDAImpl implements JDA {
     }
 
     public void login() throws LoginException {
-        threadConfig.init(this::getIdentifierString);
+        threadConfig.init(() -> "JDA");
         requester.getRateLimiter().init();
         this.gatewayUrl = getGateway();
         Checks.notNull(this.gatewayUrl, "Gateway URL");
@@ -170,15 +171,15 @@ public class JDAImpl implements JDA {
         RestAction<DataObject> login = new RestAction<DataObject>(this, Route.Self.GET_SELF.compile()) {
             @Override
             public void handleResponse(@NotNull Response response, Request<DataObject> request) {
-                if (response.isOk())
+                if (response.isOk()) {
                     request.onSuccess(response.getObject());
-                else if (response.isRateLimit())
+                } else if (response.isRateLimit()) {
                     request.onFailure(new RateLimitedException(request.getRoute(), response.retryAfter));
-                else if (response.code == 401)
+                } else if (response.code == 401) {
                     request.onSuccess(null);
-                else
-                    request.onFailure(new LoginException("When verifying the authenticity of the provided token, Discord returned an unknown response:\n" +
-                            response.toString()));
+                } else {
+                    request.onFailure(new LoginException("When verifying the authenticity of the provided token, Discord returned an unknown response:\n" + response.toString()));
+                }
             }
         };
 
@@ -376,10 +377,6 @@ public class JDAImpl implements JDA {
         this.responseTotal = responseTotal;
     }
 
-    public String getIdentifierString() {
-        return "JDA";
-    }
-
     public EventCache getEventCache() {
         return eventCache;
     }
@@ -391,5 +388,4 @@ public class JDAImpl implements JDA {
     public void resetGatewayUrl() {
         this.gatewayUrl = getGateway();
     }
-
 }

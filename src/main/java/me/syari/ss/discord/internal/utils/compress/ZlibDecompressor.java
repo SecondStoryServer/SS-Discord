@@ -4,6 +4,7 @@ import me.syari.ss.discord.internal.utils.IOUtil;
 import me.syari.ss.discord.internal.utils.JDALogger;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -14,7 +15,8 @@ import java.util.zip.DataFormatException;
 import java.util.zip.Inflater;
 import java.util.zip.InflaterOutputStream;
 
-public class ZlibDecompressor implements Decompressor {
+public class ZlibDecompressor {
+    private static final Logger LOG = JDALogger.getLog(ZlibDecompressor.class);
     private static final int Z_SYNC_FLUSH = 0x0000FFFF;
 
     private final int maxBufferSize;
@@ -66,17 +68,14 @@ public class ZlibDecompressor implements Decompressor {
         return JDALogger.getLazyString(() -> Arrays.toString(data));
     }
 
-    @Override
     public void reset() {
         inflater.reset();
     }
 
-    @Override
     public void shutdown() {
         reset();
     }
 
-    @Override
     public String decompress(byte[] data) throws DataFormatException {
         if (!isFlush(data)) {
             LOG.debug("Received incomplete data, writing to buffer. Length: {}", data.length);

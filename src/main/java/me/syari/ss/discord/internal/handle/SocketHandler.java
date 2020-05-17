@@ -27,15 +27,4 @@ public abstract class SocketHandler {
     }
 
     protected abstract Long handleInternally(DataObject content);
-
-    public static class NOPHandler extends SocketHandler {
-        public NOPHandler(JDAImpl api) {
-            super(api);
-        }
-
-        @Override
-        protected Long handleInternally(DataObject content) {
-            return null;
-        }
-    }
 }

@@ -27,10 +27,12 @@ public class ErrorResponseException extends RuntimeException {
         } else if (optObj.isPresent()) {
             DataObject obj = optObj.get();
             if (!obj.isNull("code") || !obj.isNull("message")) {
-                if (!obj.isNull("code"))
+                if (!obj.isNull("code")) {
                     code = obj.getInt("code");
-                if (!obj.isNull("message"))
+                }
+                if (!obj.isNull("message")) {
                     meaning = obj.getString("message");
+                }
             } else {
                 code = response.code;
                 meaning = obj.toString();

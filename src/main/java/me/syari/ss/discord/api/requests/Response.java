@@ -56,7 +56,7 @@ public class Response implements Closeable {
 
     @NotNull
     public DataObject getObject() {
-        return get(DataObject.class, JSON_SERIALIZE_OBJECT);
+        return parseBody(DataObject.class, Response.JSON_SERIALIZE_OBJECT).orElseThrow(IllegalStateException::new);
     }
 
     @NotNull
@@ -67,11 +67,6 @@ public class Response implements Closeable {
     @NotNull
     public String getString() {
         return parseBody(String.class, this::readString).orElseGet(() -> fallbackString == null ? "N/A" : fallbackString);
-    }
-
-    @NotNull
-    public <T> T get(Class<T> clazz, IOFunction<BufferedReader, T> parser) {
-        return parseBody(clazz, parser).orElseThrow(IllegalStateException::new);
     }
 
     @Nullable
