@@ -23,17 +23,9 @@ public interface MessageAction extends RestAction<Message>, Appendable {
     boolean isEmpty();
 
 
-    boolean isEdit();
-
-
     @Nonnull
     @CheckReturnValue
     MessageAction apply(@Nullable final Message message);
-
-
-    @Nonnull
-    @CheckReturnValue
-    MessageAction tts(final boolean isTTS);
 
 
     @Nonnull

@@ -8,7 +8,6 @@ import me.syari.ss.discord.api.requests.Response;
 import me.syari.ss.discord.api.requests.restaction.MessageAction;
 import me.syari.ss.discord.api.utils.data.DataObject;
 import me.syari.ss.discord.internal.entities.Message;
-import me.syari.ss.discord.internal.requests.Method;
 import me.syari.ss.discord.internal.requests.Requester;
 import me.syari.ss.discord.internal.requests.RestActionImpl;
 import me.syari.ss.discord.internal.requests.Route;
@@ -31,7 +30,6 @@ public class MessageActionImpl extends RestActionImpl<Message> implements Messag
     protected final Set<InputStream> ownedResources = new HashSet<>();
     protected final StringBuilder content;
     protected final MessageChannel channel;
-    protected boolean tts = false;
 
     public MessageActionImpl(JDA api, Route.CompiledRoute route, MessageChannel channel) {
         super(api, route);
@@ -64,11 +62,6 @@ public class MessageActionImpl extends RestActionImpl<Message> implements Messag
         return Helpers.isBlank(content);
     }
 
-    @Override
-    public boolean isEdit() {
-        return finalizeRoute().getMethod() == Method.PATCH;
-    }
-
     @Nonnull
     @Override
     @CheckReturnValue
@@ -77,15 +70,7 @@ public class MessageActionImpl extends RestActionImpl<Message> implements Messag
             return this;
         files.clear();
 
-        return content(message.getContentRaw()).tts(message.isTTS());
-    }
-
-    @Nonnull
-    @Override
-    @CheckReturnValue
-    public MessageActionImpl tts(final boolean isTTS) {
-        this.tts = isTTS;
-        return this;
+        return content(message.getContentRaw());
     }
 
     @Nonnull
@@ -142,7 +127,6 @@ public class MessageActionImpl extends RestActionImpl<Message> implements Messag
         }
         if (!isEmpty())
             builder.addFormDataPart("payload_json", getJSON().toString());
-        // clear remaining resources, they will be closed after being sent
         files.clear();
         ownedResources.clear();
         return builder.build();
@@ -155,7 +139,6 @@ public class MessageActionImpl extends RestActionImpl<Message> implements Messag
     protected DataObject getJSON() {
         final DataObject obj = DataObject.empty();
         obj.put("content", content.toString());
-        obj.put("tts", tts);
         return obj;
     }
 

@@ -48,8 +48,6 @@ public class TextChannelImpl extends AbstractChannelImpl<TextChannel, TextChanne
     @Override
     public MessageAction sendMessage(@Nonnull Message msg) {
         Checks.notNull(msg, "Message");
-
-        //Call MessageChannel's default
         return TextChannel.super.sendMessage(msg);
     }
 
