@@ -16,10 +16,8 @@ public class MessageCreateHandler extends SocketHandler {
     @Override
     protected Long handleInternally(DataObject content) {
         System.out.println(">> MessageCreateHandler");
-        MessageType type = MessageType.fromId(content.getInt("type"));
 
-        if (type == MessageType.UNKNOWN) {
-            WebSocketClient.LOG.debug("JDA received a message of unknown type. Type: {}  JSON: {}", type, content);
+        if (!MessageType.isDefaultMessage(content.getInt("type"))) {
             return null;
         }
 
@@ -33,8 +31,8 @@ public class MessageCreateHandler extends SocketHandler {
         Message message;
         try {
             message = jda.getEntityBuilder().createMessage(content, true);
-        } catch (IllegalArgumentException e) {
-            switch (e.getMessage()) {
+        } catch (IllegalArgumentException ex) {
+            switch (ex.getMessage()) {
                 case EntityBuilder.MISSING_CHANNEL: {
                     final long channelId = content.getLong("channel_id");
                     jda.getEventCache().cache(EventCache.Type.CHANNEL, channelId, responseNumber, allContent, this::handle);
@@ -52,7 +50,7 @@ public class MessageCreateHandler extends SocketHandler {
                     return null;
                 }
                 default:
-                    throw e;
+                    throw ex;
             }
         }
 

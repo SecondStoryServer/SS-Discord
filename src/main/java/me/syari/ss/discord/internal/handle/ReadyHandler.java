@@ -26,19 +26,6 @@ public class ReadyHandler extends SocketHandler {
             if (previous != null)
                 WebSocketClient.LOG.warn("Found duplicate guild for id {} in ready payload", id);
         }
-
-        handleReady(content);
         return null;
-    }
-
-    public void handleReady(DataObject content) {
-        DataArray privateChannels = content.getArray("private_channels");
-
-        for (int i = 0; i < privateChannels.length(); i++) {
-            DataObject chan = privateChannels.getObject(i);
-            ChannelType type = ChannelType.fromId(chan.getInt("type"));
-
-            WebSocketClient.LOG.warn("Received a Channel in the private_channels array in READY of an unknown type! Type: {}", type);
-        }
     }
 }

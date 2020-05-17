@@ -1,7 +1,6 @@
 import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.JDABuilder;
 import me.syari.ss.discord.api.entities.Member;
-import me.syari.ss.discord.api.entities.MessageChannel;
 import me.syari.ss.discord.api.entities.TextChannel;
 import me.syari.ss.discord.api.entities.User;
 import me.syari.ss.discord.api.events.MessageReceivedEvent;
@@ -33,7 +32,7 @@ public class MessageListenerExample implements ListenerAdapter {
             if (authorMember == null) return;
             String name = authorMember.getDisplayName();
             String message = event.getMessage().getContentDisplay();
-            MessageChannel channel = event.getChannel();
+            TextChannel channel = event.getChannel();
             channel.sendMessage("Chat -> " + name + ": " + message + "\r\n" +
                     "GetTextChannel -> " + (jda.getTextChannelById(710828174686027790L) != null)
             ).queue();

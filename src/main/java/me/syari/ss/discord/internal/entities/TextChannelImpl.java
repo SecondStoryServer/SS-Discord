@@ -24,11 +24,6 @@ public class TextChannelImpl extends AbstractChannelImpl<TextChannel, TextChanne
         return "<#" + id + '>';
     }
 
-    @Nonnull
-    @Override
-    public ChannelType getType() {
-        return ChannelType.TEXT;
-    }
 
     @Nonnull
     @Override

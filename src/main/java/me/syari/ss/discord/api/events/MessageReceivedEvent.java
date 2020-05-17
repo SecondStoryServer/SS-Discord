@@ -1,7 +1,7 @@
 package me.syari.ss.discord.api.events;
 
 import me.syari.ss.discord.api.entities.Member;
-import me.syari.ss.discord.api.entities.MessageChannel;
+import me.syari.ss.discord.api.entities.TextChannel;
 import me.syari.ss.discord.api.entities.User;
 import me.syari.ss.discord.internal.entities.Message;
 
@@ -9,7 +9,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class MessageReceivedEvent {
-    protected final MessageChannel channel;
+    protected final TextChannel channel;
     private final Message message;
 
     public MessageReceivedEvent(@Nonnull Message message) {
@@ -35,7 +35,7 @@ public class MessageReceivedEvent {
     }
 
     @Nonnull
-    public MessageChannel getChannel() {
+    public TextChannel getChannel() {
         return channel;
     }
 }

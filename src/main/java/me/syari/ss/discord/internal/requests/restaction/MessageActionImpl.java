@@ -1,7 +1,7 @@
 package me.syari.ss.discord.internal.requests.restaction;
 
 import me.syari.ss.discord.api.JDA;
-import me.syari.ss.discord.api.entities.MessageChannel;
+import me.syari.ss.discord.api.entities.TextChannel;
 import me.syari.ss.discord.api.requests.Request;
 import me.syari.ss.discord.api.requests.Response;
 import me.syari.ss.discord.api.requests.restaction.MessageAction;
@@ -29,15 +29,15 @@ public class MessageActionImpl extends RestActionImpl<Message> implements Messag
     protected final Map<String, InputStream> files = new HashMap<>();
     protected final Set<InputStream> ownedResources = new HashSet<>();
     protected final StringBuilder content;
-    protected final MessageChannel channel;
+    protected final TextChannel channel;
 
-    public MessageActionImpl(JDA api, Route.CompiledRoute route, MessageChannel channel) {
+    public MessageActionImpl(JDA api, Route.CompiledRoute route, TextChannel channel) {
         super(api, route);
         this.content = new StringBuilder();
         this.channel = channel;
     }
 
-    public MessageActionImpl(JDA api, Route.CompiledRoute route, MessageChannel channel, StringBuilder contentBuilder) {
+    public MessageActionImpl(JDA api, Route.CompiledRoute route, TextChannel channel, StringBuilder contentBuilder) {
         super(api, route);
         Checks.check(contentBuilder.length() <= Message.MAX_CONTENT_LENGTH,
                 "Cannot build a Message with more than %d characters. Please limit your input.", Message.MAX_CONTENT_LENGTH);

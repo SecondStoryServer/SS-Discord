@@ -85,7 +85,7 @@ public class EntityBuilder {
 
         for (int i = 0; i < channelArray.length(); i++) {
             DataObject channelJson = channelArray.getObject(i);
-            createGuildChannel(guildObj, channelJson);
+            createTextChannel(guildObj, channelJson);
         }
 
         createGuildEmotePass(guildObj, emotesArray);
@@ -93,12 +93,9 @@ public class EntityBuilder {
         return guildObj;
     }
 
-    private void createGuildChannel(GuildImpl guildObj, DataObject channelData) {
-        final ChannelType channelType = ChannelType.fromId(channelData.getInt("type"));
-        if (channelType == ChannelType.TEXT) {
+    private void createTextChannel(GuildImpl guildObj, DataObject channelData) {
+        if (ChannelType.isTextChannel(channelData.getInt("type"))) {
             createTextChannel(guildObj, channelData, guildObj.getIdLong());
-        } else {
-            LOG.debug("Cannot create channel for type " + channelData.getInt("type"));
         }
     }
 
@@ -336,24 +333,22 @@ public class EntityBuilder {
     public Message createMessage(DataObject jsonObject, boolean modifyCache) {
         final long channelId = jsonObject.getLong("channel_id");
 
-        MessageChannel chan = getJDA().getTextChannelById(channelId);
-        if (chan == null)
+        TextChannel channel = getJDA().getTextChannelById(channelId);
+        if (channel == null)
             throw new IllegalArgumentException(MISSING_CHANNEL);
 
-        return createMessage(jsonObject, chan, modifyCache);
+        return createMessage(jsonObject, channel, modifyCache);
     }
 
-    public Message createMessage(DataObject jsonObject, MessageChannel chan, boolean modifyCache) {
+    public Message createMessage(DataObject jsonObject, TextChannel channel, boolean modifyCache) {
         final long id = jsonObject.getLong("id");
         final DataObject author = jsonObject.getObject("author");
         final long authorId = author.getLong("id");
         Member member = null;
 
-        if (chan.getType().isGuild() && !jsonObject.isNull("member") && modifyCache) {
-            GuildChannel guildChannel = (GuildChannel) chan;
-            Guild guild = guildChannel.getGuild();
+        if (!jsonObject.isNull("member") && modifyCache) {
+            Guild guild = channel.getGuild();
             MemberImpl cachedMember = (MemberImpl) guild.getMemberById(authorId);
-            // Update member cache with new information if needed
             if (cachedMember == null) {
                 DataObject memberJson = jsonObject.getObject("member");
                 memberJson.put("user", author);
@@ -368,21 +363,15 @@ public class EntityBuilder {
         final boolean fromWebhook = jsonObject.hasKey("webhook_id");
 
         User user;
-        switch (chan.getType()) {
-            case TEXT:
-                Guild guild = ((TextChannel) chan).getGuild();
-                if (member == null)
-                    member = guild.getMemberById(authorId);
-                user = member != null ? member.getUser() : null;
-                if (user == null) {
-                    if (fromWebhook || !modifyCache)
-                        user = createFakeUser(author, false);
-                    else
-                        throw new IllegalArgumentException(MISSING_USER);
-                }
-                break;
-            default:
-                throw new IllegalArgumentException("Invalid Channel for creating a Message [" + chan.getType() + ']');
+        Guild guild = channel.getGuild();
+        if (member == null)
+            member = guild.getMemberById(authorId);
+        user = member != null ? member.getUser() : null;
+        if (user == null) {
+            if (fromWebhook || !modifyCache)
+                user = createFakeUser(author, false);
+            else
+                throw new IllegalArgumentException(MISSING_USER);
         }
 
         if (modifyCache && !fromWebhook)
@@ -390,29 +379,25 @@ public class EntityBuilder {
 
         TLongSet mentionedRoles = new TLongHashSet();
         TLongSet mentionedUsers = new TLongHashSet(map(jsonObject, "mentions", (o) -> o.getLong("id")));
-        Optional<DataArray> roleMentionArr = jsonObject.optArray("mention_roles");
-        roleMentionArr.ifPresent((arr) ->
+        Optional<DataArray> roleMentionArray = jsonObject.optArray("mention_roles");
+        roleMentionArray.ifPresent((array) ->
         {
-            for (int i = 0; i < arr.length(); i++)
-                mentionedRoles.add(arr.getLong(i));
+            for (int i = 0; i < array.length(); i++)
+                mentionedRoles.add(array.getLong(i));
         });
 
-        MessageType type = MessageType.fromId(jsonObject.getInt("type"));
         Message message;
-        if (type == MessageType.DEFAULT) {
-            message = new Message(id, chan,
+        if (MessageType.isDefaultMessage(jsonObject.getInt("type"))) {
+            message = new Message(id, channel,
                     mentionedUsers, mentionedRoles,
                     content, user, member);
         } else {
             throw new IllegalArgumentException(UNKNOWN_MESSAGE_TYPE);
         }
 
-        if (!message.isFromGuild())
-            return message;
+        GuildImpl guildImpl = (GuildImpl) message.getGuild();
 
-        GuildImpl guild = (GuildImpl) message.getGuild();
-
-        if (guild.isLoaded())
+        if (guildImpl.isLoaded())
             return message;
 
         List<User> mentionedUsersList = new ArrayList<>();
@@ -424,18 +409,18 @@ public class EntityBuilder {
             if (mentionJson.isNull("member")) {
                 User mentionedUser = createFakeUser(mentionJson, false);
                 mentionedUsersList.add(mentionedUser);
-                Member mentionedMember = guild.getMember(mentionedUser);
-                if (mentionedMember != null)
+                Member mentionedMember = guildImpl.getMember(mentionedUser);
+                if (mentionedMember != null) {
                     mentionedMembersList.add(mentionedMember);
-                continue;
+                }
+            } else {
+                DataObject memberJson = mentionJson.getObject("member");
+                mentionJson.remove("member");
+                memberJson.put("user", mentionJson);
+                Member mentionedMember = createMember(guildImpl, memberJson);
+                mentionedMembersList.add(mentionedMember);
+                mentionedUsersList.add(mentionedMember.getUser());
             }
-
-            DataObject memberJson = mentionJson.getObject("member");
-            mentionJson.remove("member");
-            memberJson.put("user", mentionJson);
-            Member mentionedMember = createMember(guild, memberJson);
-            mentionedMembersList.add(mentionedMember);
-            mentionedUsersList.add(mentionedMember.getUser());
         }
 
         if (!mentionedUsersList.isEmpty())
@@ -447,13 +432,14 @@ public class EntityBuilder {
         if (jsonObject.isNull(key))
             return Collections.emptyList();
 
-        final DataArray arr = jsonObject.getArray(key);
-        final List<T> mappedObjects = new ArrayList<>(arr.length());
-        for (int i = 0; i < arr.length(); i++) {
-            DataObject obj = arr.getObject(i);
+        final DataArray array = jsonObject.getArray(key);
+        final List<T> mappedObjects = new ArrayList<>(array.length());
+        for (int i = 0; i < array.length(); i++) {
+            DataObject obj = array.getObject(i);
             T result = convert.apply(obj);
-            if (result != null)
+            if (result != null) {
                 mappedObjects.add(result);
+            }
         }
 
         return mappedObjects;

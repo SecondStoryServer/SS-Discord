@@ -20,7 +20,7 @@ public class Message {
 
     protected final JDAImpl api;
     protected final long id;
-    protected final MessageChannel channel;
+    protected final TextChannel channel;
     protected final User author;
     protected final Member member;
     protected final TLongSet mentionedUsers;
@@ -35,7 +35,7 @@ public class Message {
     protected List<TextChannel> channelMentions = null;
 
     public Message(
-            long id, MessageChannel channel,
+            long id, TextChannel channel,
             TLongSet mentionedUsers, TLongSet mentionedRoles,
             String content, User author, Member member) {
         this.content = content;
@@ -89,10 +89,7 @@ public class Message {
         long roleId = MiscUtil.parseSnowflake(matcher.group(1));
         if (!mentionedRoles.contains(roleId))
             return null;
-        if (getChannelType().isGuild())
-            return getGuild().getRoleById(roleId);
-        else
-            return getJDA().getRoleById(roleId);
+        return getGuild().getRoleById(roleId);
     }
 
     @Nonnull
@@ -121,7 +118,7 @@ public class Message {
             String tmp = content;
             for (User user : getMentionedUsers()) {
                 String name;
-                if (isFromType(ChannelType.TEXT) && getGuild().isMember(user))
+                if (getGuild().isMember(user))
                     name = getGuild().getMember(user).getDisplayName();
                 else
                     name = user.getName();
@@ -144,31 +141,16 @@ public class Message {
     public String getContentRaw() {
         return content;
     }
-
-    public boolean isFromType(@Nonnull ChannelType type) {
-        return getChannelType() == type;
-    }
+    
 
     @Nonnull
-    public ChannelType getChannelType() {
-        return channel.getType();
-    }
-
-    @Nonnull
-    public MessageChannel getChannel() {
+    public TextChannel getChannel() {
         return channel;
     }
 
     @Nonnull
-    public TextChannel getTextChannel() {
-        if (!isFromType(ChannelType.TEXT))
-            throw new IllegalStateException("This message was not sent in a text channel");
-        return (TextChannel) channel;
-    }
-
-    @Nonnull
     public Guild getGuild() {
-        return getTextChannel().getGuild();
+        return getChannel().getGuild();
     }
 
     private Emote matchEmote(Matcher m) {
@@ -235,10 +217,6 @@ public class Message {
             }
         }
         return collection;
-    }
-
-    boolean isFromGuild() {
-        return getChannelType().isGuild();
     }
 
 
