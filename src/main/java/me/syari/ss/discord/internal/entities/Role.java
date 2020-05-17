@@ -13,7 +13,7 @@ public class Role implements Mentionable, Comparable<Role> {
 
     private String name;
 
-    public Role(long id, Guild guild) {
+    public Role(long id, @NotNull Guild guild) {
         this.id = id;
         JDAImpl api = guild.getJDA();
         this.guild = new SnowflakeReference<>(guild, api::getGuildById);
@@ -36,13 +36,15 @@ public class Role implements Mentionable, Comparable<Role> {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (o == this)
+    public boolean equals(Object object) {
+        if (object == this) {
             return true;
-        if (!(o instanceof Role))
+        }
+        if (!(object instanceof Role)) {
             return false;
-        Role oRole = (Role) o;
-        return this.getIdLong() == oRole.getIdLong();
+        }
+        Role role = (Role) object;
+        return this.getIdLong() == role.getIdLong();
     }
 
     @Override
@@ -68,8 +70,6 @@ public class Role implements Mentionable, Comparable<Role> {
 
         return rTime.compareTo(thisTime);
     }
-
-    // -- Setters --
 
     public void setName(String name) {
         this.name = name;

@@ -2,7 +2,6 @@ package me.syari.ss.discord.internal.utils.config;
 
 import com.neovisionaries.ws.client.WebSocketFactory;
 import me.syari.ss.discord.api.utils.SessionController;
-import me.syari.ss.discord.api.utils.SessionControllerAdapter;
 import me.syari.ss.discord.internal.utils.config.flags.ConfigFlag;
 import okhttp3.OkHttpClient;
 import org.jetbrains.annotations.NotNull;
@@ -19,7 +18,7 @@ public class SessionConfig {
     private final int maxReconnectDelay;
 
     public SessionConfig(@Nullable OkHttpClient httpClient, EnumSet<ConfigFlag> flags, int maxReconnectDelay, int largeThreshold) {
-        this.sessionController = new SessionControllerAdapter();
+        this.sessionController = new SessionController();
         this.httpClient = httpClient;
         this.webSocketFactory = new WebSocketFactory();
         this.flags = flags;

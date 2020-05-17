@@ -13,15 +13,12 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
-
 public class DataArray implements Iterable<Object> {
     private static final Logger log = LoggerFactory.getLogger(DataObject.class);
-    private static final ObjectMapper mapper;
-    private static final SimpleModule module;
+    private static final ObjectMapper mapper = new ObjectMapper();
+    private static final SimpleModule module = new SimpleModule();
 
     static {
-        mapper = new ObjectMapper();
-        module = new SimpleModule();
         module.addAbstractTypeMapping(Map.class, HashMap.class);
         module.addAbstractTypeMapping(List.class, ArrayList.class);
         mapper.registerModule(module);
@@ -33,17 +30,14 @@ public class DataArray implements Iterable<Object> {
         this.data = data;
     }
 
-
     @NotNull
     public static DataArray empty() {
         return new DataArray(new ArrayList<>());
     }
 
-
     public int length() {
         return data.size();
     }
-
 
     @NotNull
     @SuppressWarnings("unchecked")
@@ -59,7 +53,6 @@ public class DataArray implements Iterable<Object> {
         return new DataObject(child);
     }
 
-
     @NotNull
     public String getString(int index) {
         String value = get(String.class, index, UnaryOperator.identity(), String::valueOf);
@@ -68,7 +61,6 @@ public class DataArray implements Iterable<Object> {
         return value;
     }
 
-
     public long getLong(int index) {
         Long value = get(Long.class, index, Long::parseLong, Number::longValue);
         if (value == null)
@@ -76,14 +68,12 @@ public class DataArray implements Iterable<Object> {
         return value;
     }
 
-
     public long getUnsignedLong(int index) {
         Long value = get(Long.class, index, Long::parseUnsignedLong, Number::longValue);
         if (value == null)
             throw valueError(index, "unsigned long");
         return value;
     }
-
 
     @NotNull
     public DataArray add(@Nullable Object value) {
@@ -95,7 +85,6 @@ public class DataArray implements Iterable<Object> {
             data.add(value);
         return this;
     }
-
 
     @Override
     public String toString() {
@@ -118,18 +107,20 @@ public class DataArray implements Iterable<Object> {
     @Nullable
     private <T> T get(@NotNull Class<T> type, int index, @Nullable Function<String, T> stringMapper, @Nullable Function<Number, T> numberMapper) {
         Object value = data.get(index);
-        if (value == null)
+        if (value == null) {
             return null;
-        if (type.isAssignableFrom(value.getClass()))
+        }
+        if (type.isAssignableFrom(value.getClass())) {
             return type.cast(value);
-        // attempt type coercion
-        if (stringMapper != null && value instanceof String)
+        }
+        if (stringMapper != null && value instanceof String) {
             return stringMapper.apply((String) value);
-        else if (numberMapper != null && value instanceof Number)
+        }
+        else if (numberMapper != null && value instanceof Number) {
             return numberMapper.apply((Number) value);
+        }
 
-        throw new ParsingException(String.format("Cannot parse value for index %d into type %s: %s instance of %s",
-                index, type.getSimpleName(), value, value.getClass().getSimpleName()));
+        throw new ParsingException(String.format("Cannot parse value for index %d into type %s: %s instance of %s", index, type.getSimpleName(), value, value.getClass().getSimpleName()));
     }
 
     @NotNull

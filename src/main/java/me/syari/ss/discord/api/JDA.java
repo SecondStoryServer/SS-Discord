@@ -10,37 +10,21 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-
 public interface JDA {
-
     enum Status {
-
         INITIALIZING(true),
-
         INITIALIZED(true),
-
         LOGGING_IN(true),
-
         CONNECTING_TO_WEBSOCKET(true),
-
         IDENTIFYING_SESSION(true),
-
         AWAITING_LOGIN_CONFIRMATION(true),
-
         LOADING_SUBSYSTEMS(true),
-
         CONNECTED(true),
-
         DISCONNECTED(false),
-
         RECONNECT_QUEUED(false),
-
         WAITING_TO_RECONNECT(false),
-
         ATTEMPTING_TO_RECONNECT(false),
-
         SHUTTING_DOWN(false),
-
         SHUTDOWN(false);
 
         private final boolean isInit;
@@ -54,9 +38,7 @@ public interface JDA {
         }
     }
 
-
     class ShardInfo {
-
         public static final ShardInfo SINGLE = new ShardInfo(0, 1);
 
         final int shardId;
@@ -67,16 +49,13 @@ public interface JDA {
             this.shardTotal = shardTotal;
         }
 
-
         public int getShardId() {
             return shardId;
         }
 
-
         public int getShardTotal() {
             return shardTotal;
         }
-
 
         public String getShardString() {
             return "[" + shardId + " / " + shardTotal + "]";
@@ -97,59 +76,47 @@ public interface JDA {
         }
     }
 
-
     default void awaitStatus(@NotNull Status status) throws InterruptedException {
         awaitStatus(status, new Status[0]);
     }
 
-
     void awaitStatus(@NotNull Status status, @NotNull Status... failOn) throws InterruptedException;
-
 
     default void awaitReady() throws InterruptedException {
         awaitStatus(Status.CONNECTED);
     }
 
-
     @NotNull
     SnowflakeCacheView<User> getUserCache();
-
 
     @Nullable
     default User getUserById(long id) {
         return getUserCache().getElementById(id);
     }
 
-
     @NotNull
     SnowflakeCacheView<Guild> getGuildCache();
-
 
     @NotNull
     default List<Guild> getGuilds() {
         return getGuildCache().asList();
     }
 
-
     @Nullable
     default Guild getGuildById(long id) {
         return getGuildCache().getElementById(id);
     }
 
-
     @NotNull
     SnowflakeCacheView<TextChannel> getTextChannelCache();
-
 
     @Nullable
     default TextChannel getTextChannelById(long id) {
         return getTextChannelCache().getElementById(id);
     }
 
-
     @NotNull
     SnowflakeCacheView<Emote> getEmoteCache();
-
 
     @Nullable
     default Emote getEmoteById(long id) {

@@ -62,9 +62,7 @@ public enum ErrorResponse {
     MFA_NOT_ENABLED(60003, "MFA auth required but not enabled"),
     REACTION_BLOCKED(90001, "Reaction Blocked"),
     RESOURCES_OVERLOADED(130000, "Resource overloaded"),
-
     SERVER_ERROR(0, "Discord encountered an internal server error! Not good!");
-
 
     private final int code;
     private final String meaning;

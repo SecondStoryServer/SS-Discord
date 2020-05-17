@@ -16,7 +16,6 @@ import javax.security.auth.login.LoginException;
 import java.util.EnumSet;
 import java.util.function.Consumer;
 
-
 public class JDABuilder {
     protected final String token;
     protected final Consumer<MessageReceivedEvent> messageReceivedEvent;
@@ -28,17 +27,16 @@ public class JDABuilder {
     protected final EnumSet<ConfigFlag> flags = ConfigFlag.getDefault();
     protected final ChunkingFilter chunkingFilter = ChunkingFilter.ALL;
 
-
     public JDABuilder(@NotNull String token, Consumer<MessageReceivedEvent> messageReceivedEvent) {
         this.token = token;
         this.messageReceivedEvent = messageReceivedEvent;
     }
 
-
     @NotNull
     public JDA build() throws LoginException {
-        if (this.httpClientBuilder == null)
+        if (this.httpClientBuilder == null) {
             this.httpClientBuilder = new OkHttpClient.Builder();
+        }
 
         OkHttpClient httpClient = this.httpClientBuilder.build();
         AuthorizationConfig authConfig = new AuthorizationConfig(token);

@@ -81,8 +81,6 @@ public class User implements Mentionable {
         return "U:" + getName() + '(' + id + ')';
     }
 
-    // -- Setters --
-
     public User setName(String name) {
         this.name = name;
         return this;

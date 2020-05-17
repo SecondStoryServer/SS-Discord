@@ -6,7 +6,6 @@ import me.syari.ss.discord.api.exceptions.PermissionException;
 import me.syari.ss.discord.api.exceptions.RateLimitedException;
 import me.syari.ss.discord.api.requests.Request;
 import me.syari.ss.discord.api.requests.Response;
-import me.syari.ss.discord.api.requests.RestAction;
 import me.syari.ss.discord.api.requests.RestFuture;
 import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.utils.Checks;
@@ -20,11 +19,11 @@ import java.util.concurrent.ExecutionException;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
-public class RestActionImpl<T> implements RestAction<T> {
+public class RestAction<T> {
     public static final Logger LOG = JDALogger.getLog(RestAction.class);
 
-    private static final Consumer<Object> DEFAULT_SUCCESS = o -> {
-    };
+    private static final Consumer<Object> DEFAULT_SUCCESS = o -> { };
+
     private static final Consumer<? super Throwable> DEFAULT_FAILURE = t ->
     {
         if (LOG.isDebugEnabled()) {
@@ -37,7 +36,6 @@ public class RestActionImpl<T> implements RestAction<T> {
     };
 
     protected static final boolean passContext = true;
-
     protected final JDAImpl api;
 
     private final Route.CompiledRoute route;
@@ -48,16 +46,15 @@ public class RestActionImpl<T> implements RestAction<T> {
         return passContext;
     }
 
-    public RestActionImpl(JDA api, Route.CompiledRoute route) {
+    public RestAction(@NotNull JDA api, Route.CompiledRoute route) {
         this(api, route, null, null);
     }
 
-    public RestActionImpl(JDA api, Route.CompiledRoute route, BiFunction<Response, Request<T>, T> handler) {
+    public RestAction(JDA api, Route.CompiledRoute route, BiFunction<Response, Request<T>, T> handler) {
         this(api, route, null, handler);
     }
 
-    public RestActionImpl(JDA api, Route.CompiledRoute route, RequestBody data, BiFunction<Response, Request<T>, T> handler) {
-        Checks.notNull(api, "api");
+    public RestAction(@NotNull JDA api, Route.CompiledRoute route, RequestBody data, BiFunction<Response, Request<T>, T> handler) {
         this.api = (JDAImpl) api;
         this.route = route;
         this.data = data;
@@ -69,7 +66,6 @@ public class RestActionImpl<T> implements RestAction<T> {
         return api;
     }
 
-    @Override
     public void queue() {
         Route.CompiledRoute route = finalizeRoute();
         Checks.notNull(route, "Route");
@@ -85,21 +81,30 @@ public class RestActionImpl<T> implements RestAction<T> {
         return new RestFuture<>(this, shouldQueue, data, route);
     }
 
-    @Override
+    public T complete() {
+        try {
+            return complete(true);
+        } catch (RateLimitedException e) {
+            throw new AssertionError(e);
+        }
+    }
+
     public T complete(boolean shouldQueue) throws RateLimitedException {
-        if (CallbackContext.isCallbackContext())
+        if (CallbackContext.isCallbackContext()) {
             throw new IllegalStateException("Preventing use of complete() in callback threads! This operation can be a deadlock cause");
+        }
         try {
             return submit(shouldQueue).get();
         } catch (Throwable e) {
             if (e instanceof ExecutionException) {
                 Throwable t = e.getCause();
-                if (t instanceof RateLimitedException)
+                if (t instanceof RateLimitedException) {
                     throw (RateLimitedException) t;
-                else if (t instanceof PermissionException)
+                } else if (t instanceof PermissionException) {
                     throw (PermissionException) t;
-                else if (t instanceof ErrorResponseException)
+                } else if (t instanceof ErrorResponseException) {
                     throw (ErrorResponseException) t;
+                }
             }
             throw new RuntimeException(e);
         }
@@ -114,16 +119,18 @@ public class RestActionImpl<T> implements RestAction<T> {
     }
 
     public void handleResponse(@NotNull Response response, Request<T> request) {
-        if (response.isOk())
+        if (response.isOk()) {
             handleSuccess(response, request);
-        else
+        } else {
             request.onFailure(response);
+        }
     }
 
     protected void handleSuccess(Response response, Request<T> request) {
-        if (handler == null)
+        if (handler == null) {
             request.onSuccess(null);
-        else
+        } else {
             request.onSuccess(handler.apply(response, request));
+        }
     }
 }

@@ -12,7 +12,6 @@ public abstract class AbstractChannelImpl<T extends AbstractChannelImpl<T>> impl
     protected final JDAImpl api;
 
     protected String name;
-    protected int rawPosition;
 
     public AbstractChannelImpl(long id, @NotNull Guild guild) {
         this.id = id;
@@ -22,9 +21,6 @@ public abstract class AbstractChannelImpl<T extends AbstractChannelImpl<T>> impl
 
     @Override
     public int compareTo(@NotNull GuildChannel o) {
-        Checks.notNull(o, "Channel");
-        if (getPositionRaw() != o.getPositionRaw())
-            return Integer.compare(getPositionRaw(), o.getPositionRaw());
         return Long.compareUnsigned(id, o.getIdLong());
     }
 
@@ -39,12 +35,6 @@ public abstract class AbstractChannelImpl<T extends AbstractChannelImpl<T>> impl
     public Guild getGuild() {
         return guild.resolve();
     }
-
-    @Override
-    public int getPositionRaw() {
-        return rawPosition;
-    }
-
 
     @Override
     public long getIdLong() {
@@ -66,15 +56,7 @@ public abstract class AbstractChannelImpl<T extends AbstractChannelImpl<T>> impl
         return channel.getIdLong() == getIdLong();
     }
 
-    @SuppressWarnings("unchecked")
-    public T setName(String name) {
+    public void setName(String name) {
         this.name = name;
-        return (T) this;
-    }
-
-    @SuppressWarnings("unchecked")
-    public T setPosition(int rawPosition) {
-        this.rawPosition = rawPosition;
-        return (T) this;
     }
 }

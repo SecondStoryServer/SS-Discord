@@ -9,7 +9,6 @@ import me.syari.ss.discord.internal.requests.WebSocketClient;
 import org.jetbrains.annotations.NotNull;
 
 public class ReadyHandler extends SocketHandler {
-
     public ReadyHandler(JDAImpl api) {
         super(api);
     }
@@ -23,8 +22,9 @@ public class ReadyHandler extends SocketHandler {
             DataObject guild = guilds.getObject(i);
             long id = guild.getUnsignedLong("id");
             DataObject previous = distinctGuilds.put(id, guild);
-            if (previous != null)
+            if (previous != null) {
                 WebSocketClient.LOG.warn("Found duplicate guild for id {} in ready payload", id);
+            }
         }
         return null;
     }

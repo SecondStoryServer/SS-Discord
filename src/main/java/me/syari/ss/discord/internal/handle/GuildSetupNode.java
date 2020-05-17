@@ -112,9 +112,6 @@ public class GuildSetupNode {
 
     boolean handleMemberChunk(DataArray arr) {
         if (partialGuild == null) {
-            //In this case we received a GUILD_DELETE with unavailable = true while chunking
-            // however we have to wait for the GUILD_CREATE with unavailable = false before
-            // requesting new chunks
             GuildSetupController.log.debug("Dropping member chunk due to unavailable guild");
             return true;
         }
@@ -134,8 +131,6 @@ public class GuildSetupNode {
     void cacheEvent(@NotNull DataObject event) {
         GuildSetupController.log.trace("Caching {} event during init. GuildId: {}", event.getString("t"), id);
         cachedEvents.add(event);
-        //Check if more than 2000 events cached - suspicious
-        // Print warning every 1000 events
         int cacheSize = cachedEvents.size();
         if (cacheSize >= 2000 && cacheSize % 1000 == 0) {
             GuildSetupController controller = getController();
@@ -155,8 +150,10 @@ public class GuildSetupNode {
     private void completeSetup() {
         updateStatus(GuildSetupController.Status.BUILDING);
         JDAImpl api = getController().getJDA();
-        for (TLongIterator it = removedMembers.iterator(); it.hasNext(); )
-            members.remove(it.next());
+        TLongIterator iterator = removedMembers.iterator();
+        while (iterator.hasNext()) {
+            members.remove(iterator.next());
+        }
         removedMembers.clear();
         Guild guild = api.getEntityBuilder().createGuild(id, partialGuild, expectedMemberCount);
         switch (type) {
@@ -164,10 +161,11 @@ public class GuildSetupNode {
                 getController().remove(id);
                 break;
             case JOIN:
-                if (requestedChunk)
+                if (requestedChunk) {
                     getController().ready(id);
-                else
+                } else {
                     getController().remove(id);
+                }
                 break;
             default:
                 getController().ready(id);

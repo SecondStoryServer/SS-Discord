@@ -7,17 +7,13 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
-
 public class ErrorResponseException extends RuntimeException {
-
-
     private ErrorResponseException(Response response, int code, String meaning) {
         super(code + ": " + meaning);
 
         if (response != null && response.getException() != null)
             initCause(response.getException());
     }
-
 
     public static ErrorResponseException create(@NotNull ErrorResponse errorResponse, @NotNull Response response) {
         Optional<DataObject> optObj = response.optObject();

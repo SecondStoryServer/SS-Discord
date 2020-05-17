@@ -63,15 +63,16 @@ public class Member implements Mentionable {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (o == this)
+    public boolean equals(Object object) {
+        if (object == this) {
             return true;
-        if (!(o instanceof Member))
+        }
+        if (!(object instanceof Member)) {
             return false;
+        }
 
-        Member oMember = (Member) o;
-        return oMember.user.getIdLong() == user.getIdLong()
-                && oMember.guild.getIdLong() == guild.getIdLong();
+        Member member = (Member) object;
+        return member.user.getIdLong() == user.getIdLong() && member.guild.getIdLong() == guild.getIdLong();
     }
 
     @Override
@@ -89,5 +90,4 @@ public class Member implements Mentionable {
     public String getAsMention() {
         return (nickname == null ? "<@" : "<@!") + user.getId() + '>';
     }
-
 }

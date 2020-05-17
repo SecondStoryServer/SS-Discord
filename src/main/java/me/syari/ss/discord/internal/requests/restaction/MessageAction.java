@@ -3,12 +3,11 @@ package me.syari.ss.discord.internal.requests.restaction;
 import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.requests.Request;
 import me.syari.ss.discord.api.requests.Response;
-import me.syari.ss.discord.api.requests.RestAction;
 import me.syari.ss.discord.api.utils.data.DataObject;
 import me.syari.ss.discord.internal.entities.Message;
 import me.syari.ss.discord.internal.entities.TextChannel;
 import me.syari.ss.discord.internal.requests.Requester;
-import me.syari.ss.discord.internal.requests.RestActionImpl;
+import me.syari.ss.discord.internal.requests.RestAction;
 import me.syari.ss.discord.internal.requests.Route;
 import me.syari.ss.discord.internal.utils.Checks;
 import me.syari.ss.discord.internal.utils.Helpers;
@@ -24,7 +23,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class MessageAction extends RestActionImpl<Message> implements RestAction<Message>, Appendable {
+public class MessageAction extends RestAction<Message> implements Appendable {
     protected final Map<String, InputStream> files = new HashMap<>();
     protected final Set<InputStream> ownedResources = new HashSet<>();
     protected final StringBuilder content;
@@ -51,8 +50,9 @@ public class MessageAction extends RestActionImpl<Message> implements RestAction
     @NotNull
     @Override
     public MessageAction append(final CharSequence csq, final int start, final int end) {
-        if (content.length() + end - start > Message.MAX_CONTENT_LENGTH)
+        if (content.length() + end - start > Message.MAX_CONTENT_LENGTH) {
             throw new IllegalArgumentException("A message may not exceed 2000 characters. Please limit your input!");
+        }
         content.append(csq, start, end);
         return this;
     }
@@ -60,8 +60,9 @@ public class MessageAction extends RestActionImpl<Message> implements RestAction
     @NotNull
     @Override
     public MessageAction append(final char c) {
-        if (content.length() == Message.MAX_CONTENT_LENGTH)
+        if (content.length() == Message.MAX_CONTENT_LENGTH) {
             throw new IllegalArgumentException("A message may not exceed 2000 characters. Please limit your input!");
+        }
         content.append(c);
         return this;
     }
@@ -71,8 +72,9 @@ public class MessageAction extends RestActionImpl<Message> implements RestAction
             try {
                 ownedResource.close();
             } catch (IOException ex) {
-                if (!ex.getMessage().toLowerCase().contains("closed"))
+                if (!ex.getMessage().toLowerCase().contains("closed")) {
                     LOG.error("Encountered IOException trying to close owned resource", ex);
+                }
             }
         }
         ownedResources.clear();
@@ -85,8 +87,9 @@ public class MessageAction extends RestActionImpl<Message> implements RestAction
             final RequestBody body = IOUtil.createRequestBody(Requester.MEDIA_TYPE_OCTET, entry.getValue());
             builder.addFormDataPart("file" + index++, entry.getKey(), body);
         }
-        if (isNotEmpty())
+        if (isNotEmpty()) {
             builder.addFormDataPart("payload_json", getJSON().toString());
+        }
         files.clear();
         ownedResources.clear();
         return builder.build();
@@ -104,10 +107,11 @@ public class MessageAction extends RestActionImpl<Message> implements RestAction
 
     @Override
     protected RequestBody finalizeData() {
-        if (!files.isEmpty())
+        if (!files.isEmpty()) {
             return asMultipart();
-        else if (isNotEmpty())
+        } else if (isNotEmpty()) {
             return asJSON();
+        }
         throw new IllegalStateException("Cannot build a message without content!");
     }
 
@@ -118,8 +122,9 @@ public class MessageAction extends RestActionImpl<Message> implements RestAction
 
     @Override
     protected void finalize() {
-        if (ownedResources.isEmpty())
+        if (ownedResources.isEmpty()) {
             return;
+        }
         LOG.warn("Found unclosed resources in MessageAction instance, closing on finalization step!");
         clearResources();
     }

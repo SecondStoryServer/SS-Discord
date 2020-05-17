@@ -1,7 +1,7 @@
 package me.syari.ss.discord.api.requests;
 
 import me.syari.ss.discord.internal.JDAImpl;
-import me.syari.ss.discord.internal.requests.RestActionImpl;
+import me.syari.ss.discord.internal.requests.RestAction;
 import me.syari.ss.discord.internal.requests.Route;
 import okhttp3.RequestBody;
 
@@ -10,7 +10,7 @@ import java.util.concurrent.CompletableFuture;
 public class RestFuture<T> extends CompletableFuture<T> {
     final Request<T> request;
 
-    public RestFuture(final RestActionImpl<T> restAction,
+    public RestFuture(final RestAction<T> restAction,
                       final boolean shouldQueue,
                       final RequestBody data,
                       final Route.CompiledRoute route) {

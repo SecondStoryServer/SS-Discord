@@ -40,7 +40,7 @@ public class EntityBuilder {
         return api;
     }
 
-    private void createGuildEmotePass(Guild guildObj, DataArray array) {
+    private void createGuildEmotePass(@NotNull Guild guildObj, @NotNull DataArray array) {
         SnowflakeCacheViewImpl<Emote> emoteView = guildObj.getEmotesView();
         try (UnlockHook hook = emoteView.writeLock()) {
             TLongObjectMap<Emote> emoteMap = emoteView.getMap();
@@ -56,7 +56,7 @@ public class EntityBuilder {
         }
     }
 
-    public Guild createGuild(long guildId, DataObject guildJson, int memberCount) {
+    public Guild createGuild(long guildId, @NotNull DataObject guildJson, int memberCount) {
         final Guild guildObj = new Guild(getJDA(), guildId);
         final String name = guildJson.getString("name", "");
         final DataArray roleArray = guildJson.getArray("roles");
@@ -96,7 +96,7 @@ public class EntityBuilder {
         return guildObj;
     }
 
-    private void createTextChannel(Guild guildObj, DataObject channelData) {
+    private void createTextChannel(Guild guildObj, @NotNull DataObject channelData) {
         if (isTextChannel(channelData.getInt("type"))) {
             createTextChannel(guildObj, channelData, guildObj.getIdLong());
         }
@@ -110,7 +110,7 @@ public class EntityBuilder {
         return createUser(user, false, true);
     }
 
-    private User createUser(DataObject user, boolean fake, boolean modifyCache) {
+    private @NotNull User createUser(@NotNull DataObject user, boolean fake, boolean modifyCache) {
         final long id = user.getLong("id");
         User userObj;
 
@@ -139,20 +139,19 @@ public class EntityBuilder {
         }
 
         if (modifyCache || userObj.isFake()) {
-            // Initial creation
             userObj.setName(user.getString("username"))
                     .setDiscriminator(user.get("discriminator").toString())
                     .setBot(user.getBoolean("bot"));
         } else if (!userObj.isFake()) {
-            // Fire update events
             updateUser(userObj, user);
         }
-        if (!fake && modifyCache)
+        if (!fake && modifyCache) {
             getJDA().getEventCache().playbackCache(EventCache.Type.USER, id);
+        }
         return userObj;
     }
 
-    public void updateUser(User userObj, DataObject user) {
+    public void updateUser(@NotNull User userObj, @NotNull DataObject user) {
         String oldName = userObj.getName();
         String newName = user.getString("username");
         String oldDiscriminator = userObj.getDiscriminator();
@@ -167,7 +166,7 @@ public class EntityBuilder {
         }
     }
 
-    public Member createMember(Guild guild, DataObject memberJson) {
+    public Member createMember(@NotNull Guild guild, @NotNull DataObject memberJson) {
         boolean playbackCache = false;
         User user = createUser(memberJson.getObject("user"));
         Member member = guild.getMember(user);
@@ -189,7 +188,6 @@ public class EntityBuilder {
             getJDA().getEventCache().playbackCache(EventCache.Type.MEMBER, hashId);
             guild.acknowledgeMembers();
         } else {
-            // This is not a new member - fire update events
             DataArray roleArray = memberJson.getArray("roles");
             List<Role> roles = new ArrayList<>(roleArray.length());
             for (int i = 0; i < roleArray.length(); i++) {
@@ -203,7 +201,7 @@ public class EntityBuilder {
         return member;
     }
 
-    private void loadMember(Guild guild, DataObject memberJson, Member member) {
+    private void loadMember(Guild guild, @NotNull DataObject memberJson, Member member) {
         if (!memberJson.isNull("premium_since")) {
             TemporalAccessor boostDate = DateTimeFormatter.ISO_OFFSET_DATE_TIME.parse(memberJson.getString("premium_since"));
             member.setBoostDate(Instant.from(boostDate).toEpochMilli());
@@ -247,9 +245,8 @@ public class EntityBuilder {
         }
     }
 
-    private void updateMemberRoles(Member member, List<Role> newRoles) {
+    private void updateMemberRoles(@NotNull Member member, List<Role> newRoles) {
         Set<Role> currentRoles = member.getRoleSet();
-        //Find the roles removed.
         List<Role> removedRoles = new LinkedList<>();
         each:
         for (Role role : currentRoles) {
@@ -263,13 +260,15 @@ public class EntityBuilder {
             removedRoles.add(role);
         }
 
-        if (removedRoles.size() > 0)
+        if (0 < removedRoles.size()) {
             currentRoles.removeAll(removedRoles);
-        if (newRoles.size() > 0)
+        }
+        if (0 < newRoles.size()) {
             currentRoles.addAll(newRoles);
+        }
     }
 
-    public Emote createEmote(Guild guildObj, DataObject json) {
+    public Emote createEmote(@NotNull Guild guildObj, @NotNull DataObject json) {
         DataArray emoteRoles = json.optArray("roles").orElseGet(DataArray::empty);
         final long emoteId = json.getLong("id");
         Emote emoteObj = guildObj.getEmoteById(emoteId);
@@ -289,7 +288,7 @@ public class EntityBuilder {
     }
 
 
-    public void createTextChannel(Guild guildObj, DataObject json, long guildId) {
+    public void createTextChannel(Guild guildObj, @NotNull DataObject json, long guildId) {
         boolean playbackCache = false;
         final long id = json.getLong("id");
         TextChannel channel = getJDA().getTextChannelsView().get(id);
@@ -308,17 +307,18 @@ public class EntityBuilder {
             }
         }
 
-        channel.setName(json.getString("name"))
-                .setPosition(json.getInt("position"));
-        if (playbackCache)
+        channel.setName(json.getString("name"));
+        if (playbackCache) {
             getJDA().getEventCache().playbackCache(EventCache.Type.CHANNEL, id);
+        }
     }
 
     public Role createRole(Guild guild, @NotNull DataObject roleJson, long guildId) {
         boolean playbackCache = false;
         final long id = roleJson.getLong("id");
-        if (guild == null)
+        if (guild == null) {
             guild = getJDA().getGuildsView().get(guildId);
+        }
         Role role = guild.getRolesView().get(id);
         if (role == null) {
             SnowflakeCacheViewImpl<Role> roleView = guild.getRolesView();
@@ -328,8 +328,9 @@ public class EntityBuilder {
             }
         }
         role.setName(roleJson.getString("name"));
-        if (playbackCache)
+        if (playbackCache) {
             getJDA().getEventCache().playbackCache(EventCache.Type.ROLE, id);
+        }
         return role;
     }
 
@@ -337,13 +338,14 @@ public class EntityBuilder {
         final long channelId = jsonObject.getLong("channel_id");
 
         TextChannel channel = getJDA().getTextChannelById(channelId);
-        if (channel == null)
+        if (channel == null) {
             throw new IllegalArgumentException(MISSING_CHANNEL);
+        }
 
         return createMessage(jsonObject, channel, modifyCache);
     }
 
-    public Message createMessage(@NotNull DataObject jsonObject, TextChannel channel, boolean modifyCache) {
+    public Message createMessage(@NotNull DataObject jsonObject, @NotNull TextChannel channel, boolean modifyCache) {
         final long id = jsonObject.getLong("id");
         final DataObject author = jsonObject.getObject("author");
         final long authorId = author.getLong("id");
@@ -371,10 +373,11 @@ public class EntityBuilder {
             member = guild.getMemberById(authorId);
         user = member != null ? member.getUser() : null;
         if (user == null) {
-            if (fromWebhook || !modifyCache)
+            if (fromWebhook || !modifyCache) {
                 user = createFakeUser(author, false);
-            else
+            } else {
                 throw new IllegalArgumentException(MISSING_USER);
+            }
         }
 
         if (modifyCache && !fromWebhook)
@@ -385,15 +388,14 @@ public class EntityBuilder {
         Optional<DataArray> roleMentionArray = jsonObject.optArray("mention_roles");
         roleMentionArray.ifPresent((array) ->
         {
-            for (int i = 0; i < array.length(); i++)
+            for (int i = 0; i < array.length(); i++) {
                 mentionedRoles.add(array.getLong(i));
+            }
         });
 
         Message message;
         if (isDefaultMessage(jsonObject.getInt("type"))) {
-            message = new Message(id, channel,
-                    mentionedUsers, mentionedRoles,
-                    content, user, member);
+            message = new Message(id, channel, mentionedUsers, mentionedRoles, content, user, member);
         } else {
             throw new IllegalArgumentException(UNKNOWN_MESSAGE_TYPE);
         }

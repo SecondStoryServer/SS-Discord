@@ -4,7 +4,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 
-
 public class ContextException extends Exception {
     @NotNull
     public static Consumer<Throwable> here(@NotNull Consumer<? super Throwable> acceptor) {

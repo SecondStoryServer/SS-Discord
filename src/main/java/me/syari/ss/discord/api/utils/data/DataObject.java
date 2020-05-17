@@ -17,16 +17,13 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
-
 public class DataObject implements SerializableData {
     private static final Logger log = LoggerFactory.getLogger(DataObject.class);
-    private static final ObjectMapper mapper;
-    private static final SimpleModule module;
+    private static final ObjectMapper mapper = new ObjectMapper();
+    private static final SimpleModule module = new SimpleModule();
     private static final MapType mapType;
 
     static {
-        mapper = new ObjectMapper();
-        module = new SimpleModule();
         module.addAbstractTypeMapping(Map.class, HashMap.class);
         module.addAbstractTypeMapping(List.class, ArrayList.class);
         mapper.registerModule(module);
@@ -39,12 +36,10 @@ public class DataObject implements SerializableData {
         this.data = data;
     }
 
-
     @NotNull
     public static DataObject empty() {
         return new DataObject(new HashMap<>());
     }
-
 
     @NotNull
     public static DataObject fromJson(@NotNull String json) {
@@ -56,7 +51,6 @@ public class DataObject implements SerializableData {
         }
     }
 
-
     @NotNull
     public static DataObject fromJson(@NotNull Reader stream) {
         try {
@@ -67,27 +61,22 @@ public class DataObject implements SerializableData {
         }
     }
 
-
     public boolean hasKey(@NotNull String key) {
         return data.containsKey(key);
     }
-
 
     public boolean isNull(@NotNull String key) {
         return data.get(key) == null;
     }
 
-
     public boolean isType(@NotNull String key, @NotNull DataType type) {
         return type.isType(data.get(key));
     }
-
 
     @NotNull
     public DataObject getObject(@NotNull String key) {
         return optObject(key).orElseThrow(() -> valueError(key, "DataObject"));
     }
-
 
     @NotNull
     @SuppressWarnings("unchecked")
@@ -101,12 +90,10 @@ public class DataObject implements SerializableData {
         return child == null ? Optional.empty() : Optional.of(new DataObject(child));
     }
 
-
     @NotNull
     public DataArray getArray(@NotNull String key) {
         return optArray(key).orElseThrow(() -> valueError(key, "DataArray"));
     }
-
 
     @NotNull
     @SuppressWarnings("unchecked")
@@ -120,21 +107,19 @@ public class DataObject implements SerializableData {
         return child == null ? Optional.empty() : Optional.of(new DataArray(child));
     }
 
-
     @NotNull
     public Optional<Object> opt(@NotNull String key) {
         return Optional.ofNullable(data.get(key));
     }
 
-
     @NotNull
     public Object get(@NotNull String key) {
         Object value = data.get(key);
-        if (value == null)
+        if (value == null) {
             throw valueError(key, "any");
+        }
         return value;
     }
-
 
     @NotNull
     public String getString(@NotNull String key) {
@@ -144,38 +129,33 @@ public class DataObject implements SerializableData {
         return value;
     }
 
-
     @Contract("_, !null -> !null")
     public String getString(@NotNull String key, @Nullable String defaultValue) {
         String value = get(String.class, key, UnaryOperator.identity(), String::valueOf);
         return value == null ? defaultValue : value;
     }
 
-
     public boolean getBoolean(@NotNull String key) {
         return getBoolean(key, false);
     }
-
 
     public boolean getBoolean(@NotNull String key, boolean defaultValue) {
         Boolean value = get(Boolean.class, key, Boolean::parseBoolean, null);
         return value == null ? defaultValue : value;
     }
 
-
     public long getLong(@NotNull String key) {
         Long value = get(Long.class, key, Long::parseLong, Number::longValue);
-        if (value == null)
+        if (value == null) {
             throw valueError(key, "long");
+        }
         return value;
     }
-
 
     public long getLong(@NotNull String key, long defaultValue) {
         Long value = get(Long.class, key, Long::parseLong, Number::longValue);
         return value == null ? defaultValue : value;
     }
-
 
     public long getUnsignedLong(@NotNull String key) {
         Long value = get(Long.class, key, Long::parseUnsignedLong, Number::longValue);
@@ -184,25 +164,22 @@ public class DataObject implements SerializableData {
         return value;
     }
 
-
     public long getUnsignedLong(@NotNull String key, long defaultValue) {
         Long value = get(Long.class, key, Long::parseUnsignedLong, Number::longValue);
         return value == null ? defaultValue : value;
     }
 
-
     public int getInt(@NotNull String key) {
         Integer value = get(Integer.class, key, Integer::parseInt, Number::intValue);
-        if (value == null)
+        if (value == null) {
             throw valueError(key, "int");
+        }
         return value;
     }
-
 
     public void remove(@NotNull String key) {
         data.remove(key);
     }
-
 
     @NotNull
     public DataObject put(@NotNull String key, @Nullable Object value) {
@@ -214,7 +191,6 @@ public class DataObject implements SerializableData {
             data.put(key, value);
         return this;
     }
-
 
     @NotNull
     public Set<String> keys() {
@@ -229,7 +205,6 @@ public class DataObject implements SerializableData {
             throw new ParsingException(ex);
         }
     }
-
 
     @NotNull
     @Override
@@ -258,7 +233,6 @@ public class DataObject implements SerializableData {
         else if (value instanceof String && stringParse != null)
             return stringParse.apply((String) value);
 
-        throw new ParsingException(String.format("Cannot parse value for %s into type %s: %s instance of %s",
-                key, type.getSimpleName(), value, value.getClass().getSimpleName()));
+        throw new ParsingException(String.format("Cannot parse value for %s into type %s: %s instance of %s", key, type.getSimpleName(), value, value.getClass().getSimpleName()));
     }
 }

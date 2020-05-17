@@ -10,7 +10,6 @@ public class TimeUtil {
     public static final long DISCORD_EPOCH = 1420070400000L;
     public static final long TIMESTAMP_OFFSET = 22;
 
-
     @NotNull
     public static OffsetDateTime getTimeCreated(long entityId) {
         long timestamp = (entityId >>> TIMESTAMP_OFFSET) + DISCORD_EPOCH;
@@ -18,6 +17,4 @@ public class TimeUtil {
         gmt.setTimeInMillis(timestamp);
         return OffsetDateTime.ofInstant(gmt.toInstant(), gmt.getTimeZone().toZoneId());
     }
-
-
 }

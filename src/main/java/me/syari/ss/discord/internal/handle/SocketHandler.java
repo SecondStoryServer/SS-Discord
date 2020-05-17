@@ -26,7 +26,6 @@ public abstract class SocketHandler {
         return api;
     }
 
-
     protected abstract Long handleInternally(DataObject content);
 
     public static class NOPHandler extends SocketHandler {

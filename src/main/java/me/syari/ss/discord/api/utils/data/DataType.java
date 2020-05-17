@@ -5,10 +5,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Map;
 
-
 public enum DataType {
     INT, FLOAT, STRING, OBJECT, ARRAY, BOOLEAN, NULL;
-
 
     public boolean isType(@Nullable Object value) {
         switch (this) {

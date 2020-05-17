@@ -21,12 +21,10 @@ public class MessageReceivedEvent {
         return message;
     }
 
-
     @NotNull
     public User getAuthor() {
         return message.getAuthor();
     }
-
 
     @Nullable
     public Member getMember() {

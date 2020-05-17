@@ -112,8 +112,6 @@ public class Guild implements ISnowflake {
         return getEmoteCache().getElementById(id);
     }
 
-    // ---- Setters -----
-
     public void setOwner(Member owner) {
         if (getJDA().isGuildSubscriptions())
             this.owner = owner;
@@ -134,8 +132,6 @@ public class Guild implements ISnowflake {
         this.memberCount = count;
     }
 
-    // -- Map getters --
-
     public SortedSnowflakeCacheViewImpl<TextChannel> getTextChannelsView() {
         return textChannelCache;
     }
@@ -152,16 +148,12 @@ public class Guild implements ISnowflake {
         return memberCache;
     }
 
-    // -- Member Tracking --
-
     public void acknowledgeMembers() {
         if (memberCache.size() == memberCount && !chunkingCallback.isDone()) {
             JDALogger.getLog(Guild.class).debug("Chunking completed for guild {}", this);
             chunkingCallback.complete(null);
         }
     }
-
-    // -- Object overrides --
 
     @Override
     public boolean equals(Object o) {

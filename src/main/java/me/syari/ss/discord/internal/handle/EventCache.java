@@ -90,7 +90,7 @@ public class EventCache {
     }
 
     public enum Type {
-        USER, MEMBER, GUILD, CHANNEL, ROLE, RELATIONSHIP, CALL
+        USER, MEMBER, GUILD, CHANNEL, ROLE
     }
 
     private static class CacheNode {

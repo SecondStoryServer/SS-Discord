@@ -4,13 +4,14 @@ import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.requests.Request;
 import me.syari.ss.discord.api.requests.Response;
 import me.syari.ss.discord.internal.JDAImpl;
-import me.syari.ss.discord.internal.requests.ratelimit.BotRateLimiter;
+import me.syari.ss.discord.internal.requests.ratelimit.RateLimiter;
 import me.syari.ss.discord.internal.utils.JDALogger;
 import okhttp3.Call;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
 import okhttp3.internal.http.HttpMethod;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
 import javax.net.ssl.SSLPeerUnverifiedException;
@@ -28,7 +29,7 @@ public class Requester {
     public static final MediaType MEDIA_TYPE_OCTET = MediaType.parse("application/octet-stream; charset=utf-8");
 
     protected final JDAImpl api;
-    private final RateLimiter rateLimiter;
+    private final RateLimiter rateLimiter = new RateLimiter(this);
 
     private final OkHttpClient httpClient;
 
@@ -36,8 +37,6 @@ public class Requester {
 
     public Requester(JDA api) {
         this.api = (JDAImpl) api;
-        rateLimiter = new BotRateLimiter(this);
-
         this.httpClient = this.api.getHttpClient();
     }
 
@@ -45,10 +44,7 @@ public class Requester {
         return api;
     }
 
-    public <T> void request(Request<T> apiRequest) {
-        if (rateLimiter.isShutdown)
-            throw new IllegalStateException("The Requester has been shutdown! No new requests can be requested!");
-
+    public <T> void request(@NotNull Request<T> apiRequest) {
         if (apiRequest.shouldQueue())
             rateLimiter.queueRequest(apiRequest);
         else
@@ -63,7 +59,7 @@ public class Requester {
         return execute(apiRequest, false, handleOnRateLimit);
     }
 
-    public Long execute(Request<?> apiRequest, boolean retried, boolean handleOnRatelimit) {
+    public Long execute(@NotNull Request<?> apiRequest, boolean retried, boolean handleOnRatelimit) {
         Route.CompiledRoute route = apiRequest.getRoute();
         Long retryAfter = rateLimiter.getRateLimit(route);
         if (retryAfter != null && retryAfter > 0) {
@@ -80,8 +76,9 @@ public class Requester {
         String method = apiRequest.getRoute().getMethod().toString();
         RequestBody body = apiRequest.getBody();
 
-        if (body == null && HttpMethod.requiresRequestBody(method))
+        if (body == null && HttpMethod.requiresRequestBody(method)) {
             body = EMPTY_BODY;
+        }
 
         builder.method(method, body)
                 .header("X-RateLimit-Precision", "millisecond")

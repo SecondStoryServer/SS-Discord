@@ -6,7 +6,6 @@ import me.syari.ss.discord.internal.entities.Guild;
 import org.jetbrains.annotations.NotNull;
 
 public class GuildCreateHandler extends SocketHandler {
-
     public GuildCreateHandler(JDAImpl api) {
         super(api);
     }

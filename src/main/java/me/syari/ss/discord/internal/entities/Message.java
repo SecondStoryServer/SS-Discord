@@ -13,7 +13,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Message {
-
     public static final int MAX_CONTENT_LENGTH = 2000;
 
     private final Object mutex = new Object();
@@ -35,17 +34,22 @@ public class Message {
     protected List<TextChannel> channelMentions = null;
 
     public Message(
-            long id, TextChannel channel,
-            TLongSet mentionedUsers, TLongSet mentionedRoles,
-            String content, User author, Member member) {
-        this.content = content;
+            long id,
+            @NotNull TextChannel channel,
+            TLongSet mentionedUsers,
+            TLongSet mentionedRoles,
+            String content,
+            User author,
+            Member member
+    ) {
         this.id = id;
         this.channel = channel;
-        this.api = (channel != null) ? (JDAImpl) channel.getJDA() : null;
-        this.author = author;
-        this.member = member;
         this.mentionedUsers = mentionedUsers;
         this.mentionedRoles = mentionedRoles;
+        this.content = content;
+        this.author = author;
+        this.member = member;
+        this.api = (JDAImpl) channel.getJDA();
     }
 
     @NotNull
@@ -181,7 +185,7 @@ public class Message {
         this.userMentions = Collections.unmodifiableList(users);
     }
 
-    private <T, C extends Collection<T>> C processMentions(MentionType type, C collection, Function<Matcher, T> map) {
+    private <T, C extends Collection<T>> C processMentions(@NotNull MentionType type, C collection, Function<Matcher, T> map) {
         Matcher matcher = type.getPattern().matcher(getContentRaw());
         while (matcher.find()) {
             try {

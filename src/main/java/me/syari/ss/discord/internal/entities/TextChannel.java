@@ -15,15 +15,8 @@ import java.util.FormattableFlags;
 import java.util.Formatter;
 
 public class TextChannel extends AbstractChannelImpl<TextChannel> implements ISnowflake, Formattable, GuildChannel, Mentionable {
-
     public TextChannel(long id, Guild guild) {
         super(id, guild);
-    }
-
-    @Override
-    public TextChannel setPosition(int rawPosition) {
-        getGuild().getTextChannelsView().clearCachedLists();
-        return super.setPosition(rawPosition);
     }
 
     @NotNull
@@ -31,7 +24,6 @@ public class TextChannel extends AbstractChannelImpl<TextChannel> implements ISn
     public String getAsMention() {
         return "<#" + id + '>';
     }
-
 
     @NotNull
     public JDA getJDA() {
@@ -54,7 +46,6 @@ public class TextChannel extends AbstractChannelImpl<TextChannel> implements ISn
         else
             return new MessageAction(getJDA(), route, this).append(text);
     }
-
 
     @Override
     public void formatTo(Formatter formatter, int flags, int width, int precision) {

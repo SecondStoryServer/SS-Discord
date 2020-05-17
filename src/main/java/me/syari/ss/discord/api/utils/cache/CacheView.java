@@ -10,26 +10,19 @@ import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-
 public interface CacheView<T> extends Iterable<T> {
-
     @NotNull
     List<T> asList();
-
 
     @NotNull
     ClosableIterator<T> lockedIterator();
 
-
     long size();
-
 
     boolean isEmpty();
 
-
     @NotNull
     Stream<T> stream();
-
 
     @NotNull
     static <E extends ISnowflake> SnowflakeCacheView<E> allSnowflakes(@NotNull Supplier<? extends Stream<? extends SnowflakeCacheView<E>>> generator) {

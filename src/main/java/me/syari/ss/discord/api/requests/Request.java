@@ -6,7 +6,7 @@ import me.syari.ss.discord.api.exceptions.ErrorResponseException;
 import me.syari.ss.discord.api.exceptions.RateLimitedException;
 import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.requests.CallbackContext;
-import me.syari.ss.discord.internal.requests.RestActionImpl;
+import me.syari.ss.discord.internal.requests.RestAction;
 import me.syari.ss.discord.internal.requests.Route;
 import okhttp3.RequestBody;
 import org.jetbrains.annotations.NotNull;
@@ -16,7 +16,7 @@ import java.util.function.Consumer;
 
 public class Request<T> {
     private final JDAImpl api;
-    private final RestActionImpl<T> restAction;
+    private final RestAction<T> restAction;
     private final Consumer<? super T> onSuccess;
     private final Consumer<? super Throwable> onFailure;
     private final boolean shouldQueue;
@@ -27,7 +27,7 @@ public class Request<T> {
 
     private boolean isCanceled = false;
 
-    public Request(RestActionImpl<T> restAction,
+    public Request(RestAction<T> restAction,
                    Consumer<? super T> onSuccess,
                    Consumer<? super Throwable> onFailure,
                    boolean shouldQueue,
@@ -37,7 +37,7 @@ public class Request<T> {
         this.onSuccess = onSuccess;
         if (onFailure instanceof ContextException.ContextConsumer)
             this.onFailure = onFailure;
-        else if (RestActionImpl.isPassContext())
+        else if (RestAction.isPassContext())
             this.onFailure = ContextException.here(onFailure);
         else
             this.onFailure = onFailure;
@@ -56,7 +56,7 @@ public class Request<T> {
                  CallbackContext ___ = CallbackContext.getInstance()) {
                 onSuccess.accept(successObj);
             } catch (Throwable t) {
-                RestActionImpl.LOG.error("Encountered error while processing success consumer", t);
+                RestAction.LOG.error("Encountered error while processing success consumer", t);
             }
         });
     }
@@ -76,7 +76,7 @@ public class Request<T> {
                  CallbackContext ___ = CallbackContext.getInstance()) {
                 onFailure.accept(failException);
             } catch (Throwable t) {
-                RestActionImpl.LOG.error("Encountered error while processing failure consumer", t);
+                RestAction.LOG.error("Encountered error while processing failure consumer", t);
             }
         });
     }

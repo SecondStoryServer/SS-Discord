@@ -7,12 +7,6 @@ public interface GuildChannel extends ISnowflake, Comparable<GuildChannel> {
     @NotNull
     String getName();
 
-
     @NotNull
     Guild getGuild();
-
-
-    int getPositionRaw();
-
-
 }

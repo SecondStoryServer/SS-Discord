@@ -54,7 +54,6 @@ public class MiscUtil {
         }
     }
 
-
     public static void appendTo(@NotNull Formatter formatter, int width, int precision, boolean leftJustified, String out) {
         try {
             Appendable appendable = formatter.out();
@@ -63,10 +62,11 @@ public class MiscUtil {
                 return;
             }
 
-            if (leftJustified)
+            if (leftJustified) {
                 appendable.append(Helpers.rightPad(out, width));
-            else
+            } else {
                 appendable.append(Helpers.leftPad(out, width));
+            }
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }

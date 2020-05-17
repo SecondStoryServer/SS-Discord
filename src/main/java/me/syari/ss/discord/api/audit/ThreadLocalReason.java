@@ -10,7 +10,6 @@ public final class ThreadLocalReason {
         throw new UnsupportedOperationException();
     }
 
-
     public static void setCurrent(@Nullable String reason) {
         if (reason != null) {
             if (currentReason == null)
@@ -21,18 +20,15 @@ public final class ThreadLocalReason {
         }
     }
 
-
     @Nullable
     public static String getCurrent() {
         return currentReason == null ? null : currentReason.get();
     }
 
-
     @NotNull
     public static Closable closable(@Nullable String reason) {
         return new ThreadLocalReason.Closable(reason);
     }
-
 
     public static class Closable implements AutoCloseable {
         private final String previous;

@@ -38,8 +38,6 @@ public class Emote implements Mentionable {
         return (isAnimated() ? "<a:" : "<:") + getName() + ":" + getId() + ">";
     }
 
-    // -- Setters --
-
     public Emote setName(String name) {
         this.name = name;
         return this;
@@ -50,13 +48,9 @@ public class Emote implements Mentionable {
         return this;
     }
 
-    // -- Set Getter --
-
     public Set<Role> getRoleSet() {
         return this.roles;
     }
-
-    // -- Object overrides --
 
     @Override
     public boolean equals(Object obj) {
@@ -68,7 +62,6 @@ public class Emote implements Mentionable {
         Emote oEmote = (Emote) obj;
         return this.id == oEmote.id && getName().equals(oEmote.getName());
     }
-
 
     @Override
     public int hashCode() {

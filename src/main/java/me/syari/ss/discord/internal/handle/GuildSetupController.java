@@ -114,8 +114,6 @@ public class GuildSetupController {
         }
     }
 
-    // Chunking
-
     int getIncompleteCount() {
         return incompleteCount;
     }
@@ -144,7 +142,9 @@ public class GuildSetupController {
                         .put("d", DataObject.empty()
                                 .put("guild_id", obj)
                                 .put("query", "")
-                                .put("limit", 0)));
+                                .put("limit", 0)
+                        )
+        );
     }
 
     private void tryChunking() {
@@ -167,8 +167,6 @@ public class GuildSetupController {
         }
     }
 
-    // Syncing
-
     public enum Status {
         INIT,
         CHUNKING,
@@ -180,5 +178,4 @@ public class GuildSetupController {
     public interface StatusListener {
         void onStatusChange(long guildId, Status oldStatus, Status newStatus);
     }
-
 }

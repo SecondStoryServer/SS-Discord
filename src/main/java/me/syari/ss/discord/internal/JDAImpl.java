@@ -18,7 +18,7 @@ import me.syari.ss.discord.internal.entities.*;
 import me.syari.ss.discord.internal.handle.EventCache;
 import me.syari.ss.discord.internal.handle.GuildSetupController;
 import me.syari.ss.discord.internal.requests.Requester;
-import me.syari.ss.discord.internal.requests.RestActionImpl;
+import me.syari.ss.discord.internal.requests.RestAction;
 import me.syari.ss.discord.internal.requests.Route;
 import me.syari.ss.discord.internal.requests.WebSocketClient;
 import me.syari.ss.discord.internal.utils.Checks;
@@ -186,7 +186,7 @@ public class JDAImpl implements JDA {
     }
 
     public void verifyToken() throws LoginException {
-        RestActionImpl<DataObject> login = new RestActionImpl<DataObject>(this, Route.Self.GET_SELF.compile()) {
+        RestAction<DataObject> login = new RestAction<DataObject>(this, Route.Self.GET_SELF.compile()) {
             @Override
             public void handleResponse(@NotNull Response response, Request<DataObject> request) {
                 if (response.isOk())
@@ -214,7 +214,7 @@ public class JDAImpl implements JDA {
         }
     }
 
-    private DataObject checkToken(RestActionImpl<DataObject> login) throws LoginException {
+    private DataObject checkToken(RestAction<DataObject> login) throws LoginException {
         DataObject userResponse;
         try {
             userResponse = login.complete();

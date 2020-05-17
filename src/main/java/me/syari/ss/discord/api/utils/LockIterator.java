@@ -8,7 +8,6 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.concurrent.locks.Lock;
 
-
 public class LockIterator<T> implements ClosableIterator<T> {
     private final static Logger log = JDALogger.getLog(ClosableIterator.class);
     private final Iterator<? extends T> it;
