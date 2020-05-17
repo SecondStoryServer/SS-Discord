@@ -1,7 +1,6 @@
 package me.syari.ss.discord.internal.entities;
 
 import me.syari.ss.discord.api.JDA;
-import me.syari.ss.discord.api.entities.ISnowflake;
 import me.syari.ss.discord.api.entities.Mentionable;
 import me.syari.ss.discord.api.utils.MiscUtil;
 import me.syari.ss.discord.internal.JDAImpl;
@@ -11,11 +10,10 @@ import me.syari.ss.discord.internal.utils.Checks;
 import me.syari.ss.discord.internal.utils.cache.SnowflakeReference;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Formattable;
 import java.util.FormattableFlags;
 import java.util.Formatter;
 
-public class TextChannel implements ISnowflake, Formattable, Comparable<TextChannel>, Mentionable {
+public class TextChannel implements Comparable<TextChannel>, Mentionable {
     protected final long id;
     protected final SnowflakeReference<Guild> guild;
     protected final JDAImpl api;
@@ -86,7 +84,7 @@ public class TextChannel implements ISnowflake, Formattable, Comparable<TextChan
 
     @Override
     public String toString() {
-        return "TC:" + getName() + '(' + id + ')';
+        return "TextChannel:" + getName() + '(' + id + ')';
     }
 
     @Override
