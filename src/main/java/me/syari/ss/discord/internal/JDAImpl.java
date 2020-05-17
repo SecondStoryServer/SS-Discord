@@ -122,7 +122,7 @@ public class JDAImpl implements JDA {
         return guildSetupController;
     }
 
-    public void login(Compression compression, boolean validateToken) throws LoginException {
+    public void login() throws LoginException {
         threadConfig.init(this::getIdentifierString);
         requester.getRateLimiter().init();
         this.gatewayUrl = getGateway();
@@ -140,12 +140,10 @@ public class JDAImpl implements JDA {
             previousContext = MDC.getCopyOfContextMap();
             contextMap.forEach(MDC::put);
         }
-        if (validateToken) {
-            verifyToken();
-            LOG.info("Login Successful!");
-        }
+        verifyToken();
+        LOG.info("Login Successful!");
 
-        client = new WebSocketClient(this, compression);
+        client = new WebSocketClient(this);
         if (previousContext != null)
             previousContext.forEach(MDC::put);
 

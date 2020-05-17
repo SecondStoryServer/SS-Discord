@@ -38,7 +38,6 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
     protected final JDAImpl api;
     protected final JDA.ShardInfo shardInfo;
     protected final Map<String, SocketHandler> handlers = new HashMap<>();
-    protected final Compression compression;
 
     public WebSocket socket;
     protected String sessionId = null;
@@ -73,11 +72,10 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
 
     protected volatile ConnectNode connectNode;
 
-    public WebSocketClient(@NotNull JDAImpl api, Compression compression) {
+    public WebSocketClient(@NotNull JDAImpl api) {
         this.api = api;
         this.executor = api.getGatewayPool();
         this.shardInfo = api.getShardInfo();
-        this.compression = compression;
         this.shouldReconnect = api.isAutoReconnect();
         this.connectNode = new StartingNode();
         setupHandlers();
@@ -193,15 +191,9 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
         initiating = true;
 
         String url = api.getGatewayUrl() + "?encoding=json&v=" + DISCORD_GATEWAY_VERSION;
-        if (compression != Compression.NONE) {
-            url += "&compress=" + compression.getKey();
-            if (compression == Compression.ZLIB) {
-                if (decompressor == null || decompressor.getType() != Compression.ZLIB)
-                    decompressor = new ZlibDecompressor(api.getMaxBufferSize());
-            } else {
-                throw new IllegalStateException("Unknown compression");
-            }
-        }
+        url += "&compress=" + Compression.ZLIB.getKey();
+        if (decompressor == null || decompressor.getType() != Compression.ZLIB)
+            decompressor = new ZlibDecompressor(api.getMaxBufferSize());
 
         try {
             WebSocketFactory socketFactory = api.getWebSocketFactory();
@@ -615,7 +607,7 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
 
     protected DataObject handleBinary(byte[] binary) throws DataFormatException {
         if (decompressor == null) {
-            throw new IllegalStateException("Cannot decompress binary message due to unknown compression algorithm: " + compression);
+            throw new IllegalStateException("Cannot decompress binary message due to unknown compression algorithm: " + Compression.ZLIB);
         }
         String jsonString;
         try {
