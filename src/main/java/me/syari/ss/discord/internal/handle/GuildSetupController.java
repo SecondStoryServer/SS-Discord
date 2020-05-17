@@ -15,8 +15,6 @@ import me.syari.ss.discord.internal.requests.WebSocketCode;
 import me.syari.ss.discord.internal.utils.JDALogger;
 import org.slf4j.Logger;
 
-import java.util.concurrent.Future;
-
 public class GuildSetupController {
     protected static final int CHUNK_TIMEOUT = 10000;
     protected static final Logger log = JDALogger.getLog(GuildSetupController.class);
@@ -25,13 +23,9 @@ public class GuildSetupController {
     private final TLongObjectMap<GuildSetupNode> setupNodes = new TLongObjectHashMap<>();
     private final TLongSet chunkingGuilds = new TLongHashSet();
     private final TLongLongMap pendingChunks = new TLongLongHashMap();
-    private final TLongSet syncingGuilds = null;
     private final TLongSet unavailableGuilds = new TLongHashSet();
 
     private int incompleteCount = 0;
-    private int syncingCount = 0;
-
-    private Future<?> timeoutHandle;
 
     protected final StatusListener listener = (id, oldStatus, newStatus) -> log.trace("[{}] Updated status {}->{}", id, oldStatus, newStatus);
 
@@ -47,7 +41,6 @@ public class GuildSetupController {
         log.trace("Adding guild for chunking ID: {}", id);
         if (join || incompleteCount <= 0) {
             if (incompleteCount <= 0) {
-                // this happens during runtime -> chunk right away
                 sendChunkRequest(id);
                 return;
             }
@@ -55,20 +48,6 @@ public class GuildSetupController {
         }
         chunkingGuilds.add(id);
         tryChunking();
-    }
-
-    void addGuildForSyncing(long id, boolean join) {
-        log.trace("Adding guild for syncing ID: {}", id);
-        if (join || incompleteCount <= 0) {
-            if (incompleteCount <= 0) {
-                // this happens during runtime -> sync right away
-                sendSyncRequest(DataArray.empty().add(id));
-                return;
-            }
-            syncingCount++;
-        }
-        syncingGuilds.add(id);
-        trySyncing();
     }
 
     void remove(long id) {
@@ -94,7 +73,6 @@ public class GuildSetupController {
         log.trace("Received guild create for id: {} available: {}", id, available);
 
         if (available && unavailableGuilds.contains(id) && !setupNodes.containsKey(id)) {
-            // Guild was unavailable for a moment, its back now so initialize it again!
             unavailableGuilds.remove(id);
             setupNodes.put(id, new GuildSetupNode(id, this, GuildSetupNode.Type.AVAILABLE));
         }
@@ -104,8 +82,6 @@ public class GuildSetupController {
             node = new GuildSetupNode(id, this, GuildSetupNode.Type.JOIN);
             setupNodes.put(id, node);
         } else if (node.markedUnavailable && available && incompleteCount > 0) {
-            if (node.sync)
-                syncingCount++;
             incompleteCount++;
         }
         node.handleCreate(obj);
@@ -132,15 +108,9 @@ public class GuildSetupController {
         chunkingGuilds.clear();
         unavailableGuilds.clear();
         incompleteCount = 0;
-        close();
         synchronized (pendingChunks) {
             pendingChunks.clear();
         }
-    }
-
-    public void close() {
-        if (timeoutHandle != null)
-            timeoutHandle.cancel(false);
     }
 
     // Chunking
@@ -178,7 +148,6 @@ public class GuildSetupController {
 
     private void tryChunking() {
         if (chunkingGuilds.size() >= 50) {
-            // request chunks
             final DataArray subset = DataArray.empty();
             for (final TLongIterator it = chunkingGuilds.iterator(); subset.length() < 50; ) {
                 subset.add(it.next());
@@ -187,7 +156,6 @@ public class GuildSetupController {
             sendChunkRequest(subset);
         }
         if (incompleteCount > 0 && chunkingGuilds.size() >= incompleteCount) {
-            // request last chunks
             final DataArray array = DataArray.empty();
             chunkingGuilds.forEach((guild) -> {
                 array.add(guild);
@@ -200,40 +168,8 @@ public class GuildSetupController {
 
     // Syncing
 
-    private void sendSyncRequest(DataArray arr) {
-        log.debug("Sending syncing requests for {} guilds", arr.length());
-
-        getJDA().getClient().chunkOrSyncRequest(
-                DataObject.empty()
-                        .put("op", WebSocketCode.GUILD_SYNC)
-                        .put("d", arr));
-    }
-
-    private void trySyncing() {
-        if (syncingGuilds.size() >= 50) {
-            final DataArray subset = DataArray.empty();
-            for (final TLongIterator it = syncingGuilds.iterator(); subset.length() < 50; ) {
-                subset.add(it.next());
-                it.remove();
-            }
-            sendSyncRequest(subset);
-            syncingCount -= subset.length();
-        }
-        if (syncingCount > 0 && syncingGuilds.size() >= syncingCount) {
-            final DataArray array = DataArray.empty();
-            syncingGuilds.forEach((guild) -> {
-                array.add(guild);
-                return true;
-            });
-            syncingGuilds.clear();
-            sendSyncRequest(array);
-            syncingCount = 0;
-        }
-    }
-
     public enum Status {
         INIT,
-        SYNCING,
         CHUNKING,
         BUILDING,
         READY

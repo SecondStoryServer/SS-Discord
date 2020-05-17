@@ -167,5 +167,5 @@ public interface JDA {
         return getEmoteCache().getElementById(id);
     }
 
-
+    void shutdown();
 }

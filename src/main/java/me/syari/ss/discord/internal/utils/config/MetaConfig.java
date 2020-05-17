@@ -1,6 +1,5 @@
 package me.syari.ss.discord.internal.utils.config;
 
-import me.syari.ss.discord.api.utils.cache.CacheFlag;
 import me.syari.ss.discord.internal.utils.config.flags.ConfigFlag;
 
 import javax.annotation.Nonnull;
@@ -10,19 +9,14 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 public class MetaConfig {
-    private static final MetaConfig defaultConfig = new MetaConfig(2048, null, EnumSet.allOf(CacheFlag.class), ConfigFlag.getDefault());
+    private static final MetaConfig defaultConfig = new MetaConfig(2048, null, ConfigFlag.getDefault());
     private final ConcurrentMap<String, String> mdcContextMap;
-    private final EnumSet<CacheFlag> cacheFlags;
     private final boolean useShutdownHook;
     private final boolean guildSubscriptions;
     private final int maxBufferSize;
 
-    public MetaConfig(
-            int maxBufferSize,
-            @Nullable ConcurrentMap<String, String> mdcContextMap,
-            @Nullable EnumSet<CacheFlag> cacheFlags, EnumSet<ConfigFlag> flags) {
+    public MetaConfig(int maxBufferSize, @Nullable ConcurrentMap<String, String> mdcContextMap, EnumSet<ConfigFlag> flags) {
         this.maxBufferSize = maxBufferSize;
-        this.cacheFlags = cacheFlags == null ? EnumSet.allOf(CacheFlag.class) : cacheFlags;
         boolean enableMDC = flags.contains(ConfigFlag.MDC_CONTEXT);
         if (enableMDC)
             this.mdcContextMap = mdcContextMap == null ? new ConcurrentHashMap<>() : null;
@@ -35,11 +29,6 @@ public class MetaConfig {
     @Nullable
     public ConcurrentMap<String, String> getMdcContextMap() {
         return mdcContextMap;
-    }
-
-    @Nonnull
-    public EnumSet<CacheFlag> getCacheFlags() {
-        return cacheFlags;
     }
 
     public boolean isUseShutdownHook() {

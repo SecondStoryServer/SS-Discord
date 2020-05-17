@@ -6,7 +6,6 @@ import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.entities.*;
 import me.syari.ss.discord.api.events.MessageReceivedEvent;
 import me.syari.ss.discord.api.exceptions.RateLimitedException;
-import me.syari.ss.discord.api.hooks.IEventManager;
 import me.syari.ss.discord.api.hooks.InterfacedEventManager;
 import me.syari.ss.discord.api.hooks.ListenerAdapter;
 import me.syari.ss.discord.api.requests.Request;
@@ -15,7 +14,6 @@ import me.syari.ss.discord.api.utils.ChunkingFilter;
 import me.syari.ss.discord.api.utils.Compression;
 import me.syari.ss.discord.api.utils.MiscUtil;
 import me.syari.ss.discord.api.utils.SessionController;
-import me.syari.ss.discord.api.utils.cache.CacheFlag;
 import me.syari.ss.discord.api.utils.cache.CacheView;
 import me.syari.ss.discord.api.utils.cache.SnowflakeCacheView;
 import me.syari.ss.discord.api.utils.data.DataObject;
@@ -95,10 +93,6 @@ public class JDAImpl implements JDA {
 
     public boolean isRelativeRateLimit() {
         return sessionConfig.isRelativeRateLimit();
-    }
-
-    public boolean isCacheFlagSet(CacheFlag flag) {
-        return metaConfig.getCacheFlags().contains(flag);
     }
 
     public boolean isGuildSubscriptions() {
@@ -286,9 +280,7 @@ public class JDAImpl implements JDA {
         if (getStatus() == Status.CONNECTED)
             return;
         List<Status> failStatus = Arrays.asList(failOn);
-        while (!getStatus().isInit()                         // JDA might disconnect while starting
-                || getStatus().ordinal() < status.ordinal()) // Wait until status is bypassed
-        {
+        while (!getStatus().isInit() || getStatus().ordinal() < status.ordinal()) {
             if (getStatus() == Status.SHUTDOWN)
                 throw new IllegalStateException("Was shutdown trying to await status");
             else if (failStatus.contains(getStatus()))
@@ -313,7 +305,7 @@ public class JDAImpl implements JDA {
     }
 
     @Nonnull
-    @SuppressWarnings("ConstantConditions") // this can't really happen unless you pass bad configs
+    @SuppressWarnings("ConstantConditions")
     public OkHttpClient getHttpClient() {
         return sessionConfig.getHttpClient();
     }
@@ -358,7 +350,8 @@ public class JDAImpl implements JDA {
         threadConfig.shutdownNow();
     }
 
-    private synchronized void shutdown() {
+    @Override
+    public synchronized void shutdown() {
         if (status == Status.SHUTDOWN || status == Status.SHUTTING_DOWN)
             return;
 
@@ -374,7 +367,6 @@ public class JDAImpl implements JDA {
     public synchronized void shutdownInternals() {
         if (status == Status.SHUTDOWN)
             return;
-        guildSetupController.close();
 
         getRequester().shutdown();
         threadConfig.shutdown();
@@ -400,10 +392,6 @@ public class JDAImpl implements JDA {
     @Nonnull
     public ShardInfo getShardInfo() {
         return shardInfo == null ? ShardInfo.SINGLE : shardInfo;
-    }
-
-    public void setEventManager(IEventManager eventManager) {
-        this.eventManager.setSubject(eventManager);
     }
 
     public void setEventListener(@Nonnull ListenerAdapter listener) {

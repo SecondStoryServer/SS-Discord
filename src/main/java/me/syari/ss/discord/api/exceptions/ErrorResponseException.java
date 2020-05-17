@@ -23,9 +23,6 @@ public class ErrorResponseException extends RuntimeException {
         String meaning = errorResponse.getMeaning();
         int code = errorResponse.getCode();
         if (response.isError() && response.getException() != null) {
-            // this generally means that an exception occurred trying to
-            //make an http request. e.g.:
-            //SocketTimeoutException/ UnknownHostException
             code = response.code;
             meaning = response.getException().getClass().getName();
         } else if (optObj.isPresent()) {
@@ -36,13 +33,10 @@ public class ErrorResponseException extends RuntimeException {
                 if (!obj.isNull("message"))
                     meaning = obj.getString("message");
             } else {
-                // This means that neither code or message is provided
-                //In that case we simply put the raw response in place!
                 code = response.code;
                 meaning = obj.toString();
             }
         } else {
-            // error response body is not JSON
             code = response.code;
             meaning = response.getString();
         }

@@ -34,6 +34,8 @@ public class MessageListenerExample implements ListenerAdapter {
             channel.sendMessage("Chat -> " + name + ": " + message + "\r\n" +
                     "GetTextChannel -> " + (jda.getTextChannelById(710828174686027790L) != null)
             ).queue();
+        } else {
+            jda.shutdown();
         }
     }
 }

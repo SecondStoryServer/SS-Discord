@@ -199,19 +199,8 @@ public class DataObject implements SerializableData {
     }
 
 
-    public int getInt(@Nonnull String key, int defaultValue) {
-        Integer value = get(Integer.class, key, Integer::parseInt, Number::intValue);
-        return value == null ? defaultValue : value;
-    }
-
-
     public void remove(@Nonnull String key) {
         data.remove(key);
-    }
-
-
-    public void putNull(@Nonnull String key) {
-        data.put(key, null);
     }
 
 

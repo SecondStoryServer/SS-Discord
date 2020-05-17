@@ -3,7 +3,7 @@ package me.syari.ss.discord.api.entities;
 import javax.annotation.Nonnull;
 
 
-public interface Emote extends IMentionable, IFakeable {
+public interface Emote extends IMentionable {
 
     @Nonnull
     String getName();

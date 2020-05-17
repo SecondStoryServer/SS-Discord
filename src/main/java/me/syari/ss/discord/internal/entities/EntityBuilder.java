@@ -5,7 +5,6 @@ import gnu.trove.set.TLongSet;
 import gnu.trove.set.hash.TLongHashSet;
 import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.entities.*;
-import me.syari.ss.discord.api.utils.cache.CacheFlag;
 import me.syari.ss.discord.api.utils.data.DataArray;
 import me.syari.ss.discord.api.utils.data.DataObject;
 import me.syari.ss.discord.internal.JDAImpl;
@@ -39,8 +38,6 @@ public class EntityBuilder {
     }
 
     private void createGuildEmotePass(GuildImpl guildObj, DataArray array) {
-        if (!getJDA().isCacheFlagSet(CacheFlag.EMOTE))
-            return;
         SnowflakeCacheViewImpl<Emote> emoteView = guildObj.getEmotesView();
         try (UnlockHook hook = emoteView.writeLock()) {
             TLongObjectMap<Emote> emoteMap = emoteView.getMap();

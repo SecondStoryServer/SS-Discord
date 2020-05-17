@@ -1,12 +1,12 @@
 package me.syari.ss.discord.internal.entities;
 
-import me.syari.ss.discord.api.entities.ListedEmote;
+import me.syari.ss.discord.api.entities.Emote;
 import me.syari.ss.discord.api.entities.Role;
 
 import javax.annotation.Nonnull;
 import java.util.Set;
 
-public class EmoteImpl implements ListedEmote {
+public class EmoteImpl implements Emote {
     private final long id;
     private final Set<Role> roles;
 

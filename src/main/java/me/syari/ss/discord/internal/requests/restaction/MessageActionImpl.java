@@ -21,7 +21,10 @@ import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.BooleanSupplier;
 
 public class MessageActionImpl extends RestActionImpl<Message> implements MessageAction {
