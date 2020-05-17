@@ -1,6 +1,5 @@
 package me.syari.ss.discord.api;
 
-import me.syari.ss.discord.api.entities.*;
 import me.syari.ss.discord.api.utils.cache.SnowflakeCacheView;
 import me.syari.ss.discord.internal.entities.Emote;
 import me.syari.ss.discord.internal.entities.Guild;

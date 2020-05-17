@@ -2,7 +2,6 @@ package me.syari.ss.discord.internal.entities;
 
 import gnu.trove.set.TLongSet;
 import me.syari.ss.discord.api.JDA;
-import me.syari.ss.discord.api.entities.*;
 import me.syari.ss.discord.api.utils.MiscUtil;
 import me.syari.ss.discord.internal.JDAImpl;
 
@@ -141,7 +140,7 @@ public class Message {
     public String getContentRaw() {
         return content;
     }
-    
+
 
     @Nonnull
     public TextChannel getChannel() {

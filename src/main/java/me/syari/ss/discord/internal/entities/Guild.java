@@ -1,6 +1,6 @@
 package me.syari.ss.discord.internal.entities;
 
-import me.syari.ss.discord.api.entities.*;
+import me.syari.ss.discord.api.entities.ISnowflake;
 import me.syari.ss.discord.api.utils.cache.MemberCacheView;
 import me.syari.ss.discord.api.utils.cache.SnowflakeCacheView;
 import me.syari.ss.discord.api.utils.cache.SortedSnowflakeCacheView;

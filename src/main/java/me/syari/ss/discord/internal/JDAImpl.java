@@ -3,7 +3,6 @@ package me.syari.ss.discord.internal;
 import com.neovisionaries.ws.client.WebSocketFactory;
 import gnu.trove.map.TLongObjectMap;
 import me.syari.ss.discord.api.JDA;
-import me.syari.ss.discord.api.entities.*;
 import me.syari.ss.discord.api.events.MessageReceivedEvent;
 import me.syari.ss.discord.api.exceptions.RateLimitedException;
 import me.syari.ss.discord.api.hooks.InterfacedEventManager;
