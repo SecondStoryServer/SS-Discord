@@ -49,7 +49,7 @@ public class JDABuilder {
 
         jda.setStatus(JDA.Status.INITIALIZED);
 
-        jda.login(null, compression, true);
+        jda.login(compression, true);
         return jda;
     }
 

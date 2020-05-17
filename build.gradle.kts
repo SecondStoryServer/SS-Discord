@@ -25,18 +25,18 @@ dependencies {
     /* ABI dependencies */
 
     //Code safety
-    api("org.jetbrains:annotations:16.0.1")
+    implementation("org.jetbrains:annotations:16.0.1")
 
     //Logger
-    api("org.slf4j:slf4j-api:1.7.25")
+    implementation("org.slf4j:slf4j-api:1.7.25")
 
     //Web Connection Support
-    api("com.neovisionaries:nv-websocket-client:2.9")
-    api("com.squareup.okhttp3:okhttp:3.13.0")
+    implementation("com.neovisionaries:nv-websocket-client:2.9")
+    implementation("com.squareup.okhttp3:okhttp:3.13.0")
 
 
     //Collections Utility
-    api("org.apache.commons:commons-collections4:4.1")
+    implementation("org.apache.commons:commons-collections4:4.1")
 
 
     /* Internal dependencies */

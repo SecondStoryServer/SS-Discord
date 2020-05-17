@@ -64,7 +64,6 @@ public class JDAImpl implements JDA {
     protected WebSocketClient client;
     protected final Requester requester;
     protected Status status = Status.INITIALIZING;
-    protected ShardInfo shardInfo;
     protected long responseTotal;
     protected String gatewayUrl;
     protected ChunkingFilter chunkingFilter;
@@ -123,15 +122,10 @@ public class JDAImpl implements JDA {
         return guildSetupController;
     }
 
-    public void login(ShardInfo shardInfo, Compression compression, boolean validateToken) throws LoginException {
-        login(null, shardInfo, compression, validateToken);
-    }
-
-    public void login(String gatewayUrl, ShardInfo shardInfo, Compression compression, boolean validateToken) throws LoginException {
-        this.shardInfo = shardInfo;
+    public void login(Compression compression, boolean validateToken) throws LoginException {
         threadConfig.init(this::getIdentifierString);
         requester.getRateLimiter().init();
-        this.gatewayUrl = gatewayUrl == null ? getGateway() : gatewayUrl;
+        this.gatewayUrl = getGateway();
         Checks.notNull(this.gatewayUrl, "Gateway URL");
 
         String token = authConfig.getToken();
@@ -143,11 +137,6 @@ public class JDAImpl implements JDA {
         Map<String, String> previousContext = null;
         ConcurrentMap<String, String> contextMap = metaConfig.getMdcContextMap();
         if (contextMap != null) {
-            if (shardInfo != null) {
-                contextMap.put("jda.shard", shardInfo.getShardString());
-                contextMap.put("jda.shard.id", String.valueOf(shardInfo.getShardId()));
-                contextMap.put("jda.shard.total", String.valueOf(shardInfo.getShardTotal()));
-            }
             previousContext = MDC.getCopyOfContextMap();
             contextMap.forEach(MDC::put);
         }
@@ -361,7 +350,7 @@ public class JDAImpl implements JDA {
 
     @NotNull
     public ShardInfo getShardInfo() {
-        return shardInfo == null ? ShardInfo.SINGLE : shardInfo;
+        return ShardInfo.SINGLE;
     }
 
     public EntityBuilder getEntityBuilder() {
@@ -401,11 +390,7 @@ public class JDAImpl implements JDA {
     }
 
     public String getIdentifierString() {
-        if (shardInfo != null) {
-            return "JDA " + shardInfo.getShardString();
-        } else {
-            return "JDA";
-        }
+        return "JDA";
     }
 
     public EventCache getEventCache() {
