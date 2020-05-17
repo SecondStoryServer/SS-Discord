@@ -5,9 +5,9 @@ import me.syari.ss.discord.api.utils.SessionController;
 import me.syari.ss.discord.api.utils.SessionControllerAdapter;
 import me.syari.ss.discord.internal.utils.config.flags.ConfigFlag;
 import okhttp3.OkHttpClient;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
 import java.util.EnumSet;
 
 public class SessionConfig {

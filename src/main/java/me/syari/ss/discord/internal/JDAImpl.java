@@ -181,18 +181,12 @@ public class JDAImpl implements JDA {
     }
 
     public void setStatus(Status status) {
-        //noinspection SynchronizeOnNonFinalField
         synchronized (this.status) {
             this.status = status;
         }
     }
 
     public void verifyToken() throws LoginException {
-        this.verifyToken(false);
-    }
-
-    public void verifyToken(boolean alreadyFailed) throws LoginException {
-
         RestActionImpl<DataObject> login = new RestActionImpl<DataObject>(this, Route.Self.GET_SELF.compile()) {
             @Override
             public void handleResponse(Response response, Request<DataObject> request) {
@@ -208,33 +202,17 @@ public class JDAImpl implements JDA {
             }
         };
 
-        DataObject userResponse;
-
-        if (!alreadyFailed) {
-            userResponse = checkToken(login);
-            if (userResponse != null) {
-                return;
-            }
+        DataObject userResponse = checkToken(login);
+        if (userResponse != null) {
+            return;
         }
-
-        //If we received a null return for userResponse, then that means we hit a 401.
-        // 401 occurs when we attempt to access the users/@me endpoint with the wrong token prefix.
-        // e.g: If we use a Client token and prefix it with "Bot ", or use a bot token and don't prefix it.
-        // It also occurs when we attempt to access the endpoint with an invalid token.
-        //The code below already knows that something is wrong with the token. We want to determine if it is invalid
-        // or if the developer attempted to login with a token using the wrong AccountType.
-
-        //If we attempted to login as a Bot, remove the "Bot " prefix and set the Requester to be a client.
 
         userResponse = checkToken(login);
         shutdownNow();
 
-        //If the response isn't null (thus it didn't 401) send it to the secondary verify method to determine
-        // which account type the developer wrongly attempted to login as
         if (userResponse == null) {
             throw new LoginException("The provided token is invalid!");
         }
-
     }
 
     private DataObject checkToken(RestActionImpl<DataObject> login) throws LoginException {

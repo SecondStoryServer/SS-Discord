@@ -8,8 +8,8 @@ import me.syari.ss.discord.api.utils.MiscUtil;
 import me.syari.ss.discord.internal.requests.Route;
 import me.syari.ss.discord.internal.requests.restaction.MessageAction;
 import me.syari.ss.discord.internal.utils.Checks;
-import org.jetbrains.annotations.NotNull;
 
+import org.jetbrains.annotations.NotNull;
 import java.util.Formattable;
 import java.util.FormattableFlags;
 import java.util.Formatter;

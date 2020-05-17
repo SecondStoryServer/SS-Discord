@@ -1,9 +1,9 @@
 package me.syari.ss.discord.internal.utils.config;
 
 import me.syari.ss.discord.internal.utils.config.flags.ConfigFlag;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
 import java.util.EnumSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;

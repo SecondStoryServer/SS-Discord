@@ -1,8 +1,8 @@
 package me.syari.ss.discord.internal.entities;
 
 import me.syari.ss.discord.api.entities.Mentionable;
-import org.jetbrains.annotations.NotNull;
 
+import org.jetbrains.annotations.NotNull;
 import java.util.Set;
 
 public class Emote implements Mentionable {

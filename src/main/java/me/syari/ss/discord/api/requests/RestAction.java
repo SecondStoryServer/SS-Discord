@@ -1,8 +1,8 @@
 package me.syari.ss.discord.api.requests;
 
 import me.syari.ss.discord.api.exceptions.RateLimitedException;
-import org.jetbrains.annotations.Nullable;
 
+import org.jetbrains.annotations.Nullable;
 import java.util.function.Consumer;
 
 

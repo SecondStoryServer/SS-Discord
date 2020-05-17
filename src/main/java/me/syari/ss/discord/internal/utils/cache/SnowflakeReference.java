@@ -1,8 +1,8 @@
 package me.syari.ss.discord.internal.utils.cache;
 
 import me.syari.ss.discord.api.entities.ISnowflake;
-import org.jetbrains.annotations.NotNull;
 
+import org.jetbrains.annotations.NotNull;
 import java.lang.ref.WeakReference;
 import java.util.function.LongFunction;
 

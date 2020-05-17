@@ -4,8 +4,8 @@ import me.syari.ss.discord.api.entities.ISnowflake;
 import me.syari.ss.discord.api.utils.ClosableIterator;
 import me.syari.ss.discord.internal.utils.Checks;
 import me.syari.ss.discord.internal.utils.cache.UnifiedCacheViewImpl;
-import org.jetbrains.annotations.NotNull;
 
+import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Stream;

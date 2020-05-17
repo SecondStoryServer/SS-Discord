@@ -15,8 +15,8 @@ import me.syari.ss.discord.internal.utils.Helpers;
 import me.syari.ss.discord.internal.utils.IOUtil;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
-import org.jetbrains.annotations.NotNull;
 
+import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;

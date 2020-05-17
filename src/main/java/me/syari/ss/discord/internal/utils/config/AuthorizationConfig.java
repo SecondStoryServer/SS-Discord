@@ -1,6 +1,7 @@
 package me.syari.ss.discord.internal.utils.config;
 
 import me.syari.ss.discord.internal.utils.Checks;
+
 import org.jetbrains.annotations.NotNull;
 
 public final class AuthorizationConfig {
