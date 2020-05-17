@@ -2,6 +2,7 @@ import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.JDABuilder;
 import me.syari.ss.discord.api.entities.Member;
 import me.syari.ss.discord.api.entities.MessageChannel;
+import me.syari.ss.discord.api.entities.TextChannel;
 import me.syari.ss.discord.api.entities.User;
 import me.syari.ss.discord.api.events.MessageReceivedEvent;
 import me.syari.ss.discord.api.hooks.ListenerAdapter;
@@ -22,6 +23,8 @@ public class MessageListenerExample implements ListenerAdapter {
         }
     }
 
+    private int sendMessageCount = 0;
+
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         User authorUser = event.getAuthor();
@@ -35,7 +38,11 @@ public class MessageListenerExample implements ListenerAdapter {
                     "GetTextChannel -> " + (jda.getTextChannelById(710828174686027790L) != null)
             ).queue();
         } else {
-            jda.shutdown();
+            sendMessageCount ++;
+            if(sendMessageCount == 2){
+                System.out.println(">> Shutdown");
+                jda.shutdown();
+            }
         }
     }
 }

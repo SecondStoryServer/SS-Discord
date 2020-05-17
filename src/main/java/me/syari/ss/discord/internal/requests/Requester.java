@@ -1,7 +1,6 @@
 package me.syari.ss.discord.internal.requests;
 
 import me.syari.ss.discord.api.JDA;
-import me.syari.ss.discord.api.JDAInfo;
 import me.syari.ss.discord.api.requests.Request;
 import me.syari.ss.discord.api.requests.Response;
 import me.syari.ss.discord.internal.JDAImpl;

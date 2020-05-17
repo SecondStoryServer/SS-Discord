@@ -6,10 +6,6 @@ public enum ChannelType {
 
     TEXT(0, 0, true),
 
-    PRIVATE(1, -1),
-
-    GROUP(3, -1),
-
     UNKNOWN(-1, -2);
 
     private final int sortBucket;
@@ -39,13 +35,11 @@ public enum ChannelType {
 
     @Nonnull
     public static ChannelType fromId(int id) {
-        if (id == 5) // NEWS = TEXT
+        if(id == TEXT.id){
             return TEXT;
-        for (ChannelType type : values()) {
-            if (type.id == id)
-                return type;
+        } else {
+            return UNKNOWN;
         }
-        return UNKNOWN;
     }
 
 

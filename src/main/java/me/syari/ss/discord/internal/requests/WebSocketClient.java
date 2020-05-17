@@ -53,7 +53,6 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
     protected boolean initiating;
 
     protected int reconnectTimeoutS = 2;
-    protected long heartbeatStartTime;
     protected long identifyTime = 0;
 
     protected final Queue<String> chunkSyncQueue = new ConcurrentLinkedQueue<>();
@@ -435,7 +434,6 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
                         ).toString();
 
         send(keepAlivePacket, true);
-        heartbeatStartTime = System.currentTimeMillis();
     }
 
     protected void sendIdentify() {

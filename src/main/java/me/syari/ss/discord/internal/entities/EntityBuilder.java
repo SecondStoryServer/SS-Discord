@@ -369,8 +369,6 @@ public class EntityBuilder {
 
         User user;
         switch (chan.getType()) {
-            case GROUP:
-                throw new IllegalStateException("Cannot build a message for a group channel, how did this even get here?");
             case TEXT:
                 Guild guild = ((TextChannel) chan).getGuild();
                 if (member == null)

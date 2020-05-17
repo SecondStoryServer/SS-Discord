@@ -24,6 +24,7 @@ public abstract class AbstractChannelImpl<T extends GuildChannel, M extends Abst
 
     @Override
     public int compareTo(@Nonnull GuildChannel o) {
+        System.out.println("pass");
         Checks.notNull(o, "Channel");
         if (getType().getSortBucket() != o.getType().getSortBucket())
             return Integer.compare(getType().getSortBucket(), o.getType().getSortBucket());
