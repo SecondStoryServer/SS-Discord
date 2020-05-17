@@ -4,8 +4,6 @@ import gnu.trove.map.TLongObjectMap;
 import gnu.trove.set.TLongSet;
 import gnu.trove.set.hash.TLongHashSet;
 import me.syari.ss.discord.api.JDA;
-import me.syari.ss.discord.api.entities.ChannelType;
-import me.syari.ss.discord.api.entities.MessageType;
 import me.syari.ss.discord.api.utils.data.DataArray;
 import me.syari.ss.discord.api.utils.data.DataObject;
 import me.syari.ss.discord.internal.JDAImpl;
@@ -21,6 +19,9 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAccessor;
 import java.util.*;
 import java.util.function.Function;
+
+import static me.syari.ss.discord.util.Check.isDefaultMessage;
+import static me.syari.ss.discord.util.Check.isTextChannel;
 
 public class EntityBuilder {
     public static final Logger LOG = JDALogger.getLog(EntityBuilder.class);
@@ -95,7 +96,7 @@ public class EntityBuilder {
     }
 
     private void createTextChannel(Guild guildObj, DataObject channelData) {
-        if (ChannelType.isTextChannel(channelData.getInt("type"))) {
+        if (isTextChannel(channelData.getInt("type"))) {
             createTextChannel(guildObj, channelData, guildObj.getIdLong());
         }
     }
@@ -388,7 +389,7 @@ public class EntityBuilder {
         });
 
         Message message;
-        if (MessageType.isDefaultMessage(jsonObject.getInt("type"))) {
+        if (isDefaultMessage(jsonObject.getInt("type"))) {
             message = new Message(id, channel,
                     mentionedUsers, mentionedRoles,
                     content, user, member);

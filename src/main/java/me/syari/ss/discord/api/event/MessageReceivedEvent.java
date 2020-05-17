@@ -4,7 +4,6 @@ import me.syari.ss.discord.internal.entities.Member;
 import me.syari.ss.discord.internal.entities.Message;
 import me.syari.ss.discord.internal.entities.TextChannel;
 import me.syari.ss.discord.internal.entities.User;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

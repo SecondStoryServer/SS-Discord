@@ -4,8 +4,8 @@ import gnu.trove.set.TLongSet;
 import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.utils.MiscUtil;
 import me.syari.ss.discord.internal.JDAImpl;
-
 import org.jetbrains.annotations.NotNull;
+
 import java.util.*;
 import java.util.function.Function;
 import java.util.regex.Matcher;

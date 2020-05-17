@@ -1,6 +1,7 @@
 package me.syari.ss.discord.internal.utils.concurrent;
 
 import org.jetbrains.annotations.NotNull;
+
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Supplier;

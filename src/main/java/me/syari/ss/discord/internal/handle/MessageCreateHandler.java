@@ -1,11 +1,12 @@
 package me.syari.ss.discord.internal.handle;
 
-import me.syari.ss.discord.api.entities.MessageType;
 import me.syari.ss.discord.api.utils.data.DataObject;
 import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.entities.EntityBuilder;
 import me.syari.ss.discord.internal.entities.Message;
 import me.syari.ss.discord.internal.requests.WebSocketClient;
+
+import static me.syari.ss.discord.util.Check.isDefaultMessage;
 
 public class MessageCreateHandler extends SocketHandler {
     public MessageCreateHandler(JDAImpl api) {
@@ -16,7 +17,7 @@ public class MessageCreateHandler extends SocketHandler {
     protected Long handleInternally(DataObject content) {
         System.out.println(">> MessageCreateHandler");
 
-        if (!MessageType.isDefaultMessage(content.getInt("type"))) {
+        if (!isDefaultMessage(content.getInt("type"))) {
             return null;
         }
 

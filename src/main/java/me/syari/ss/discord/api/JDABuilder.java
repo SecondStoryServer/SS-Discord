@@ -10,8 +10,8 @@ import me.syari.ss.discord.internal.utils.config.SessionConfig;
 import me.syari.ss.discord.internal.utils.config.ThreadingConfig;
 import me.syari.ss.discord.internal.utils.config.flags.ConfigFlag;
 import okhttp3.OkHttpClient;
-
 import org.jetbrains.annotations.NotNull;
+
 import javax.security.auth.login.LoginException;
 import java.util.EnumSet;
 import java.util.function.Consumer;
