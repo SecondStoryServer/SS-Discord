@@ -35,8 +35,7 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
     protected static final long IDENTIFY_BACKOFF = TimeUnit.SECONDS.toMillis(SessionController.IDENTIFY_DELAY);
 
     protected final JDAImpl api;
-    protected final JDA.ShardInfo shardInfo;
-    protected final Map<String, SocketHandler> handlers = new HashMap<>();
+    protected final Map<String, SocketHandler> handlers;
 
     public WebSocket socket;
     protected String sessionId = null;
@@ -74,10 +73,15 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
     public WebSocketClient(@NotNull JDAImpl api) {
         this.api = api;
         this.executor = api.getGatewayPool();
-        this.shardInfo = JDA.ShardInfo.SINGLE;
         this.shouldReconnect = api.isAutoReconnect();
         this.connectNode = new StartingNode();
-        setupHandlers();
+        this.handlers = new HashMap<String, SocketHandler>(){
+            {
+                put("GUILD_CREATE", new GuildCreateHandler(api));
+                put("MESSAGE_CREATE", new MessageCreateHandler(api));
+                put("READY", new ReadyHandler(api));
+            }
+        };
         try {
             api.getSessionController().appendSession(connectNode);
         } catch (RuntimeException | Error e) {
@@ -221,10 +225,11 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
     @Override
     public void onConnected(WebSocket websocket, Map<String, List<String>> headers) {
         api.setStatus(JDA.Status.IDENTIFYING_SESSION);
-        if (sessionId == null) //no need to log for resume here
+        if (sessionId == null) {
             LOG.info("Connected to WebSocket");
-        else
+        } else {
             LOG.debug("Connected to WebSocket");
+        }
         connected = true;
         messagesSent.set(0);
         ratelimitResetTime = System.currentTimeMillis() + 60000;
@@ -356,7 +361,7 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
         }
         String message = "";
         if (callFromQueue)
-            message = String.format("Queue is attempting to reconnect a shard...%s ", shardInfo != null ? " Shard: " + shardInfo.getShardString() : "");
+            message = "Queue is attempting to reconnect a shard... Shard: [0/ 1] ";
         LOG.debug("{}Attempting to reconnect in {}s", message, reconnectTimeoutS);
         while (shouldReconnect) {
             api.setStatus(JDA.Status.WAITING_TO_RECONNECT);
@@ -414,11 +419,9 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
         DataObject identify = DataObject.empty()
                 .put("op", WebSocketCode.IDENTIFY)
                 .put("d", payload);
-        if (shardInfo != null) {
-            payload.put("shard", DataArray.empty()
-                    .add(shardInfo.getShardId())
-                    .add(shardInfo.getShardTotal()));
-        }
+        payload.put("shard", DataArray.empty()
+                .add(0)
+                .add(1));
         send(identify.toString(), true);
         handleIdentifyRateLimit = true;
         identifyTime = System.currentTimeMillis();
@@ -588,11 +591,6 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
     }
 
     @Override
-    public void onTextMessage(WebSocket websocket, String message) {
-        handleEvent(DataObject.fromJson(message));
-    }
-
-    @Override
     public void onBinaryMessage(WebSocket websocket, byte[] binary) throws DataFormatException {
         DataObject json;
         synchronized (readLock) {
@@ -623,37 +621,6 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
         } catch (ParsingException e) {
             LOG.error("Failed to parse json {}", jsonString);
             throw e;
-        }
-    }
-
-    @Override
-    public void onUnexpectedError(WebSocket websocket, WebSocketException cause) {
-        handleCallbackError(websocket, cause);
-    }
-
-    @Override
-    public void handleCallbackError(WebSocket websocket, Throwable cause) {
-        LOG.error("There was an error in the WebSocket connection", cause);
-    }
-
-    @Override
-    public void onThreadCreated(WebSocket websocket, @NotNull ThreadType threadType, Thread thread) {
-        String identifier = api.getIdentifierString();
-        switch (threadType) {
-            case CONNECT_THREAD:
-                thread.setName(identifier + " MainWS-ConnectThread");
-                break;
-            case FINISH_THREAD:
-                thread.setName(identifier + " MainWS-FinishThread");
-                break;
-            case READING_THREAD:
-                thread.setName(identifier + " MainWS-ReadThread");
-                break;
-            case WRITING_THREAD:
-                thread.setName(identifier + " MainWS-WriteThread");
-                break;
-            default:
-                thread.setName(identifier + " MainWS-" + threadType);
         }
     }
 
@@ -691,45 +658,6 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
         } catch (ClassCastException e) {
             throw new IllegalStateException(e);
         }
-    }
-
-    protected void setupHandlers() {
-        final SocketHandler.NOPHandler nopHandler = new SocketHandler.NOPHandler(api);
-        handlers.put("CHANNEL_CREATE", nopHandler);
-        handlers.put("CHANNEL_DELETE", nopHandler);
-        handlers.put("CHANNEL_UPDATE", nopHandler);
-        handlers.put("GUILD_BAN_ADD", nopHandler);
-        handlers.put("GUILD_BAN_REMOVE", nopHandler);
-        handlers.put("GUILD_CREATE", new GuildCreateHandler(api));
-        handlers.put("GUILD_DELETE", nopHandler);
-        handlers.put("GUILD_EMOJIS_UPDATE", nopHandler);
-        handlers.put("GUILD_MEMBER_ADD", nopHandler);
-        handlers.put("GUILD_MEMBER_REMOVE", nopHandler);
-        handlers.put("GUILD_MEMBER_UPDATE", nopHandler);
-        handlers.put("GUILD_MEMBERS_CHUNK", nopHandler);
-        handlers.put("GUILD_ROLE_CREATE", nopHandler);
-        handlers.put("GUILD_ROLE_DELETE", nopHandler);
-        handlers.put("GUILD_ROLE_UPDATE", nopHandler);
-        handlers.put("GUILD_SYNC", nopHandler);
-        handlers.put("GUILD_UPDATE", nopHandler);
-        handlers.put("MESSAGE_CREATE", new MessageCreateHandler(api));
-        handlers.put("MESSAGE_DELETE", nopHandler);
-        handlers.put("MESSAGE_DELETE_BULK", nopHandler);
-        handlers.put("MESSAGE_REACTION_ADD", nopHandler);
-        handlers.put("MESSAGE_REACTION_REMOVE", nopHandler);
-        handlers.put("MESSAGE_REACTION_REMOVE_ALL", nopHandler);
-        handlers.put("MESSAGE_UPDATE", nopHandler);
-        handlers.put("READY", new ReadyHandler(api));
-        handlers.put("USER_UPDATE", nopHandler);
-        handlers.put("VOICE_SERVER_UPDATE", nopHandler);
-        handlers.put("VOICE_STATE_UPDATE", nopHandler);
-        handlers.put("PRESENCE_UPDATE", nopHandler);
-        handlers.put("TYPING_START", nopHandler);
-        handlers.put("CHANNEL_PINS_ACK", nopHandler);
-        handlers.put("CHANNEL_PINS_UPDATE", nopHandler);
-        handlers.put("GUILD_INTEGRATIONS_UPDATE", nopHandler);
-        handlers.put("PRESENCES_REPLACE", nopHandler);
-        handlers.put("WEBHOOKS_UPDATE", nopHandler);
     }
 
     protected abstract class ConnectNode implements SessionController.SessionConnectNode {

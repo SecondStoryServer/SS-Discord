@@ -38,44 +38,6 @@ public interface JDA {
         }
     }
 
-    class ShardInfo {
-        public static final ShardInfo SINGLE = new ShardInfo(0, 1);
-
-        final int shardId;
-        final int shardTotal;
-
-        public ShardInfo(int shardId, int shardTotal) {
-            this.shardId = shardId;
-            this.shardTotal = shardTotal;
-        }
-
-        public int getShardId() {
-            return shardId;
-        }
-
-        public int getShardTotal() {
-            return shardTotal;
-        }
-
-        public String getShardString() {
-            return "[" + shardId + " / " + shardTotal + "]";
-        }
-
-        @Override
-        public String toString() {
-            return "Shard " + getShardString();
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (!(o instanceof ShardInfo))
-                return false;
-
-            ShardInfo oInfo = (ShardInfo) o;
-            return shardId == oInfo.getShardId() && shardTotal == oInfo.getShardTotal();
-        }
-    }
-
     default void awaitStatus(@NotNull Status status) throws InterruptedException {
         awaitStatus(status, new Status[0]);
     }
