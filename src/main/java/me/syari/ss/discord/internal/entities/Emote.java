@@ -7,14 +7,11 @@ import java.util.Set;
 
 public class Emote implements ISnowflake {
     private final long id;
-    private final Set<Role> roles;
-
     private boolean animated = false;
     private String name;
 
     public Emote(long id) {
         this.id = id;
-        this.roles = null;
     }
 
     @NotNull
@@ -26,7 +23,6 @@ public class Emote implements ISnowflake {
     public long getIdLong() {
         return id;
     }
-
 
     public boolean isAnimated() {
         return animated;
@@ -45,10 +41,6 @@ public class Emote implements ISnowflake {
     public Emote setAnimated(boolean animated) {
         this.animated = animated;
         return this;
-    }
-
-    public Set<Role> getRoleSet() {
-        return this.roles;
     }
 
     @Override

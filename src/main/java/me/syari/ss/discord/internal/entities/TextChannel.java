@@ -18,6 +18,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class TextChannel implements ISnowflake, Comparable<TextChannel> {
+    private static final int MAX_CONTENT_LENGTH = 2000;
+
     protected final long id;
     protected final SnowflakeReference<Guild> guild;
     protected final JDA api;
@@ -61,7 +63,7 @@ public class TextChannel implements ISnowflake, Comparable<TextChannel> {
     public void sendMessage(@NotNull String text) {
         int length = text.length();
         if (length == 0) return;
-        if (2000 < length) {
+        if (MAX_CONTENT_LENGTH < length) {
             sendMessage(text.substring(0, 2000));
             sendMessage(text.substring(2000));
             return;

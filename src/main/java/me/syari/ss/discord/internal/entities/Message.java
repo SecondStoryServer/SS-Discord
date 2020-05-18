@@ -1,7 +1,7 @@
 package me.syari.ss.discord.internal.entities;
 
 import gnu.trove.set.TLongSet;
-import me.syari.ss.discord.api.utils.MiscUtil;
+import me.syari.ss.discord.internal.utils.MiscUtil;
 import me.syari.ss.discord.internal.JDA;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -12,10 +12,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Message {
-    public static final int MAX_CONTENT_LENGTH = 2000;
-
     private final Object mutex = new Object();
-
     protected final JDA api;
     protected final long id;
     protected final TextChannel channel;
@@ -24,9 +21,7 @@ public class Message {
     protected final TLongSet mentionedUsers;
     protected final TLongSet mentionedRoles;
     protected final String content;
-
     protected String altContent = null;
-
     protected List<User> userMentions = null;
     protected List<Emote> emoteMentions = null;
     protected List<Role> roleMentions = null;

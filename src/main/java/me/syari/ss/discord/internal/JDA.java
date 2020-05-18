@@ -8,7 +8,6 @@ import me.syari.ss.discord.api.MessageReceivedEvent;
 import me.syari.ss.discord.api.exceptions.RateLimitedException;
 import me.syari.ss.discord.api.requests.Request;
 import me.syari.ss.discord.api.requests.Response;
-import me.syari.ss.discord.api.utils.ChunkingFilter;
 import me.syari.ss.discord.api.utils.SessionController;
 import me.syari.ss.discord.api.utils.cache.CacheView;
 import me.syari.ss.discord.api.utils.cache.ISnowflakeCacheView;
@@ -71,7 +70,6 @@ public class JDA {
     protected Status status = Status.INITIALIZING;
     protected long responseTotal;
     protected String gatewayUrl;
-    protected final ChunkingFilter chunkingFilter = ChunkingFilter.ALL;
 
     public JDA(@NotNull String token,
                @NotNull Consumer<MessageReceivedEvent> messageReceivedEvent) {
@@ -86,7 +84,7 @@ public class JDA {
 
     public boolean chunkGuild(long id) {
         try {
-            return chunkingFilter.filter(id);
+            return ChunkingFilter.ALL.filter(id);
         } catch (Exception e) {
             return true;
         }
@@ -382,5 +380,12 @@ public class JDA {
         public boolean isInit() {
             return isInit;
         }
+    }
+
+    @FunctionalInterface
+    private interface ChunkingFilter {
+        ChunkingFilter ALL = (x) -> true;
+
+        boolean filter(long guildId);
     }
 }

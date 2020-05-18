@@ -1,6 +1,6 @@
 package me.syari.ss.discord.internal.utils.cache;
 
-import me.syari.ss.discord.api.utils.MiscUtil;
+import me.syari.ss.discord.internal.utils.MiscUtil;
 import me.syari.ss.discord.api.utils.cache.ISnowflakeCacheView;
 import me.syari.ss.discord.internal.entities.Member;
 import org.jetbrains.annotations.NotNull;

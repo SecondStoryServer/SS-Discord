@@ -18,8 +18,8 @@ import java.time.temporal.TemporalAccessor;
 import java.util.*;
 import java.util.function.Function;
 
-import static me.syari.ss.discord.util.Check.isDefaultMessage;
-import static me.syari.ss.discord.util.Check.isTextChannel;
+import static me.syari.ss.discord.internal.utils.Check.isDefaultMessage;
+import static me.syari.ss.discord.internal.utils.Check.isTextChannel;
 
 public class EntityBuilder {
     public static final String MISSING_CHANNEL = "MISSING_CHANNEL";
@@ -57,10 +57,8 @@ public class EntityBuilder {
         final DataArray roleArray = guildJson.getArray("roles");
         final DataArray channelArray = guildJson.getArray("channels");
         final DataArray emotesArray = guildJson.getArray("emojis");
-        final long ownerId = guildJson.getUnsignedLong("owner_id", 0L);
 
         guildObj.setName(name);
-        guildObj.setOwnerId(ownerId);
         guildObj.setMemberCount(memberCount);
 
         SnowflakeCacheView<Guild> guildView = getJDA().getGuildsView();
@@ -254,18 +252,10 @@ public class EntityBuilder {
     }
 
     public Emote createEmote(@NotNull Guild guildObj, @NotNull DataObject json) {
-        DataArray emoteRoles = json.optArray("roles").orElseGet(DataArray::empty);
         final long emoteId = json.getLong("id");
         Emote emoteObj = guildObj.getEmoteById(emoteId);
-        if (emoteObj == null)
+        if (emoteObj == null) {
             emoteObj = new Emote(emoteId);
-        Set<Role> roleSet = emoteObj.getRoleSet();
-
-        roleSet.clear();
-        for (int j = 0; j < emoteRoles.length(); j++) {
-            Role role = guildObj.getRoleById(emoteRoles.getString(j));
-            if (role != null)
-                roleSet.add(role);
         }
         return emoteObj
                 .setName(json.getString("name", ""))

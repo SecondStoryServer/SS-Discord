@@ -100,10 +100,6 @@ public class Guild implements ISnowflake {
         this.name = name;
     }
 
-
-    public void setOwnerId(long ownerId) {
-    }
-
     public void setMemberCount(int count) {
         this.memberCount = count;
     }

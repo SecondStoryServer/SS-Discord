@@ -184,9 +184,9 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
             socket.addHeader("Accept-Encoding", "gzip")
                     .addListener(this)
                     .connect();
-        } catch (IOException | WebSocketException e) {
+        } catch (IOException | WebSocketException ex) {
             api.resetGatewayUrl();
-            throw new IllegalStateException(e);
+            throw new IllegalStateException(ex);
         }
     }
 

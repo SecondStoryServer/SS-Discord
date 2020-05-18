@@ -13,14 +13,12 @@ import java.util.concurrent.atomic.AtomicLong;
 public class SessionController {
     public final static int IDENTIFY_DELAY = 5;
     protected final Object lock = new Object();
-    protected final Queue<SessionConnectNode> connectQueue;
-    protected final AtomicLong globalRatelimit;
+    protected final Queue<SessionConnectNode> connectQueue = new ConcurrentLinkedQueue<>();
+    protected final AtomicLong globalRatelimit = new AtomicLong(Long.MIN_VALUE);
     protected Thread workerHandle;
     protected long lastConnect = 0;
 
     public SessionController() {
-        connectQueue = new ConcurrentLinkedQueue<>();
-        globalRatelimit = new AtomicLong(Long.MIN_VALUE);
     }
 
     public void appendSession(@NotNull SessionConnectNode node) {

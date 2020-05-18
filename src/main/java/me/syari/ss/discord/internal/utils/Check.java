@@ -1,4 +1,4 @@
-package me.syari.ss.discord.util;
+package me.syari.ss.discord.internal.utils;
 
 public class Check {
     public static boolean isTextChannel(int id) {

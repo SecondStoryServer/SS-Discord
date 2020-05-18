@@ -1,7 +1,7 @@
 package me.syari.ss.discord.internal.requests;
 
 import me.syari.ss.discord.api.requests.Request;
-import me.syari.ss.discord.api.utils.MiscUtil;
+import me.syari.ss.discord.internal.utils.MiscUtil;
 import okhttp3.Headers;
 import org.jetbrains.annotations.NotNull;
 

@@ -12,8 +12,9 @@ public final class ThreadLocalReason {
 
     public static void setCurrent(@Nullable String reason) {
         if (reason != null) {
-            if (currentReason == null)
+            if (currentReason == null) {
                 currentReason = new ThreadLocal<>();
+            }
             currentReason.set(reason);
         } else if (currentReason != null) {
             currentReason.remove();
