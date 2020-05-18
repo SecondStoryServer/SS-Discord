@@ -50,16 +50,13 @@ public class GuildSetupNode {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof GuildSetupNode))
-            return false;
+        if (!(obj instanceof GuildSetupNode)) return false;
         GuildSetupNode node = (GuildSetupNode) obj;
         return node.id == id;
     }
 
     void updateStatus(GuildSetupController.Status status) {
-        if (status != this.status) {
-            this.status = status;
-        }
+        if (status != this.status) this.status = status;
     }
 
     void handleCreate(DataObject obj) {
@@ -72,23 +69,18 @@ public class GuildSetupNode {
         }
         boolean unavailable = partialGuild.getBoolean("unavailable");
         this.markedUnavailable = unavailable;
-        if (unavailable) {
-            return;
-        }
+        if (unavailable) return;
         ensureMembers();
     }
 
     boolean handleMemberChunk(DataArray arr) {
-        if (partialGuild == null) {
-            return true;
-        }
+        if (partialGuild == null) return true;
         for (int index = 0; index < arr.length(); index++) {
             DataObject obj = arr.getObject(index);
             long id = obj.getObject("user").getLong("id");
             members.put(id, obj);
         }
-
-        if (members.size() >= expectedMemberCount || !api.chunkGuild(id)) {
+        if (expectedMemberCount <= members.size() || !api.chunkGuild(id)) {
             completeSetup();
             return false;
         }
@@ -98,10 +90,8 @@ public class GuildSetupNode {
     void cacheEvent(@NotNull DataObject event) {
         cachedEvents.add(event);
         int cacheSize = cachedEvents.size();
-        if (cacheSize >= 2000 && cacheSize % 1000 == 0) {
-            if (status == GuildSetupController.Status.CHUNKING) {
-                controller.sendChunkRequest(id);
-            }
+        if (2000 <= cacheSize && cacheSize % 1000 == 0 && status == GuildSetupController.Status.CHUNKING) {
+            controller.sendChunkRequest(id);
         }
     }
 

@@ -77,7 +77,6 @@ public class JDA {
         this.messageReceivedEvent = messageReceivedEvent;
         this.shutdownHook = new Thread(this::shutdown, "JDA Shutdown Hook");
         this.requester = new Requester(this);
-        this.requester.setRetryOnTimeout(true);
         this.guildSetupController = new GuildSetupController(this);
         this.eventCache = new EventCache();
     }

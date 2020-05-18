@@ -93,24 +93,21 @@ public class EntityBuilder {
                         userView.getMap().put(user.getIdLong(), user);
                     }
                 } else {
-                    user = new User(id, getJDA()).setFake(fake);
-                    if (!fake) {
-                        userView.getMap().put(id, user);
-                    }
+                    user = new User(id, getJDA());
+                    user.setFake(fake);
+                    if (!fake) userView.getMap().put(id, user);
                 }
             }
         }
 
         if (!fake || user.isFake()) {
-            user.setName(userData.getString("username"))
-                    .setDiscriminator(userData.get("discriminator").toString())
-                    .setBot(userData.getBoolean("bot"));
+            user.setName(userData.getString("username"));
+            user.setDiscriminator(userData.get("discriminator").toString());
+            user.setBot(userData.getBoolean("bot"));
         } else if (!user.isFake()) {
             updateUser(user, userData);
         }
-        if (!fake) {
-            getJDA().getEventCache().playbackCache(EventCache.Type.USER, id);
-        }
+        if (!fake) getJDA().getEventCache().playbackCache(EventCache.Type.USER, id);
         return user;
     }
 
@@ -171,8 +168,7 @@ public class EntityBuilder {
         final long id = json.getLong("id");
         TextChannel channel = getJDA().getTextChannelsView().get(id);
         if (channel == null) {
-            if (guildObj == null)
-                guildObj = getJDA().getGuildsView().get(guildId);
+            if (guildObj == null) guildObj = getJDA().getGuildsView().get(guildId);
             SnowflakeCacheView<TextChannel>
                     guildTextView = guildObj.getTextChannelsView(),
                     textView = getJDA().getTextChannelsView();
@@ -186,17 +182,13 @@ public class EntityBuilder {
         }
 
         channel.setName(json.getString("name"));
-        if (playbackCache) {
-            getJDA().getEventCache().playbackCache(EventCache.Type.CHANNEL, id);
-        }
+        if (playbackCache) getJDA().getEventCache().playbackCache(EventCache.Type.CHANNEL, id);
     }
 
     private @NotNull Role createRole(Guild guild, @NotNull DataObject roleJson, long guildId) {
         boolean playbackCache = false;
         final long id = roleJson.getLong("id");
-        if (guild == null) {
-            guild = getJDA().getGuildsView().get(guildId);
-        }
+        if (guild == null) guild = getJDA().getGuildsView().get(guildId);
         Role role = guild.getRolesView().get(id);
         if (role == null) {
             SnowflakeCacheView<Role> roleView = guild.getRolesView();
@@ -206,20 +198,14 @@ public class EntityBuilder {
             }
         }
         role.setName(roleJson.getString("name"));
-        if (playbackCache) {
-            getJDA().getEventCache().playbackCache(EventCache.Type.ROLE, id);
-        }
+        if (playbackCache) getJDA().getEventCache().playbackCache(EventCache.Type.ROLE, id);
         return role;
     }
 
     public Message createMessage(@NotNull DataObject jsonObject, boolean modifyCache) {
         final long channelId = jsonObject.getLong("channel_id");
-
         TextChannel channel = getJDA().getTextChannelById(channelId);
-        if (channel == null) {
-            throw new IllegalArgumentException(MISSING_CHANNEL);
-        }
-
+        if (channel == null) throw new IllegalArgumentException(MISSING_CHANNEL);
         return createMessage(jsonObject, channel, modifyCache);
     }
 
@@ -257,8 +243,7 @@ public class EntityBuilder {
             }
         }
 
-        if (modifyCache && !fromWebhook)
-            updateUser(user, author);
+        if (modifyCache && !fromWebhook) updateUser(user, author);
 
         TLongSet mentionedRoles = new TLongHashSet();
         TLongSet mentionedUsers = new TLongHashSet(map(jsonObject, "mentions", (o) -> o.getLong("id")));
@@ -279,8 +264,7 @@ public class EntityBuilder {
 
         Guild guildImpl = message.getGuild();
 
-        if (guildImpl.isLoaded())
-            return message;
+        if (guildImpl.isLoaded()) return message;
 
         List<User> mentionedUsersList = new ArrayList<>();
         List<Member> mentionedMembersList = new ArrayList<>();
@@ -292,9 +276,7 @@ public class EntityBuilder {
                 User mentionedUser = createFakeUser(mentionJson);
                 mentionedUsersList.add(mentionedUser);
                 Member mentionedMember = guildImpl.getMember(mentionedUser);
-                if (mentionedMember != null) {
-                    mentionedMembersList.add(mentionedMember);
-                }
+                if (mentionedMember != null) mentionedMembersList.add(mentionedMember);
             } else {
                 DataObject memberJson = mentionJson.getObject("member");
                 mentionJson.remove("member");
@@ -305,25 +287,19 @@ public class EntityBuilder {
             }
         }
 
-        if (!mentionedUsersList.isEmpty())
-            message.setMentions(mentionedUsersList, mentionedMembersList);
+        if (!mentionedUsersList.isEmpty()) message.setMentions(mentionedUsersList, mentionedMembersList);
         return message;
     }
 
     private <T> @NotNull List<T> map(@NotNull DataObject jsonObject, String key, Function<DataObject, T> convert) {
-        if (jsonObject.isNull(key))
-            return Collections.emptyList();
-
+        if (jsonObject.isNull(key)) return Collections.emptyList();
         final DataArray array = jsonObject.getArray(key);
         final List<T> mappedObjects = new ArrayList<>(array.length());
         for (int i = 0; i < array.length(); i++) {
             DataObject obj = array.getObject(i);
             T result = convert.apply(obj);
-            if (result != null) {
-                mappedObjects.add(result);
-            }
+            if (result != null) mappedObjects.add(result);
         }
-
         return mappedObjects;
     }
 }

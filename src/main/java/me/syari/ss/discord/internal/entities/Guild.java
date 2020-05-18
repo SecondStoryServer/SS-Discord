@@ -103,17 +103,13 @@ public class Guild implements ISnowflake {
     }
 
     public void acknowledgeMembers() {
-        if (memberCache.size() == memberCount && !chunkingCallback.isDone()) {
-            chunkingCallback.complete(null);
-        }
+        if (memberCache.size() == memberCount && !chunkingCallback.isDone()) chunkingCallback.complete(null);
     }
 
     @Override
     public boolean equals(Object o) {
-        if (o == this)
-            return true;
-        if (!(o instanceof Guild))
-            return false;
+        if (o == this) return true;
+        if (!(o instanceof Guild)) return false;
         Guild oGuild = (Guild) o;
         return this.id == oGuild.id;
     }

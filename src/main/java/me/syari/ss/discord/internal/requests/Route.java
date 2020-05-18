@@ -110,4 +110,9 @@ public class Route {
             return "CompiledRoute(" + method + ": " + compiledRoute + ")";
         }
     }
+
+    public enum Method {
+        GET,
+        POST
+    }
 }

@@ -70,7 +70,6 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
             {
                 put("GUILD_CREATE", new GuildCreateHandler(api));
                 put("MESSAGE_CREATE", new MessageCreateHandler(api));
-                put("READY", new ReadyHandler(api));
             }
         };
         try {
@@ -451,7 +450,6 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
                     api.setStatus(JDA.Status.LOADING_SUBSYSTEMS);
                     processingReady = true;
                     handleIdentifyRateLimit = false;
-                    handlers.get("READY").handle(responseTotal, raw);
                     sessionId = content.getString("session_id");
                     break;
                 case "RESUMED":
@@ -554,12 +552,10 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
 
         @Override
         public void run(boolean isLast) throws InterruptedException {
-            if (shutdown)
-                return;
+            if (shutdown) return;
             setupSendingThread();
             connect();
-            if (isLast)
-                return;
+            if (isLast) return;
             try {
                 api.awaitStatus(JDA.Status.LOADING_SUBSYSTEMS, JDA.Status.RECONNECT_QUEUED);
             } catch (IllegalStateException ex) {
@@ -574,10 +570,8 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
 
         @Override
         public boolean equals(Object obj) {
-            if (obj == this)
-                return true;
-            if (!(obj instanceof StartingNode))
-                return false;
+            if (obj == this) return true;
+            if (!(obj instanceof StartingNode)) return false;
             StartingNode node = (StartingNode) obj;
             return node.getJDA().equals(getJDA());
         }

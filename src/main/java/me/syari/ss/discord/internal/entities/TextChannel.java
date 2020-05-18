@@ -90,10 +90,8 @@ public class TextChannel implements ISnowflake, Comparable<TextChannel> {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == this)
-            return true;
-        if (!(obj instanceof TextChannel))
-            return false;
+        if (obj == this) return true;
+        if (!(obj instanceof TextChannel)) return false;
         TextChannel channel = (TextChannel) obj;
         return channel.getIdLong() == getIdLong();
     }
@@ -138,9 +136,7 @@ public class TextChannel implements ISnowflake, Comparable<TextChannel> {
 
         @Override
         protected void finalize() {
-            if (ownedResources.isEmpty()) {
-                return;
-            }
+            if (ownedResources.isEmpty()) return;
             clearResources();
         }
     }

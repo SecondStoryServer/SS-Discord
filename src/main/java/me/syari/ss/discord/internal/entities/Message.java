@@ -65,15 +65,11 @@ public class Message {
         if (altContent != null)
             return altContent;
         synchronized (mutex) {
-            if (altContent != null)
-                return altContent;
+            if (altContent != null) return altContent;
             String tmp = content;
             for (User user : getMentionedUsers()) {
-                String name;
-                if (getGuild().isMember(user))
-                    name = getGuild().getMember(user).getDisplayName();
-                else
-                    name = user.getName();
+                Member member = getGuild().getMember(user);
+                String name = (member != null)? member.getDisplayName() : user.getName();
                 tmp = tmp.replaceAll("<@!?" + Pattern.quote(user.getId()) + '>', '@' + Matcher.quoteReplacement(name));
             }
             for (Emote emote : getEmotes()) {
@@ -106,29 +102,22 @@ public class Message {
 
     @NotNull
     private synchronized List<User> getMentionedUsers() {
-        if (userMentions == null)
-            userMentions = Collections.unmodifiableList(processMentions(Message.MentionType.USER, new ArrayList<>(), this::matchUser));
+        if (userMentions == null) userMentions = Collections.unmodifiableList(processMentions(Message.MentionType.USER, new ArrayList<>(), this::matchUser));
         return userMentions;
     }
 
     private @Nullable User matchUser(@NotNull Matcher matcher) {
         long userId = MiscUtil.parseSnowflake(matcher.group(1));
-        if (!mentionedUsers.contains(userId))
-            return null;
+        if (!mentionedUsers.contains(userId)) return null;
         User user = getJDA().getUserById(userId);
-        if (user == null) {
-            user = api.getFakeUserMap().get(userId);
-        }
-        if (user == null && userMentions != null) {
-            user = userMentions.stream().filter(it -> it.getIdLong() == userId).findFirst().orElse(null);
-        }
+        if (user == null) user = api.getFakeUserMap().get(userId);
+        if (user == null && userMentions != null) user = userMentions.stream().filter(it -> it.getIdLong() == userId).findFirst().orElse(null);
         return user;
     }
 
     @NotNull
     private synchronized List<TextChannel> getMentionedChannels() {
-        if (channelMentions == null)
-            channelMentions = Collections.unmodifiableList(processMentions(Message.MentionType.CHANNEL, new ArrayList<>(), this::matchTextChannel));
+        if (channelMentions == null) channelMentions = Collections.unmodifiableList(processMentions(Message.MentionType.CHANNEL, new ArrayList<>(), this::matchTextChannel));
         return channelMentions;
     }
 
@@ -139,22 +128,19 @@ public class Message {
 
     @NotNull
     private synchronized List<Role> getMentionedRoles() {
-        if (roleMentions == null)
-            roleMentions = Collections.unmodifiableList(processMentions(Message.MentionType.ROLE, new ArrayList<>(), this::matchRole));
+        if (roleMentions == null) roleMentions = Collections.unmodifiableList(processMentions(Message.MentionType.ROLE, new ArrayList<>(), this::matchRole));
         return roleMentions;
     }
 
     private @Nullable Role matchRole(@NotNull Matcher matcher) {
         long roleId = MiscUtil.parseSnowflake(matcher.group(1));
-        if (!mentionedRoles.contains(roleId))
-            return null;
+        if (!mentionedRoles.contains(roleId)) return null;
         return getGuild().getRoleById(roleId);
     }
 
     @NotNull
     private synchronized List<Emote> getEmotes() {
-        if (this.emoteMentions == null)
-            emoteMentions = Collections.unmodifiableList(processMentions(Message.MentionType.EMOTE, new ArrayList<>(), this::matchEmote));
+        if (this.emoteMentions == null) emoteMentions = Collections.unmodifiableList(processMentions(Message.MentionType.EMOTE, new ArrayList<>(), this::matchEmote));
         return emoteMentions;
     }
 
@@ -201,10 +187,8 @@ public class Message {
 
     @Override
     public boolean equals(Object o) {
-        if (o == this)
-            return true;
-        if (!(o instanceof Message))
-            return false;
+        if (o == this) return true;
+        if (!(o instanceof Message)) return false;
         Message oMsg = (Message) o;
         return this.id == oMsg.id;
     }
@@ -216,9 +200,7 @@ public class Message {
 
     @Override
     public String toString() {
-        return author != null
-                ? String.format("M:%s:%.20s(%s)", author, this, id)
-                : String.format("M:%.20s", this); // this message was made using MessageBuilder
+        return author != null ? String.format("M:%s:%.20s(%s)", author, this, id) : String.format("M:%.20s", this);
     }
 
     private enum MentionType {

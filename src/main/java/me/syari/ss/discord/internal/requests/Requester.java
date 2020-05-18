@@ -25,11 +25,9 @@ public class Requester {
 
     private final OkHttpClient httpClient;
 
-    private volatile boolean retryOnTimeout = false;
-
     public Requester(JDA api) {
         this.api = api;
-        this.httpClient = this.api.getHttpClient();
+        this.httpClient = api.getHttpClient();
     }
 
     public JDA getJDA() {
@@ -37,14 +35,15 @@ public class Requester {
     }
 
     public <T> void request(@NotNull Request<T> apiRequest) {
-        if (apiRequest.shouldQueue())
+        if (apiRequest.shouldQueue()) {
             rateLimiter.queueRequest(apiRequest);
-        else
+        } else {
             execute(apiRequest, true);
+        }
     }
 
-    private static boolean isRetry(Throwable e) {
-        return e instanceof SocketException || e instanceof SocketTimeoutException || e instanceof SSLPeerUnverifiedException;
+    private static boolean isRetry(Throwable ex) {
+        return ex instanceof SocketException || ex instanceof SocketTimeoutException || ex instanceof SSLPeerUnverifiedException;
     }
 
     public Long execute(Request<?> apiRequest, boolean handleOnRateLimit) {
@@ -55,45 +54,31 @@ public class Requester {
         Route.CompiledRoute route = apiRequest.getRoute();
         Long retryAfter = rateLimiter.getRateLimit(route);
         if (retryAfter != null && retryAfter > 0) {
-            if (handleOnRatelimit)
-                apiRequest.handleResponse(new Response(retryAfter));
+            if (handleOnRatelimit) apiRequest.handleResponse(new Response(retryAfter));
             return retryAfter;
         }
-
         okhttp3.Request.Builder builder = new okhttp3.Request.Builder();
-
         String url = DISCORD_API_PREFIX + route.getCompiledRoute();
         builder.url(url);
-
         String method = apiRequest.getRoute().getMethod().toString();
         RequestBody body = apiRequest.getBody();
-
-        if (body == null && HttpMethod.requiresRequestBody(method)) {
-            body = EMPTY_BODY;
-        }
-
+        if (body == null && HttpMethod.requiresRequestBody(method)) body = EMPTY_BODY;
         builder.method(method, body)
                 .header("X-RateLimit-Precision", "millisecond")
                 .header("user-agent", USER_AGENT)
                 .header("accept-encoding", "gzip");
-
-        if (url.startsWith(DISCORD_API_PREFIX))
-            builder.header("authorization", api.getToken());
-
+        if (url.startsWith(DISCORD_API_PREFIX)) builder.header("authorization", api.getToken());
         okhttp3.Request request = builder.build();
-
         okhttp3.Response[] responses = new okhttp3.Response[4];
         okhttp3.Response lastResponse = null;
+        boolean retryOnTimeout = true;
         try {
             int attempt = 0;
             do {
                 Call call = httpClient.newCall(request);
                 lastResponse = call.execute();
                 responses[attempt] = lastResponse;
-
-                if (lastResponse.code() < 500)
-                    break;
-
+                if (lastResponse.code() < 500) break;
                 attempt++;
                 try {
                     Thread.sleep(50 * attempt);
@@ -102,46 +87,36 @@ public class Requester {
                 }
             }
             while (attempt < 3 && lastResponse.code() >= 500);
-
             if (lastResponse.code() >= 500) {
                 Response response = new Response(lastResponse, -1);
                 apiRequest.handleResponse(response);
                 return null;
             }
-
             retryAfter = rateLimiter.handleResponse(route, lastResponse);
-
-            if (retryAfter == null)
+            if (retryAfter == null) {
                 apiRequest.handleResponse(new Response(lastResponse, -1));
-            else if (handleOnRatelimit)
+            } else if (handleOnRatelimit) {
                 apiRequest.handleResponse(new Response(lastResponse, retryAfter));
-
+            }
             return retryAfter;
         } catch (SocketTimeoutException e) {
-            if (retryOnTimeout && !retried)
-                return execute(apiRequest, true, handleOnRatelimit);
+            if (!retried) return execute(apiRequest, true, handleOnRatelimit);
             apiRequest.handleResponse(new Response(lastResponse, e));
             return null;
         } catch (Exception e) {
-            if (retryOnTimeout && !retried && isRetry(e))
-                return execute(apiRequest, true, handleOnRatelimit);
+            if (!retried && isRetry(e)) return execute(apiRequest, true, handleOnRatelimit);
             apiRequest.handleResponse(new Response(lastResponse, e));
             return null;
         } finally {
-            for (okhttp3.Response r : responses) {
-                if (r == null)
-                    break;
-                r.close();
+            for (okhttp3.Response response : responses) {
+                if (response == null) break;
+                response.close();
             }
         }
     }
 
     public RateLimiter getRateLimiter() {
         return rateLimiter;
-    }
-
-    public void setRetryOnTimeout(boolean retryOnTimeout) {
-        this.retryOnTimeout = retryOnTimeout;
     }
 
     public void shutdown() {

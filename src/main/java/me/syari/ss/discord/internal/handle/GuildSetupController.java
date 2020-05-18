@@ -81,9 +81,7 @@ public class GuildSetupController {
 
     public void cacheEvent(long guildId, DataObject event) {
         GuildSetupNode node = setupNodes.get(guildId);
-        if (node != null) {
-            node.cacheEvent(event);
-        }
+        if (node != null) node.cacheEvent(event);
     }
 
     public void clearCache() {

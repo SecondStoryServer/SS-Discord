@@ -1,7 +1,6 @@
 package me.syari.ss.discord.internal.entities;
 
 import me.syari.ss.discord.api.ISnowflake;
-import me.syari.ss.discord.internal.JDA;
 import me.syari.ss.discord.internal.utils.cache.SnowflakeReference;
 import org.jetbrains.annotations.NotNull;
 
@@ -45,12 +44,8 @@ public class Member implements ISnowflake {
 
     @Override
     public boolean equals(Object object) {
-        if (object == this) {
-            return true;
-        }
-        if (!(object instanceof Member)) {
-            return false;
-        }
+        if (object == this) return true;
+        if (!(object instanceof Member)) return false;
         Member member = (Member) object;
         return member.user.getIdLong() == user.getIdLong() && member.guild.getIdLong() == guild.getIdLong();
     }

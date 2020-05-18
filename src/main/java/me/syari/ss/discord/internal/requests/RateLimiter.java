@@ -40,15 +40,11 @@ public class RateLimiter {
 
     private void cleanup() {
         MiscUtil.locked(bucketLock, () -> {
-            int size = bucket.size();
             Iterator<Map.Entry<String, Bucket>> entries = bucket.entrySet().iterator();
-
             while (entries.hasNext()) {
                 Map.Entry<String, Bucket> entry = entries.next();
                 Bucket bucket = entry.getValue();
-                if (bucket.isUnlimited() && bucket.requests.isEmpty()) {
-                    entries.remove();
-                } else if (bucket.requests.isEmpty() && bucket.reset <= getNow()) {
+                if ((bucket.isUnlimited() && bucket.requests.isEmpty()) || (bucket.requests.isEmpty() && bucket.reset <= getNow())) {
                     entries.remove();
                 }
             }
@@ -65,8 +61,8 @@ public class RateLimiter {
                 cancel(it, request, new CancellationException("RestAction has been cancelled"));
                 return true;
             }
-        } catch (Throwable exception) {
-            cancel(it, request, exception);
+        } catch (Throwable ex) {
+            cancel(it, request, ex);
             return true;
         }
         return false;
@@ -78,9 +74,7 @@ public class RateLimiter {
     }
 
     public void shutdown() {
-        if (cleanupWorker != null) {
-            cleanupWorker.cancel(false);
-        }
+        if (cleanupWorker != null) cleanupWorker.cancel(false);
     }
 
     public Long getRateLimit(Route.CompiledRoute route) {
@@ -116,21 +110,14 @@ public class RateLimiter {
             try {
                 Bucket bucket = getBucket(route, true);
                 Headers headers = response.headers();
-
-                boolean wasUnlimited = bucket.isUnlimited();
                 boolean global = headers.get(GLOBAL_HEADER) != null;
                 String hash = headers.get(HASH_HEADER);
                 long now = getNow();
-
                 Route baseRoute = route.getBaseRoute();
                 if (hash != null) {
-                    if (!this.hash.containsKey(baseRoute)) {
-                        this.hash.put(baseRoute, hash);
-                    }
-
+                    if (!this.hash.containsKey(baseRoute)) this.hash.put(baseRoute, hash);
                     bucket = getBucket(route, true);
                 }
-
                 if (global) {
                     String retryAfterHeader = headers.get(RETRY_AFTER_HEADER);
                     long retryAfter = parseLong(retryAfterHeader);
@@ -142,18 +129,10 @@ public class RateLimiter {
                     bucket.reset = getNow() + retryAfter;
                     return bucket;
                 }
-
-                if (hash == null) {
-                    return bucket;
-                }
-
-                String limitHeader = headers.get(LIMIT_HEADER);
-                String remainingHeader = headers.get(REMAINING_HEADER);
-                String resetAfterHeader = headers.get(RESET_AFTER_HEADER);
-
-                bucket.limit = (int) Math.max(1L, parseLong(limitHeader));
-                bucket.remaining = (int) parseLong(remainingHeader);
-                bucket.reset = now + parseDouble(resetAfterHeader);
+                if (hash == null) return bucket;
+                bucket.limit = (int) Math.max(1L, parseLong(headers.get(LIMIT_HEADER)));
+                bucket.remaining = (int) parseLong(headers.get(REMAINING_HEADER));
+                bucket.reset = now + parseDouble(headers.get(RESET_AFTER_HEADER));
                 return bucket;
             } catch (Exception e) {
                 return getBucket(route, true);
@@ -167,18 +146,13 @@ public class RateLimiter {
             String hash = getRouteHash(route.getBaseRoute());
             String bucketId = hash + ":" + route.getMajorParameters();
             Bucket bucket = this.bucket.get(bucketId);
-            if (bucket == null && create) {
-                this.bucket.put(bucketId, bucket = new Bucket(bucketId));
-            }
-
+            if (bucket == null && create) this.bucket.put(bucketId, bucket = new Bucket(bucketId));
             return bucket;
         });
     }
 
     private void runBucket(Bucket bucket) {
-        MiscUtil.locked(bucketLock, () ->
-                rateLimitQueue.computeIfAbsent(bucket,
-                        (k) -> getScheduler().schedule(bucket, bucket.getRateLimit(), TimeUnit.MILLISECONDS)));
+        MiscUtil.locked(bucketLock, () -> rateLimitQueue.computeIfAbsent(bucket, (k) -> getScheduler().schedule(bucket, bucket.getRateLimit(), TimeUnit.MILLISECONDS)));
     }
 
     private long parseLong(String input) {
@@ -213,14 +187,11 @@ public class RateLimiter {
         public long getRateLimit() {
             long now = getNow();
             long global = requester.getJDA().getSessionController().getGlobalRatelimit();
-            if (now < global) {
-                return global - now;
-            }
+            if (now < global) return global - now;
             if (reset <= now) {
                 remaining = limit;
                 return 0L;
             }
-
             return remaining < 1 ? reset - now : 0L;
         }
 
@@ -231,9 +202,7 @@ public class RateLimiter {
         private void backoff() {
             MiscUtil.locked(bucketLock, () -> {
                 rateLimitQueue.remove(this);
-                if (!requests.isEmpty()) {
-                    runBucket(this);
-                }
+                if (!requests.isEmpty()) runBucket(this);
             });
         }
 
@@ -242,10 +211,7 @@ public class RateLimiter {
             Iterator<Request> iterator = requests.iterator();
             while (iterator.hasNext()) {
                 Long rateLimit = getRateLimit();
-                if (0L < rateLimit) {
-                    break;
-                }
-
+                if (0L < rateLimit) break;
                 Request request = iterator.next();
                 if (isUnlimited()) {
                     boolean shouldSkip = MiscUtil.locked(bucketLock, () -> {
@@ -260,11 +226,7 @@ public class RateLimiter {
                     });
                     if (shouldSkip) continue;
                 }
-
-                if (isSkipped(iterator, request)) {
-                    continue;
-                }
-
+                if (isSkipped(iterator, request)) continue;
                 try {
                     rateLimit = requester.execute(request, false);
                     if (rateLimit == null) {
@@ -276,7 +238,6 @@ public class RateLimiter {
                     break;
                 }
             }
-
             backoff();
         }
 

@@ -17,13 +17,11 @@ public class EventCache {
     private final EnumMap<Type, TLongObjectMap<List<CacheNode>>> eventCache = new EnumMap<>(Type.class);
 
     public synchronized void timeout(final long responseTotal) {
-        if (eventCache.isEmpty())
-            return;
+        if (eventCache.isEmpty()) return;
         AtomicInteger count = new AtomicInteger();
         eventCache.forEach((type, map) ->
         {
-            if (map.isEmpty())
-                return;
+            if (map.isEmpty()) return;
             TLongObjectIterator<List<CacheNode>> iterator = map.iterator();
             while (iterator.hasNext()) {
                 iterator.advance();
@@ -31,38 +29,32 @@ public class EventCache {
                 cache.removeIf(node ->
                 {
                     boolean remove = responseTotal - node.responseTotal > TIMEOUT_AMOUNT;
-                    if (remove) {
-                        count.incrementAndGet();
-                    }
+                    if (remove) count.incrementAndGet();
                     return remove;
                 });
-                if (cache.isEmpty())
-                    iterator.remove();
+                if (cache.isEmpty()) iterator.remove();
             }
         });
     }
 
     public synchronized void cache(Type type, long triggerId, long responseTotal, DataObject event, CacheConsumer handler) {
         TLongObjectMap<List<CacheNode>> triggerCache = eventCache.computeIfAbsent(type, k -> new TLongObjectHashMap<>());
-
         List<CacheNode> items = triggerCache.get(triggerId);
         if (items == null) {
             items = new LinkedList<>();
             triggerCache.put(triggerId, items);
         }
-
         items.add(new CacheNode(responseTotal, event, handler));
     }
 
     public synchronized void playbackCache(Type type, long triggerId) {
         TLongObjectMap<List<CacheNode>> typeCache = this.eventCache.get(type);
-        if (typeCache == null)
-            return;
-
+        if (typeCache == null) return;
         List<CacheNode> items = typeCache.remove(triggerId);
         if (items != null && !items.isEmpty()) {
-            for (CacheNode item : items)
+            for (CacheNode item : items) {
                 item.execute();
+            }
         }
     }
 

@@ -16,32 +16,25 @@ public class MessageCreateHandler extends SocketHandler {
     @Override
     protected Long handleInternally(@NotNull DataObject content) {
         System.out.println(">> MessageCreateHandler");
-
-        if (!isDefaultMessage(content.getInt("type"))) {
-            return null;
-        }
-
-        JDA jda = getJDA();
+        if (!isDefaultMessage(content.getInt("type"))) return null;
+        JDA api = getJDA();
         if (!content.isNull("guild_id")) {
             long guildId = content.getLong("guild_id");
-            if (jda.getGuildSetupController().isLocked(guildId)) {
-                return guildId;
-            }
+            if (api.getGuildSetupController().isLocked(guildId)) return guildId;
         }
-
         Message message;
         try {
-            message = jda.getEntityBuilder().createMessage(content, true);
+            message = api.getEntityBuilder().createMessage(content, true);
         } catch (IllegalArgumentException ex) {
             switch (ex.getMessage()) {
                 case EntityBuilder.MISSING_CHANNEL: {
                     final long channelId = content.getLong("channel_id");
-                    jda.getEventCache().cache(EventCache.Type.CHANNEL, channelId, responseNumber, allContent, this::handle);
+                    api.getEventCache().cache(EventCache.Type.CHANNEL, channelId, responseNumber, allContent, this::handle);
                     return null;
                 }
                 case EntityBuilder.MISSING_USER: {
                     final long authorId = content.getObject("author").getLong("id");
-                    jda.getEventCache().cache(EventCache.Type.USER, authorId, responseNumber, allContent, this::handle);
+                    api.getEventCache().cache(EventCache.Type.USER, authorId, responseNumber, allContent, this::handle);
                     return null;
                 }
                 case EntityBuilder.UNKNOWN_MESSAGE_TYPE: {
@@ -51,8 +44,7 @@ public class MessageCreateHandler extends SocketHandler {
                     throw ex;
             }
         }
-
-        jda.callMessageReceiveEvent(message);
+        api.callMessageReceiveEvent(message);
         return null;
     }
 }

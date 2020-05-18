@@ -29,12 +29,8 @@ public class Role implements ISnowflake {
 
     @Override
     public boolean equals(Object object) {
-        if (object == this) {
-            return true;
-        }
-        if (!(object instanceof Role)) {
-            return false;
-        }
+        if (object == this) return true;
+        if (!(object instanceof Role)) return false;
         Role role = (Role) object;
         return this.getIdLong() == role.getIdLong();
     }

@@ -48,12 +48,8 @@ public class User implements ISnowflake {
 
     @Override
     public boolean equals(Object object) {
-        if (object == this) {
-            return true;
-        }
-        if (!(object instanceof User)) {
-            return false;
-        }
+        if (object == this) return true;
+        if (!(object instanceof User)) return false;
         User user = (User) object;
         return this.id == user.id;
     }
@@ -68,22 +64,19 @@ public class User implements ISnowflake {
         return "U:" + getName() + '(' + id + ')';
     }
 
-    public User setName(String name) {
+    public void setName(String name) {
         this.name = name;
-        return this;
     }
 
-    public User setDiscriminator(String discriminator) {
+    public void setDiscriminator(String discriminator) {
         this.discriminator = Short.parseShort(discriminator);
-        return this;
     }
 
     public void setBot(boolean bot) {
         this.bot = bot;
     }
 
-    public User setFake(boolean fake) {
+    public void setFake(boolean fake) {
         this.fake = fake;
-        return this;
     }
 }

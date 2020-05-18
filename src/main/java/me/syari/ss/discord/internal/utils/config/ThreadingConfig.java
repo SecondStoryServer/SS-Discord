@@ -11,9 +11,6 @@ public class ThreadingConfig {
     private ScheduledExecutorService gatewayPool;
     private final ExecutorService callbackPool = ForkJoinPool.commonPool();
 
-    public ThreadingConfig() {
-    }
-
     public void init(@NotNull Supplier<String> identifier) {
         this.rateLimitPool = newScheduler(5, identifier, "RateLimit");
         this.gatewayPool = newScheduler(1, identifier, "Gateway");
