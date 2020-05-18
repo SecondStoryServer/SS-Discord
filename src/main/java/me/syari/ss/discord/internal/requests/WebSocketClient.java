@@ -7,7 +7,6 @@ import me.syari.ss.discord.api.requests.CloseCode;
 import me.syari.ss.discord.api.utils.SessionController;
 import me.syari.ss.discord.api.utils.data.DataArray;
 import me.syari.ss.discord.api.utils.data.DataObject;
-import me.syari.ss.discord.api.utils.data.DataType;
 import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.handle.*;
 import me.syari.ss.discord.internal.utils.IOUtil;
@@ -516,7 +515,7 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
         String type = raw.getString("t");
         long responseTotal = api.getResponseTotal();
 
-        if (!raw.isType("d", DataType.OBJECT)) {
+        if (!(raw.get("d") instanceof Map)) {
             if (type.equals("PRESENCES_REPLACE")) {
                 final DataArray payload = raw.getArray("d");
                 final List<DataObject> converted = convertPresencesReplace(responseTotal, payload);

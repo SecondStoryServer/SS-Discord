@@ -69,10 +69,6 @@ public class DataObject {
         return data.get(key) == null;
     }
 
-    public boolean isType(@NotNull String key, @NotNull DataType type) {
-        return type.isType(data.get(key));
-    }
-
     @NotNull
     public DataObject getObject(@NotNull String key) {
         return optObject(key).orElseThrow(() -> valueError(key, "DataObject"));

@@ -52,7 +52,7 @@ public class MessageAction extends RestAction<Message> {
 
     protected DataObject getJSON() {
         final DataObject obj = DataObject.empty();
-        obj.put("content", content.toString());
+        obj.put("content", content);
         return obj;
     }
 

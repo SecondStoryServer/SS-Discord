@@ -217,7 +217,7 @@ public class Message {
     @Override
     public String toString() {
         return author != null
-                ? String.format("M:%#s:%.20s(%s)", author, this, id)
+                ? String.format("M:%s:%.20s(%s)", author, this, id)
                 : String.format("M:%.20s", this); // this message was made using MessageBuilder
     }
 

@@ -24,7 +24,6 @@ public class GuildSetupNode {
     private int expectedMemberCount = 1;
     boolean requestedChunk;
 
-    final Type type = GuildSetupNode.Type.JOIN;
     final boolean sync;
     boolean firedUnavailableJoin = false;
     boolean markedUnavailable = false;
@@ -52,7 +51,6 @@ public class GuildSetupNode {
                 '{' +
                 "expectedMemberCount=" + expectedMemberCount + ", " +
                 "requestedChunk=" + requestedChunk + ", " +
-                "type=" + type + ", " +
                 "sync=" + sync + ", " +
                 "markedUnavailable=" + markedUnavailable +
                 '}';
@@ -151,21 +149,11 @@ public class GuildSetupNode {
         }
         removedMembers.clear();
         Guild guild = api.getEntityBuilder().createGuild(id, partialGuild, expectedMemberCount);
-        switch (type) {
-            case AVAILABLE:
-                getController().remove(id);
-                break;
-            case JOIN:
-                if (requestedChunk) {
-                    getController().ready(id);
-                } else {
-                    getController().remove(id);
-                }
-                break;
-            default:
+        if (requestedChunk) {
                 getController().ready(id);
-                break;
-        }
+            } else {
+                getController().remove(id);
+            }
         updateStatus(GuildSetupController.Status.READY);
         GuildSetupController.log.debug("Finished setup for guild {} firing cached events {}", id, cachedEvents.size());
         api.getClient().handle(cachedEvents);
@@ -194,9 +182,5 @@ public class GuildSetupNode {
             getController().addGuildForChunking(id);
             requestedChunk = true;
         }
-    }
-
-    public enum Type {
-        JOIN, AVAILABLE
     }
 }
