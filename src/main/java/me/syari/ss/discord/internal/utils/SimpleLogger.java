@@ -59,18 +59,18 @@ class SimpleLogger extends MarkerIgnoringBase {
     public static final String LOG_KEY_PREFIX = SYSTEM_PREFIX + "log.";
 
     private static String getStringProperty(String name) {
-        String prop = null;
+        String property = null;
         try {
-            prop = System.getProperty(name);
+            property = System.getProperty(name);
         } catch (SecurityException e) {
             // Ignore
         }
-        return (prop == null) ? SIMPLE_LOGGER_PROPS.getProperty(name) : prop;
+        return (property == null) ? SIMPLE_LOGGER_PROPS.getProperty(name) : property;
     }
 
     private static String getStringProperty(String name, String defaultValue) {
-        String prop = getStringProperty(name);
-        return (prop == null) ? defaultValue : prop;
+        String property = getStringProperty(name);
+        return (property == null) ? defaultValue : property;
     }
 
     private static boolean getBooleanProperty(String name, boolean defaultValue) {

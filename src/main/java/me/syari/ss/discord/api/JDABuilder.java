@@ -6,12 +6,10 @@ import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.utils.config.MetaConfig;
 import me.syari.ss.discord.internal.utils.config.SessionConfig;
 import me.syari.ss.discord.internal.utils.config.ThreadingConfig;
-import me.syari.ss.discord.internal.utils.config.flags.ConfigFlag;
 import okhttp3.OkHttpClient;
 import org.jetbrains.annotations.NotNull;
 
 import javax.security.auth.login.LoginException;
-import java.util.EnumSet;
 import java.util.function.Consumer;
 
 public class JDABuilder {
@@ -21,7 +19,6 @@ public class JDABuilder {
     protected final int maxReconnectDelay = 900;
     protected final int largeThreshold = 250;
     protected final int maxBufferSize = 2048;
-    protected final EnumSet<ConfigFlag> flags = ConfigFlag.getDefault();
     protected final ChunkingFilter chunkingFilter = ChunkingFilter.ALL;
 
     public JDABuilder(@NotNull String token, Consumer<MessageReceivedEvent> messageReceivedEvent) {
@@ -40,7 +37,7 @@ public class JDABuilder {
 
         OkHttpClient httpClient = this.httpClientBuilder.build();
         ThreadingConfig threadingConfig = new ThreadingConfig();
-        SessionConfig sessionConfig = new SessionConfig(httpClient, flags, maxReconnectDelay, largeThreshold);
+        SessionConfig sessionConfig = new SessionConfig(httpClient, maxReconnectDelay, largeThreshold);
         MetaConfig metaConfig = new MetaConfig(maxBufferSize);
 
         JDAImpl jda = new JDAImpl(token, sessionConfig, threadingConfig, metaConfig, chunkingFilter, messageReceivedEvent);

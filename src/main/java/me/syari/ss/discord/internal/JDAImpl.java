@@ -27,7 +27,6 @@ import me.syari.ss.discord.internal.utils.config.MetaConfig;
 import me.syari.ss.discord.internal.utils.config.SessionConfig;
 import me.syari.ss.discord.internal.utils.config.ThreadingConfig;
 import okhttp3.OkHttpClient;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.MDC;
@@ -65,7 +64,7 @@ public class JDAImpl implements JDA {
     protected Status status = Status.INITIALIZING;
     protected long responseTotal;
     protected String gatewayUrl;
-    protected ChunkingFilter chunkingFilter;
+    protected final ChunkingFilter chunkingFilter;
 
     public JDAImpl(@NotNull String token,
                    @NotNull SessionConfig sessionConfig,
@@ -81,13 +80,9 @@ public class JDAImpl implements JDA {
         this.messageReceivedEvent = messageReceivedEvent;
         this.shutdownHook = new Thread(this::shutdown, "JDA Shutdown Hook");
         this.requester = new Requester(this);
-        this.requester.setRetryOnTimeout(this.sessionConfig.isRetryOnTimeout());
+        this.requester.setRetryOnTimeout(true);
         this.guildSetupController = new GuildSetupController(this);
         this.eventCache = new EventCache();
-    }
-
-    public boolean isRelativeRateLimit() {
-        return sessionConfig.isRelativeRateLimit();
     }
 
     public int getLargeThreshold() {

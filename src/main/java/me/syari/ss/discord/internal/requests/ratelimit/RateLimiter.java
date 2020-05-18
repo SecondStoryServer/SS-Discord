@@ -17,7 +17,6 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class RateLimiter {
     private static final String RESET_AFTER_HEADER = "X-RateLimit-Reset-After";
-    private static final String RESET_HEADER = "X-RateLimit-Reset";
     private static final String LIMIT_HEADER = "X-RateLimit-Limit";
     private static final String REMAINING_HEADER = "X-RateLimit-Remaining";
     private static final String GLOBAL_HEADER = "X-RateLimit-Global";
@@ -168,15 +167,10 @@ public class RateLimiter {
                 String limitHeader = headers.get(LIMIT_HEADER);
                 String remainingHeader = headers.get(REMAINING_HEADER);
                 String resetAfterHeader = headers.get(RESET_AFTER_HEADER);
-                String resetHeader = headers.get(RESET_HEADER);
 
                 bucket.limit = (int) Math.max(1L, parseLong(limitHeader));
                 bucket.remaining = (int) parseLong(remainingHeader);
-                if (requester.getJDA().isRelativeRateLimit()) {
-                    bucket.reset = now + parseDouble(resetAfterHeader);
-                } else {
-                    bucket.reset = parseDouble(resetHeader);
-                }
+                bucket.reset = now + parseDouble(resetAfterHeader);
                 log.trace("Updated bucket {} to ({}/{}, {})", bucket.bucketId, bucket.remaining, bucket.limit, bucket.reset - now);
                 return bucket;
             } catch (Exception e) {

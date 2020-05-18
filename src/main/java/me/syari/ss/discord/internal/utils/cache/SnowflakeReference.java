@@ -36,8 +36,8 @@ public class SnowflakeReference<T extends ISnowflake> implements ISnowflake {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        return resolve().equals(obj);
+    public boolean equals(Object object) {
+        return resolve().equals(object);
     }
 
     @Override

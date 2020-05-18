@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.Set;
 
 public class MessageAction extends RestAction<Message> implements Appendable {
-    protected final Map<String, InputStream> files = new HashMap<>();
     protected final Set<InputStream> ownedResources = new HashSet<>();
     protected final StringBuilder content;
     protected final TextChannel channel;
@@ -50,7 +49,7 @@ public class MessageAction extends RestAction<Message> implements Appendable {
     @NotNull
     @Override
     public MessageAction append(final CharSequence csq, final int start, final int end) {
-        if (content.length() + end - start > Message.MAX_CONTENT_LENGTH) {
+        if (Message.MAX_CONTENT_LENGTH < content.length() + end - start) {
             throw new IllegalArgumentException("A message may not exceed 2000 characters. Please limit your input!");
         }
         content.append(csq, start, end);
@@ -65,6 +64,12 @@ public class MessageAction extends RestAction<Message> implements Appendable {
         }
         content.append(c);
         return this;
+    }
+
+    @NotNull
+    @Override
+    public MessageAction append(@NotNull final CharSequence csq) {
+        return append(csq, 0, csq.length());
     }
 
     private void clearResources() {
@@ -83,14 +88,9 @@ public class MessageAction extends RestAction<Message> implements Appendable {
     protected RequestBody asMultipart() {
         final MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
         int index = 0;
-        for (Map.Entry<String, InputStream> entry : files.entrySet()) {
-            final RequestBody body = IOUtil.createRequestBody(Requester.MEDIA_TYPE_OCTET, entry.getValue());
-            builder.addFormDataPart("file" + index++, entry.getKey(), body);
-        }
         if (isNotEmpty()) {
             builder.addFormDataPart("payload_json", getJSON().toString());
         }
-        files.clear();
         ownedResources.clear();
         return builder.build();
     }
@@ -107,9 +107,7 @@ public class MessageAction extends RestAction<Message> implements Appendable {
 
     @Override
     protected RequestBody finalizeData() {
-        if (!files.isEmpty()) {
-            return asMultipart();
-        } else if (isNotEmpty()) {
+        if (isNotEmpty()) {
             return asJSON();
         }
         throw new IllegalStateException("Cannot build a message without content!");
@@ -127,11 +125,5 @@ public class MessageAction extends RestAction<Message> implements Appendable {
         }
         LOG.warn("Found unclosed resources in MessageAction instance, closing on finalization step!");
         clearResources();
-    }
-
-    @NotNull
-    @Override
-    public MessageAction append(@NotNull final CharSequence csq) {
-        return append(csq, 0, csq.length());
     }
 }
