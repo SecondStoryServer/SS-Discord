@@ -14,10 +14,6 @@ import java.util.function.Consumer;
 public class JDABuilder {
     protected final String token;
     protected final Consumer<MessageReceivedEvent> messageReceivedEvent;
-    protected OkHttpClient.Builder httpClientBuilder = null;
-    protected final int maxReconnectDelay = 900;
-    protected final int largeThreshold = 250;
-    protected final int maxBufferSize = 2048;
     protected final ChunkingFilter chunkingFilter = ChunkingFilter.ALL;
 
     public JDABuilder(@NotNull String token, Consumer<MessageReceivedEvent> messageReceivedEvent) {
@@ -30,14 +26,9 @@ public class JDABuilder {
 
     @NotNull
     public JDA build() throws LoginException {
-        if (this.httpClientBuilder == null) {
-            this.httpClientBuilder = new OkHttpClient.Builder();
-        }
-
-        OkHttpClient httpClient = this.httpClientBuilder.build();
         ThreadingConfig threadingConfig = new ThreadingConfig();
-        SessionConfig sessionConfig = new SessionConfig(httpClient, maxReconnectDelay, largeThreshold);
-        MetaConfig metaConfig = new MetaConfig(maxBufferSize);
+        SessionConfig sessionConfig = new SessionConfig(new OkHttpClient.Builder().build());
+        MetaConfig metaConfig = new MetaConfig();
 
         JDAImpl jda = new JDAImpl(token, sessionConfig, threadingConfig, metaConfig, chunkingFilter, messageReceivedEvent);
 

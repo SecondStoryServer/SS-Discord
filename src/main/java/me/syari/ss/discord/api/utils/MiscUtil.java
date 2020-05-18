@@ -8,10 +8,11 @@ import java.util.function.Supplier;
 public class MiscUtil {
     public static long parseSnowflake(@NotNull String input) {
         try {
-            if (!input.startsWith("-"))
-                return Long.parseUnsignedLong(input);
-            else
+            if (input.startsWith("-")) {
                 return Long.parseLong(input);
+            } else {
+                return Long.parseUnsignedLong(input);
+            }
         } catch (NumberFormatException ex) {
             throw new NumberFormatException(String.format("The specified ID is not a valid snowflake (%s). Expecting a valid long value!", input));
         }

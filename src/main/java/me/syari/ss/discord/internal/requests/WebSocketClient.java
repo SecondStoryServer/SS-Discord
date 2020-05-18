@@ -183,7 +183,7 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
 
         String url = api.getGatewayUrl() + "?encoding=json&v=" + DISCORD_GATEWAY_VERSION + "&compress=zlib-stream";
         if (decompressor == null)
-            decompressor = new ZlibDecompressor(api.getMaxBufferSize());
+            decompressor = new ZlibDecompressor();
 
         try {
             WebSocketFactory socketFactory = api.getWebSocketFactory();
@@ -330,7 +330,6 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
         reconnect(false);
     }
 
-
     public void reconnect(boolean callFromQueue) throws InterruptedException {
         Set<MDC.MDCCloseable> contextEntries = null;
         Map<String, String> previousContext = null;
@@ -354,7 +353,7 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
         while (shouldReconnect) {
             api.setStatus(JDA.Status.WAITING_TO_RECONNECT);
             int delay = reconnectTimeoutS;
-            reconnectTimeoutS = Math.min(reconnectTimeoutS << 1, api.getMaxReconnectDelay());
+            reconnectTimeoutS = Math.min(reconnectTimeoutS << 1, 900);
             Thread.sleep(delay * 1000);
             handleIdentifyRateLimit = false;
             api.setStatus(JDA.Status.ATTEMPTING_TO_RECONNECT);
@@ -403,7 +402,7 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
                 .put("properties", connectionProperties)
                 .put("v", DISCORD_GATEWAY_VERSION)
                 .put("guild_subscriptions", true)
-                .put("large_threshold", api.getLargeThreshold());
+                .put("large_threshold", 250);
         DataObject identify = DataObject.empty()
                 .put("op", WebSocketCode.IDENTIFY)
                 .put("d", payload);

@@ -7,19 +7,13 @@ import java.util.concurrent.ConcurrentMap;
 
 public class MetaConfig {
     private final ConcurrentMap<String, String> mdcContextMap = new ConcurrentHashMap<>();
-    private final int maxBufferSize;
 
-    public MetaConfig(int maxBufferSize) {
-        this.maxBufferSize = maxBufferSize;
+    public MetaConfig() {
     }
 
     @NotNull
     public ConcurrentMap<String, String> getMdcContextMap() {
         return mdcContextMap;
-    }
-
-    public int getMaxBufferSize() {
-        return maxBufferSize;
     }
 
 }

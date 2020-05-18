@@ -16,7 +16,6 @@ public class MemberCacheView extends SnowflakeCacheViewImpl<Member> implements S
         return get(id);
     }
 
-
     @Nullable
     public Member getElementById(@NotNull String id) {
         return getElementById(MiscUtil.parseSnowflake(id));

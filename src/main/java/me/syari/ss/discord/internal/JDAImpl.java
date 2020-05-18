@@ -86,14 +86,6 @@ public class JDAImpl implements JDA {
         this.eventCache = new EventCache();
     }
 
-    public int getLargeThreshold() {
-        return sessionConfig.getLargeThreshold();
-    }
-
-    public int getMaxBufferSize() {
-        return metaConfig.getMaxBufferSize();
-    }
-
     public boolean chunkGuild(long id) {
         try {
             return chunkingFilter.filter(id);
@@ -314,10 +306,6 @@ public class JDAImpl implements JDA {
 
     public long getResponseTotal() {
         return responseTotal;
-    }
-
-    public int getMaxReconnectDelay() {
-        return sessionConfig.getMaxReconnectDelay();
     }
 
     public EntityBuilder getEntityBuilder() {

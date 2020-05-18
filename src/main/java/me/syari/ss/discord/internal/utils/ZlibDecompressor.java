@@ -17,13 +17,12 @@ public class ZlibDecompressor {
     private static final Logger LOG = JDALogger.getLog(ZlibDecompressor.class);
     private static final int Z_SYNC_FLUSH = 0x0000FFFF;
 
-    private final int maxBufferSize;
+    private final int maxBufferSize = 2048;
     private final Inflater inflater = new Inflater();
     private ByteBuffer flushBuffer = null;
     private SoftReference<ByteArrayOutputStream> decompressBuffer = null;
 
-    public ZlibDecompressor(int maxBufferSize) {
-        this.maxBufferSize = maxBufferSize;
+    public ZlibDecompressor() {
     }
 
     @Contract(" -> new")
