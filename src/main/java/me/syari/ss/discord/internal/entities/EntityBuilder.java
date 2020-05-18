@@ -168,9 +168,6 @@ public class EntityBuilder {
                 member = new Member(guild, user);
                 playbackCache = true;
             }
-            if (guild.getOwnerIdLong() == user.getIdLong()) {
-                guild.setOwner(member);
-            }
         }
 
         if (playbackCache) {
@@ -204,8 +201,7 @@ public class EntityBuilder {
         for (int k = 0; k < rolesJson.length(); k++) {
             final long roleId = rolesJson.getLong(k);
             Role role = guild.getRolesView().get(roleId);
-            if (role == null) {
-            } else {
+            if (role != null) {
                 member.getRoleSet().add(role);
             }
         }

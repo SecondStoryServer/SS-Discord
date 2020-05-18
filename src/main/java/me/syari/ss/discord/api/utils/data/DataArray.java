@@ -44,6 +44,7 @@ public class DataArray implements Iterable<Object> {
         try {
             child = get(Map.class, index, null, null);
         } catch (ClassCastException ex) {
+            ex.printStackTrace();
         }
         if (child == null)
             throw valueError(index, "DataObject");

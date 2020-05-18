@@ -61,8 +61,6 @@ public class GuildSetupController {
     }
 
     public void onCreate(long id, @NotNull DataObject obj) {
-        boolean available = obj.isNull("unavailable") || !obj.getBoolean("unavailable");
-
         GuildSetupNode node = setupNodes.get(id);
         if (node == null) {
             node = new GuildSetupNode(id, this);
@@ -93,14 +91,6 @@ public class GuildSetupController {
         synchronized (pendingChunks) {
             pendingChunks.clear();
         }
-    }
-
-    int getIncompleteCount() {
-        return incompleteCount;
-    }
-
-    int getChunkingCount() {
-        return chunkingGuilds.size();
     }
 
     void sendChunkRequest(Object obj) {
@@ -151,10 +141,5 @@ public class GuildSetupController {
         CHUNKING,
         BUILDING,
         READY
-    }
-
-    @FunctionalInterface
-    public interface StatusListener {
-        void onStatusChange(long guildId, Status oldStatus, Status newStatus);
     }
 }

@@ -78,7 +78,7 @@ public class DataObject {
         try {
             child = (Map<String, Object>) get(Map.class, key);
         } catch (ClassCastException ex) {
-
+            ex.printStackTrace();
         }
         return child == null ? Optional.empty() : Optional.of(new DataObject(child));
     }
@@ -95,6 +95,7 @@ public class DataObject {
         try {
             child = (List<Object>) get(List.class, key);
         } catch (ClassCastException ex) {
+            ex.printStackTrace();
         }
         return child == null ? Optional.empty() : Optional.of(new DataArray(child));
     }

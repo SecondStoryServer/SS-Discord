@@ -15,16 +15,6 @@ public class ReadyHandler extends SocketHandler {
     @Override
     protected Long handleInternally(@NotNull DataObject content) {
         System.out.println(">> ReadyHandler");
-        DataArray guilds = content.getArray("guilds");
-        TLongObjectMap<DataObject> distinctGuilds = new TLongObjectHashMap<>();
-        for (int i = 0; i < guilds.length(); i++) {
-            DataObject guild = guilds.getObject(i);
-            long id = guild.getUnsignedLong("id");
-            DataObject previous = distinctGuilds.put(id, guild);
-            if (previous != null) {
-
-            }
-        }
         return null;
     }
 }

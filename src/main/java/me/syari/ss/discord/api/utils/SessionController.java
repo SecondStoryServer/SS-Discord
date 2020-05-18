@@ -84,6 +84,7 @@ public class SessionController {
                         Thread.sleep(this.delay - interval);
                 }
             } catch (InterruptedException ex) {
+                ex.printStackTrace();
             }
             processQueue();
             synchronized (lock) {
@@ -106,7 +107,6 @@ public class SessionController {
                     if (this.delay > 0)
                         Thread.sleep(this.delay);
                 } catch (IllegalStateException e) {
-                    Throwable t = e.getCause();
                     appendSession(node);
                 } catch (InterruptedException e) {
 

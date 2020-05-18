@@ -35,16 +35,6 @@ public class GuildSetupNode {
         this.sync = false;
     }
 
-    public int getExpectedMemberCount() {
-        return expectedMemberCount;
-    }
-
-    public int getCurrentMemberCount() {
-        TLongHashSet knownMembers = new TLongHashSet(members.keySet());
-        knownMembers.removeAll(removedMembers);
-        return knownMembers.size();
-    }
-
     @Override
     public String toString() {
         return "GuildSetupNode[" + id + "|" + status + ']' +

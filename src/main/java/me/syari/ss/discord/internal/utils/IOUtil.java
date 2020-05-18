@@ -15,18 +15,6 @@ public class IOUtil {
     public static String getHost(String uri) {
         return URI.create(uri).getHost();
     }
-
-    public static byte[] readFully(InputStream stream) throws IOException {
-        byte[] buffer = new byte[1024];
-        try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
-            int readAmount;
-            while ((readAmount = stream.read(buffer)) != -1) {
-                bos.write(buffer, 0, readAmount);
-            }
-            return bos.toByteArray();
-        }
-    }
-
     public static int getIntBigEndian(byte @NotNull [] array, int offset) {
         return array[offset + 3] & 0xFF | (array[offset + 2] & 0xFF) << 8 | (array[offset + 1] & 0xFF) << 16 | (array[offset] & 0xFF) << 24;
     }

@@ -21,7 +21,6 @@ public class Guild implements ISnowflake {
 
     private final CompletableFuture<Void> chunkingCallback = new CompletableFuture<>();
 
-    private Member owner;
     private String name;
     private long ownerId;
     private int memberCount;
@@ -42,14 +41,6 @@ public class Guild implements ISnowflake {
     @NotNull
     private String getName() {
         return name;
-    }
-
-    public Member getOwner() {
-        return owner;
-    }
-
-    public long getOwnerIdLong() {
-        return ownerId;
     }
 
     public boolean isMember(@NotNull User user) {
@@ -104,10 +95,6 @@ public class Guild implements ISnowflake {
     @Nullable
     public Emote getEmoteById(long id) {
         return getEmoteCache().getElementById(id);
-    }
-
-    public void setOwner(Member owner) {
-        this.owner = owner;
     }
 
     public void setName(String name) {

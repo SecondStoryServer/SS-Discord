@@ -57,6 +57,7 @@ public class Request<T> {
                  CallbackContext ___ = CallbackContext.getInstance()) {
                 onSuccess.accept(successObj);
             } catch (Throwable t) {
+                t.printStackTrace();
             }
         });
     }
@@ -76,6 +77,7 @@ public class Request<T> {
                  CallbackContext ___ = CallbackContext.getInstance()) {
                 onFailure.accept(failException);
             } catch (Throwable t) {
+                t.printStackTrace();
             }
         });
     }

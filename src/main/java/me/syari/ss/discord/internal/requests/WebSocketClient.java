@@ -1,7 +1,6 @@
 package me.syari.ss.discord.internal.requests;
 
 import com.neovisionaries.ws.client.*;
-import me.syari.ss.discord.api.exceptions.ParsingException;
 import me.syari.ss.discord.api.requests.CloseCode;
 import me.syari.ss.discord.api.utils.SessionController;
 import me.syari.ss.discord.api.utils.data.DataArray;
@@ -263,11 +262,6 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
         }
     }
 
-    protected long calculateIdentifyBackoff() {
-        long currentTime = System.currentTimeMillis();
-        return currentTime - (identifyTime + IDENTIFY_BACKOFF);
-    }
-
     protected void queueReconnect() {
         try {
             this.api.setStatus(JDA.Status.RECONNECT_QUEUED);
@@ -279,10 +273,6 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
     }
 
     protected void reconnect() throws InterruptedException {
-        reconnect(false);
-    }
-
-    public void reconnect(boolean callFromQueue) throws InterruptedException {
         if (shutdown) {
             api.setStatus(JDA.Status.SHUTDOWN);
             return;
@@ -301,6 +291,7 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
                 api.setStatus(JDA.Status.SHUTDOWN);
                 return;
             } catch (RuntimeException ex) {
+                ex.printStackTrace();
             }
         }
     }
@@ -391,6 +382,7 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
         try {
             onEvent(content);
         } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 
@@ -482,7 +474,7 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
                         handler.handle(responseTotal, raw);
             }
         } catch (Exception ex) {
-
+            ex.printStackTrace();
         }
 
         if (responseTotal % EventCache.TIMEOUT_AMOUNT == 0)
@@ -512,11 +504,7 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
             throw e;
         }
 
-        try {
-            return DataObject.fromJson(jsonString);
-        } catch (ParsingException e) {
-            throw e;
-        }
+        return DataObject.fromJson(jsonString);
     }
 
     protected void maybeUnlock() {
@@ -529,6 +517,7 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
             queueLock.lockInterruptibly();
             task.run();
         } catch (InterruptedException e) {
+            e.printStackTrace();
         } finally {
             maybeUnlock();
         }
@@ -539,6 +528,7 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
             queueLock.lockInterruptibly();
             task.get();
         } catch (InterruptedException e) {
+            e.printStackTrace();
         } finally {
             maybeUnlock();
         }
@@ -599,7 +589,7 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
         public void run(boolean isLast) throws InterruptedException {
             if (shutdown)
                 return;
-            reconnect(true);
+            reconnect();
             if (isLast)
                 return;
             try {

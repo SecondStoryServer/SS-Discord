@@ -84,7 +84,6 @@ public class Requester {
 
         okhttp3.Request request = builder.build();
 
-        Set<String> rays = new LinkedHashSet<>();
         okhttp3.Response[] responses = new okhttp3.Response[4];
         okhttp3.Response lastResponse = null;
         try {
@@ -94,8 +93,6 @@ public class Requester {
                 lastResponse = call.execute();
                 responses[attempt] = lastResponse;
                 String cfRay = lastResponse.header("CF-RAY");
-                if (cfRay != null)
-                    rays.add(cfRay);
 
                 if (lastResponse.code() < 500)
                     break;
