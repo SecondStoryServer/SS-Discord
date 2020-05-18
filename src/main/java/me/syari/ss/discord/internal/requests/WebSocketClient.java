@@ -72,7 +72,7 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
     public WebSocketClient(@NotNull JDAImpl api) {
         this.api = api;
         this.executor = api.getGatewayPool();
-        this.shouldReconnect = api.isAutoReconnect();
+        this.shouldReconnect = true;
         this.connectNode = new StartingNode();
         this.handlers = new HashMap<String, SocketHandler>() {
             {
@@ -180,8 +180,9 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
     public synchronized void shutdown() {
         shutdown = true;
         shouldReconnect = false;
-        if (connectNode != null)
+        if (connectNode != null) {
             api.getSessionController().removeSession(connectNode);
+        }
         close(1000, "Shutting down");
     }
 
@@ -413,7 +414,7 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
                 .put("token", getToken())
                 .put("properties", connectionProperties)
                 .put("v", DISCORD_GATEWAY_VERSION)
-                .put("guild_subscriptions", api.isGuildSubscriptions())
+                .put("guild_subscriptions", true)
                 .put("large_threshold", api.getLargeThreshold());
         DataObject identify = DataObject.empty()
                 .put("op", WebSocketCode.IDENTIFY)

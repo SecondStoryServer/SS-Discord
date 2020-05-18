@@ -10,33 +10,16 @@ import java.util.concurrent.ConcurrentMap;
 
 public class MetaConfig {
     private final ConcurrentMap<String, String> mdcContextMap;
-    private final boolean useShutdownHook;
-    private final boolean guildSubscriptions;
     private final int maxBufferSize;
 
-    public MetaConfig(int maxBufferSize, @NotNull EnumSet<ConfigFlag> flags) {
+    public MetaConfig(int maxBufferSize) {
         this.maxBufferSize = maxBufferSize;
-        boolean enableMDC = flags.contains(ConfigFlag.MDC_CONTEXT);
-        if (enableMDC) {
-            this.mdcContextMap = new ConcurrentHashMap<>();
-        } else {
-            this.mdcContextMap = null;
-        }
-        this.useShutdownHook = flags.contains(ConfigFlag.SHUTDOWN_HOOK);
-        this.guildSubscriptions = flags.contains(ConfigFlag.GUILD_SUBSCRIPTIONS);
+        this.mdcContextMap = new ConcurrentHashMap<>();
     }
 
     @Nullable
     public ConcurrentMap<String, String> getMdcContextMap() {
         return mdcContextMap;
-    }
-
-    public boolean isUseShutdownHook() {
-        return useShutdownHook;
-    }
-
-    public boolean isGuildSubscriptions() {
-        return guildSubscriptions;
     }
 
     public int getMaxBufferSize() {

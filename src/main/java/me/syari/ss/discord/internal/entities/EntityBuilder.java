@@ -64,9 +64,9 @@ public class EntityBuilder {
         final DataArray emotesArray = guildJson.getArray("emojis");
         final long ownerId = guildJson.getUnsignedLong("owner_id", 0L);
 
-        guildObj.setName(name)
-                .setOwnerId(ownerId)
-                .setMemberCount(memberCount);
+        guildObj.setName(name);
+        guildObj.setOwnerId(ownerId);
+        guildObj.setMemberCount(memberCount);
 
         SnowflakeCacheViewImpl<Guild> guildView = getJDA().getGuildsView();
         try (UnlockHook hook = guildView.writeLock()) {
@@ -128,7 +128,7 @@ public class EntityBuilder {
                 } else {
                     userObj = new User(id, getJDA()).setFake(fake);
                     // Cache user if guild subscriptions are enabled
-                    if (modifyCache && getJDA().isGuildSubscriptions()) {
+                    if (modifyCache) {
                         if (fake)
                             getJDA().getFakeUserMap().put(id, userObj);
                         else

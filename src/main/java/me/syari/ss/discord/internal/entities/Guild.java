@@ -36,7 +36,7 @@ public class Guild implements ISnowflake {
     }
 
     public boolean isLoaded() {
-        return getJDA().isGuildSubscriptions() && (long) getMemberCount() <= getMemberCache().size();
+        return (long) getMemberCount() <= getMemberCache().size();
     }
 
     private int getMemberCount() {
@@ -112,19 +112,16 @@ public class Guild implements ISnowflake {
     }
 
     public void setOwner(Member owner) {
-        if (getJDA().isGuildSubscriptions())
-            this.owner = owner;
+        this.owner = owner;
     }
 
-    public Guild setName(String name) {
+    public void setName(String name) {
         this.name = name;
-        return this;
     }
 
 
-    public Guild setOwnerId(long ownerId) {
+    public void setOwnerId(long ownerId) {
         this.ownerId = ownerId;
-        return this;
     }
 
     public void setMemberCount(int count) {

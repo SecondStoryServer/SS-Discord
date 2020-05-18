@@ -71,25 +71,23 @@ public class JDAImpl implements JDA {
                    @NotNull SessionConfig sessionConfig,
                    @NotNull ThreadingConfig threadConfig,
                    @NotNull MetaConfig metaConfig,
+                   @NotNull ChunkingFilter chunkingFilter,
                    @NotNull Consumer<MessageReceivedEvent> messageReceivedEvent) {
         this.token = "Bot " + token;
         this.threadConfig = threadConfig;
         this.sessionConfig = sessionConfig;
         this.metaConfig = metaConfig;
+        this.chunkingFilter = chunkingFilter;
         this.messageReceivedEvent = messageReceivedEvent;
-        this.shutdownHook = this.metaConfig.isUseShutdownHook() ? new Thread(this::shutdown, "JDA Shutdown Hook") : null;
+        this.shutdownHook = new Thread(this::shutdown, "JDA Shutdown Hook");
         this.requester = new Requester(this);
         this.requester.setRetryOnTimeout(this.sessionConfig.isRetryOnTimeout());
         this.guildSetupController = new GuildSetupController(this);
-        this.eventCache = new EventCache(isGuildSubscriptions());
+        this.eventCache = new EventCache();
     }
 
     public boolean isRelativeRateLimit() {
         return sessionConfig.isRelativeRateLimit();
-    }
-
-    public boolean isGuildSubscriptions() {
-        return metaConfig.isGuildSubscriptions();
     }
 
     public int getLargeThreshold() {
@@ -102,15 +100,11 @@ public class JDAImpl implements JDA {
 
     public boolean chunkGuild(long id) {
         try {
-            return isGuildSubscriptions() && chunkingFilter.filter(id);
+            return chunkingFilter.filter(id);
         } catch (Exception e) {
             LOG.error("Uncaught exception from chunking filter", e);
             return true;
         }
-    }
-
-    public void setChunkingFilter(ChunkingFilter filter) {
-        this.chunkingFilter = filter;
     }
 
     public SessionController getSessionController() {
@@ -213,11 +207,6 @@ public class JDAImpl implements JDA {
     @NotNull
     public String getToken() {
         return token;
-    }
-
-
-    public boolean isAutoReconnect() {
-        return sessionConfig.isAutoReconnect();
     }
 
     @NotNull

@@ -41,10 +41,9 @@ public class JDABuilder {
         OkHttpClient httpClient = this.httpClientBuilder.build();
         ThreadingConfig threadingConfig = new ThreadingConfig();
         SessionConfig sessionConfig = new SessionConfig(httpClient, flags, maxReconnectDelay, largeThreshold);
-        MetaConfig metaConfig = new MetaConfig(maxBufferSize, flags);
+        MetaConfig metaConfig = new MetaConfig(maxBufferSize);
 
-        JDAImpl jda = new JDAImpl(token, sessionConfig, threadingConfig, metaConfig, messageReceivedEvent);
-        jda.setChunkingFilter(chunkingFilter);
+        JDAImpl jda = new JDAImpl(token, sessionConfig, threadingConfig, metaConfig, chunkingFilter, messageReceivedEvent);
 
         jda.setStatus(JDA.Status.INITIALIZED);
 

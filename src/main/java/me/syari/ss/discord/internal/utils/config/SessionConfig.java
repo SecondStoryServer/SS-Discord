@@ -41,10 +41,6 @@ public class SessionConfig {
         return webSocketFactory;
     }
 
-    public boolean isAutoReconnect() {
-        return flags.contains(ConfigFlag.AUTO_RECONNECT);
-    }
-
     public boolean isRetryOnTimeout() {
         return flags.contains(ConfigFlag.RETRY_TIMEOUT);
     }

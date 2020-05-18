@@ -7,8 +7,8 @@ import java.util.Calendar;
 import java.util.TimeZone;
 
 public class TimeUtil {
-    public static final long DISCORD_EPOCH = 1420070400000L;
-    public static final long TIMESTAMP_OFFSET = 22;
+    private static final long DISCORD_EPOCH = 1420070400000L;
+    private static final long TIMESTAMP_OFFSET = 22;
 
     @NotNull
     public static OffsetDateTime getTimeCreated(long entityId) {
