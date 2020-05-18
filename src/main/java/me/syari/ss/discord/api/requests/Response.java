@@ -33,7 +33,7 @@ public class Response implements Closeable {
     }
 
     @SuppressWarnings("ConstantConditions")
-    public @Nullable InputStream getBody(okhttp3.@NotNull Response response) throws IOException {
+    private  @Nullable InputStream getBody(okhttp3.@NotNull Response response) throws IOException {
         String encoding = response.header("content-encoding", "");
         InputStream data = new BufferedInputStream(response.body().byteStream());
         data.mark(256);
@@ -100,7 +100,7 @@ public class Response implements Closeable {
     }
 
     public boolean isOk() {
-        return this.code > 199 && this.code < 300;
+        return 199 < this.code && this.code < 300;
     }
 
     public boolean isRateLimit() {
@@ -132,9 +132,11 @@ public class Response implements Closeable {
     @SuppressWarnings("ConstantConditions")
     private <T> Optional<T> parseBody(boolean opt, Class<T> clazz, IOFunction<BufferedReader, T> parser) {
         if (attemptedParsing) {
-            if (object != null && clazz.isAssignableFrom(object.getClass()))
+            if (object != null && clazz.isAssignableFrom(object.getClass())) {
                 return Optional.of(clazz.cast(object));
-            return Optional.empty();
+            } else {
+                return Optional.empty();
+            }
         }
 
         attemptedParsing = true;
@@ -142,25 +144,24 @@ public class Response implements Closeable {
             return Optional.empty();
         }
 
-        BufferedReader reader = null;
+        BufferedReader reader = new BufferedReader(new InputStreamReader(body));
         try {
-            reader = new BufferedReader(new InputStreamReader(body));
             reader.mark(1024);
             T t = parser.apply(reader);
             this.object = t;
             return Optional.ofNullable(t);
-        } catch (final Exception e) {
+        } catch (final Exception ex1) {
             try {
                 reader.reset();
                 this.fallbackString = readString(reader);
                 reader.close();
-            } catch (NullPointerException | IOException ex) {
-                ex.printStackTrace();
+            } catch (NullPointerException | IOException ex2) {
+                ex2.printStackTrace();
             }
-            if (opt && e instanceof ParsingException) {
+            if (opt && ex1 instanceof ParsingException) {
                 return Optional.empty();
             } else {
-                throw new IllegalStateException("An error occurred while parsing the response for a RestAction", e);
+                throw new IllegalStateException("An error occurred while parsing the response for a RestAction", ex1);
             }
         }
     }

@@ -6,7 +6,7 @@ import java.util.function.Consumer;
 
 public class ContextException extends Exception {
     @NotNull
-    public static Consumer<Throwable> here(@NotNull Consumer<? super Throwable> acceptor) {
+    public static Consumer<Throwable> from(@NotNull Consumer<? super Throwable> acceptor) {
         return new ContextConsumer(new ContextException(), acceptor);
     }
 

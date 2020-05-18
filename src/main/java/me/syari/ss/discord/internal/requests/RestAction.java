@@ -21,15 +21,10 @@ public class RestAction<T> {
     private static final Consumer<? super Throwable> DEFAULT_FAILURE = t -> {
     };
 
-    protected static final boolean passContext = true;
     protected final JDA api;
 
     private final Route.CompiledRoute route;
     private final BiFunction<Response, Request<T>, T> handler;
-
-    public static boolean isPassContext() {
-        return passContext;
-    }
 
     public RestAction(@NotNull JDA api, Route.CompiledRoute route) {
         this(api, route, null);

@@ -11,7 +11,6 @@ import java.util.Optional;
 public class ErrorResponseException extends RuntimeException {
     private ErrorResponseException(Response response, int code, String meaning) {
         super(code + ": " + meaning);
-
         if (response != null && response.getException() != null) {
             initCause(response.getException());
         }
@@ -19,24 +18,26 @@ public class ErrorResponseException extends RuntimeException {
 
     @Contract("_, _ -> new")
     public static @NotNull ErrorResponseException create(@NotNull ErrorResponse errorResponse, @NotNull Response response) {
-        Optional<DataObject> optObj = response.optObject();
+        Optional<DataObject> optObject = response.optObject();
         String meaning = errorResponse.getMeaning();
         int code = errorResponse.getCode();
         if (response.isError() && response.getException() != null) {
             code = response.code;
             meaning = response.getException().getClass().getName();
-        } else if (optObj.isPresent()) {
-            DataObject obj = optObj.get();
-            if (!obj.isNull("code") || !obj.isNull("message")) {
-                if (!obj.isNull("code")) {
-                    code = obj.getInt("code");
+        } else if (optObject.isPresent()) {
+            DataObject object = optObject.get();
+            boolean isNullCode = object.isNull("code");
+            boolean isNullMessage = object.isNull("message");
+            if (!isNullCode || !isNullMessage) {
+                if (!isNullCode) {
+                    code = object.getInt("code");
                 }
-                if (!obj.isNull("message")) {
-                    meaning = obj.getString("message");
+                if (!isNullMessage) {
+                    meaning = object.getString("message");
                 }
             } else {
                 code = response.code;
-                meaning = obj.toString();
+                meaning = object.toString();
             }
         } else {
             code = response.code;

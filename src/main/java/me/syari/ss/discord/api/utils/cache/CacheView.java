@@ -9,7 +9,6 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 public interface CacheView<T> extends Iterable<T> {
-
     @NotNull
     ClosableIterator<T> lockedIterator();
 

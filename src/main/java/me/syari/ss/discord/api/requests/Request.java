@@ -15,16 +15,14 @@ import org.jetbrains.annotations.Nullable;
 import java.util.function.Consumer;
 
 public class Request<T> {
-    private final JDA api;
     private final RestAction<T> restAction;
     private final Consumer<? super T> onSuccess;
     private final Consumer<? super Throwable> onFailure;
     private final boolean shouldQueue;
-    private final Route.CompiledRoute route;
     private final RequestBody body;
-
-    private final String localReason;
-
+    private final Route.CompiledRoute route;
+    private final JDA api;
+    private final String localReason = ThreadLocalReason.getCurrent();
     private boolean isCanceled = false;
 
     public Request(RestAction<T> restAction,
@@ -37,17 +35,13 @@ public class Request<T> {
         this.onSuccess = onSuccess;
         if (onFailure instanceof ContextException.ContextConsumer) {
             this.onFailure = onFailure;
-        } else if (RestAction.isPassContext()) {
-            this.onFailure = ContextException.here(onFailure);
         } else {
-            this.onFailure = onFailure;
+            this.onFailure = ContextException.from(onFailure);
         }
         this.shouldQueue = shouldQueue;
         this.body = body;
         this.route = route;
-
         this.api = restAction.getJDA();
-        this.localReason = ThreadLocalReason.getCurrent();
     }
 
     public void onSuccess(T successObj) {
@@ -56,8 +50,8 @@ public class Request<T> {
             try (ThreadLocalReason.Closable __ = ThreadLocalReason.closable(localReason);
                  CallbackContext ___ = CallbackContext.getInstance()) {
                 onSuccess.accept(successObj);
-            } catch (Throwable t) {
-                t.printStackTrace();
+            } catch (Throwable ex) {
+                ex.printStackTrace();
             }
         });
     }
