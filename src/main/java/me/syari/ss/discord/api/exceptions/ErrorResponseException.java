@@ -12,8 +12,9 @@ public class ErrorResponseException extends RuntimeException {
     private ErrorResponseException(Response response, int code, String meaning) {
         super(code + ": " + meaning);
 
-        if (response != null && response.getException() != null)
+        if (response != null && response.getException() != null) {
             initCause(response.getException());
+        }
     }
 
     @Contract("_, _ -> new")
@@ -44,6 +45,4 @@ public class ErrorResponseException extends RuntimeException {
 
         return new ErrorResponseException(response, code, meaning);
     }
-
-
 }

@@ -19,53 +19,21 @@ import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Set;
 
-public class MessageAction extends RestAction<Message> implements Appendable {
+public class MessageAction extends RestAction<Message> {
     protected final Set<InputStream> ownedResources = new HashSet<>();
-    protected final StringBuilder content;
+    protected final String content;
     protected final TextChannel channel;
 
-    public MessageAction(JDA api, Route.CompiledRoute route, TextChannel channel) {
+    public MessageAction(JDA api, Route.CompiledRoute route, TextChannel channel, @NotNull String content) {
         super(api, route);
-        this.content = new StringBuilder();
-        this.channel = channel;
-    }
-
-    public MessageAction(JDA api, Route.CompiledRoute route, TextChannel channel, @NotNull StringBuilder contentBuilder) {
-        super(api, route);
-        Checks.check(contentBuilder.length() <= Message.MAX_CONTENT_LENGTH,
+        Checks.check(content.length() <= Message.MAX_CONTENT_LENGTH,
                 "Cannot build a Message with more than %d characters. Please limit your input.", Message.MAX_CONTENT_LENGTH);
-        this.content = contentBuilder;
+        this.content = content;
         this.channel = channel;
     }
 
     private boolean isNotEmpty() {
         return !Helpers.isBlank(content);
-    }
-
-    @NotNull
-    @Override
-    public MessageAction append(final CharSequence csq, final int start, final int end) {
-        if (Message.MAX_CONTENT_LENGTH < content.length() + end - start) {
-            throw new IllegalArgumentException("A message may not exceed 2000 characters. Please limit your input!");
-        }
-        content.append(csq, start, end);
-        return this;
-    }
-
-    @NotNull
-    @Override
-    public MessageAction append(final char c) {
-        if (content.length() == Message.MAX_CONTENT_LENGTH) {
-            throw new IllegalArgumentException("A message may not exceed 2000 characters. Please limit your input!");
-        }
-        content.append(c);
-        return this;
-    }
-
-    @NotNull
-    @Override
-    public MessageAction append(@NotNull final CharSequence csq) {
-        return append(csq, 0, csq.length());
     }
 
     private void clearResources() {

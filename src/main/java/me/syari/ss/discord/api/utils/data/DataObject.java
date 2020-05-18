@@ -17,7 +17,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
-public class DataObject implements SerializableData {
+public class DataObject {
     private static final Logger log = LoggerFactory.getLogger(DataObject.class);
     private static final ObjectMapper mapper = new ObjectMapper();
     private static final SimpleModule module = new SimpleModule();
@@ -183,8 +183,8 @@ public class DataObject implements SerializableData {
 
     @NotNull
     public DataObject put(@NotNull String key, @Nullable Object value) {
-        if (value instanceof SerializableData)
-            data.put(key, ((SerializableData) value).toData().data);
+        if (value instanceof DataObject)
+            data.put(key, ((DataObject) value).toData().data);
         else if (value instanceof DataArray)
             data.put(key, ((DataArray) value).data);
         else
@@ -207,7 +207,6 @@ public class DataObject implements SerializableData {
     }
 
     @NotNull
-    @Override
     public DataObject toData() {
         return this;
     }

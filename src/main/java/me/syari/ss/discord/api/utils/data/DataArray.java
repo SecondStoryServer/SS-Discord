@@ -78,8 +78,8 @@ public class DataArray implements Iterable<Object> {
 
     @NotNull
     public DataArray add(@Nullable Object value) {
-        if (value instanceof SerializableData)
-            data.add(((SerializableData) value).toData().data);
+        if (value instanceof DataObject)
+            data.add(((DataObject) value).toData().data);
         else if (value instanceof DataArray)
             data.add(((DataArray) value).data);
         else
