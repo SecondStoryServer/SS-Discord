@@ -7,11 +7,11 @@ import me.syari.ss.discord.api.utils.data.DataArray;
 import me.syari.ss.discord.api.utils.data.DataObject;
 import me.syari.ss.discord.internal.JDA;
 import me.syari.ss.discord.internal.handle.*;
-import me.syari.ss.discord.internal.utils.IOUtil;
 import me.syari.ss.discord.internal.utils.ZlibDecompressor;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -173,7 +173,7 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
         try {
             WebSocketFactory socketFactory = api.getWebSocketFactory();
             synchronized (socketFactory) {
-                String host = IOUtil.getHost(url);
+                String host = URI.create(url).getHost();
                 if (host != null) {
                     socketFactory.setServerName(host);
                 } else {

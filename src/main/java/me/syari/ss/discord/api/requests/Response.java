@@ -3,13 +3,16 @@ package me.syari.ss.discord.api.requests;
 import me.syari.ss.discord.api.exceptions.ParsingException;
 import me.syari.ss.discord.api.utils.IOFunction;
 import me.syari.ss.discord.api.utils.data.DataObject;
-import me.syari.ss.discord.internal.utils.IOUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.Inflater;
+import java.util.zip.InflaterInputStream;
+import java.util.zip.ZipException;
 
 public class Response implements Closeable {
     public static final int ERROR_CODE = -1;
@@ -29,6 +32,24 @@ public class Response implements Closeable {
         this.exception = exception;
     }
 
+    @SuppressWarnings("ConstantConditions")
+    public @Nullable InputStream getBody(okhttp3.@NotNull Response response) throws IOException {
+        String encoding = response.header("content-encoding", "");
+        InputStream data = new BufferedInputStream(response.body().byteStream());
+        data.mark(256);
+        try {
+            if (encoding.equalsIgnoreCase("gzip")) {
+                return new GZIPInputStream(data);
+            } else if (encoding.equalsIgnoreCase("deflate")) {
+                return new InflaterInputStream(data, new Inflater(true));
+            }
+        } catch (ZipException | EOFException ex) {
+            data.reset();
+            return null;
+        }
+        return data;
+    }
+
     public Response(@Nullable final okhttp3.Response response, final int code, final long retryAfter) {
         this.rawResponse = response;
         this.code = code;
@@ -39,7 +60,7 @@ public class Response implements Closeable {
             this.body = null;
         } else {
             try {
-                this.body = IOUtil.getBody(response);
+                this.body = getBody(response);
             } catch (final Exception ex) {
                 throw new IllegalStateException("An error occurred while parsing the response for a RestAction", ex);
             }

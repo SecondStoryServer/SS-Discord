@@ -37,12 +37,22 @@ public class ZlibDecompressor {
         return buffer;
     }
 
+    private int getIntBigEndian(byte @NotNull [] array, int offset) {
+        return array[offset + 3] & 0xFF | (array[offset + 2] & 0xFF) << 8 | (array[offset + 1] & 0xFF) << 16 | (array[offset] & 0xFF) << 24;
+    }
+
     private boolean isFlush(byte @NotNull [] data) {
         if (data.length < 4) {
             return false;
         }
-        int suffix = IOUtil.getIntBigEndian(data, data.length - 4);
+        int suffix = getIntBigEndian(data, data.length - 4);
         return suffix == Z_SYNC_FLUSH;
+    }
+
+    private @NotNull ByteBuffer reallocate(ByteBuffer original, int length) {
+        ByteBuffer buffer = ByteBuffer.allocate(length);
+        buffer.put(original);
+        return buffer;
     }
 
     private void buffer(byte[] data) {
@@ -51,7 +61,7 @@ public class ZlibDecompressor {
 
         if (flushBuffer.capacity() < data.length + flushBuffer.position()) {
             flushBuffer.flip();
-            flushBuffer = IOUtil.reallocate(flushBuffer, (flushBuffer.capacity() + data.length) * 2);
+            flushBuffer = reallocate(flushBuffer, (flushBuffer.capacity() + data.length) * 2);
         }
 
         flushBuffer.put(data);
