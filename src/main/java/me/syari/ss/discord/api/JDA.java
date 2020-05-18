@@ -38,10 +38,6 @@ public interface JDA {
         }
     }
 
-    default void awaitStatus(@NotNull Status status) throws InterruptedException {
-        awaitStatus(status, new Status[0]);
-    }
-
     void awaitStatus(@NotNull Status status, @NotNull Status... failOn) throws InterruptedException;
 
     default void awaitReady() throws InterruptedException {

@@ -48,8 +48,7 @@ public class SessionController {
     @NotNull
     public String getGateway(@NotNull JDA api) {
         Route.CompiledRoute route = Route.Misc.GATEWAY.compile();
-        return new RestAction<String>(api, route,
-                (response, request) -> response.getObject().getString("url")).complete();
+        return new RestAction<String>(api, route, (response, request) -> response.getObject().getString("url")).complete();
     }
 
     protected void runWorker() {
