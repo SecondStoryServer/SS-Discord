@@ -69,10 +69,6 @@ public class ZlibDecompressor {
         inflater.reset();
     }
 
-    public void shutdown() {
-        reset();
-    }
-
     public String decompress(byte[] data) throws DataFormatException {
         if (!isFlush(data)) {
             LOG.debug("Received incomplete data, writing to buffer. Length: {}", data.length);

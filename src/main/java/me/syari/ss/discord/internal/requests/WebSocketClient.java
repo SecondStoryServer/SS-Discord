@@ -36,7 +36,7 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
     public WebSocket socket;
     protected String sessionId = null;
     protected final Object readLock = new Object();
-    protected ZlibDecompressor decompressor;
+    protected ZlibDecompressor decompressor = new ZlibDecompressor();
 
     protected final ReentrantLock queueLock = new ReentrantLock();
     protected final ScheduledExecutorService executor;
@@ -180,8 +180,6 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
         initiating = true;
 
         String url = api.getGatewayUrl() + "?encoding=json&v=" + DISCORD_GATEWAY_VERSION + "&compress=zlib-stream";
-        if (decompressor == null)
-            decompressor = new ZlibDecompressor();
 
         try {
             WebSocketFactory socketFactory = api.getWebSocketFactory();
@@ -268,13 +266,11 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
                 LOG.error("WebSocket connection was closed and cannot be recovered due to identification issues\n{}", closeCode);
             }
 
-            if (decompressor != null)
-                decompressor.shutdown();
+            decompressor.reset();
             api.shutdownInternals();
         } else {
             synchronized (readLock) {
-                if (decompressor != null)
-                    decompressor.reset();
+                decompressor.reset();
             }
             if (isInvalidate)
                 invalidate();
@@ -580,9 +576,6 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
     }
 
     protected DataObject handleBinary(byte[] binary) throws DataFormatException {
-        if (decompressor == null) {
-            throw new IllegalStateException("Cannot decompress binary message due to unknown compression algorithm: ZLIB");
-        }
         String jsonString;
         try {
             jsonString = decompressor.decompress(binary);
