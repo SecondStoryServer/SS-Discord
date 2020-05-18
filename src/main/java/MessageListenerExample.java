@@ -1,4 +1,3 @@
-import me.syari.ss.discord.api.JDABuilder;
 import me.syari.ss.discord.internal.JDA;
 import me.syari.ss.discord.internal.entities.Member;
 import me.syari.ss.discord.internal.entities.TextChannel;
@@ -13,7 +12,7 @@ public class MessageListenerExample {
 
     public static void main(String[] args) {
         try {
-            jda = new JDABuilder("NjE0NjkwNTIwNDQyMjA4Mjky.Xr6kqg.9dRqzWGH6YcogNG8-BcsYGPYleg", (event) -> {
+            jda = JDA.build("NjE0NjkwNTIwNDQyMjA4Mjky.Xr6kqg.9dRqzWGH6YcogNG8-BcsYGPYleg", (event) -> {
                 User authorUser = event.getAuthor();
                 if (!authorUser.isBot()) {
                     Member authorMember = event.getMember();
@@ -31,8 +30,12 @@ public class MessageListenerExample {
                         jda.shutdown();
                     }
                 }
-            }).build();
-            jda.awaitReady();
+            });
+            if(jda != null){
+                jda.awaitReady();
+            } else {
+                System.out.println(">> Failed JDA build");
+            }
             System.out.println("Finished Building JDA!");
         } catch (LoginException | InterruptedException e) {
             e.printStackTrace();

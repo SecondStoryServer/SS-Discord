@@ -46,7 +46,7 @@ public class Request<T> {
         this.body = body;
         this.route = route;
 
-        this.api = (JDA) restAction.getJDA();
+        this.api = restAction.getJDA();
         this.localReason = ThreadLocalReason.getCurrent();
     }
 

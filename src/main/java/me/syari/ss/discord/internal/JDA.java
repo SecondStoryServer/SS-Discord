@@ -26,6 +26,7 @@ import me.syari.ss.discord.internal.utils.cache.SnowflakeCacheViewImpl;
 import me.syari.ss.discord.internal.utils.config.SessionConfig;
 import me.syari.ss.discord.internal.utils.config.ThreadingConfig;
 import okhttp3.OkHttpClient;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -41,6 +42,18 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.Consumer;
 
 public class JDA {
+    @Contract(pure = true)
+    public static @Nullable JDA build(@NotNull String token, Consumer<MessageReceivedEvent> messageReceivedEvent) throws LoginException {
+        if (token.isEmpty()) {
+            return null;
+        } else {
+            JDA jda = new JDA(token, messageReceivedEvent);
+            jda.setStatus(JDA.Status.INITIALIZED);
+            jda.login();
+            return jda;
+        }
+    }
+
     public static final Logger LOG = JDALogger.getLog(JDA.class);
 
     protected final SnowflakeCacheViewImpl<User> userCache = new SnowflakeCacheViewImpl<>(User.class);
@@ -56,8 +69,8 @@ public class JDA {
     protected final GuildSetupController guildSetupController;
 
     protected final String token;
-    protected final ThreadingConfig threadConfig;
-    protected final SessionConfig sessionConfig;
+    protected final ThreadingConfig threadConfig = new ThreadingConfig();
+    protected final SessionConfig sessionConfig = new SessionConfig();
     private final Consumer<MessageReceivedEvent> messageReceivedEvent;
 
     protected WebSocketClient client;
@@ -65,17 +78,11 @@ public class JDA {
     protected Status status = Status.INITIALIZING;
     protected long responseTotal;
     protected String gatewayUrl;
-    protected final ChunkingFilter chunkingFilter;
+    protected final ChunkingFilter chunkingFilter = ChunkingFilter.ALL;
 
     public JDA(@NotNull String token,
-               @NotNull SessionConfig sessionConfig,
-               @NotNull ThreadingConfig threadConfig,
-               @NotNull ChunkingFilter chunkingFilter,
                @NotNull Consumer<MessageReceivedEvent> messageReceivedEvent) {
         this.token = "Bot " + token;
-        this.threadConfig = threadConfig;
-        this.sessionConfig = sessionConfig;
-        this.chunkingFilter = chunkingFilter;
         this.messageReceivedEvent = messageReceivedEvent;
         this.shutdownHook = new Thread(this::shutdown, "JDA Shutdown Hook");
         this.requester = new Requester(this);

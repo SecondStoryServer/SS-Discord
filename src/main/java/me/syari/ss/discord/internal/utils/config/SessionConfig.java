@@ -6,15 +6,9 @@ import okhttp3.OkHttpClient;
 import org.jetbrains.annotations.NotNull;
 
 public class SessionConfig {
-    private final SessionController sessionController;
-    private final OkHttpClient httpClient;
-    private final WebSocketFactory webSocketFactory;
-
-    public SessionConfig(@NotNull OkHttpClient httpClient) {
-        this.sessionController = new SessionController();
-        this.httpClient = httpClient;
-        this.webSocketFactory = new WebSocketFactory();
-    }
+    private final SessionController sessionController = new SessionController();
+    private final OkHttpClient httpClient = new OkHttpClient.Builder().build();
+    private final WebSocketFactory webSocketFactory = new WebSocketFactory();
 
     @NotNull
     public SessionController getSessionController() {

@@ -523,7 +523,7 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
         DataObject content = raw.getObject("d");
         LOG.trace("{} -> {}", type, content);
 
-        JDA jda = (JDA) getJDA();
+        JDA jda = getJDA();
         try {
             switch (type) {
                 case "READY":
