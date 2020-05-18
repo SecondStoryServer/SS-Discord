@@ -1,1 +1,1 @@
-rootProject.name = "JDA"
+rootProject.name = "SS-Discord"

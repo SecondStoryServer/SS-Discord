@@ -1,21 +1,9 @@
 plugins {
-    signing
     `java-library`
-    `maven-publish`
-
-    id("com.jfrog.bintray") version "1.8.1"
-    id("com.github.ben-manes.versions") version "0.19.0"
-    id("com.github.johnrengelman.shadow") version "5.1.0"
 }
 
-project.group = "net.dv8tion"
-project.version = "1.0"
-val archivesBaseName = "JDA"
-
-java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
-}
+group = "me.syari.ss.discord"
+version = "1.0"
 
 repositories {
     jcenter()
