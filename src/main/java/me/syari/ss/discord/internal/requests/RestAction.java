@@ -2,7 +2,6 @@ package me.syari.ss.discord.internal.requests;
 
 import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.exceptions.ErrorResponseException;
-import me.syari.ss.discord.api.exceptions.PermissionException;
 import me.syari.ss.discord.api.exceptions.RateLimitedException;
 import me.syari.ss.discord.api.requests.Request;
 import me.syari.ss.discord.api.requests.Response;
@@ -101,8 +100,6 @@ public class RestAction<T> {
                 Throwable t = e.getCause();
                 if (t instanceof RateLimitedException) {
                     throw (RateLimitedException) t;
-                } else if (t instanceof PermissionException) {
-                    throw (PermissionException) t;
                 } else if (t instanceof ErrorResponseException) {
                     throw (ErrorResponseException) t;
                 }

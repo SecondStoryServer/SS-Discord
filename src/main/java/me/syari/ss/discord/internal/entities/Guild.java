@@ -2,7 +2,6 @@ package me.syari.ss.discord.internal.entities;
 
 import me.syari.ss.discord.api.entities.ISnowflake;
 import me.syari.ss.discord.api.utils.cache.SnowflakeCacheView;
-import me.syari.ss.discord.api.utils.cache.SortedSnowflakeCacheView;
 import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.utils.Checks;
 import me.syari.ss.discord.internal.utils.JDALogger;
@@ -72,7 +71,7 @@ public class Guild implements ISnowflake {
     }
 
     @NotNull
-    public SortedSnowflakeCacheView<Role> getRoleCache() {
+    public SnowflakeCacheView<Role> getRoleCache() {
         return roleCache;
     }
 

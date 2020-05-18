@@ -1,7 +1,6 @@
 package me.syari.ss.discord.internal.utils.cache;
 
 import me.syari.ss.discord.api.entities.ISnowflake;
-import me.syari.ss.discord.api.utils.cache.SortedSnowflakeCacheView;
 import me.syari.ss.discord.internal.utils.UnlockHook;
 import org.apache.commons.collections4.iterators.ObjectArrayIterator;
 import org.jetbrains.annotations.NotNull;
@@ -10,8 +9,7 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-public class SortedSnowflakeCacheViewImpl<T extends ISnowflake & Comparable<? super T>>
-        extends SnowflakeCacheViewImpl<T> implements SortedSnowflakeCacheView<T> {
+public class SortedSnowflakeCacheViewImpl<T extends ISnowflake & Comparable<? super T>> extends SnowflakeCacheViewImpl<T> {
     protected static final int SPLIT_CHARACTERISTICS = Spliterator.IMMUTABLE | Spliterator.ORDERED | Spliterator.NONNULL;
 
     protected final Comparator<T> comparator;
