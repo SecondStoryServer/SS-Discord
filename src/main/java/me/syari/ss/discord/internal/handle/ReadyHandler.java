@@ -5,7 +5,6 @@ import gnu.trove.map.hash.TLongObjectHashMap;
 import me.syari.ss.discord.api.utils.data.DataArray;
 import me.syari.ss.discord.api.utils.data.DataObject;
 import me.syari.ss.discord.internal.JDA;
-import me.syari.ss.discord.internal.requests.WebSocketClient;
 import org.jetbrains.annotations.NotNull;
 
 public class ReadyHandler extends SocketHandler {

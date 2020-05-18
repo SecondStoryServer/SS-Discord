@@ -1,10 +1,10 @@
 package me.syari.ss.discord.api.utils;
 
-import com.neovisionaries.ws.client.OpeningHandshakeException;
 import me.syari.ss.discord.internal.JDA;
 import me.syari.ss.discord.internal.requests.RestAction;
 import me.syari.ss.discord.internal.requests.Route;
 import org.jetbrains.annotations.NotNull;
+
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
@@ -73,11 +73,6 @@ public class SessionController {
         public QueueWorker(long delay) {
             super("SessionControllerAdapter-Worker");
             this.delay = delay;
-            super.setUncaughtExceptionHandler(this::handleFailure);
-        }
-
-        protected void handleFailure(Thread thread, Throwable exception) {
-
         }
 
         @Override

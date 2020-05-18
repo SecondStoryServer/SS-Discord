@@ -1,6 +1,7 @@
 package me.syari.ss.discord.internal.requests;
 
 import org.jetbrains.annotations.NotNull;
+
 import java.util.Queue;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;

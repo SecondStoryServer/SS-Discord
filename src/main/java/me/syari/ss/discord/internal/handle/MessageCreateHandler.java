@@ -4,7 +4,6 @@ import me.syari.ss.discord.api.utils.data.DataObject;
 import me.syari.ss.discord.internal.JDA;
 import me.syari.ss.discord.internal.entities.EntityBuilder;
 import me.syari.ss.discord.internal.entities.Message;
-import me.syari.ss.discord.internal.requests.WebSocketClient;
 import org.jetbrains.annotations.NotNull;
 
 import static me.syari.ss.discord.util.Check.isDefaultMessage;

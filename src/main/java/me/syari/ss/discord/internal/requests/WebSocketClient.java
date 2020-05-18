@@ -11,6 +11,7 @@ import me.syari.ss.discord.internal.handle.*;
 import me.syari.ss.discord.internal.utils.IOUtil;
 import me.syari.ss.discord.internal.utils.ZlibDecompressor;
 import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.*;
@@ -31,7 +32,7 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
     public WebSocket socket;
     protected String sessionId = null;
     protected final Object readLock = new Object();
-    protected ZlibDecompressor decompressor = new ZlibDecompressor();
+    protected final ZlibDecompressor decompressor = new ZlibDecompressor();
 
     protected final ReentrantLock queueLock = new ReentrantLock();
     protected final ScheduledExecutorService executor;

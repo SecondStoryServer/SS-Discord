@@ -2,6 +2,7 @@ package me.syari.ss.discord.internal.utils;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
 import java.io.*;
 import java.net.URI;
 import java.nio.ByteBuffer;
