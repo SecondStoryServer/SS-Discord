@@ -27,9 +27,9 @@ public class UnifiedCacheViewImpl<T, E extends CacheView<T>> implements CacheVie
     @Override
     public void forEach(Consumer<? super T> action) {
         Objects.requireNonNull(action);
-        try (ClosableIterator<T> it = lockedIterator()) {
-            while (it.hasNext())
-                action.accept(it.next());
+        try (ClosableIterator<T> iterator = lockedIterator()) {
+            while (iterator.hasNext())
+                action.accept(iterator.next());
         }
     }
 

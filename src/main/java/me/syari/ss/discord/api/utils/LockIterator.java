@@ -7,36 +7,40 @@ import java.util.NoSuchElementException;
 import java.util.concurrent.locks.Lock;
 
 public class LockIterator<T> implements ClosableIterator<T> {
-    private final Iterator<? extends T> it;
+    private final Iterator<? extends T> iterator;
     private Lock lock;
 
-    public LockIterator(@NotNull Iterator<? extends T> it, Lock lock) {
-        this.it = it;
+    public LockIterator(@NotNull Iterator<? extends T> iterator, Lock lock) {
+        this.iterator = iterator;
         this.lock = lock;
     }
 
     @Override
     public void close() {
-        if (lock != null)
+        if (lock != null) {
             lock.unlock();
+        }
         lock = null;
     }
 
     @Override
     public boolean hasNext() {
-        if (lock == null)
+        if (lock == null) {
             return false;
-        boolean hasNext = it.hasNext();
-        if (!hasNext)
+        }
+        boolean hasNext = iterator.hasNext();
+        if (!hasNext) {
             close();
+        }
         return hasNext;
     }
 
     @NotNull
     @Override
     public T next() {
-        if (lock == null)
+        if (lock == null) {
             throw new NoSuchElementException();
-        return it.next();
+        }
+        return iterator.next();
     }
 }

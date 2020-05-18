@@ -17,8 +17,8 @@ public class Guild implements ISnowflake {
     private final long id;
     private final JDAImpl api;
 
-    private final SortedSnowflakeCacheViewImpl<TextChannel> textChannelCache = new SortedSnowflakeCacheViewImpl<>(TextChannel.class, Comparator.naturalOrder());
-    private final SortedSnowflakeCacheViewImpl<Role> roleCache = new SortedSnowflakeCacheViewImpl<>(Role.class, Comparator.reverseOrder());
+    private final SnowflakeCacheViewImpl<TextChannel> textChannelCache = new SnowflakeCacheViewImpl<>(TextChannel.class);
+    private final SnowflakeCacheViewImpl<Role> roleCache = new SnowflakeCacheViewImpl<>(Role.class);
     private final SnowflakeCacheViewImpl<Emote> emoteCache = new SnowflakeCacheViewImpl<>(Emote.class);
     private final MemberCacheView memberCache = new MemberCacheView();
 
@@ -126,11 +126,11 @@ public class Guild implements ISnowflake {
         this.memberCount = count;
     }
 
-    public SortedSnowflakeCacheViewImpl<TextChannel> getTextChannelsView() {
+    public SnowflakeCacheViewImpl<TextChannel> getTextChannelsView() {
         return textChannelCache;
     }
 
-    public SortedSnowflakeCacheViewImpl<Role> getRolesView() {
+    public SnowflakeCacheViewImpl<Role> getRolesView() {
         return roleCache;
     }
 

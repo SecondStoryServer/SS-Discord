@@ -40,8 +40,8 @@ public class Response implements Closeable {
         } else {
             try {
                 this.body = IOUtil.getBody(response);
-            } catch (final Exception e) {
-                throw new IllegalStateException("An error occurred while parsing the response for a RestAction", e);
+            } catch (final Exception ex) {
+                throw new IllegalStateException("An error occurred while parsing the response for a RestAction", ex);
             }
         }
     }

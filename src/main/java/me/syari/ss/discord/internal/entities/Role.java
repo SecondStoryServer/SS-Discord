@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.time.OffsetDateTime;
 
-public class Role implements ISnowflake, Comparable<Role> {
+public class Role implements ISnowflake {
     private final long id;
     private final SnowflakeReference<Guild> guild;
 
@@ -54,20 +54,6 @@ public class Role implements ISnowflake, Comparable<Role> {
     @Override
     public String toString() {
         return "R:" + getName() + '(' + id + ')';
-    }
-
-    @Override
-    public int compareTo(@NotNull Role role) {
-        if (this == role)
-            return 0;
-
-        if (this.guild.getIdLong() != role.guild.getIdLong())
-            throw new IllegalArgumentException("Cannot compare roles that aren't from the same guild!");
-
-        OffsetDateTime thisTime = this.getTimeCreated();
-        OffsetDateTime rTime = role.getTimeCreated();
-
-        return rTime.compareTo(thisTime);
     }
 
     public void setName(String name) {
