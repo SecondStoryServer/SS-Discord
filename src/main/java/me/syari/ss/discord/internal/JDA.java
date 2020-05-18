@@ -20,7 +20,6 @@ import me.syari.ss.discord.internal.requests.Requester;
 import me.syari.ss.discord.internal.requests.RestAction;
 import me.syari.ss.discord.internal.requests.Route;
 import me.syari.ss.discord.internal.requests.WebSocketClient;
-import me.syari.ss.discord.internal.utils.Checks;
 import me.syari.ss.discord.internal.utils.cache.SnowflakeCacheView;
 import me.syari.ss.discord.internal.utils.config.SessionConfig;
 import me.syari.ss.discord.internal.utils.config.ThreadingConfig;
@@ -177,7 +176,9 @@ public class JDA {
     }
 
     public void awaitStatus(@NotNull Status status, @NotNull Status... failOn) throws InterruptedException {
-        Checks.check(status.isInit(), "Cannot await the status %s as it is not part of the login cycle!", status);
+        if (!status.isInit()) {
+            throw new IllegalArgumentException(String.format("Cannot await the status %s as it is not part of the login cycle!", status));
+        }
         if (getStatus() == Status.CONNECTED) {
             return;
         }

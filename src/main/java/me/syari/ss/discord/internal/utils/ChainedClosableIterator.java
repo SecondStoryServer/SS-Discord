@@ -9,14 +9,12 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 
 public class ChainedClosableIterator<T> implements ClosableIterator<T> {
-    private final Set<T> items;
+    private final Set<T> items = new HashSet<>();
     private final Iterator<? extends CacheView<T>> generator;
     private ClosableIterator<T> currentIterator;
-
     private T item;
 
     public ChainedClosableIterator(Iterator<? extends CacheView<T>> generator) {
-        this.items = new HashSet<>();
         this.generator = generator;
     }
 
@@ -48,10 +46,11 @@ public class ChainedClosableIterator<T> implements ClosableIterator<T> {
             CacheView<T> view = null;
             while (generator.hasNext()) {
                 view = generator.next();
-                if (!view.isEmpty()) {
+                if (view.isEmpty()) {
+                    view = null;
+                } else {
                     break;
                 }
-                view = null;
             }
             if (view == null) {
                 return false;
@@ -68,23 +67,23 @@ public class ChainedClosableIterator<T> implements ClosableIterator<T> {
     private boolean findNext() {
         while (currentIterator.hasNext()) {
             T next = currentIterator.next();
-            if (items.contains(next)) {
-                continue;
+            if (!items.contains(next)) {
+                item = next;
+                items.add(item);
+                return true;
             }
-            item = next;
-            items.add(item);
-            return true;
         }
         return false;
     }
 
     @Override
     public T next() {
-        if (!hasNext()) {
+        if (hasNext()) {
+            T tmp = item;
+            item = null;
+            return tmp;
+        } else {
             throw new NoSuchElementException();
         }
-        T tmp = item;
-        item = null;
-        return tmp;
     }
 }

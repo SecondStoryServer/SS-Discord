@@ -8,8 +8,6 @@ import me.syari.ss.discord.internal.JDA;
 import me.syari.ss.discord.internal.requests.Requester;
 import me.syari.ss.discord.internal.requests.RestAction;
 import me.syari.ss.discord.internal.requests.Route;
-import me.syari.ss.discord.internal.utils.Checks;
-import me.syari.ss.discord.internal.utils.Helpers;
 import me.syari.ss.discord.internal.utils.cache.SnowflakeReference;
 import okhttp3.RequestBody;
 import org.jetbrains.annotations.NotNull;
@@ -105,14 +103,8 @@ public class TextChannel implements ISnowflake, Comparable<TextChannel> {
 
         public MessageAction(JDA api, Route.CompiledRoute route, TextChannel channel, @NotNull String content) {
             super(api, route);
-            Checks.check(content.length() <= Message.MAX_CONTENT_LENGTH,
-                    "Cannot build a Message with more than %d characters. Please limit your input.", Message.MAX_CONTENT_LENGTH);
             this.content = content;
             this.channel = channel;
-        }
-
-        private boolean isNotEmpty() {
-            return !Helpers.isBlank(content);
         }
 
         private void clearResources() {
