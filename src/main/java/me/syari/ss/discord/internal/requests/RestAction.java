@@ -68,7 +68,6 @@ public class RestAction<T> {
 
     public void queue() {
         Route.CompiledRoute route = finalizeRoute();
-        Checks.notNull(route, "Route");
         RequestBody data = finalizeData();
         api.getRequester().request(new Request<>(this, DEFAULT_SUCCESS, DEFAULT_FAILURE, true, data, route));
     }
@@ -76,7 +75,6 @@ public class RestAction<T> {
     @NotNull
     private CompletableFuture<T> submit(boolean shouldQueue) {
         Route.CompiledRoute route = finalizeRoute();
-        Checks.notNull(route, "Route");
         RequestBody data = finalizeData();
         return new RestFuture<>(this, shouldQueue, data, route);
     }

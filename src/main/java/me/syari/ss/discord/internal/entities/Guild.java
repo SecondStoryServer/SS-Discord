@@ -61,7 +61,6 @@ public class Guild implements ISnowflake {
     }
 
     public Member getMember(@NotNull User user) {
-        Checks.notNull(user, "User");
         return getMemberById(user.getIdLong());
     }
 

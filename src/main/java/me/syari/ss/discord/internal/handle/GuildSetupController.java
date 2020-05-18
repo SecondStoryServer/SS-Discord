@@ -73,17 +73,10 @@ public class GuildSetupController {
         boolean available = obj.isNull("unavailable") || !obj.getBoolean("unavailable");
         log.trace("Received guild create for id: {} available: {}", id, available);
 
-        if (available && unavailableGuilds.contains(id) && !setupNodes.containsKey(id)) {
-            unavailableGuilds.remove(id);
-            setupNodes.put(id, new GuildSetupNode(id, this, GuildSetupNode.Type.AVAILABLE));
-        }
-
         GuildSetupNode node = setupNodes.get(id);
         if (node == null) {
             node = new GuildSetupNode(id, this, GuildSetupNode.Type.JOIN);
             setupNodes.put(id, node);
-        } else if (node.markedUnavailable && available && incompleteCount > 0) {
-            incompleteCount++;
         }
         node.handleCreate(obj);
     }

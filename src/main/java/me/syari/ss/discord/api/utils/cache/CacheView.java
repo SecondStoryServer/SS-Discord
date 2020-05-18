@@ -24,7 +24,6 @@ public interface CacheView<T> extends Iterable<T> {
 
     @NotNull
     static <E extends ISnowflake> SnowflakeCacheView<E> allSnowflakes(@NotNull Supplier<? extends Stream<? extends SnowflakeCacheView<E>>> generator) {
-        Checks.notNull(generator, "Generator");
         return new UnifiedCacheViewImpl.UnifiedSnowflakeCacheView<>(generator);
     }
 }

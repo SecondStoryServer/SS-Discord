@@ -20,8 +20,6 @@ public class IOUtil {
     }
 
     public static byte[] readFully(InputStream stream) throws IOException {
-        Checks.notNull(stream, "InputStream");
-
         byte[] buffer = new byte[1024];
         try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
             int readAmount;

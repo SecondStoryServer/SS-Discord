@@ -1,5 +1,7 @@
 package me.syari.ss.discord.internal.utils;
 
+import org.jetbrains.annotations.NotNull;
+
 public class Checks {
 
     public static void check(final boolean expression, final String message) {
@@ -12,13 +14,7 @@ public class Checks {
             throw new IllegalArgumentException(String.format(message, arg));
     }
 
-    public static void notNull(final Object argument, final String name) {
-        if (argument == null)
-            throw new IllegalArgumentException(name + " may not be null");
-    }
-
-    public static void notEmpty(final CharSequence argument, final String name) {
-        notNull(argument, name);
+    public static void notEmpty(@NotNull final CharSequence argument, final String name) {
         if (Helpers.isEmpty(argument))
             throw new IllegalArgumentException(name + " may not be empty");
     }

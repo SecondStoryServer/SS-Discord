@@ -115,7 +115,6 @@ public class JDAImpl implements JDA {
         threadConfig.init(() -> "JDA");
         requester.getRateLimiter().init();
         this.gatewayUrl = getGateway();
-        Checks.notNull(this.gatewayUrl, "Gateway URL");
 
         setStatus(Status.LOGGING_IN);
 
@@ -208,7 +207,6 @@ public class JDAImpl implements JDA {
 
     @Override
     public void awaitStatus(@NotNull Status status, @NotNull Status... failOn) throws InterruptedException {
-        Checks.notNull(status, "Status");
         Checks.check(status.isInit(), "Cannot await the status %s as it is not part of the login cycle!", status);
         if (getStatus() == Status.CONNECTED)
             return;

@@ -103,17 +103,6 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
             processingReady = false;
             if (firstInit) {
                 firstInit = false;
-                if (api.getGuilds().size() >= 2000) {
-                    JDAImpl.LOG.warn(" __      __ _    ___  _  _  ___  _  _   ___  _ ");
-                    JDAImpl.LOG.warn(" \\ \\    / //_\\  | _ \\| \\| ||_ _|| \\| | / __|| |");
-                    JDAImpl.LOG.warn("  \\ \\/\\/ // _ \\ |   /| .` | | | | .` || (_ ||_|");
-                    JDAImpl.LOG.warn("   \\_/\\_//_/ \\_\\|_|_\\|_|\\_||___||_|\\_| \\___|(_)");
-                    JDAImpl.LOG.warn("You're running a session with over 2000 connected");
-                    JDAImpl.LOG.warn("guilds. You should shard the connection in order");
-                    JDAImpl.LOG.warn("to split the load or things like resuming");
-                    JDAImpl.LOG.warn("connection might not work as expected.");
-                    JDAImpl.LOG.warn("For more info see https://git.io/vrFWP");
-                }
                 JDAImpl.LOG.info("Finished Loading!");
             } else {
                 JDAImpl.LOG.info("Finished (Re)Loading!");

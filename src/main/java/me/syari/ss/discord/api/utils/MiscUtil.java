@@ -7,8 +7,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Supplier;
 
 public class MiscUtil {
-    public static long parseSnowflake(String input) {
-        Checks.notEmpty(input, "ID");
+    public static long parseSnowflake(@NotNull String input) {
         try {
             if (!input.startsWith("-"))
                 return Long.parseUnsignedLong(input);
