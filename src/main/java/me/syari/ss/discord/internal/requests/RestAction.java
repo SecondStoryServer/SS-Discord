@@ -6,31 +6,18 @@ import me.syari.ss.discord.api.requests.Request;
 import me.syari.ss.discord.api.requests.Response;
 import me.syari.ss.discord.api.requests.RestFuture;
 import me.syari.ss.discord.internal.JDA;
-import me.syari.ss.discord.internal.utils.JDALogger;
 import okhttp3.RequestBody;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
 public class RestAction<T> {
-    public static final Logger LOG = JDALogger.getLog(RestAction.class);
-
     private static final Consumer<Object> DEFAULT_SUCCESS = o -> {
     };
 
-    private static final Consumer<? super Throwable> DEFAULT_FAILURE = t ->
-    {
-        if (LOG.isDebugEnabled()) {
-            LOG.error("RestAction queue returned failure", t);
-        } else if (t.getCause() != null) {
-            LOG.error("RestAction queue returned failure: [{}] {}", t.getClass().getSimpleName(), t.getMessage(), t.getCause());
-        } else {
-            LOG.error("RestAction queue returned failure: [{}] {}", t.getClass().getSimpleName(), t.getMessage());
-        }
+    private static final Consumer<? super Throwable> DEFAULT_FAILURE = t -> {
     };
 
     protected static final boolean passContext = true;

@@ -117,7 +117,6 @@ public class TextChannel implements ISnowflake, Comparable<TextChannel> {
                     ownedResource.close();
                 } catch (IOException ex) {
                     if (!ex.getMessage().toLowerCase().contains("closed")) {
-                        LOG.error("Encountered IOException trying to close owned resource", ex);
                     }
                 }
             }
@@ -152,7 +151,6 @@ public class TextChannel implements ISnowflake, Comparable<TextChannel> {
             if (ownedResources.isEmpty()) {
                 return;
             }
-            LOG.warn("Found unclosed resources in MessageAction instance, closing on finalization step!");
             clearResources();
         }
     }

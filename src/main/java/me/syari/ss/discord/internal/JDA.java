@@ -21,7 +21,6 @@ import me.syari.ss.discord.internal.requests.RestAction;
 import me.syari.ss.discord.internal.requests.Route;
 import me.syari.ss.discord.internal.requests.WebSocketClient;
 import me.syari.ss.discord.internal.utils.Checks;
-import me.syari.ss.discord.internal.utils.JDALogger;
 import me.syari.ss.discord.internal.utils.cache.SnowflakeCacheView;
 import me.syari.ss.discord.internal.utils.config.SessionConfig;
 import me.syari.ss.discord.internal.utils.config.ThreadingConfig;
@@ -29,13 +28,10 @@ import okhttp3.OkHttpClient;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.MDC;
 
 import javax.security.auth.login.LoginException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
@@ -53,8 +49,6 @@ public class JDA {
             return jda;
         }
     }
-
-    public static final Logger LOG = JDALogger.getLog(JDA.class);
 
     protected final SnowflakeCacheView<User> userCache = new SnowflakeCacheView<>(User.class);
     protected final SnowflakeCacheView<Guild> guildCache = new SnowflakeCacheView<>(Guild.class);
@@ -95,7 +89,6 @@ public class JDA {
         try {
             return chunkingFilter.filter(id);
         } catch (Exception e) {
-            LOG.error("Uncaught exception from chunking filter", e);
             return true;
         }
     }
@@ -112,17 +105,9 @@ public class JDA {
         threadConfig.init(() -> "JDA");
         requester.getRateLimiter().init();
         this.gatewayUrl = getGateway();
-
         setStatus(Status.LOGGING_IN);
-
-        Map<String, String> previousContext = MDC.getCopyOfContextMap();
         verifyToken();
-        LOG.info("Login Successful!");
-
         client = new WebSocketClient(this);
-        if (previousContext != null)
-            previousContext.forEach(MDC::put);
-
         if (shutdownHook != null)
             Runtime.getRuntime().addShutdownHook(shutdownHook);
 

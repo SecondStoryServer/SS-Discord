@@ -8,8 +8,6 @@ import me.syari.ss.discord.api.exceptions.ParsingException;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -18,7 +16,6 @@ import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
 public class DataObject {
-    private static final Logger log = LoggerFactory.getLogger(DataObject.class);
     private static final ObjectMapper mapper = new ObjectMapper();
     private static final SimpleModule module = new SimpleModule();
     private static final MapType mapType;
@@ -81,7 +78,7 @@ public class DataObject {
         try {
             child = (Map<String, Object>) get(Map.class, key);
         } catch (ClassCastException ex) {
-            log.error("Unable to extract child data", ex);
+
         }
         return child == null ? Optional.empty() : Optional.of(new DataObject(child));
     }
@@ -98,7 +95,6 @@ public class DataObject {
         try {
             child = (List<Object>) get(List.class, key);
         } catch (ClassCastException ex) {
-            log.error("Unable to extract child data", ex);
         }
         return child == null ? Optional.empty() : Optional.of(new DataArray(child));
     }

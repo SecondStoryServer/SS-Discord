@@ -7,15 +7,12 @@ import me.syari.ss.discord.api.exceptions.ParsingException;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
 public class DataArray implements Iterable<Object> {
-    private static final Logger log = LoggerFactory.getLogger(DataObject.class);
     private static final ObjectMapper mapper = new ObjectMapper();
     private static final SimpleModule module = new SimpleModule();
 
@@ -47,7 +44,6 @@ public class DataArray implements Iterable<Object> {
         try {
             child = get(Map.class, index, null, null);
         } catch (ClassCastException ex) {
-            log.error("Unable to extract child data", ex);
         }
         if (child == null)
             throw valueError(index, "DataObject");

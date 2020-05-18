@@ -1,8 +1,6 @@
 package me.syari.ss.discord.internal.requests;
 
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-
 import java.util.Queue;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
@@ -10,8 +8,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
 class WebSocketSendingThread implements Runnable {
-    private static final Logger LOG = WebSocketClient.LOG;
-
     private final WebSocketClient client;
     private final ReentrantLock queueLock;
     private final Queue<String> chunkSyncQueue;
@@ -87,14 +83,12 @@ class WebSocketSendingThread implements Runnable {
                 scheduleSentMessage();
             }
         } catch (InterruptedException ignored) {
-            LOG.debug("Main WS send thread interrupted. Most likely JDA is disconnecting the websocket.");
         } finally {
             client.maybeUnlock();
         }
     }
 
     private void handleChunkSync(String chunkOrSyncRequest) {
-        LOG.debug("Sending chunk/sync request {}", chunkOrSyncRequest);
         if (send(chunkOrSyncRequest))
             chunkSyncQueue.remove();
     }
@@ -102,7 +96,6 @@ class WebSocketSendingThread implements Runnable {
     private void handleNormalRequest() {
         String message = ratelimitQueue.peek();
         if (message != null) {
-            LOG.debug("Sending normal message {}", message);
             if (send(message))
                 ratelimitQueue.remove();
         }

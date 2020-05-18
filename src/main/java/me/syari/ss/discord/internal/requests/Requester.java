@@ -3,14 +3,12 @@ package me.syari.ss.discord.internal.requests;
 import me.syari.ss.discord.api.requests.Request;
 import me.syari.ss.discord.api.requests.Response;
 import me.syari.ss.discord.internal.JDA;
-import me.syari.ss.discord.internal.utils.JDALogger;
 import okhttp3.Call;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
 import okhttp3.internal.http.HttpMethod;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
 
 import javax.net.ssl.SSLPeerUnverifiedException;
 import java.net.SocketException;
@@ -19,7 +17,6 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class Requester {
-    public static final Logger LOG = JDALogger.getLog(Requester.class);
     public static final String DISCORD_API_PREFIX = "https://discordapp.com/api/v6/";
     public static final String USER_AGENT = "SS-Discord";
     public static final RequestBody EMPTY_BODY = RequestBody.create(null, new byte[0]);
@@ -91,7 +88,6 @@ public class Requester {
         okhttp3.Response[] responses = new okhttp3.Response[4];
         okhttp3.Response lastResponse = null;
         try {
-            LOG.trace("Executing request {} {}", apiRequest.getRoute().getMethod(), url);
             int attempt = 0;
             do {
                 Call call = httpClient.newCall(request);
@@ -105,17 +101,12 @@ public class Requester {
                     break;
 
                 attempt++;
-                LOG.debug("Requesting {} -> {} returned status {}... retrying (attempt {})",
-                        apiRequest.getRoute().getMethod(),
-                        url, lastResponse.code(), attempt);
                 try {
                     Thread.sleep(50 * attempt);
                 } catch (InterruptedException ignored) {
                 }
             }
             while (attempt < 3 && lastResponse.code() >= 500);
-
-            LOG.trace("Finished Request {} {} with code {}", route.getMethod(), lastResponse.request().url(), lastResponse.code());
 
             if (lastResponse.code() >= 500) {
                 Response response = new Response(lastResponse, -1);
@@ -124,8 +115,6 @@ public class Requester {
             }
 
             retryAfter = rateLimiter.handleResponse(route, lastResponse);
-            if (!rays.isEmpty())
-                LOG.debug("Received response with following cf-rays: {}", rays);
 
             if (retryAfter == null)
                 apiRequest.handleResponse(new Response(lastResponse, -1));
@@ -136,13 +125,11 @@ public class Requester {
         } catch (SocketTimeoutException e) {
             if (retryOnTimeout && !retried)
                 return execute(apiRequest, true, handleOnRatelimit);
-            LOG.error("Requester timed out while executing a request", e);
             apiRequest.handleResponse(new Response(lastResponse, e));
             return null;
         } catch (Exception e) {
             if (retryOnTimeout && !retried && isRetry(e))
                 return execute(apiRequest, true, handleOnRatelimit);
-            LOG.error("There was an exception while executing a REST request", e);
             apiRequest.handleResponse(new Response(lastResponse, e));
             return null;
         } finally {

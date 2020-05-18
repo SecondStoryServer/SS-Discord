@@ -7,12 +7,11 @@ import me.syari.ss.discord.api.utils.data.DataArray;
 import me.syari.ss.discord.api.utils.data.DataObject;
 import me.syari.ss.discord.internal.JDA;
 import me.syari.ss.discord.internal.handle.EventCache;
-import me.syari.ss.discord.internal.utils.JDALogger;
 import me.syari.ss.discord.internal.utils.UnlockHook;
 import me.syari.ss.discord.internal.utils.cache.MemberCacheView;
 import me.syari.ss.discord.internal.utils.cache.SnowflakeCacheView;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
+
 
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
@@ -24,7 +23,6 @@ import static me.syari.ss.discord.util.Check.isDefaultMessage;
 import static me.syari.ss.discord.util.Check.isTextChannel;
 
 public class EntityBuilder {
-    public static final Logger LOG = JDALogger.getLog(EntityBuilder.class);
     public static final String MISSING_CHANNEL = "MISSING_CHANNEL";
     public static final String MISSING_USER = "MISSING_USER";
     public static final String UNKNOWN_MESSAGE_TYPE = "UNKNOWN_MESSAGE_TYPE";
@@ -46,7 +44,6 @@ public class EntityBuilder {
             for (int i = 0; i < array.length(); i++) {
                 DataObject object = array.getObject(i);
                 if (object.isNull("id")) {
-                    LOG.error("Received GUILD_CREATE with an emoji with a null ID. JSON: {}", object);
                     continue;
                 }
                 final long emoteId = object.getLong("id");
@@ -81,9 +78,6 @@ public class EntityBuilder {
                 map.put(role.getIdLong(), role);
             }
         }
-
-        if (guildObj.getOwner() == null)
-            LOG.debug("Finished setup for guild with a null owner. GuildId: {} OwnerId: {}", guildId, guildJson.opt("owner_id").orElse(null));
 
         for (int i = 0; i < channelArray.length(); i++) {
             DataObject channelJson = channelArray.getObject(i);
@@ -176,7 +170,6 @@ public class EntityBuilder {
                 playbackCache = true;
             }
             if (guild.getOwnerIdLong() == user.getIdLong()) {
-                LOG.trace("Found owner of guild with id {}", guild.getId());
                 guild.setOwner(member);
             }
         }
@@ -213,8 +206,6 @@ public class EntityBuilder {
             final long roleId = rolesJson.getLong(k);
             Role role = guild.getRolesView().get(roleId);
             if (role == null) {
-                LOG.debug("Received a Member with an unknown Role. MemberId: {} GuildId: {} roleId: {}",
-                        member.getUser().getId(), guild.getId(), roleId);
             } else {
                 member.getRoleSet().add(role);
             }
@@ -356,7 +347,6 @@ public class EntityBuilder {
             if (cachedMember == null) {
                 DataObject memberJson = jsonObject.getObject("member");
                 memberJson.put("user", author);
-                LOG.trace("Initializing member from message create {}", memberJson);
                 member = createMember(guild, memberJson);
             } else {
                 member = cachedMember;

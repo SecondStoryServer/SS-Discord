@@ -2,11 +2,8 @@ package me.syari.ss.discord.internal.requests;
 
 import me.syari.ss.discord.api.requests.Request;
 import me.syari.ss.discord.api.utils.MiscUtil;
-import me.syari.ss.discord.internal.utils.JDALogger;
 import okhttp3.Headers;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Queue;
@@ -21,8 +18,6 @@ public class RateLimiter {
     private static final String HASH_HEADER = "X-RateLimit-Bucket";
     private static final String RETRY_AFTER_HEADER = "Retry-After";
     private static final String UNLIMITED_BUCKET = "unlimited";
-    protected static final Logger log = JDALogger.getLog(RateLimiter.class);
-
     protected final Requester requester;
     private final ReentrantLock bucketLock = new ReentrantLock();
     private final Map<Route, String> hash = new ConcurrentHashMap<>();
@@ -55,10 +50,6 @@ public class RateLimiter {
                 } else if (bucket.requests.isEmpty() && bucket.reset <= getNow()) {
                     entries.remove();
                 }
-            }
-            size -= bucket.size();
-            if (0 < size) {
-                log.debug("Removed {} expired buckets", size);
             }
         });
     }
@@ -134,7 +125,6 @@ public class RateLimiter {
                 if (hash != null) {
                     if (!this.hash.containsKey(baseRoute)) {
                         this.hash.put(baseRoute, hash);
-                        log.debug("Caching bucket hash {} -> {}", baseRoute, hash);
                     }
 
                     bucket = getBucket(route, true);
@@ -144,17 +134,11 @@ public class RateLimiter {
                     String retryAfterHeader = headers.get(RETRY_AFTER_HEADER);
                     long retryAfter = parseLong(retryAfterHeader);
                     requester.getJDA().getSessionController().setGlobalRatelimit(now + retryAfter);
-                    log.error("Encountered global rate limit! Retry-After: {} ms", retryAfter);
                 } else if (response.code() == 429) {
                     String retryAfterHeader = headers.get(RETRY_AFTER_HEADER);
                     long retryAfter = parseLong(retryAfterHeader);
                     bucket.remaining = 0;
                     bucket.reset = getNow() + retryAfter;
-                    if (hash == null || !wasUnlimited) {
-                        log.warn("Encountered 429 on route {} with bucket {} Retry-After: {} ms", baseRoute, bucket.bucketId, retryAfter);
-                    } else {
-                        log.debug("Encountered 429 on route {} with bucket {} Retry-After: {} ms", baseRoute, bucket.bucketId, retryAfter);
-                    }
                     return bucket;
                 }
 
@@ -169,12 +153,9 @@ public class RateLimiter {
                 bucket.limit = (int) Math.max(1L, parseLong(limitHeader));
                 bucket.remaining = (int) parseLong(remainingHeader);
                 bucket.reset = now + parseDouble(resetAfterHeader);
-                log.trace("Updated bucket {} to ({}/{}, {})", bucket.bucketId, bucket.remaining, bucket.limit, bucket.reset - now);
                 return bucket;
             } catch (Exception e) {
                 Bucket bucket = getBucket(route, true);
-                log.error("Encountered Exception while updating a bucket. Route: {} Bucket: {} Code: {} Headers:\n{}",
-                        route.getBaseRoute(), bucket, response.code(), response.headers(), e);
                 return bucket;
             }
         });
@@ -258,12 +239,10 @@ public class RateLimiter {
 
         @Override
         public void run() {
-            log.trace("Bucket {} is running {} requests", bucketId, requests.size());
             Iterator<Request> iterator = requests.iterator();
             while (iterator.hasNext()) {
                 Long rateLimit = getRateLimit();
                 if (0L < rateLimit) {
-                    log.debug("Backing off {} ms for bucket {}", rateLimit, bucketId);
                     break;
                 }
 
@@ -294,7 +273,6 @@ public class RateLimiter {
                         break;
                     }
                 } catch (Exception ex) {
-                    log.error("Encountered exception trying to execute request", ex);
                     break;
                 }
             }

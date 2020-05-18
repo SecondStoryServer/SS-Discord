@@ -12,14 +12,10 @@ import me.syari.ss.discord.api.utils.data.DataObject;
 import me.syari.ss.discord.internal.JDA;
 import me.syari.ss.discord.internal.requests.WebSocketClient;
 import me.syari.ss.discord.internal.requests.WebSocketCode;
-import me.syari.ss.discord.internal.utils.JDALogger;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
 
 public class GuildSetupController {
     protected static final int CHUNK_TIMEOUT = 10000;
-    protected static final Logger log = JDALogger.getLog(GuildSetupController.class);
-
     private final JDA api;
     private final TLongObjectMap<GuildSetupNode> setupNodes = new TLongObjectHashMap<>();
     private final TLongSet chunkingGuilds = new TLongHashSet();
@@ -27,8 +23,6 @@ public class GuildSetupController {
     private final TLongSet unavailableGuilds = new TLongHashSet();
 
     private int incompleteCount = 0;
-
-    protected final StatusListener listener = (id, oldStatus, newStatus) -> log.trace("[{}] Updated status {}->{}", id, oldStatus, newStatus);
 
     public GuildSetupController(JDA api) {
         this.api = api;
@@ -39,7 +33,6 @@ public class GuildSetupController {
     }
 
     void addGuildForChunking(long id) {
-        log.trace("Adding guild for chunking ID: {}", id);
         if (incompleteCount <= 0) {
             sendChunkRequest(id);
             return;
@@ -69,7 +62,6 @@ public class GuildSetupController {
 
     public void onCreate(long id, @NotNull DataObject obj) {
         boolean available = obj.isNull("unavailable") || !obj.getBoolean("unavailable");
-        log.trace("Received guild create for id: {} available: {}", id, available);
 
         GuildSetupNode node = setupNodes.get(id);
         if (node == null) {
@@ -91,8 +83,6 @@ public class GuildSetupController {
         GuildSetupNode node = setupNodes.get(guildId);
         if (node != null)
             node.cacheEvent(event);
-        else
-            log.warn("Attempted to cache event for a guild that is not locked. {}", event, new IllegalStateException());
     }
 
     public void clearCache() {
@@ -114,8 +104,6 @@ public class GuildSetupController {
     }
 
     void sendChunkRequest(Object obj) {
-        log.debug("Sending chunking requests for {} guilds", obj instanceof DataArray ? ((DataArray) obj).length() : 1);
-
         long timeout = System.currentTimeMillis() + CHUNK_TIMEOUT;
         synchronized (pendingChunks) {
             if (obj instanceof DataArray) {

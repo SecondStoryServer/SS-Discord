@@ -76,11 +76,6 @@ public class GuildSetupNode {
     void updateStatus(GuildSetupController.Status status) {
         if (status == this.status)
             return;
-        try {
-            getController().listener.onStatusChange(id, this.status, status);
-        } catch (Exception ex) {
-            GuildSetupController.log.error("Uncaught exception in status listener", ex);
-        }
         this.status = status;
     }
 
@@ -105,7 +100,6 @@ public class GuildSetupNode {
 
     boolean handleMemberChunk(DataArray arr) {
         if (partialGuild == null) {
-            GuildSetupController.log.debug("Dropping member chunk due to unavailable guild");
             return true;
         }
         for (int index = 0; index < arr.length(); index++) {
@@ -122,19 +116,11 @@ public class GuildSetupNode {
     }
 
     void cacheEvent(@NotNull DataObject event) {
-        GuildSetupController.log.trace("Caching {} event during init. GuildId: {}", event.getString("t"), id);
         cachedEvents.add(event);
         int cacheSize = cachedEvents.size();
         if (cacheSize >= 2000 && cacheSize % 1000 == 0) {
             GuildSetupController controller = getController();
-            GuildSetupController.log.warn(
-                    "Accumulating suspicious amounts of cached events during guild setup, " +
-                            "something might be wrong. Cached: {} Members: {}/{} Status: {} GuildId: {} Incomplete: {}/{}",
-                    cacheSize, getCurrentMemberCount(), getExpectedMemberCount(),
-                    status, id, controller.getChunkingCount(), controller.getIncompleteCount());
-
             if (status == GuildSetupController.Status.CHUNKING) {
-                GuildSetupController.log.debug("Forcing new chunk request for guild: {}", id);
                 controller.sendChunkRequest(id);
             }
         }
@@ -155,7 +141,6 @@ public class GuildSetupNode {
             getController().remove(id);
         }
         updateStatus(GuildSetupController.Status.READY);
-        GuildSetupController.log.debug("Finished setup for guild {} firing cached events {}", id, cachedEvents.size());
         api.getClient().handle(cachedEvents);
         api.getEventCache().playbackCache(EventCache.Type.GUILD, id);
         guild.acknowledgeMembers();
@@ -173,10 +158,6 @@ public class GuildSetupNode {
             getController().addGuildForChunking(id);
             requestedChunk = true;
         } else if (handleMemberChunk(memberArray) && !requestedChunk) {
-            GuildSetupController.log.trace(
-                    "Received suspicious members with a guild payload. Attempting to chunk. " +
-                            "member_count: {} members: {} actual_members: {} guild_id: {}",
-                    expectedMemberCount, memberArray.length(), members.size(), id);
             members.clear();
             updateStatus(GuildSetupController.Status.CHUNKING);
             getController().addGuildForChunking(id);

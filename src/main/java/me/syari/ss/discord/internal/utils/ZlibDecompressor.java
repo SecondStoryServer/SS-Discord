@@ -2,8 +2,6 @@ package me.syari.ss.discord.internal.utils;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.ref.SoftReference;
@@ -14,7 +12,6 @@ import java.util.zip.Inflater;
 import java.util.zip.InflaterOutputStream;
 
 public class ZlibDecompressor {
-    private static final Logger LOG = JDALogger.getLog(ZlibDecompressor.class);
     private static final int Z_SYNC_FLUSH = 0x0000FFFF;
 
     private final int maxBufferSize = 2048;
@@ -60,29 +57,21 @@ public class ZlibDecompressor {
         flushBuffer.put(data);
     }
 
-    @Contract(pure = true)
-    private @NotNull Object lazy(byte[] data) {
-        return JDALogger.getLazyString(() -> Arrays.toString(data));
-    }
-
     public void reset() {
         inflater.reset();
     }
 
     public String decompress(byte[] data) throws DataFormatException {
         if (!isFlush(data)) {
-            LOG.debug("Received incomplete data, writing to buffer. Length: {}", data.length);
             buffer(data);
             return null;
         } else if (flushBuffer != null) {
-            LOG.debug("Received final part of incomplete data");
             buffer(data);
             byte[] arr = flushBuffer.array();
             data = new byte[flushBuffer.position()];
             System.arraycopy(arr, 0, data, 0, data.length);
             flushBuffer = null;
         }
-        LOG.trace("Decompressing data {}", lazy(data));
         ByteArrayOutputStream buffer = getDecompressBuffer();
         try (InflaterOutputStream decompressor = new InflaterOutputStream(buffer, inflater)) {
             decompressor.write(data);

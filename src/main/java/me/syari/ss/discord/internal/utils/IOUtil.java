@@ -2,8 +2,6 @@ package me.syari.ss.discord.internal.utils;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.slf4j.Logger;
-
 import java.io.*;
 import java.net.URI;
 import java.nio.ByteBuffer;
@@ -13,8 +11,6 @@ import java.util.zip.InflaterInputStream;
 import java.util.zip.ZipException;
 
 public class IOUtil {
-    private static final Logger log = JDALogger.getLog(IOUtil.class);
-
     public static String getHost(String uri) {
         return URI.create(uri).getHost();
     }
@@ -53,8 +49,6 @@ public class IOUtil {
             }
         } catch (ZipException | EOFException ex) {
             data.reset();
-            log.error("Failed to read gzip content for response. Headers: {}\nContent: '{}'",
-                    response.headers(), JDALogger.getLazyString(() -> new String(readFully(data))), ex);
             return null;
         }
         return data;

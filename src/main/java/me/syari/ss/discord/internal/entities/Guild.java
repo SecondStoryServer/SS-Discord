@@ -3,7 +3,6 @@ package me.syari.ss.discord.internal.entities;
 import me.syari.ss.discord.api.ISnowflake;
 import me.syari.ss.discord.api.utils.cache.ISnowflakeCacheView;
 import me.syari.ss.discord.internal.JDA;
-import me.syari.ss.discord.internal.utils.JDALogger;
 import me.syari.ss.discord.internal.utils.cache.MemberCacheView;
 import me.syari.ss.discord.internal.utils.cache.SnowflakeCacheView;
 import org.jetbrains.annotations.NotNull;
@@ -142,7 +141,6 @@ public class Guild implements ISnowflake {
 
     public void acknowledgeMembers() {
         if (memberCache.size() == memberCount && !chunkingCallback.isDone()) {
-            JDALogger.getLog(Guild.class).debug("Chunking completed for guild {}", this);
             chunkingCallback.complete(null);
         }
     }

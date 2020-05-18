@@ -23,7 +23,7 @@ public class ReadyHandler extends SocketHandler {
             long id = guild.getUnsignedLong("id");
             DataObject previous = distinctGuilds.put(id, guild);
             if (previous != null) {
-                WebSocketClient.LOG.warn("Found duplicate guild for id {} in ready payload", id);
+
             }
         }
         return null;

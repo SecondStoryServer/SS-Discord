@@ -57,7 +57,6 @@ public class Request<T> {
                  CallbackContext ___ = CallbackContext.getInstance()) {
                 onSuccess.accept(successObj);
             } catch (Throwable t) {
-                RestAction.LOG.error("Encountered error while processing success consumer", t);
             }
         });
     }
@@ -77,7 +76,6 @@ public class Request<T> {
                  CallbackContext ___ = CallbackContext.getInstance()) {
                 onFailure.accept(failException);
             } catch (Throwable t) {
-                RestAction.LOG.error("Encountered error while processing failure consumer", t);
             }
         });
     }

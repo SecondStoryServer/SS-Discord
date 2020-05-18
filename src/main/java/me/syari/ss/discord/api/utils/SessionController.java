@@ -4,10 +4,7 @@ import com.neovisionaries.ws.client.OpeningHandshakeException;
 import me.syari.ss.discord.internal.JDA;
 import me.syari.ss.discord.internal.requests.RestAction;
 import me.syari.ss.discord.internal.requests.Route;
-import me.syari.ss.discord.internal.utils.JDALogger;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
@@ -15,7 +12,6 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class SessionController {
     public final static int IDENTIFY_DELAY = 5;
-    protected static final Logger log = JDALogger.getLog(SessionController.class);
     protected final Object lock = new Object();
     protected final Queue<SessionConnectNode> connectQueue;
     protected final AtomicLong globalRatelimit;
@@ -81,7 +77,7 @@ public class SessionController {
         }
 
         protected void handleFailure(Thread thread, Throwable exception) {
-            log.error("Worker has failed with throwable!", exception);
+
         }
 
         @Override
@@ -93,7 +89,6 @@ public class SessionController {
                         Thread.sleep(this.delay - interval);
                 }
             } catch (InterruptedException ex) {
-                log.error("Unable to backoff", ex);
             }
             processQueue();
             synchronized (lock) {
@@ -117,15 +112,11 @@ public class SessionController {
                         Thread.sleep(this.delay);
                 } catch (IllegalStateException e) {
                     Throwable t = e.getCause();
-                    if (t instanceof OpeningHandshakeException)
-                        log.error("Failed opening handshake, appending to queue. Message: {}", e.getMessage());
-                    else if (!JDA.Status.RECONNECT_QUEUED.name().equals(t.getMessage()))
-                        log.error("Failed to establish connection for a node, appending to queue", e);
                     appendSession(node);
                 } catch (InterruptedException e) {
-                    log.error("Failed to run node", e);
+
                     appendSession(node);
-                    return; // caller should start a new thread
+                    return;
                 }
             }
         }

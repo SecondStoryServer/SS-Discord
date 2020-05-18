@@ -37,17 +37,14 @@ public class MessageCreateHandler extends SocketHandler {
                 case EntityBuilder.MISSING_CHANNEL: {
                     final long channelId = content.getLong("channel_id");
                     jda.getEventCache().cache(EventCache.Type.CHANNEL, channelId, responseNumber, allContent, this::handle);
-                    EventCache.LOG.debug("Received a message for a channel that JDA does not currently have cached");
                     return null;
                 }
                 case EntityBuilder.MISSING_USER: {
                     final long authorId = content.getObject("author").getLong("id");
                     jda.getEventCache().cache(EventCache.Type.USER, authorId, responseNumber, allContent, this::handle);
-                    EventCache.LOG.debug("Received a message for a user that JDA does not currently have cached");
                     return null;
                 }
                 case EntityBuilder.UNKNOWN_MESSAGE_TYPE: {
-                    WebSocketClient.LOG.debug("Ignoring message with unknown type: {}", content);
                     return null;
                 }
                 default:
