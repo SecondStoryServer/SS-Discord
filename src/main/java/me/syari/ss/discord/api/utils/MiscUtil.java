@@ -1,11 +1,7 @@
 package me.syari.ss.discord.api.utils;
 
-import gnu.trove.impl.sync.TSynchronizedLongObjectMap;
-import gnu.trove.map.TLongObjectMap;
-import gnu.trove.map.hash.TLongObjectHashMap;
 import me.syari.ss.discord.internal.utils.Checks;
 import me.syari.ss.discord.internal.utils.Helpers;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -15,11 +11,6 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Supplier;
 
 public class MiscUtil {
-    @Contract(" -> new")
-    public static <T> @NotNull TLongObjectMap<T> newLongMap() {
-        return new TSynchronizedLongObjectMap<>(new TLongObjectHashMap<>(), new Object());
-    }
-
     public static long parseSnowflake(String input) {
         Checks.notEmpty(input, "ID");
         try {

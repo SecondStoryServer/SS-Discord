@@ -1,7 +1,9 @@
 package me.syari.ss.discord.internal;
 
 import com.neovisionaries.ws.client.WebSocketFactory;
+import gnu.trove.impl.sync.TSynchronizedLongObjectMap;
 import gnu.trove.map.TLongObjectMap;
+import gnu.trove.map.hash.TLongObjectHashMap;
 import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.event.MessageReceivedEvent;
 import me.syari.ss.discord.api.exceptions.RateLimitedException;
@@ -45,7 +47,7 @@ public class JDAImpl implements JDA {
     protected final SnowflakeCacheViewImpl<Guild> guildCache = new SnowflakeCacheViewImpl<>(Guild.class);
     protected final SnowflakeCacheViewImpl<TextChannel> textChannelCache = new SnowflakeCacheViewImpl<>(TextChannel.class);
 
-    protected final TLongObjectMap<User> fakeUsers = MiscUtil.newLongMap();
+    protected final TLongObjectMap<User> fakeUsers = new TSynchronizedLongObjectMap<>(new TLongObjectHashMap<>(), new Object());
 
     protected final Thread shutdownHook;
     protected final EntityBuilder entityBuilder = new EntityBuilder(this);

@@ -11,16 +11,12 @@ import me.syari.ss.discord.internal.requests.RestAction;
 import me.syari.ss.discord.internal.requests.Route;
 import me.syari.ss.discord.internal.utils.Checks;
 import me.syari.ss.discord.internal.utils.Helpers;
-import me.syari.ss.discord.internal.utils.IOUtil;
-import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 public class MessageAction extends RestAction<Message> implements Appendable {
@@ -83,16 +79,6 @@ public class MessageAction extends RestAction<Message> implements Appendable {
             }
         }
         ownedResources.clear();
-    }
-
-    protected RequestBody asMultipart() {
-        final MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
-        int index = 0;
-        if (isNotEmpty()) {
-            builder.addFormDataPart("payload_json", getJSON().toString());
-        }
-        ownedResources.clear();
-        return builder.build();
     }
 
     protected RequestBody asJSON() {
