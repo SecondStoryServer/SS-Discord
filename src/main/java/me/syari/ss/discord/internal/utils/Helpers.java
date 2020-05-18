@@ -16,17 +16,4 @@ public final class Helpers {
         return true;
     }
 
-    public static int countMatches(final CharSequence seq, final char c) {
-        if (isEmpty(seq)) {
-            return 0;
-        }
-        int count = 0;
-        for (int i = 0; i < seq.length(); i++) {
-            if (seq.charAt(i) == c) {
-                count++;
-            }
-        }
-        return count;
-    }
-
 }

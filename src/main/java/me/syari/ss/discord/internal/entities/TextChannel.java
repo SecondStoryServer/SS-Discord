@@ -127,21 +127,14 @@ public class TextChannel implements ISnowflake, Comparable<TextChannel> {
         }
 
         protected RequestBody asJSON() {
-            return RequestBody.create(Requester.MEDIA_TYPE_JSON, getJSON().toString());
-        }
-
-        protected DataObject getJSON() {
-            final DataObject obj = DataObject.empty();
-            obj.put("content", content);
-            return obj;
+            final DataObject json = DataObject.empty();
+            json.put("content", content);
+            return RequestBody.create(Requester.MEDIA_TYPE_JSON, json.toString());
         }
 
         @Override
         protected RequestBody finalizeData() {
-            if (isNotEmpty()) {
-                return asJSON();
-            }
-            throw new IllegalStateException("Cannot build a message without content!");
+            return asJSON();
         }
 
         @Override
