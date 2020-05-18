@@ -5,9 +5,6 @@ import me.syari.ss.discord.internal.JDA;
 import me.syari.ss.discord.internal.utils.cache.SnowflakeReference;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-
 public class Member implements ISnowflake {
     private final SnowflakeReference<Guild> guild;
     private final User user;

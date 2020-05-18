@@ -82,11 +82,6 @@ public class Guild implements ISnowflake {
     }
 
     @Nullable
-    public Role getRoleById(@NotNull String id) {
-        return getRoleCache().getElementById(id);
-    }
-
-    @Nullable
     public Role getRoleById(long id) {
         return getRoleCache().getElementById(id);
     }

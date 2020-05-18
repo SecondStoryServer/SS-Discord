@@ -67,8 +67,7 @@ public abstract class AbstractCacheView<T> extends ReadWriteLockCache<T> impleme
     }
 
     @NotNull
-    @Override
-    public List<T> asList() {
+    private List<T> asList() {
         if (isEmpty())
             return Collections.emptyList();
         try (UnlockHook hook = readLock()) {

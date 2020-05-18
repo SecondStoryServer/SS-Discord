@@ -1,8 +1,8 @@
 package me.syari.ss.discord.internal.entities;
 
 import gnu.trove.set.TLongSet;
-import me.syari.ss.discord.internal.utils.MiscUtil;
 import me.syari.ss.discord.internal.JDA;
+import me.syari.ss.discord.internal.utils.MiscUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

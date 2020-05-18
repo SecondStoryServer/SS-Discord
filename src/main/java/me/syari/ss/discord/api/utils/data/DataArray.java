@@ -10,7 +10,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Function;
-import java.util.function.UnaryOperator;
 
 public class DataArray implements Iterable<Object> {
     private static final ObjectMapper mapper = new ObjectMapper();
@@ -51,25 +50,10 @@ public class DataArray implements Iterable<Object> {
         return new DataObject(child);
     }
 
-    @NotNull
-    public String getString(int index) {
-        String value = get(String.class, index, UnaryOperator.identity(), String::valueOf);
-        if (value == null)
-            throw valueError(index, "String");
-        return value;
-    }
-
     public long getLong(int index) {
         Long value = get(Long.class, index, Long::parseLong, Number::longValue);
         if (value == null)
             throw valueError(index, "long");
-        return value;
-    }
-
-    public long getUnsignedLong(int index) {
-        Long value = get(Long.class, index, Long::parseUnsignedLong, Number::longValue);
-        if (value == null)
-            throw valueError(index, "unsigned long");
         return value;
     }
 

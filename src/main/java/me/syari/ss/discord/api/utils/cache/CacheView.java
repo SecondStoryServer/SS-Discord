@@ -5,13 +5,10 @@ import me.syari.ss.discord.api.utils.ClosableIterator;
 import me.syari.ss.discord.internal.utils.cache.UnifiedSnowflakeCacheView;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 public interface CacheView<T> extends Iterable<T> {
-    @NotNull
-    List<T> asList();
 
     @NotNull
     ClosableIterator<T> lockedIterator();

@@ -44,14 +44,6 @@ public class UnifiedSnowflakeCacheView<T extends ISnowflake> implements ISnowfla
 
     @NotNull
     @Override
-    public List<T> asList() {
-        List<T> list = new LinkedList<>();
-        forEach(list::add);
-        return Collections.unmodifiableList(list);
-    }
-
-    @NotNull
-    @Override
     public ChainedClosableIterator<T> lockedIterator() {
         Iterator<? extends ISnowflakeCacheView<T>> iterator = generator.get().iterator();
         return new ChainedClosableIterator<>(iterator);
