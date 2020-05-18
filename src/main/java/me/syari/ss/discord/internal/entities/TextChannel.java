@@ -68,7 +68,7 @@ public class TextChannel implements ISnowflake, Comparable<TextChannel> {
             sendMessage(text.substring(2000));
             return;
         }
-        Route.CompiledRoute route = Route.Messages.SEND_MESSAGE.compile(getId());
+        Route.CompiledRoute route = Route.SEND_MESSAGE.compile(getId());
         MessageAction messageAction = new MessageAction(getJDA(), route, this, text);
         messageAction.queue();
     }
