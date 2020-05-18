@@ -12,11 +12,19 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-public class UnifiedCacheViewImpl<T, E extends CacheView<T>> implements CacheView<T> {
-    protected final Supplier<? extends Stream<? extends E>> generator;
+public class UnifiedSnowflakeCacheView<T extends ISnowflake> implements ISnowflakeCacheView<T> {
+    protected final Supplier<? extends Stream<? extends ISnowflakeCacheView<T>>> generator;
 
-    public UnifiedCacheViewImpl(Supplier<? extends Stream<? extends E>> generator) {
+    public UnifiedSnowflakeCacheView(Supplier<? extends Stream<? extends ISnowflakeCacheView<T>>> generator) {
         this.generator = generator;
+    }
+
+    @Override
+    public T getElementById(long id) {
+        return generator.get()
+                .map(view -> view.getElementById(id))
+                .filter(Objects::nonNull)
+                .findFirst().orElse(null);
     }
 
     @Override
@@ -45,8 +53,8 @@ public class UnifiedCacheViewImpl<T, E extends CacheView<T>> implements CacheVie
     @NotNull
     @Override
     public ChainedClosableIterator<T> lockedIterator() {
-        Iterator<? extends E> gen = generator.get().iterator();
-        return new ChainedClosableIterator<>(gen);
+        Iterator<? extends ISnowflakeCacheView<T>> iterator = generator.get().iterator();
+        return new ChainedClosableIterator<>(iterator);
     }
 
     @NotNull
@@ -61,22 +69,7 @@ public class UnifiedCacheViewImpl<T, E extends CacheView<T>> implements CacheVie
         return stream().iterator();
     }
 
-    protected Stream<? extends E> distinctStream() {
+    protected Stream<? extends ISnowflakeCacheView<T>> distinctStream() {
         return generator.get().distinct();
     }
-
-    public static class UnifiedSnowflakeCacheView<T extends ISnowflake> extends UnifiedCacheViewImpl<T, ISnowflakeCacheView<T>> implements ISnowflakeCacheView<T> {
-        public UnifiedSnowflakeCacheView(Supplier<? extends Stream<? extends ISnowflakeCacheView<T>>> generator) {
-            super(generator);
-        }
-
-        @Override
-        public T getElementById(long id) {
-            return generator.get()
-                    .map(view -> view.getElementById(id))
-                    .filter(Objects::nonNull)
-                    .findFirst().orElse(null);
-        }
-    }
-
 }

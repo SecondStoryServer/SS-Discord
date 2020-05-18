@@ -2,7 +2,7 @@ package me.syari.ss.discord.api.utils.cache;
 
 import me.syari.ss.discord.api.ISnowflake;
 import me.syari.ss.discord.api.utils.ClosableIterator;
-import me.syari.ss.discord.internal.utils.cache.UnifiedCacheViewImpl;
+import me.syari.ss.discord.internal.utils.cache.UnifiedSnowflakeCacheView;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -23,6 +23,6 @@ public interface CacheView<T> extends Iterable<T> {
 
     @NotNull
     static <E extends ISnowflake> ISnowflakeCacheView<E> allSnowflakes(@NotNull Supplier<? extends Stream<? extends ISnowflakeCacheView<E>>> generator) {
-        return new UnifiedCacheViewImpl.UnifiedSnowflakeCacheView<>(generator);
+        return new UnifiedSnowflakeCacheView<>(generator);
     }
 }
