@@ -78,10 +78,11 @@ public class SessionController {
         @Override
         public void run() {
             try {
-                if (this.delay > 0) {
+                if (0 < this.delay) {
                     final long interval = System.currentTimeMillis() - lastConnect;
-                    if (interval < this.delay)
+                    if (interval < this.delay) {
                         Thread.sleep(this.delay - interval);
+                    }
                 }
             } catch (InterruptedException ex) {
                 ex.printStackTrace();
@@ -89,8 +90,9 @@ public class SessionController {
             processQueue();
             synchronized (lock) {
                 workerHandle = null;
-                if (!connectQueue.isEmpty())
+                if (!connectQueue.isEmpty()) {
                     runWorker();
+                }
             }
         }
 
@@ -104,14 +106,11 @@ public class SessionController {
                     lastConnect = System.currentTimeMillis();
                     if (connectQueue.isEmpty())
                         break;
-                    if (this.delay > 0)
+                    if (this.delay > 0) {
                         Thread.sleep(this.delay);
-                } catch (IllegalStateException e) {
+                    }
+                } catch (IllegalStateException | InterruptedException e) {
                     appendSession(node);
-                } catch (InterruptedException e) {
-
-                    appendSession(node);
-                    return;
                 }
             }
         }

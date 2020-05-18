@@ -150,13 +150,6 @@ public class DataObject {
         return value == null ? defaultValue : value;
     }
 
-    public long getUnsignedLong(@NotNull String key) {
-        Long value = get(Long.class, key, Long::parseUnsignedLong, Number::longValue);
-        if (value == null)
-            throw valueError(key, "unsigned long");
-        return value;
-    }
-
     public long getUnsignedLong(@NotNull String key, long defaultValue) {
         Long value = get(Long.class, key, Long::parseUnsignedLong, Number::longValue);
         return value == null ? defaultValue : value;

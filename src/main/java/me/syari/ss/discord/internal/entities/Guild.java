@@ -22,7 +22,6 @@ public class Guild implements ISnowflake {
     private final CompletableFuture<Void> chunkingCallback = new CompletableFuture<>();
 
     private String name;
-    private long ownerId;
     private int memberCount;
 
     public Guild(JDA api, long id) {
@@ -103,7 +102,6 @@ public class Guild implements ISnowflake {
 
 
     public void setOwnerId(long ownerId) {
-        this.ownerId = ownerId;
     }
 
     public void setMemberCount(int count) {

@@ -61,9 +61,13 @@ public class TextChannel implements ISnowflake, Comparable<TextChannel> {
     }
 
     public void sendMessage(@NotNull String text) {
-        Checks.notEmpty(text, "Provided text for message");
-        Checks.check(text.length() <= 2000, "Provided text for message must be less than 2000 characters in length");
-
+        int length = text.length();
+        if (length == 0) return;
+        if (2000 < length) {
+            sendMessage(text.substring(0, 2000));
+            sendMessage(text.substring(2000));
+            return;
+        }
         Route.CompiledRoute route = Route.Messages.SEND_MESSAGE.compile(getId());
         MessageAction messageAction = new MessageAction(getJDA(), route, this, text);
         messageAction.queue();

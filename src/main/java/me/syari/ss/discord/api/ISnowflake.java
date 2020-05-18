@@ -9,5 +9,4 @@ public interface ISnowflake {
     }
 
     long getIdLong();
-
 }

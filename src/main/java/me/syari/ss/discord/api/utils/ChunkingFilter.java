@@ -5,5 +5,4 @@ public interface ChunkingFilter {
     ChunkingFilter ALL = (x) -> true;
 
     boolean filter(long guildId);
-
 }

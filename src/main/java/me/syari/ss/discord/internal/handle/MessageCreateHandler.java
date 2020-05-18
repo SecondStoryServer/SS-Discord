@@ -24,8 +24,9 @@ public class MessageCreateHandler extends SocketHandler {
         JDA jda = getJDA();
         if (!content.isNull("guild_id")) {
             long guildId = content.getLong("guild_id");
-            if (jda.getGuildSetupController().isLocked(guildId))
+            if (jda.getGuildSetupController().isLocked(guildId)) {
                 return guildId;
+            }
         }
 
         Message message;

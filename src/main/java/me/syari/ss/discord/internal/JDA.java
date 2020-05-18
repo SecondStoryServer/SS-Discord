@@ -178,15 +178,18 @@ public class JDA {
 
     public void awaitStatus(@NotNull Status status, @NotNull Status... failOn) throws InterruptedException {
         Checks.check(status.isInit(), "Cannot await the status %s as it is not part of the login cycle!", status);
-        if (getStatus() == Status.CONNECTED)
+        if (getStatus() == Status.CONNECTED) {
             return;
+        }
         List<Status> failStatus = Arrays.asList(failOn);
         while (!getStatus().isInit() || getStatus().ordinal() < status.ordinal()) {
-            if (getStatus() == Status.SHUTDOWN)
+            if (getStatus() == Status.SHUTDOWN) {
                 throw new IllegalStateException("Was shutdown trying to await status");
-            else if (failStatus.contains(getStatus()))
+            } else if (failStatus.contains(getStatus())) {
                 return;
-            Thread.sleep(50);
+            } else {
+                Thread.sleep(50);
+            }
         }
     }
 

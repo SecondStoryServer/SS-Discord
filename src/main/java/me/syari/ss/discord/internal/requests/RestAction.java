@@ -25,7 +25,6 @@ public class RestAction<T> {
     protected final JDA api;
 
     private final Route.CompiledRoute route;
-    private final RequestBody data;
     private final BiFunction<Response, Request<T>, T> handler;
 
     public static boolean isPassContext() {
@@ -33,17 +32,12 @@ public class RestAction<T> {
     }
 
     public RestAction(@NotNull JDA api, Route.CompiledRoute route) {
-        this(api, route, null, null);
+        this(api, route, null);
     }
 
     public RestAction(JDA api, Route.CompiledRoute route, BiFunction<Response, Request<T>, T> handler) {
-        this(api, route, null, handler);
-    }
-
-    public RestAction(@NotNull JDA api, Route.CompiledRoute route, RequestBody data, BiFunction<Response, Request<T>, T> handler) {
         this.api = api;
         this.route = route;
-        this.data = data;
         this.handler = handler;
     }
 
@@ -93,7 +87,7 @@ public class RestAction<T> {
     }
 
     protected RequestBody finalizeData() {
-        return data;
+        return null;
     }
 
     protected Route.CompiledRoute finalizeRoute() {

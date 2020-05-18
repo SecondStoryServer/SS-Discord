@@ -3,7 +3,10 @@ package me.syari.ss.discord.internal.utils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.EOFException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.nio.ByteBuffer;
 import java.util.zip.GZIPInputStream;
@@ -15,6 +18,7 @@ public class IOUtil {
     public static String getHost(String uri) {
         return URI.create(uri).getHost();
     }
+
     public static int getIntBigEndian(byte @NotNull [] array, int offset) {
         return array[offset + 3] & 0xFF | (array[offset + 2] & 0xFF) << 8 | (array[offset + 1] & 0xFF) << 16 | (array[offset] & 0xFF) << 24;
     }

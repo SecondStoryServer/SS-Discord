@@ -22,9 +22,10 @@ public class ChainedClosableIterator<T> implements ClosableIterator<T> {
 
     @Override
     public void close() {
-        if (currentIterator != null)
+        if (currentIterator != null) {
             currentIterator.close();
-        currentIterator = null;
+            currentIterator = null;
+        }
     }
 
     @Override

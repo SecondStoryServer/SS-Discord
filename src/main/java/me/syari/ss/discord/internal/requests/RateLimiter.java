@@ -156,8 +156,7 @@ public class RateLimiter {
                 bucket.reset = now + parseDouble(resetAfterHeader);
                 return bucket;
             } catch (Exception e) {
-                Bucket bucket = getBucket(route, true);
-                return bucket;
+                return getBucket(route, true);
             }
         });
     }

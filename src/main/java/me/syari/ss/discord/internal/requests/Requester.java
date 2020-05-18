@@ -13,8 +13,6 @@ import org.jetbrains.annotations.NotNull;
 import javax.net.ssl.SSLPeerUnverifiedException;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 public class Requester {
     public static final String DISCORD_API_PREFIX = "https://discordapp.com/api/v6/";
@@ -92,7 +90,6 @@ public class Requester {
                 Call call = httpClient.newCall(request);
                 lastResponse = call.execute();
                 responses[attempt] = lastResponse;
-                String cfRay = lastResponse.header("CF-RAY");
 
                 if (lastResponse.code() < 500)
                     break;
