@@ -18,9 +18,6 @@ public class SessionController {
     protected Thread workerHandle;
     protected long lastConnect = 0;
 
-    public SessionController() {
-    }
-
     public void appendSession(@NotNull SessionConnectNode node) {
         removeSession(node);
         connectQueue.add(node);
@@ -54,23 +51,11 @@ public class SessionController {
         }
     }
 
-    protected class QueueWorker extends Thread {
-
-        protected final long delay;
+    private class QueueWorker extends Thread {
+        private final long delay = TimeUnit.SECONDS.toMillis(IDENTIFY_DELAY);
 
         public QueueWorker() {
-            this(IDENTIFY_DELAY);
-        }
-
-
-        public QueueWorker(int delay) {
-            this(TimeUnit.SECONDS.toMillis(delay));
-        }
-
-
-        public QueueWorker(long delay) {
             super("SessionControllerAdapter-Worker");
-            this.delay = delay;
         }
 
         @Override
@@ -94,7 +79,7 @@ public class SessionController {
             }
         }
 
-        protected void processQueue() {
+        private void processQueue() {
             boolean isMultiple = connectQueue.size() > 1;
             while (!connectQueue.isEmpty()) {
                 SessionConnectNode node = connectQueue.poll();

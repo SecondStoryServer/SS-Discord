@@ -11,10 +11,8 @@ import me.syari.ss.discord.internal.utils.UnlockHook;
 import me.syari.ss.discord.internal.utils.cache.MemberCacheView;
 import me.syari.ss.discord.internal.utils.cache.SnowflakeCacheView;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.*;
 import java.util.function.Function;
-
 import static me.syari.ss.discord.internal.utils.Check.isDefaultMessage;
 import static me.syari.ss.discord.internal.utils.Check.isTextChannel;
 
@@ -33,6 +31,12 @@ public class EntityBuilder {
         return api;
     }
 
+    private void createTextChannel(Guild guildObj, @NotNull DataObject channelData) {
+        if (isTextChannel(channelData.getInt("type"))) {
+            createTextChannel(guildObj, channelData, guildObj.getIdLong());
+        }
+    }
+
     private void createGuildEmotePass(@NotNull Guild guildObj, @NotNull DataArray array) {
         SnowflakeCacheView<Emote> emoteView = guildObj.getEmotesView();
         try (UnlockHook hook = emoteView.writeLock()) {
@@ -46,6 +50,17 @@ public class EntityBuilder {
                 emoteMap.put(emoteId, createEmote(guildObj, object));
             }
         }
+    }
+
+    private @NotNull Emote createEmote(@NotNull Guild guildObj, @NotNull DataObject json) {
+        final long emoteId = json.getLong("id");
+        Emote emote = guildObj.getEmoteById(emoteId);
+        if (emote == null) {
+            emote = new Emote(emoteId);
+        }
+        emote.setName(json.getString("name", ""));
+        emote.setAnimated(json.getBoolean("animated"));
+        return emote;
     }
 
     public Guild createGuild(long guildId, @NotNull DataObject guildJson, int memberCount) {
@@ -83,62 +98,54 @@ public class EntityBuilder {
         return guildObj;
     }
 
-    private void createTextChannel(Guild guildObj, @NotNull DataObject channelData) {
-        if (isTextChannel(channelData.getInt("type"))) {
-            createTextChannel(guildObj, channelData, guildObj.getIdLong());
-        }
+    private @NotNull User createFakeUser(DataObject user) {
+        return createUser(user, true, false);
     }
 
-    public User createFakeUser(DataObject user, boolean modifyCache) {
-        return createUser(user, true, modifyCache);
-    }
-
-    public User createUser(DataObject user) {
+    private @NotNull User createUser(DataObject user) {
         return createUser(user, false, true);
     }
 
-    private @NotNull User createUser(@NotNull DataObject user, boolean fake, boolean modifyCache) {
-        final long id = user.getLong("id");
-        User userObj;
-
+    private @NotNull User createUser(@NotNull DataObject userData, boolean fake, boolean modifyCache) {
+        final long id = userData.getLong("id");
+        User user;
         SnowflakeCacheView<User> userView = getJDA().getUsersView();
         try (UnlockHook hook = userView.writeLock()) {
-            userObj = userView.getElementById(id);
-            if (userObj == null) {
-                userObj = getJDA().getFakeUserMap().get(id);
-                if (userObj != null) {
+            user = userView.getElementById(id);
+            if (user == null) {
+                user = getJDA().getFakeUserMap().get(id);
+                if (user != null) {
                     if (!fake && modifyCache) {
                         getJDA().getFakeUserMap().remove(id);
-                        userObj.setFake(false);
-                        userView.getMap().put(userObj.getIdLong(), userObj);
+                        user.setFake(false);
+                        userView.getMap().put(user.getIdLong(), user);
                     }
                 } else {
-                    userObj = new User(id, getJDA()).setFake(fake);
-                    // Cache user if guild subscriptions are enabled
+                    user = new User(id, getJDA()).setFake(fake);
                     if (modifyCache) {
                         if (fake)
-                            getJDA().getFakeUserMap().put(id, userObj);
+                            getJDA().getFakeUserMap().put(id, user);
                         else
-                            userView.getMap().put(id, userObj);
+                            userView.getMap().put(id, user);
                     }
                 }
             }
         }
 
-        if (modifyCache || userObj.isFake()) {
-            userObj.setName(user.getString("username"))
-                    .setDiscriminator(user.get("discriminator").toString())
-                    .setBot(user.getBoolean("bot"));
-        } else if (!userObj.isFake()) {
-            updateUser(userObj, user);
+        if (modifyCache || user.isFake()) {
+            user.setName(userData.getString("username"))
+                    .setDiscriminator(userData.get("discriminator").toString())
+                    .setBot(userData.getBoolean("bot"));
+        } else if (!user.isFake()) {
+            updateUser(user, userData);
         }
         if (!fake && modifyCache) {
             getJDA().getEventCache().playbackCache(EventCache.Type.USER, id);
         }
-        return userObj;
+        return user;
     }
 
-    public void updateUser(@NotNull User userObj, @NotNull DataObject user) {
+    private void updateUser(@NotNull User userObj, @NotNull DataObject user) {
         String oldName = userObj.getName();
         String newName = user.getString("username");
         String oldDiscriminator = userObj.getDiscriminator();
@@ -153,7 +160,7 @@ public class EntityBuilder {
         }
     }
 
-    public Member createMember(@NotNull Guild guild, @NotNull DataObject memberJson) {
+    private Member createMember(@NotNull Guild guild, @NotNull DataObject memberJson) {
         boolean playbackCache = false;
         User user = createUser(memberJson.getObject("user"));
         Member member = guild.getMember(user);
@@ -180,7 +187,7 @@ public class EntityBuilder {
         member.setNickname(memberJson.getString("nick", null));
     }
 
-    public void updateMember(Member member, @NotNull DataObject content) {
+    private void updateMember(Member member, @NotNull DataObject content) {
         if (content.hasKey("nick")) {
             String oldNick = member.getNickname();
             String newNick = content.getString("nick", null);
@@ -190,19 +197,7 @@ public class EntityBuilder {
         }
     }
 
-    public Emote createEmote(@NotNull Guild guildObj, @NotNull DataObject json) {
-        final long emoteId = json.getLong("id");
-        Emote emote = guildObj.getEmoteById(emoteId);
-        if (emote == null) {
-            emote = new Emote(emoteId);
-        }
-        return emote
-                .setName(json.getString("name", ""))
-                .setAnimated(json.getBoolean("animated"));
-    }
-
-
-    public void createTextChannel(Guild guildObj, @NotNull DataObject json, long guildId) {
+    private void createTextChannel(Guild guildObj, @NotNull DataObject json, long guildId) {
         boolean playbackCache = false;
         final long id = json.getLong("id");
         TextChannel channel = getJDA().getTextChannelsView().get(id);
@@ -227,7 +222,7 @@ public class EntityBuilder {
         }
     }
 
-    public Role createRole(Guild guild, @NotNull DataObject roleJson, long guildId) {
+    private @NotNull Role createRole(Guild guild, @NotNull DataObject roleJson, long guildId) {
         boolean playbackCache = false;
         final long id = roleJson.getLong("id");
         if (guild == null) {
@@ -287,7 +282,7 @@ public class EntityBuilder {
         user = member != null ? member.getUser() : null;
         if (user == null) {
             if (fromWebhook || !modifyCache) {
-                user = createFakeUser(author, false);
+                user = createFakeUser(author);
             } else {
                 throw new IllegalArgumentException(MISSING_USER);
             }
@@ -325,7 +320,7 @@ public class EntityBuilder {
         for (int i = 0; i < userMentions.length(); i++) {
             DataObject mentionJson = userMentions.getObject(i);
             if (mentionJson.isNull("member")) {
-                User mentionedUser = createFakeUser(mentionJson, false);
+                User mentionedUser = createFakeUser(mentionJson);
                 mentionedUsersList.add(mentionedUser);
                 Member mentionedMember = guildImpl.getMember(mentionedUser);
                 if (mentionedMember != null) {

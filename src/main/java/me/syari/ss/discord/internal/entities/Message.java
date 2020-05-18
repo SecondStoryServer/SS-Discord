@@ -161,8 +161,11 @@ public class Message {
         String name = m.group(1);
         boolean animated = m.group(0).startsWith("<a:");
         Emote emote = getJDA().getEmoteById(emoteId);
-        if (emote == null)
-            emote = new Emote(emoteId).setName(name).setAnimated(animated);
+        if (emote == null) {
+            emote = new Emote(emoteId);
+            emote.setName(name);
+            emote.setAnimated(animated);
+        }
         return emote;
     }
 

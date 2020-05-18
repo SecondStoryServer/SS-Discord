@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 public class Emote implements ISnowflake {
     private final long id;
     private boolean animated = false;
-    private String name;
+    private String name = "";
 
     public Emote(long id) {
         this.id = id;
@@ -31,14 +31,12 @@ public class Emote implements ISnowflake {
         return (isAnimated() ? "<a:" : "<:") + getName() + ":" + getId() + ">";
     }
 
-    public Emote setName(String name) {
+    public void setName(@NotNull String name) {
         this.name = name;
-        return this;
     }
 
-    public Emote setAnimated(boolean animated) {
+    public void setAnimated(boolean animated) {
         this.animated = animated;
-        return this;
     }
 
     @Override

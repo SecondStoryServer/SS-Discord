@@ -19,8 +19,8 @@ public class LockIterator<T> implements ClosableIterator<T> {
     public void close() {
         if (lock != null) {
             lock.unlock();
+            lock = null;
         }
-        lock = null;
     }
 
     @Override
@@ -38,9 +38,10 @@ public class LockIterator<T> implements ClosableIterator<T> {
     @NotNull
     @Override
     public T next() {
-        if (lock == null) {
+        if (lock != null) {
+            return iterator.next();
+        } else {
             throw new NoSuchElementException();
         }
-        return iterator.next();
     }
 }

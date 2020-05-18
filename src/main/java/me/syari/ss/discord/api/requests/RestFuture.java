@@ -7,7 +7,7 @@ import okhttp3.RequestBody;
 import java.util.concurrent.CompletableFuture;
 
 public class RestFuture<T> extends CompletableFuture<T> {
-    final Request<T> request;
+    private final Request<T> request;
 
     public RestFuture(final RestAction<T> restAction,
                       final boolean shouldQueue,
