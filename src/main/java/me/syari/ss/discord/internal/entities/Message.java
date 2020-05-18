@@ -116,10 +116,12 @@ public class Message {
         if (!mentionedUsers.contains(userId))
             return null;
         User user = getJDA().getUserById(userId);
-        if (user == null)
+        if (user == null) {
             user = api.getFakeUserMap().get(userId);
-        if (user == null && userMentions != null)
+        }
+        if (user == null && userMentions != null) {
             user = userMentions.stream().filter(it -> it.getIdLong() == userId).findFirst().orElse(null);
+        }
         return user;
     }
 

@@ -11,8 +11,10 @@ import me.syari.ss.discord.internal.utils.UnlockHook;
 import me.syari.ss.discord.internal.utils.cache.MemberCacheView;
 import me.syari.ss.discord.internal.utils.cache.SnowflakeCacheView;
 import org.jetbrains.annotations.NotNull;
+
 import java.util.*;
 import java.util.function.Function;
+
 import static me.syari.ss.discord.internal.utils.Check.isDefaultMessage;
 import static me.syari.ss.discord.internal.utils.Check.isTextChannel;
 
@@ -37,38 +39,11 @@ public class EntityBuilder {
         }
     }
 
-    private void createGuildEmotePass(@NotNull Guild guildObj, @NotNull DataArray array) {
-        SnowflakeCacheView<Emote> emoteView = guildObj.getEmotesView();
-        try (UnlockHook hook = emoteView.writeLock()) {
-            TLongObjectMap<Emote> emoteMap = emoteView.getMap();
-            for (int i = 0; i < array.length(); i++) {
-                DataObject object = array.getObject(i);
-                if (object.isNull("id")) {
-                    continue;
-                }
-                final long emoteId = object.getLong("id");
-                emoteMap.put(emoteId, createEmote(guildObj, object));
-            }
-        }
-    }
-
-    private @NotNull Emote createEmote(@NotNull Guild guildObj, @NotNull DataObject json) {
-        final long emoteId = json.getLong("id");
-        Emote emote = guildObj.getEmoteById(emoteId);
-        if (emote == null) {
-            emote = new Emote(emoteId);
-        }
-        emote.setName(json.getString("name", ""));
-        emote.setAnimated(json.getBoolean("animated"));
-        return emote;
-    }
-
     public Guild createGuild(long guildId, @NotNull DataObject guildJson, int memberCount) {
         final Guild guildObj = new Guild(getJDA(), guildId);
         final String name = guildJson.getString("name", "");
         final DataArray roleArray = guildJson.getArray("roles");
         final DataArray channelArray = guildJson.getArray("channels");
-        final DataArray emotesArray = guildJson.getArray("emojis");
 
         guildObj.setName(name);
         guildObj.setMemberCount(memberCount);
@@ -92,21 +67,18 @@ public class EntityBuilder {
             DataObject channelJson = channelArray.getObject(i);
             createTextChannel(guildObj, channelJson);
         }
-
-        createGuildEmotePass(guildObj, emotesArray);
-
         return guildObj;
     }
 
     private @NotNull User createFakeUser(DataObject user) {
-        return createUser(user, true, false);
+        return createUser(user, true);
     }
 
     private @NotNull User createUser(DataObject user) {
-        return createUser(user, false, true);
+        return createUser(user, false);
     }
 
-    private @NotNull User createUser(@NotNull DataObject userData, boolean fake, boolean modifyCache) {
+    private @NotNull User createUser(@NotNull DataObject userData, boolean fake) {
         final long id = userData.getLong("id");
         User user;
         SnowflakeCacheView<User> userView = getJDA().getUsersView();
@@ -115,48 +87,45 @@ public class EntityBuilder {
             if (user == null) {
                 user = getJDA().getFakeUserMap().get(id);
                 if (user != null) {
-                    if (!fake && modifyCache) {
+                    if (!fake) {
                         getJDA().getFakeUserMap().remove(id);
                         user.setFake(false);
                         userView.getMap().put(user.getIdLong(), user);
                     }
                 } else {
                     user = new User(id, getJDA()).setFake(fake);
-                    if (modifyCache) {
-                        if (fake)
-                            getJDA().getFakeUserMap().put(id, user);
-                        else
-                            userView.getMap().put(id, user);
+                    if (!fake) {
+                        userView.getMap().put(id, user);
                     }
                 }
             }
         }
 
-        if (modifyCache || user.isFake()) {
+        if (!fake || user.isFake()) {
             user.setName(userData.getString("username"))
                     .setDiscriminator(userData.get("discriminator").toString())
                     .setBot(userData.getBoolean("bot"));
         } else if (!user.isFake()) {
             updateUser(user, userData);
         }
-        if (!fake && modifyCache) {
+        if (!fake) {
             getJDA().getEventCache().playbackCache(EventCache.Type.USER, id);
         }
         return user;
     }
 
-    private void updateUser(@NotNull User userObj, @NotNull DataObject user) {
-        String oldName = userObj.getName();
-        String newName = user.getString("username");
-        String oldDiscriminator = userObj.getDiscriminator();
-        String newDiscriminator = user.get("discriminator").toString();
+    private void updateUser(@NotNull User user, @NotNull DataObject userData) {
+        String lastName = user.getName();
+        String name = userData.getString("username");
+        String lastDiscriminator = user.getDiscriminator();
+        String discriminator = userData.get("discriminator").toString();
 
-        if (!oldName.equals(newName)) {
-            userObj.setName(newName);
+        if (!name.equals(lastName)) {
+            user.setName(name);
         }
 
-        if (!oldDiscriminator.equals(newDiscriminator)) {
-            userObj.setDiscriminator(newDiscriminator);
+        if (!discriminator.equals(lastDiscriminator)) {
+            user.setDiscriminator(discriminator);
         }
     }
 
@@ -189,10 +158,10 @@ public class EntityBuilder {
 
     private void updateMember(Member member, @NotNull DataObject content) {
         if (content.hasKey("nick")) {
-            String oldNick = member.getNickname();
-            String newNick = content.getString("nick", null);
-            if (!Objects.equals(oldNick, newNick)) {
-                member.setNickname(newNick);
+            String lastNickName = member.getNickname();
+            String nickName = content.getString("nick", null);
+            if (!Objects.equals(nickName, lastNickName)) {
+                member.setNickname(nickName);
             }
         }
     }

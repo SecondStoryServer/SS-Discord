@@ -21,8 +21,8 @@ public class TextChannel implements ISnowflake, Comparable<TextChannel> {
     private static final int MAX_CONTENT_LENGTH = 2000;
 
     protected final long id;
-    protected final SnowflakeReference<Guild> guild;
     protected final JDA api;
+    protected final SnowflakeReference<Guild> guild;
     protected String name;
 
     public TextChannel(long id, @NotNull Guild guild) {

@@ -8,12 +8,10 @@ import org.jetbrains.annotations.NotNull;
 public class Member implements ISnowflake {
     private final SnowflakeReference<Guild> guild;
     private final User user;
-
     private String nickname;
 
     public Member(Guild guild, @NotNull User user) {
-        JDA api = user.getJDA();
-        this.guild = new SnowflakeReference<>(guild, api::getGuildById);
+        this.guild = new SnowflakeReference<>(guild, user.getJDA()::getGuildById);
         this.user = user;
     }
 
@@ -53,7 +51,6 @@ public class Member implements ISnowflake {
         if (!(object instanceof Member)) {
             return false;
         }
-
         Member member = (Member) object;
         return member.user.getIdLong() == user.getIdLong() && member.guild.getIdLong() == guild.getIdLong();
     }

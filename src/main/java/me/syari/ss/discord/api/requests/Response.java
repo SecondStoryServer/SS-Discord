@@ -33,7 +33,7 @@ public class Response implements Closeable {
     }
 
     @SuppressWarnings("ConstantConditions")
-    private  @Nullable InputStream getBody(okhttp3.@NotNull Response response) throws IOException {
+    private @Nullable InputStream getBody(okhttp3.@NotNull Response response) throws IOException {
         String encoding = response.header("content-encoding", "");
         InputStream data = new BufferedInputStream(response.body().byteStream());
         data.mark(256);

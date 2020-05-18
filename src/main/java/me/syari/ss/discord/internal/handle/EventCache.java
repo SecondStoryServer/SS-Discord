@@ -13,10 +13,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class EventCache {
     public static final long TIMEOUT_AMOUNT = 100;
-    private final EnumMap<Type, TLongObjectMap<List<CacheNode>>> eventCache = new EnumMap<>(Type.class);
 
-    public EventCache() {
-    }
+    private final EnumMap<Type, TLongObjectMap<List<CacheNode>>> eventCache = new EnumMap<>(Type.class);
 
     public synchronized void timeout(final long responseTotal) {
         if (eventCache.isEmpty())
@@ -29,7 +27,6 @@ public class EventCache {
             TLongObjectIterator<List<CacheNode>> iterator = map.iterator();
             while (iterator.hasNext()) {
                 iterator.advance();
-                long triggerId = iterator.key();
                 List<CacheNode> cache = iterator.value();
                 cache.removeIf(node ->
                 {

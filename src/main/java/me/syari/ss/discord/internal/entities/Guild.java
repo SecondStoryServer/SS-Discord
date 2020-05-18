@@ -11,16 +11,13 @@ import org.jetbrains.annotations.Nullable;
 import java.util.concurrent.CompletableFuture;
 
 public class Guild implements ISnowflake {
-    private final long id;
-    private final JDA api;
-
     private final SnowflakeCacheView<TextChannel> textChannelCache = new SnowflakeCacheView<>(TextChannel.class);
     private final SnowflakeCacheView<Role> roleCache = new SnowflakeCacheView<>(Role.class);
     private final SnowflakeCacheView<Emote> emoteCache = new SnowflakeCacheView<>(Emote.class);
     private final MemberCacheView memberCache = new MemberCacheView();
-
     private final CompletableFuture<Void> chunkingCallback = new CompletableFuture<>();
-
+    private final long id;
+    private final JDA api;
     private String name;
     private int memberCount;
 
@@ -75,7 +72,6 @@ public class Guild implements ISnowflake {
         return id;
     }
 
-
     @Nullable
     public Member getMemberById(long userId) {
         return getMemberCache().getElementById(userId);
@@ -84,11 +80,6 @@ public class Guild implements ISnowflake {
     @Nullable
     public Role getRoleById(long id) {
         return getRoleCache().getElementById(id);
-    }
-
-    @Nullable
-    public Emote getEmoteById(long id) {
-        return getEmoteCache().getElementById(id);
     }
 
     public void setName(String name) {
@@ -105,10 +96,6 @@ public class Guild implements ISnowflake {
 
     public SnowflakeCacheView<Role> getRolesView() {
         return roleCache;
-    }
-
-    public SnowflakeCacheView<Emote> getEmotesView() {
-        return emoteCache;
     }
 
     public MemberCacheView getMembersView() {

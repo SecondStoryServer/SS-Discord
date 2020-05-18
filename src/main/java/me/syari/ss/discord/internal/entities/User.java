@@ -47,13 +47,15 @@ public class User implements ISnowflake {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (o == this)
+    public boolean equals(Object object) {
+        if (object == this) {
             return true;
-        if (!(o instanceof User))
+        }
+        if (!(object instanceof User)) {
             return false;
-        User oUser = (User) o;
-        return this.id == oUser.id;
+        }
+        User user = (User) object;
+        return this.id == user.id;
     }
 
     @Override

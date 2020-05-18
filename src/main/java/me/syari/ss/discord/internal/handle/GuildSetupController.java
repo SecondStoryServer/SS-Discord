@@ -16,30 +16,30 @@ import org.jetbrains.annotations.NotNull;
 
 public class GuildSetupController {
     protected static final int CHUNK_TIMEOUT = 10000;
+
     private final JDA api;
     private final TLongObjectMap<GuildSetupNode> setupNodes = new TLongObjectHashMap<>();
     private final TLongSet chunkingGuilds = new TLongHashSet();
     private final TLongLongMap pendingChunks = new TLongLongHashMap();
     private final TLongSet unavailableGuilds = new TLongHashSet();
-
     private int incompleteCount = 0;
 
     public GuildSetupController(JDA api) {
         this.api = api;
     }
 
-    JDA getJDA() {
+    protected JDA getJDA() {
         return api;
     }
 
     void addGuildForChunking(long id) {
         if (incompleteCount <= 0) {
             sendChunkRequest(id);
-            return;
+        } else {
+            incompleteCount++;
+            chunkingGuilds.add(id);
+            tryChunking();
         }
-        incompleteCount++;
-        chunkingGuilds.add(id);
-        tryChunking();
     }
 
     void remove(long id) {
@@ -53,11 +53,13 @@ public class GuildSetupController {
 
     public void ready(long id) {
         remove(id);
-        WebSocketClient client = getJDA().getClient();
-        if (--incompleteCount < 1 && !client.isReady())
+        WebSocketClient client = api.getClient();
+        incompleteCount--;
+        if (incompleteCount < 1 && !client.isReady()) {
             client.ready();
-        else
+        } else {
             tryChunking();
+        }
     }
 
     public void onCreate(long id, @NotNull DataObject obj) {
@@ -79,8 +81,9 @@ public class GuildSetupController {
 
     public void cacheEvent(long guildId, DataObject event) {
         GuildSetupNode node = setupNodes.get(guildId);
-        if (node != null)
+        if (node != null) {
             node.cacheEvent(event);
+        }
     }
 
     public void clearCache() {
@@ -93,23 +96,24 @@ public class GuildSetupController {
         }
     }
 
-    void sendChunkRequest(Object obj) {
+    void sendChunkRequest(Object object) {
         long timeout = System.currentTimeMillis() + CHUNK_TIMEOUT;
         synchronized (pendingChunks) {
-            if (obj instanceof DataArray) {
-                DataArray arr = (DataArray) obj;
-                for (Object o : arr)
+            if (object instanceof DataArray) {
+                DataArray array = (DataArray) object;
+                for (Object o : array) {
                     pendingChunks.put((long) o, timeout);
+                }
             } else {
-                pendingChunks.put((long) obj, timeout);
+                pendingChunks.put((long) object, timeout);
             }
         }
 
-        getJDA().getClient().chunkOrSyncRequest(
+        api.getClient().chunkOrSyncRequest(
                 DataObject.empty()
                         .put("op", WebSocketCode.MEMBER_CHUNK_REQUEST)
                         .put("d", DataObject.empty()
-                                .put("guild_id", obj)
+                                .put("guild_id", object)
                                 .put("query", "")
                                 .put("limit", 0)
                         )

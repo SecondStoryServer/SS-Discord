@@ -15,24 +15,22 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class GuildSetupNode {
-    private final long id;
-    private final GuildSetupController controller;
     private final List<DataObject> cachedEvents = new LinkedList<>();
     private TLongObjectMap<DataObject> members;
     private TLongSet removedMembers;
     private DataObject partialGuild;
     private int expectedMemberCount = 1;
     boolean requestedChunk;
-
-    final boolean sync;
-    boolean firedUnavailableJoin = false;
     boolean markedUnavailable = false;
     GuildSetupController.Status status = GuildSetupController.Status.INIT;
+    private final long id;
+    private final GuildSetupController controller;
+    private final JDA api;
 
-    GuildSetupNode(long id, GuildSetupController controller) {
+    GuildSetupNode(long id, @NotNull GuildSetupController controller) {
         this.id = id;
         this.controller = controller;
-        this.sync = false;
+        api = controller.getJDA();
     }
 
     @Override
@@ -41,7 +39,6 @@ public class GuildSetupNode {
                 '{' +
                 "expectedMemberCount=" + expectedMemberCount + ", " +
                 "requestedChunk=" + requestedChunk + ", " +
-                "sync=" + sync + ", " +
                 "markedUnavailable=" + markedUnavailable +
                 '}';
     }
@@ -59,14 +56,10 @@ public class GuildSetupNode {
         return node.id == id;
     }
 
-    private GuildSetupController getController() {
-        return controller;
-    }
-
     void updateStatus(GuildSetupController.Status status) {
-        if (status == this.status)
-            return;
-        this.status = status;
+        if (status != this.status) {
+            this.status = status;
+        }
     }
 
     void handleCreate(DataObject obj) {
@@ -80,9 +73,6 @@ public class GuildSetupNode {
         boolean unavailable = partialGuild.getBoolean("unavailable");
         this.markedUnavailable = unavailable;
         if (unavailable) {
-            if (!firedUnavailableJoin) {
-                firedUnavailableJoin = true;
-            }
             return;
         }
         ensureMembers();
@@ -98,7 +88,7 @@ public class GuildSetupNode {
             members.put(id, obj);
         }
 
-        if (members.size() >= expectedMemberCount || !getController().getJDA().chunkGuild(id)) {
+        if (members.size() >= expectedMemberCount || !api.chunkGuild(id)) {
             completeSetup();
             return false;
         }
@@ -109,7 +99,6 @@ public class GuildSetupNode {
         cachedEvents.add(event);
         int cacheSize = cachedEvents.size();
         if (cacheSize >= 2000 && cacheSize % 1000 == 0) {
-            GuildSetupController controller = getController();
             if (status == GuildSetupController.Status.CHUNKING) {
                 controller.sendChunkRequest(id);
             }
@@ -118,7 +107,6 @@ public class GuildSetupNode {
 
     private void completeSetup() {
         updateStatus(GuildSetupController.Status.BUILDING);
-        JDA api = getController().getJDA();
         TLongIterator iterator = removedMembers.iterator();
         while (iterator.hasNext()) {
             members.remove(iterator.next());
@@ -126,9 +114,9 @@ public class GuildSetupNode {
         removedMembers.clear();
         Guild guild = api.getEntityBuilder().createGuild(id, partialGuild, expectedMemberCount);
         if (requestedChunk) {
-            getController().ready(id);
+            controller.ready(id);
         } else {
-            getController().remove(id);
+            controller.remove(id);
         }
         updateStatus(GuildSetupController.Status.READY);
         api.getClient().handle(cachedEvents);
@@ -141,16 +129,16 @@ public class GuildSetupNode {
         members = new TLongObjectHashMap<>(expectedMemberCount);
         removedMembers = new TLongHashSet();
         DataArray memberArray = partialGuild.getArray("members");
-        if (!getController().getJDA().chunkGuild(id)) {
+        if (!api.chunkGuild(id)) {
             handleMemberChunk(memberArray);
         } else if (memberArray.length() < expectedMemberCount && !requestedChunk) {
             updateStatus(GuildSetupController.Status.CHUNKING);
-            getController().addGuildForChunking(id);
+            controller.addGuildForChunking(id);
             requestedChunk = true;
         } else if (handleMemberChunk(memberArray) && !requestedChunk) {
             members.clear();
             updateStatus(GuildSetupController.Status.CHUNKING);
-            getController().addGuildForChunking(id);
+            controller.addGuildForChunking(id);
             requestedChunk = true;
         }
     }

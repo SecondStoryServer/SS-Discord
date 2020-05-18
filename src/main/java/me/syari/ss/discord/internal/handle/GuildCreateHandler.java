@@ -14,11 +14,11 @@ public class GuildCreateHandler extends SocketHandler {
     protected Long handleInternally(@NotNull DataObject content) {
         System.out.println(">> GuildCreateHandler");
         final long id = content.getLong("id");
-        Guild guild = getJDA().getGuildById(id);
+        JDA api = getJDA();
+        Guild guild = api.getGuildById(id);
         if (guild == null) {
-            getJDA().getGuildSetupController().onCreate(id, content);
+            api.getGuildSetupController().onCreate(id, content);
         }
-
         return null;
     }
 }
