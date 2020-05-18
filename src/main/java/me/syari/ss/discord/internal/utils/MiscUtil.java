@@ -25,9 +25,7 @@ public class MiscUtil {
         } catch (InterruptedException ex) {
             throw new IllegalStateException(ex);
         } finally {
-            if (lock.isHeldByCurrentThread()) {
-                lock.unlock();
-            }
+            if (lock.isHeldByCurrentThread()) lock.unlock();
         }
     }
 
@@ -38,9 +36,7 @@ public class MiscUtil {
         } catch (InterruptedException e) {
             throw new IllegalStateException(e);
         } finally {
-            if (lock.isHeldByCurrentThread()) {
-                lock.unlock();
-            }
+            if (lock.isHeldByCurrentThread()) lock.unlock();
         }
     }
 

@@ -35,9 +35,7 @@ public class Route {
             int paramEnd = compiledRoute.indexOf("}");
             String paramName = compiledRoute.substring(paramStart + 1, paramEnd);
             int majorParamIndex = majorParameter.indexOf(paramName);
-            if (majorParamIndex > -1)
-                majorParameter.replace(majorParamIndex, majorParamIndex + paramName.length(), params[i]);
-
+            if (majorParamIndex > -1) majorParameter.replace(majorParamIndex, majorParamIndex + paramName.length(), params[i]);
             compiledRoute.replace(paramStart, paramEnd + 1, params[i]);
         }
 
@@ -97,11 +95,8 @@ public class Route {
 
         @Override
         public boolean equals(Object object) {
-            if (!(object instanceof CompiledRoute))
-                return false;
-
+            if (!(object instanceof CompiledRoute)) return false;
             CompiledRoute compiledRoute = (CompiledRoute) object;
-
             return baseRoute.equals(compiledRoute.getBaseRoute()) && this.compiledRoute.equals(compiledRoute.compiledRoute);
         }
 

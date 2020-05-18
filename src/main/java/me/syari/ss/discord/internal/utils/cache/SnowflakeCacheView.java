@@ -10,9 +10,6 @@ public class SnowflakeCacheView<T extends ISnowflake> extends AbstractCacheView<
 
     @Override
     public T getElementById(long id) {
-        if (elements.isEmpty()) {
-            return null;
-        }
-        return get(id);
+        return elements.isEmpty()? null : get(id);
     }
 }

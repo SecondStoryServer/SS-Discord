@@ -31,9 +31,11 @@ public abstract class AbstractCacheView<T> extends ReadWriteLockCache<T> impleme
     }
 
     public TLongObjectMap<T> getMap() {
-        if (!lock.writeLock().isHeldByCurrentThread())
+        if (!lock.writeLock().isHeldByCurrentThread()) {
             throw new IllegalStateException("Cannot access map directly without holding write lock!");
-        return elements;
+        } else {
+            return elements;
+        }
     }
 
     public T get(long id) {
@@ -60,21 +62,18 @@ public abstract class AbstractCacheView<T> extends ReadWriteLockCache<T> impleme
         try {
             Iterator<T> directIterator = elements.valueCollection().iterator();
             return new LockIterator<>(directIterator, readLock);
-        } catch (Throwable t) {
+        } catch (Throwable ex) {
             readLock.unlock();
-            throw t;
+            throw ex;
         }
     }
 
     @NotNull
     private List<T> asList() {
-        if (isEmpty())
-            return Collections.emptyList();
+        if (isEmpty()) return Collections.emptyList();
         try (UnlockHook hook = readLock()) {
             List<T> list = getCachedList();
-            if (list != null) {
-                return list;
-            }
+            if (list != null) return list;
             list = new ArrayList<>(elements.size());
             elements.forEachValue(list::add);
             return cache(list);
@@ -124,12 +123,10 @@ public abstract class AbstractCacheView<T> extends ReadWriteLockCache<T> impleme
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj == this)
-            return true;
-        if (!(obj instanceof AbstractCacheView))
-            return false;
-        AbstractCacheView view = (AbstractCacheView) obj;
+    public boolean equals(Object object) {
+        if (object == this) return true;
+        if (!(object instanceof AbstractCacheView)) return false;
+        AbstractCacheView view = (AbstractCacheView) object;
         try (UnlockHook hook = readLock(); UnlockHook otherHook = view.readLock()) {
             return this.elements.equals(view.elements);
         }

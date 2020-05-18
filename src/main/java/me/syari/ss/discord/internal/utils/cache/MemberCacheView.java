@@ -12,5 +12,4 @@ public class MemberCacheView extends SnowflakeCacheView<Member> implements ISnow
     public Member getElementById(long id) {
         return get(id);
     }
-
 }

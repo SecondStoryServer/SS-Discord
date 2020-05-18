@@ -37,12 +37,7 @@ public class MessageListenerExample {
     public static void main(String[] args) {
         try {
             jda = JDA.build(token, messageReceivedEvent);
-            if(jda != null){
-                jda.awaitReady();
-            } else {
-                System.out.println(">> Failed JDA build");
-            }
-            System.out.println("Finished Building JDA!");
+            jda.awaitReady();
         } catch (LoginException | InterruptedException e) {
             e.printStackTrace();
         }

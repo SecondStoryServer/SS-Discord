@@ -19,21 +19,15 @@ public class ZlibDecompressor {
     private ByteBuffer flushBuffer = null;
     private SoftReference<ByteArrayOutputStream> decompressBuffer = null;
 
-    public ZlibDecompressor() {
-    }
-
     @Contract(" -> new")
     private @NotNull SoftReference<ByteArrayOutputStream> newDecompressBuffer() {
         return new SoftReference<>(new ByteArrayOutputStream(Math.min(1024, maxBufferSize)));
     }
 
     private ByteArrayOutputStream getDecompressBuffer() {
-        if (decompressBuffer == null)
-            decompressBuffer = newDecompressBuffer();
+        if (decompressBuffer == null) decompressBuffer = newDecompressBuffer();
         ByteArrayOutputStream buffer = decompressBuffer.get();
-        if (buffer == null) {
-            decompressBuffer = new SoftReference<>(buffer = new ByteArrayOutputStream(Math.min(1024, maxBufferSize)));
-        }
+        if (buffer == null) decompressBuffer = new SoftReference<>(buffer = new ByteArrayOutputStream(Math.min(1024, maxBufferSize)));
         return buffer;
     }
 
@@ -42,9 +36,7 @@ public class ZlibDecompressor {
     }
 
     private boolean isFlush(byte @NotNull [] data) {
-        if (data.length < 4) {
-            return false;
-        }
+        if (data.length < 4) return false;
         int suffix = getIntBigEndian(data, data.length - 4);
         return suffix == Z_SYNC_FLUSH;
     }
@@ -56,14 +48,11 @@ public class ZlibDecompressor {
     }
 
     private void buffer(byte[] data) {
-        if (flushBuffer == null)
-            flushBuffer = ByteBuffer.allocate(data.length * 2);
-
+        if (flushBuffer == null) flushBuffer = ByteBuffer.allocate(data.length * 2);
         if (flushBuffer.capacity() < data.length + flushBuffer.position()) {
             flushBuffer.flip();
             flushBuffer = reallocate(flushBuffer, (flushBuffer.capacity() + data.length) * 2);
         }
-
         flushBuffer.put(data);
     }
 
@@ -89,10 +78,11 @@ public class ZlibDecompressor {
         } catch (IOException e) {
             throw (DataFormatException) new DataFormatException("Malformed").initCause(e);
         } finally {
-            if (buffer.size() > maxBufferSize)
+            if (buffer.size() > maxBufferSize) {
                 decompressBuffer = newDecompressBuffer();
-            else
+            } else {
                 buffer.reset();
+            }
         }
     }
 }

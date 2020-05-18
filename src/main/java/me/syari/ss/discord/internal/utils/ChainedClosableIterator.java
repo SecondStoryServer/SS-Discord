@@ -28,13 +28,9 @@ public class ChainedClosableIterator<T> implements ClosableIterator<T> {
 
     @Override
     public boolean hasNext() {
-        if (item != null) {
-            return true;
-        }
+        if (item != null) return true;
         if (currentIterator != null) {
-            if (currentIterator.hasNext() && findNext()) {
-                return true;
-            }
+            if (currentIterator.hasNext() && findNext()) return true;
             currentIterator.close();
             currentIterator = null;
         }
@@ -52,14 +48,9 @@ public class ChainedClosableIterator<T> implements ClosableIterator<T> {
                     break;
                 }
             }
-            if (view == null) {
-                return false;
-            }
-
+            if (view == null) return false;
             currentIterator = view.lockedIterator();
-            if (findNext()) {
-                break;
-            }
+            if (findNext()) break;
         }
         return true;
     }

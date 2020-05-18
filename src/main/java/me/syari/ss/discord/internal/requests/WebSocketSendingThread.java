@@ -15,7 +15,6 @@ class WebSocketSendingThread implements Runnable {
     private final Queue<String> ratelimitQueue;
     private final ScheduledExecutorService executor;
     private Future<?> handle;
-
     private boolean needRateLimit = false;
     private boolean attemptedToSend = false;
     private boolean shutdown = false;
@@ -30,8 +29,7 @@ class WebSocketSendingThread implements Runnable {
 
     public void shutdown() {
         shutdown = true;
-        if (handle != null)
-            handle.cancel(false);
+        if (handle != null) handle.cancel(false);
     }
 
     public void start() {
@@ -40,20 +38,17 @@ class WebSocketSendingThread implements Runnable {
     }
 
     private void scheduleIdle() {
-        if (shutdown)
-            return;
+        if (shutdown) return;
         handle = executor.schedule(this, 500, TimeUnit.MILLISECONDS);
     }
 
     private void scheduleSentMessage() {
-        if (shutdown)
-            return;
+        if (shutdown) return;
         handle = executor.schedule(this, 10, TimeUnit.MILLISECONDS);
     }
 
     private void scheduleRateLimit() {
-        if (shutdown)
-            return;
+        if (shutdown) return;
         handle = executor.schedule(this, 1, TimeUnit.MINUTES);
     }
 
@@ -63,19 +58,16 @@ class WebSocketSendingThread implements Runnable {
             scheduleIdle();
             return;
         }
-
         try {
             attemptedToSend = false;
             needRateLimit = false;
             queueLock.lockInterruptibly();
-
             String chunkOrSyncRequest = chunkSyncQueue.peek();
             if (chunkOrSyncRequest != null) {
                 handleChunkSync(chunkOrSyncRequest);
             } else {
                 handleNormalRequest();
             }
-
             if (needRateLimit) {
                 scheduleRateLimit();
             } else if (!attemptedToSend) {
@@ -91,16 +83,12 @@ class WebSocketSendingThread implements Runnable {
     }
 
     private void handleChunkSync(String chunkOrSyncRequest) {
-        if (send(chunkOrSyncRequest))
-            chunkSyncQueue.remove();
+        if (send(chunkOrSyncRequest)) chunkSyncQueue.remove();
     }
 
     private void handleNormalRequest() {
         String message = ratelimitQueue.peek();
-        if (message != null) {
-            if (send(message))
-                ratelimitQueue.remove();
-        }
+        if (message != null && send(message)) ratelimitQueue.remove();
     }
 
     private boolean send(String request) {

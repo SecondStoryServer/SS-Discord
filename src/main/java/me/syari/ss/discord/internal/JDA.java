@@ -20,7 +20,6 @@ import me.syari.ss.discord.internal.requests.RestAction;
 import me.syari.ss.discord.internal.requests.Route;
 import me.syari.ss.discord.internal.requests.WebSocketClient;
 import me.syari.ss.discord.internal.utils.cache.SnowflakeCacheView;
-import me.syari.ss.discord.internal.utils.config.SessionConfig;
 import me.syari.ss.discord.internal.utils.config.ThreadingConfig;
 import okhttp3.OkHttpClient;
 import org.jetbrains.annotations.Contract;
@@ -37,36 +36,29 @@ import java.util.function.Consumer;
 
 public class JDA {
     @Contract(pure = true)
-    public static @Nullable JDA build(@NotNull String token, Consumer<MessageReceivedEvent> messageReceivedEvent) throws LoginException {
-        if (token.isEmpty()) {
-            return null;
-        } else {
-            JDA jda = new JDA(token, messageReceivedEvent);
-            jda.setStatus(JDA.Status.INITIALIZED);
-            jda.login();
-            return jda;
-        }
+    public static @NotNull JDA build(@NotNull String token, Consumer<MessageReceivedEvent> messageReceivedEvent) throws LoginException {
+        JDA jda = new JDA(token, messageReceivedEvent);
+        jda.setStatus(JDA.Status.INITIALIZED);
+        jda.login();
+        return jda;
     }
 
     protected final SnowflakeCacheView<User> userCache = new SnowflakeCacheView<>(User.class);
     protected final SnowflakeCacheView<Guild> guildCache = new SnowflakeCacheView<>(Guild.class);
     protected final SnowflakeCacheView<TextChannel> textChannelCache = new SnowflakeCacheView<>(TextChannel.class);
-
     protected final TLongObjectMap<User> fakeUsers = new TSynchronizedLongObjectMap<>(new TLongObjectHashMap<>(), new Object());
-
-    protected final Thread shutdownHook;
+    protected final Thread shutdownHook = new Thread(this::shutdown, "JDA Shutdown Hook");
     protected final EntityBuilder entityBuilder = new EntityBuilder(this);
-    protected final EventCache eventCache;
-
-    protected final GuildSetupController guildSetupController;
-
+    protected final EventCache eventCache = new EventCache();
+    protected final GuildSetupController guildSetupController = new GuildSetupController(this);
     protected final String token;
     protected final ThreadingConfig threadConfig = new ThreadingConfig();
-    protected final SessionConfig sessionConfig = new SessionConfig();
+    private final SessionController sessionController = new SessionController();
+    private final OkHttpClient httpClient = new OkHttpClient.Builder().build();
+    private final WebSocketFactory webSocketFactory = new WebSocketFactory();
     private final Consumer<MessageReceivedEvent> messageReceivedEvent;
-
     protected WebSocketClient client;
-    protected final Requester requester;
+    protected final Requester requester = new Requester(this);
     protected Status status = Status.INITIALIZING;
     protected long responseTotal;
     protected String gatewayUrl;
@@ -75,10 +67,6 @@ public class JDA {
                @NotNull Consumer<MessageReceivedEvent> messageReceivedEvent) {
         this.token = "Bot " + token;
         this.messageReceivedEvent = messageReceivedEvent;
-        this.shutdownHook = new Thread(this::shutdown, "JDA Shutdown Hook");
-        this.requester = new Requester(this);
-        this.guildSetupController = new GuildSetupController(this);
-        this.eventCache = new EventCache();
     }
 
     public boolean chunkGuild(long id) {
@@ -90,7 +78,7 @@ public class JDA {
     }
 
     public SessionController getSessionController() {
-        return sessionConfig.getSessionController();
+        return sessionController;
     }
 
     public GuildSetupController getGuildSetupController() {
@@ -104,13 +92,11 @@ public class JDA {
         setStatus(Status.LOGGING_IN);
         verifyToken();
         client = new WebSocketClient(this);
-        if (shutdownHook != null)
-            Runtime.getRuntime().addShutdownHook(shutdownHook);
-
+        Runtime.getRuntime().addShutdownHook(shutdownHook);
     }
 
     public String getGateway() {
-        return getSessionController().getGateway(this);
+        return sessionController.getGateway(this);
     }
 
     public void setStatus(Status status) {
@@ -134,30 +120,24 @@ public class JDA {
                 }
             }
         };
-
         DataObject userResponse = checkToken(login);
-        if (userResponse != null) {
-            return;
-        }
-
+        if (userResponse != null) return;
         userResponse = checkToken(login);
         shutdownNow();
-
-        if (userResponse == null) {
-            throw new LoginException("The provided token is invalid!");
-        }
+        if (userResponse == null) throw new LoginException("The provided token is invalid!");
     }
 
     private DataObject checkToken(RestAction<DataObject> login) throws LoginException {
         DataObject userResponse;
         try {
             userResponse = login.complete();
-        } catch (RuntimeException e) {
-            Throwable ex = e.getCause() instanceof ExecutionException ? e.getCause().getCause() : null;
-            if (ex instanceof LoginException)
-                throw new LoginException(ex.getMessage());
-            else
-                throw e;
+        } catch (RuntimeException ex) {
+            Throwable throwable = ex.getCause() instanceof ExecutionException ? ex.getCause().getCause() : null;
+            if (throwable instanceof LoginException) {
+                throw new LoginException(throwable.getMessage());
+            } else {
+                throw ex;
+            }
         }
         return userResponse;
     }
@@ -173,12 +153,9 @@ public class JDA {
     }
 
     public void awaitStatus(@NotNull Status status, @NotNull Status... failOn) throws InterruptedException {
-        if (!status.isInit()) {
+        if (!status.isInit())
             throw new IllegalArgumentException(String.format("Cannot await the status %s as it is not part of the login cycle!", status));
-        }
-        if (getStatus() == Status.CONNECTED) {
-            return;
-        }
+        if (getStatus() == Status.CONNECTED) return;
         List<Status> failStatus = Arrays.asList(failOn);
         while (!getStatus().isInit() || getStatus().ordinal() < status.ordinal()) {
             if (getStatus() == Status.SHUTDOWN) {
@@ -212,7 +189,7 @@ public class JDA {
 
     @NotNull
     public OkHttpClient getHttpClient() {
-        return sessionConfig.getHttpClient();
+        return httpClient;
     }
 
     @NotNull
@@ -265,17 +242,10 @@ public class JDA {
     }
 
     public synchronized void shutdown() {
-        if (status == Status.SHUTDOWN || status == Status.SHUTTING_DOWN) {
-            return;
-        }
-
+        if (status == Status.SHUTDOWN || status == Status.SHUTTING_DOWN) return;
         setStatus(Status.SHUTTING_DOWN);
-
         WebSocketClient client = getClient();
-        if (client != null) {
-            client.shutdown();
-        }
-
+        if (client != null) client.shutdown();
         shutdownInternals();
     }
 
@@ -284,21 +254,14 @@ public class JDA {
     }
 
     public synchronized void shutdownInternals() {
-        if (status == Status.SHUTDOWN) {
-            return;
-        }
-
+        if (status == Status.SHUTDOWN) return;
         getRequester().shutdown();
         threadConfig.shutdown();
-
-        if (shutdownHook != null) {
-            try {
-                Runtime.getRuntime().removeShutdownHook(shutdownHook);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
+        try {
+            Runtime.getRuntime().removeShutdownHook(shutdownHook);
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
-
         setStatus(Status.SHUTDOWN);
     }
 
@@ -315,7 +278,7 @@ public class JDA {
     }
 
     public WebSocketFactory getWebSocketFactory() {
-        return sessionConfig.getWebSocketFactory();
+        return webSocketFactory;
     }
 
     public WebSocketClient getClient() {
