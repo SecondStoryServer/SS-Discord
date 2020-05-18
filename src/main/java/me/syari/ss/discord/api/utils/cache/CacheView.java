@@ -22,7 +22,7 @@ public interface CacheView<T> extends Iterable<T> {
     Stream<T> stream();
 
     @NotNull
-    static <E extends ISnowflake> SnowflakeCacheView<E> allSnowflakes(@NotNull Supplier<? extends Stream<? extends SnowflakeCacheView<E>>> generator) {
+    static <E extends ISnowflake> ISnowflakeCacheView<E> allSnowflakes(@NotNull Supplier<? extends Stream<? extends ISnowflakeCacheView<E>>> generator) {
         return new UnifiedCacheViewImpl.UnifiedSnowflakeCacheView<>(generator);
     }
 }

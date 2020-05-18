@@ -11,7 +11,7 @@ import me.syari.ss.discord.api.requests.Response;
 import me.syari.ss.discord.api.utils.ChunkingFilter;
 import me.syari.ss.discord.api.utils.SessionController;
 import me.syari.ss.discord.api.utils.cache.CacheView;
-import me.syari.ss.discord.api.utils.cache.SnowflakeCacheView;
+import me.syari.ss.discord.api.utils.cache.ISnowflakeCacheView;
 import me.syari.ss.discord.api.utils.data.DataObject;
 import me.syari.ss.discord.internal.entities.*;
 import me.syari.ss.discord.internal.handle.EventCache;
@@ -22,7 +22,7 @@ import me.syari.ss.discord.internal.requests.Route;
 import me.syari.ss.discord.internal.requests.WebSocketClient;
 import me.syari.ss.discord.internal.utils.Checks;
 import me.syari.ss.discord.internal.utils.JDALogger;
-import me.syari.ss.discord.internal.utils.cache.SnowflakeCacheViewImpl;
+import me.syari.ss.discord.internal.utils.cache.SnowflakeCacheView;
 import me.syari.ss.discord.internal.utils.config.SessionConfig;
 import me.syari.ss.discord.internal.utils.config.ThreadingConfig;
 import okhttp3.OkHttpClient;
@@ -56,9 +56,9 @@ public class JDA {
 
     public static final Logger LOG = JDALogger.getLog(JDA.class);
 
-    protected final SnowflakeCacheViewImpl<User> userCache = new SnowflakeCacheViewImpl<>(User.class);
-    protected final SnowflakeCacheViewImpl<Guild> guildCache = new SnowflakeCacheViewImpl<>(Guild.class);
-    protected final SnowflakeCacheViewImpl<TextChannel> textChannelCache = new SnowflakeCacheViewImpl<>(TextChannel.class);
+    protected final SnowflakeCacheView<User> userCache = new SnowflakeCacheView<>(User.class);
+    protected final SnowflakeCacheView<Guild> guildCache = new SnowflakeCacheView<>(Guild.class);
+    protected final SnowflakeCacheView<TextChannel> textChannelCache = new SnowflakeCacheView<>(TextChannel.class);
 
     protected final TLongObjectMap<User> fakeUsers = new TSynchronizedLongObjectMap<>(new TLongObjectHashMap<>(), new Object());
 
@@ -230,7 +230,7 @@ public class JDA {
     }
 
     @NotNull
-    public SnowflakeCacheView<Guild> getGuildCache() {
+    public ISnowflakeCacheView<Guild> getGuildCache() {
         return guildCache;
     }
 
@@ -244,7 +244,7 @@ public class JDA {
     }
 
     @NotNull
-    public SnowflakeCacheView<Emote> getEmoteCache() {
+    public ISnowflakeCacheView<Emote> getEmoteCache() {
         return CacheView.allSnowflakes(() -> guildCache.stream().map(Guild::getEmoteCache));
     }
 
@@ -254,7 +254,7 @@ public class JDA {
     }
 
     @NotNull
-    public SnowflakeCacheView<TextChannel> getTextChannelCache() {
+    public ISnowflakeCacheView<TextChannel> getTextChannelCache() {
         return textChannelCache;
     }
 
@@ -264,7 +264,7 @@ public class JDA {
     }
 
     @NotNull
-    public SnowflakeCacheView<User> getUserCache() {
+    public ISnowflakeCacheView<User> getUserCache() {
         return userCache;
     }
 
@@ -335,15 +335,15 @@ public class JDA {
         return client;
     }
 
-    public SnowflakeCacheViewImpl<User> getUsersView() {
+    public SnowflakeCacheView<User> getUsersView() {
         return userCache;
     }
 
-    public SnowflakeCacheViewImpl<Guild> getGuildsView() {
+    public SnowflakeCacheView<Guild> getGuildsView() {
         return guildCache;
     }
 
-    public SnowflakeCacheViewImpl<TextChannel> getTextChannelsView() {
+    public SnowflakeCacheView<TextChannel> getTextChannelsView() {
         return textChannelCache;
     }
 

@@ -73,8 +73,9 @@ public abstract class AbstractCacheView<T> extends ReadWriteLockCache<T> impleme
             return Collections.emptyList();
         try (UnlockHook hook = readLock()) {
             List<T> list = getCachedList();
-            if (list != null)
+            if (list != null) {
                 return list;
+            }
             list = new ArrayList<>(elements.size());
             elements.forEachValue(list::add);
             return cache(list);

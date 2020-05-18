@@ -10,7 +10,7 @@ import me.syari.ss.discord.internal.handle.EventCache;
 import me.syari.ss.discord.internal.utils.JDALogger;
 import me.syari.ss.discord.internal.utils.UnlockHook;
 import me.syari.ss.discord.internal.utils.cache.MemberCacheView;
-import me.syari.ss.discord.internal.utils.cache.SnowflakeCacheViewImpl;
+import me.syari.ss.discord.internal.utils.cache.SnowflakeCacheView;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
@@ -40,7 +40,7 @@ public class EntityBuilder {
     }
 
     private void createGuildEmotePass(@NotNull Guild guildObj, @NotNull DataArray array) {
-        SnowflakeCacheViewImpl<Emote> emoteView = guildObj.getEmotesView();
+        SnowflakeCacheView<Emote> emoteView = guildObj.getEmotesView();
         try (UnlockHook hook = emoteView.writeLock()) {
             TLongObjectMap<Emote> emoteMap = emoteView.getMap();
             for (int i = 0; i < array.length(); i++) {
@@ -67,12 +67,12 @@ public class EntityBuilder {
         guildObj.setOwnerId(ownerId);
         guildObj.setMemberCount(memberCount);
 
-        SnowflakeCacheViewImpl<Guild> guildView = getJDA().getGuildsView();
+        SnowflakeCacheView<Guild> guildView = getJDA().getGuildsView();
         try (UnlockHook hook = guildView.writeLock()) {
             guildView.getMap().put(guildId, guildObj);
         }
 
-        SnowflakeCacheViewImpl<Role> roleView = guildObj.getRolesView();
+        SnowflakeCacheView<Role> roleView = guildObj.getRolesView();
         try (UnlockHook hook = roleView.writeLock()) {
             TLongObjectMap<Role> map = roleView.getMap();
             for (int i = 0; i < roleArray.length(); i++) {
@@ -113,7 +113,7 @@ public class EntityBuilder {
         final long id = user.getLong("id");
         User userObj;
 
-        SnowflakeCacheViewImpl<User> userView = getJDA().getUsersView();
+        SnowflakeCacheView<User> userView = getJDA().getUsersView();
         try (UnlockHook hook = userView.writeLock()) {
             userObj = userView.getElementById(id);
             if (userObj == null) {
@@ -294,7 +294,7 @@ public class EntityBuilder {
         if (channel == null) {
             if (guildObj == null)
                 guildObj = getJDA().getGuildsView().get(guildId);
-            SnowflakeCacheViewImpl<TextChannel>
+            SnowflakeCacheView<TextChannel>
                     guildTextView = guildObj.getTextChannelsView(),
                     textView = getJDA().getTextChannelsView();
             try (
@@ -320,7 +320,7 @@ public class EntityBuilder {
         }
         Role role = guild.getRolesView().get(id);
         if (role == null) {
-            SnowflakeCacheViewImpl<Role> roleView = guild.getRolesView();
+            SnowflakeCacheView<Role> roleView = guild.getRolesView();
             try (UnlockHook hook = roleView.writeLock()) {
                 role = new Role(id);
                 playbackCache = roleView.getMap().put(id, role) == null;

@@ -3,7 +3,6 @@ package me.syari.ss.discord.internal.utils;
 import org.jetbrains.annotations.NotNull;
 
 public class Checks {
-
     public static void check(final boolean expression, final String message) {
         if (!expression)
             throw new IllegalArgumentException(message);
@@ -18,5 +17,4 @@ public class Checks {
         if (Helpers.isEmpty(argument))
             throw new IllegalArgumentException(name + " may not be empty");
     }
-
 }

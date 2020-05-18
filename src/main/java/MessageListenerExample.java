@@ -24,7 +24,7 @@ public class MessageListenerExample {
             TextChannel channel = event.getChannel();
             channel.sendMessage("Chat -> " + name + ": " + message + "\r\n" +
                     "GetTextChannel -> " + (jda.getTextChannelById(710828174686027790L) != null)
-            ).queue();
+            );
         } else {
             sendMessageCount ++;
             if(sendMessageCount == 2){

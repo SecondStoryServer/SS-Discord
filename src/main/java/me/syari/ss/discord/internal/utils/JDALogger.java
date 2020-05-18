@@ -1,6 +1,8 @@
 package me.syari.ss.discord.internal.utils;
 
 import org.apache.commons.collections4.map.CaseInsensitiveMap;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,14 +28,10 @@ public class JDALogger {
                 tmp = false;
             }
         }
-
         SLF4J_ENABLED = tmp;
     }
 
     private static final Map<String, Logger> LOGS = new CaseInsensitiveMap<>();
-
-    private JDALogger() {
-    }
 
     public static Logger getLog(Class<?> clazz) {
         synchronized (LOGS) {
@@ -43,7 +41,8 @@ public class JDALogger {
         }
     }
 
-    public static Object getLazyString(LazyEvaluation lazyLambda) {
+    @Contract(value = "_ -> new", pure = true)
+    public static @NotNull Object getLazyString(LazyEvaluation lazyLambda) {
         return new Object() {
             @Override
             public String toString() {
@@ -60,7 +59,6 @@ public class JDALogger {
 
     @FunctionalInterface
     public interface LazyEvaluation {
-
         String getString() throws Exception;
     }
 }

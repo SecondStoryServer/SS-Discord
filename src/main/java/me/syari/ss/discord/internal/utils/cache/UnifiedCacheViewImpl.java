@@ -3,7 +3,7 @@ package me.syari.ss.discord.internal.utils.cache;
 import me.syari.ss.discord.api.ISnowflake;
 import me.syari.ss.discord.api.utils.ClosableIterator;
 import me.syari.ss.discord.api.utils.cache.CacheView;
-import me.syari.ss.discord.api.utils.cache.SnowflakeCacheView;
+import me.syari.ss.discord.api.utils.cache.ISnowflakeCacheView;
 import me.syari.ss.discord.internal.utils.ChainedClosableIterator;
 import org.jetbrains.annotations.NotNull;
 
@@ -65,8 +65,8 @@ public class UnifiedCacheViewImpl<T, E extends CacheView<T>> implements CacheVie
         return generator.get().distinct();
     }
 
-    public static class UnifiedSnowflakeCacheView<T extends ISnowflake> extends UnifiedCacheViewImpl<T, SnowflakeCacheView<T>> implements SnowflakeCacheView<T> {
-        public UnifiedSnowflakeCacheView(Supplier<? extends Stream<? extends SnowflakeCacheView<T>>> generator) {
+    public static class UnifiedSnowflakeCacheView<T extends ISnowflake> extends UnifiedCacheViewImpl<T, ISnowflakeCacheView<T>> implements ISnowflakeCacheView<T> {
+        public UnifiedSnowflakeCacheView(Supplier<? extends Stream<? extends ISnowflakeCacheView<T>>> generator) {
             super(generator);
         }
 

@@ -1,11 +1,11 @@
 package me.syari.ss.discord.internal.entities;
 
 import me.syari.ss.discord.api.ISnowflake;
-import me.syari.ss.discord.api.utils.cache.SnowflakeCacheView;
+import me.syari.ss.discord.api.utils.cache.ISnowflakeCacheView;
 import me.syari.ss.discord.internal.JDA;
 import me.syari.ss.discord.internal.utils.JDALogger;
 import me.syari.ss.discord.internal.utils.cache.MemberCacheView;
-import me.syari.ss.discord.internal.utils.cache.SnowflakeCacheViewImpl;
+import me.syari.ss.discord.internal.utils.cache.SnowflakeCacheView;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,9 +15,9 @@ public class Guild implements ISnowflake {
     private final long id;
     private final JDA api;
 
-    private final SnowflakeCacheViewImpl<TextChannel> textChannelCache = new SnowflakeCacheViewImpl<>(TextChannel.class);
-    private final SnowflakeCacheViewImpl<Role> roleCache = new SnowflakeCacheViewImpl<>(Role.class);
-    private final SnowflakeCacheViewImpl<Emote> emoteCache = new SnowflakeCacheViewImpl<>(Emote.class);
+    private final SnowflakeCacheView<TextChannel> textChannelCache = new SnowflakeCacheView<>(TextChannel.class);
+    private final SnowflakeCacheView<Role> roleCache = new SnowflakeCacheView<>(Role.class);
+    private final SnowflakeCacheView<Emote> emoteCache = new SnowflakeCacheView<>(Emote.class);
     private final MemberCacheView memberCache = new MemberCacheView();
 
     private final CompletableFuture<Void> chunkingCallback = new CompletableFuture<>();
@@ -67,12 +67,12 @@ public class Guild implements ISnowflake {
     }
 
     @NotNull
-    public SnowflakeCacheView<Role> getRoleCache() {
+    public ISnowflakeCacheView<Role> getRoleCache() {
         return roleCache;
     }
 
     @NotNull
-    public SnowflakeCacheView<Emote> getEmoteCache() {
+    public ISnowflakeCacheView<Emote> getEmoteCache() {
         return emoteCache;
     }
 
@@ -124,15 +124,15 @@ public class Guild implements ISnowflake {
         this.memberCount = count;
     }
 
-    public SnowflakeCacheViewImpl<TextChannel> getTextChannelsView() {
+    public SnowflakeCacheView<TextChannel> getTextChannelsView() {
         return textChannelCache;
     }
 
-    public SnowflakeCacheViewImpl<Role> getRolesView() {
+    public SnowflakeCacheView<Role> getRolesView() {
         return roleCache;
     }
 
-    public SnowflakeCacheViewImpl<Emote> getEmotesView() {
+    public SnowflakeCacheView<Emote> getEmotesView() {
         return emoteCache;
     }
 
