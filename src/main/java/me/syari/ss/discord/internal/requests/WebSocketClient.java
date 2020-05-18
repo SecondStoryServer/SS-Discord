@@ -12,7 +12,7 @@ import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.handle.*;
 import me.syari.ss.discord.internal.utils.IOUtil;
 import me.syari.ss.discord.internal.utils.JDALogger;
-import me.syari.ss.discord.internal.utils.compress.ZlibDecompressor;
+import me.syari.ss.discord.internal.utils.ZlibDecompressor;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.MDC;

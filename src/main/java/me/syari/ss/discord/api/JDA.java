@@ -8,8 +8,6 @@ import me.syari.ss.discord.internal.entities.User;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-
 public interface JDA {
     enum Status {
         INITIALIZING(true),
@@ -54,11 +52,6 @@ public interface JDA {
 
     @NotNull
     SnowflakeCacheView<Guild> getGuildCache();
-
-    @NotNull
-    default List<Guild> getGuilds() {
-        return getGuildCache().asList();
-    }
 
     @Nullable
     default Guild getGuildById(long id) {

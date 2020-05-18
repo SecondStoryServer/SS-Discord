@@ -1,6 +1,6 @@
 package me.syari.ss.discord.internal.utils.config;
 
-import me.syari.ss.discord.internal.utils.concurrent.CountingThreadFactory;
+import me.syari.ss.discord.internal.utils.CountingThreadFactory;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.*;

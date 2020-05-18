@@ -1,6 +1,6 @@
 package me.syari.ss.discord.internal.entities;
 
-import me.syari.ss.discord.api.entities.ISnowflake;
+import me.syari.ss.discord.api.ISnowflake;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;

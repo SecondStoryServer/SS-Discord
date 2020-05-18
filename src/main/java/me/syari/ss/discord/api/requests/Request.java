@@ -1,6 +1,6 @@
 package me.syari.ss.discord.api.requests;
 
-import me.syari.ss.discord.api.audit.ThreadLocalReason;
+import me.syari.ss.discord.api.ThreadLocalReason;
 import me.syari.ss.discord.api.exceptions.ContextException;
 import me.syari.ss.discord.api.exceptions.ErrorResponseException;
 import me.syari.ss.discord.api.exceptions.RateLimitedException;

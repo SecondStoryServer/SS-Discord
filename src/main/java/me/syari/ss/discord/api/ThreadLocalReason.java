@@ -1,4 +1,4 @@
-package me.syari.ss.discord.api.audit;
+package me.syari.ss.discord.api;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

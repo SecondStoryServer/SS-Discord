@@ -1,4 +1,4 @@
-package me.syari.ss.discord.api.entities;
+package me.syari.ss.discord.api;
 
 import me.syari.ss.discord.api.utils.TimeUtil;
 import org.jetbrains.annotations.NotNull;

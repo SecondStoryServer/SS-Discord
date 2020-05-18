@@ -24,16 +24,15 @@ public class GuildSetupNode {
     private int expectedMemberCount = 1;
     boolean requestedChunk;
 
-    final Type type;
+    final Type type = GuildSetupNode.Type.JOIN;
     final boolean sync;
     boolean firedUnavailableJoin = false;
     boolean markedUnavailable = false;
     GuildSetupController.Status status = GuildSetupController.Status.INIT;
 
-    GuildSetupNode(long id, GuildSetupController controller, Type type) {
+    GuildSetupNode(long id, GuildSetupController controller) {
         this.id = id;
         this.controller = controller;
-        this.type = type;
         this.sync = false;
     }
 
@@ -45,10 +44,6 @@ public class GuildSetupNode {
         TLongHashSet knownMembers = new TLongHashSet(members.keySet());
         knownMembers.removeAll(removedMembers);
         return knownMembers.size();
-    }
-
-    public boolean isJoin() {
-        return type == Type.JOIN;
     }
 
     @Override
@@ -102,7 +97,7 @@ public class GuildSetupNode {
         boolean unavailable = partialGuild.getBoolean("unavailable");
         this.markedUnavailable = unavailable;
         if (unavailable) {
-            if (!firedUnavailableJoin && isJoin()) {
+            if (!firedUnavailableJoin) {
                 firedUnavailableJoin = true;
             }
             return;
@@ -187,7 +182,7 @@ public class GuildSetupNode {
             handleMemberChunk(memberArray);
         } else if (memberArray.length() < expectedMemberCount && !requestedChunk) {
             updateStatus(GuildSetupController.Status.CHUNKING);
-            getController().addGuildForChunking(id, isJoin());
+            getController().addGuildForChunking(id);
             requestedChunk = true;
         } else if (handleMemberChunk(memberArray) && !requestedChunk) {
             GuildSetupController.log.trace(
@@ -196,7 +191,7 @@ public class GuildSetupNode {
                     expectedMemberCount, memberArray.length(), members.size(), id);
             members.clear();
             updateStatus(GuildSetupController.Status.CHUNKING);
-            getController().addGuildForChunking(id, isJoin());
+            getController().addGuildForChunking(id);
             requestedChunk = true;
         }
     }

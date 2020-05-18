@@ -38,15 +38,13 @@ public class GuildSetupController {
         return api;
     }
 
-    void addGuildForChunking(long id, boolean join) {
+    void addGuildForChunking(long id) {
         log.trace("Adding guild for chunking ID: {}", id);
-        if (join || incompleteCount <= 0) {
-            if (incompleteCount <= 0) {
-                sendChunkRequest(id);
-                return;
-            }
-            incompleteCount++;
+        if (incompleteCount <= 0) {
+            sendChunkRequest(id);
+            return;
         }
+        incompleteCount++;
         chunkingGuilds.add(id);
         tryChunking();
     }
@@ -75,7 +73,7 @@ public class GuildSetupController {
 
         GuildSetupNode node = setupNodes.get(id);
         if (node == null) {
-            node = new GuildSetupNode(id, this, GuildSetupNode.Type.JOIN);
+            node = new GuildSetupNode(id, this);
             setupNodes.put(id, node);
         }
         node.handleCreate(obj);

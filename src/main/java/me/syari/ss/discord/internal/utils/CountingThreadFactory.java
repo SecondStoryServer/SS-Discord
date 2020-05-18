@@ -1,4 +1,4 @@
-package me.syari.ss.discord.internal.utils.concurrent;
+package me.syari.ss.discord.internal.utils;
 
 import org.jetbrains.annotations.NotNull;
 

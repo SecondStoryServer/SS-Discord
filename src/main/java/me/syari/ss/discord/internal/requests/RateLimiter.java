@@ -1,9 +1,7 @@
-package me.syari.ss.discord.internal.requests.ratelimit;
+package me.syari.ss.discord.internal.requests;
 
 import me.syari.ss.discord.api.requests.Request;
 import me.syari.ss.discord.api.utils.MiscUtil;
-import me.syari.ss.discord.internal.requests.Requester;
-import me.syari.ss.discord.internal.requests.Route;
 import me.syari.ss.discord.internal.utils.JDALogger;
 import okhttp3.Headers;
 import org.jetbrains.annotations.NotNull;

@@ -1,6 +1,5 @@
 package me.syari.ss.discord.api;
 
-import me.syari.ss.discord.api.event.MessageReceivedEvent;
 import me.syari.ss.discord.api.utils.ChunkingFilter;
 import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.utils.config.MetaConfig;

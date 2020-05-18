@@ -1,6 +1,5 @@
 package me.syari.ss.discord.api.utils;
 
-import me.syari.ss.discord.internal.utils.Checks;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.locks.ReentrantLock;

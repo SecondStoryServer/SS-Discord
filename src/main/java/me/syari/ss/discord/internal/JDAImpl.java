@@ -5,7 +5,7 @@ import gnu.trove.impl.sync.TSynchronizedLongObjectMap;
 import gnu.trove.map.TLongObjectMap;
 import gnu.trove.map.hash.TLongObjectHashMap;
 import me.syari.ss.discord.api.JDA;
-import me.syari.ss.discord.api.event.MessageReceivedEvent;
+import me.syari.ss.discord.api.MessageReceivedEvent;
 import me.syari.ss.discord.api.exceptions.RateLimitedException;
 import me.syari.ss.discord.api.requests.Request;
 import me.syari.ss.discord.api.requests.Response;

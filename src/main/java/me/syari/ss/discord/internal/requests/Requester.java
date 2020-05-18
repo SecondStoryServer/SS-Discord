@@ -4,7 +4,6 @@ import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.requests.Request;
 import me.syari.ss.discord.api.requests.Response;
 import me.syari.ss.discord.internal.JDAImpl;
-import me.syari.ss.discord.internal.requests.ratelimit.RateLimiter;
 import me.syari.ss.discord.internal.utils.JDALogger;
 import okhttp3.Call;
 import okhttp3.MediaType;
