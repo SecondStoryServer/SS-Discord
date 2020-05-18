@@ -83,7 +83,8 @@ class WebSocketSendingThread implements Runnable {
             } else {
                 scheduleSentMessage();
             }
-        } catch (InterruptedException ignored) {
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
         } finally {
             client.maybeUnlock();
         }

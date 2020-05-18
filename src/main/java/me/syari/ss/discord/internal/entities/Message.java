@@ -192,7 +192,8 @@ public class Message {
                 if (elem == null || (collection.contains(elem)))
                     continue;
                 collection.add(elem);
-            } catch (NumberFormatException ignored) {
+            } catch (NumberFormatException ex) {
+                ex.printStackTrace();
             }
         }
         return collection;

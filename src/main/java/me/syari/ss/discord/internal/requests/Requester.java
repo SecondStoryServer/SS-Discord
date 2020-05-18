@@ -97,7 +97,8 @@ public class Requester {
                 attempt++;
                 try {
                     Thread.sleep(50 * attempt);
-                } catch (InterruptedException ignored) {
+                } catch (InterruptedException ex) {
+                    ex.printStackTrace();
                 }
             }
             while (attempt < 3 && lastResponse.code() >= 500);

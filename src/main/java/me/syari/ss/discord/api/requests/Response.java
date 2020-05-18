@@ -154,7 +154,8 @@ public class Response implements Closeable {
                 reader.reset();
                 this.fallbackString = readString(reader);
                 reader.close();
-            } catch (NullPointerException | IOException ignored) {
+            } catch (NullPointerException | IOException ex) {
+                ex.printStackTrace();
             }
             if (opt && e instanceof ParsingException) {
                 return Optional.empty();

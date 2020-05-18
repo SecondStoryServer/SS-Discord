@@ -120,8 +120,7 @@ public class TextChannel implements ISnowflake, Comparable<TextChannel> {
                 try {
                     ownedResource.close();
                 } catch (IOException ex) {
-                    if (!ex.getMessage().toLowerCase().contains("closed")) {
-                    }
+                    ex.printStackTrace();
                 }
             }
             ownedResources.clear();
