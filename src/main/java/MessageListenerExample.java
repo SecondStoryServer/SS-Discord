@@ -12,7 +12,7 @@ public class MessageListenerExample {
 
     private static int sendMessageCount = 0;
 
-    private static final String token = "NjE0NjkwNTIwNDQyMjA4Mjky.Xr6kqg.9dRqzWGH6YcogNG8-BcsYGPYleg";
+    private static final String token = DiscordToken.BOT_TOKEN;
 
     private static final Consumer<MessageReceivedEvent> messageReceivedEvent = (event) -> {
         User authorUser = event.getAuthor();
