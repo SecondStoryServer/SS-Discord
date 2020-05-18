@@ -44,14 +44,11 @@ public class Emote implements ISnowflake {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj == this)
-            return true;
-        if (!(obj instanceof Emote))
-            return false;
-
-        Emote oEmote = (Emote) obj;
-        return this.id == oEmote.id && getName().equals(oEmote.getName());
+    public boolean equals(Object object) {
+        if (object == this) return true;
+        if (!(object instanceof Emote)) return false;
+        Emote emote = (Emote) object;
+        return this.id == emote.id && getName().equals(emote.getName());
     }
 
     @Override

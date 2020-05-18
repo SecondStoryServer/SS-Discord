@@ -12,9 +12,6 @@ import me.syari.ss.discord.internal.utils.cache.MemberCacheView;
 import me.syari.ss.discord.internal.utils.cache.SnowflakeCacheView;
 import org.jetbrains.annotations.NotNull;
 
-import java.time.Instant;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.TemporalAccessor;
 import java.util.*;
 import java.util.function.Function;
 
@@ -169,46 +166,21 @@ public class EntityBuilder {
         }
 
         if (playbackCache) {
-            loadMember(guild, memberJson, member);
+            loadMember(memberJson, member);
             long hashId = guild.getIdLong() ^ user.getIdLong();
             getJDA().getEventCache().playbackCache(EventCache.Type.MEMBER, hashId);
             guild.acknowledgeMembers();
         } else {
-            DataArray roleArray = memberJson.getArray("roles");
-            List<Role> roles = new ArrayList<>(roleArray.length());
-            for (int i = 0; i < roleArray.length(); i++) {
-                long roleId = roleArray.getUnsignedLong(i);
-                Role role = guild.getRoleById(roleId);
-                if (role != null)
-                    roles.add(role);
-            }
-            updateMember(member, memberJson, roles);
+            updateMember(member, memberJson);
         }
         return member;
     }
 
-    private void loadMember(Guild guild, @NotNull DataObject memberJson, Member member) {
-        if (!memberJson.isNull("premium_since")) {
-            TemporalAccessor boostDate = DateTimeFormatter.ISO_OFFSET_DATE_TIME.parse(memberJson.getString("premium_since"));
-            member.setBoostDate(Instant.from(boostDate).toEpochMilli());
-        }
-
+    private void loadMember(@NotNull DataObject memberJson, @NotNull Member member) {
         member.setNickname(memberJson.getString("nick", null));
-
-        DataArray rolesJson = memberJson.getArray("roles");
-        for (int k = 0; k < rolesJson.length(); k++) {
-            final long roleId = rolesJson.getLong(k);
-            Role role = guild.getRolesView().get(roleId);
-            if (role != null) {
-                member.getRoleSet().add(role);
-            }
-        }
     }
 
-    public void updateMember(Member member, DataObject content, List<Role> newRoles) {
-        if (newRoles != null) {
-            updateMemberRoles(member, newRoles);
-        }
+    public void updateMember(Member member, @NotNull DataObject content) {
         if (content.hasKey("nick")) {
             String oldNick = member.getNickname();
             String newNick = content.getString("nick", null);
@@ -216,48 +188,15 @@ public class EntityBuilder {
                 member.setNickname(newNick);
             }
         }
-        if (content.hasKey("premium_since")) {
-            long epoch = 0;
-            if (!content.isNull("premium_since")) {
-                TemporalAccessor date = DateTimeFormatter.ISO_OFFSET_DATE_TIME.parse(content.getString("premium_since"));
-                epoch = Instant.from(date).toEpochMilli();
-            }
-            if (epoch != member.getBoostDateRaw()) {
-                member.setBoostDate(epoch);
-            }
-        }
-    }
-
-    private void updateMemberRoles(@NotNull Member member, List<Role> newRoles) {
-        Set<Role> currentRoles = member.getRoleSet();
-        List<Role> removedRoles = new LinkedList<>();
-        each:
-        for (Role role : currentRoles) {
-            for (Iterator<Role> it = newRoles.iterator(); it.hasNext(); ) {
-                Role r = it.next();
-                if (role.equals(r)) {
-                    it.remove();
-                    continue each;
-                }
-            }
-            removedRoles.add(role);
-        }
-
-        if (0 < removedRoles.size()) {
-            currentRoles.removeAll(removedRoles);
-        }
-        if (0 < newRoles.size()) {
-            currentRoles.addAll(newRoles);
-        }
     }
 
     public Emote createEmote(@NotNull Guild guildObj, @NotNull DataObject json) {
         final long emoteId = json.getLong("id");
-        Emote emoteObj = guildObj.getEmoteById(emoteId);
-        if (emoteObj == null) {
-            emoteObj = new Emote(emoteId);
+        Emote emote = guildObj.getEmoteById(emoteId);
+        if (emote == null) {
+            emote = new Emote(emoteId);
         }
-        return emoteObj
+        return emote
                 .setName(json.getString("name", ""))
                 .setAnimated(json.getBoolean("animated"));
     }

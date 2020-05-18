@@ -11,10 +11,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class Member implements ISnowflake {
     private final SnowflakeReference<Guild> guild;
     private final User user;
-    private final Set<Role> roles = ConcurrentHashMap.newKeySet();
 
     private String nickname;
-    private long boostDate;
 
     public Member(Guild guild, @NotNull User user) {
         JDA api = user.getJDA();
@@ -48,18 +46,6 @@ public class Member implements ISnowflake {
 
     public void setNickname(String nickname) {
         this.nickname = nickname;
-    }
-
-    public void setBoostDate(long boostDate) {
-        this.boostDate = boostDate;
-    }
-
-    public Set<Role> getRoleSet() {
-        return roles;
-    }
-
-    public long getBoostDateRaw() {
-        return boostDate;
     }
 
     @Override
