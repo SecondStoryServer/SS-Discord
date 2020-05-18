@@ -22,7 +22,8 @@ public class SnowflakeReference<T extends ISnowflake> implements ISnowflake {
         T referent = reference.get();
         if (referent == null) {
             referent = fallbackProvider.apply(id);
-            if (referent == null) throw new IllegalStateException("Cannot get reference as it has already been Garbage Collected");
+            if (referent == null)
+                throw new IllegalStateException("Cannot get reference as it has already been Garbage Collected");
             reference = new WeakReference<>(referent);
         }
         return referent;

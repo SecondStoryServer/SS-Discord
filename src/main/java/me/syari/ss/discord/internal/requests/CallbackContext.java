@@ -4,7 +4,7 @@ public class CallbackContext implements AutoCloseable {
     private static final ThreadLocal<Boolean> callback = ThreadLocal.withInitial(() -> false);
     private static final CallbackContext instance = new CallbackContext();
 
-    private CallbackContext(){
+    private CallbackContext() {
     }
 
     public static CallbackContext getInstance() {

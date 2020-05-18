@@ -6,7 +6,10 @@ import me.syari.ss.discord.api.utils.SessionController;
 import me.syari.ss.discord.api.utils.data.DataArray;
 import me.syari.ss.discord.api.utils.data.DataObject;
 import me.syari.ss.discord.internal.JDA;
-import me.syari.ss.discord.internal.handle.*;
+import me.syari.ss.discord.internal.handle.EventCache;
+import me.syari.ss.discord.internal.handle.GuildCreateHandler;
+import me.syari.ss.discord.internal.handle.MessageCreateHandler;
+import me.syari.ss.discord.internal.handle.SocketHandler;
 import me.syari.ss.discord.internal.utils.ZlibDecompressor;
 import org.jetbrains.annotations.NotNull;
 

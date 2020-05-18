@@ -27,7 +27,8 @@ public class ZlibDecompressor {
     private ByteArrayOutputStream getDecompressBuffer() {
         if (decompressBuffer == null) decompressBuffer = newDecompressBuffer();
         ByteArrayOutputStream buffer = decompressBuffer.get();
-        if (buffer == null) decompressBuffer = new SoftReference<>(buffer = new ByteArrayOutputStream(Math.min(1024, maxBufferSize)));
+        if (buffer == null)
+            decompressBuffer = new SoftReference<>(buffer = new ByteArrayOutputStream(Math.min(1024, maxBufferSize)));
         return buffer;
     }
 

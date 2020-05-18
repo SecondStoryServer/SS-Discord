@@ -12,7 +12,8 @@ public abstract class ReadWriteLockCache<T> {
     protected WeakReference<List<T>> cachedList;
 
     public UnlockHook writeLock() {
-        if (lock.getReadHoldCount() > 0) throw new IllegalStateException("Unable to acquire write-lock while holding read-lock!");
+        if (lock.getReadHoldCount() > 0)
+            throw new IllegalStateException("Unable to acquire write-lock while holding read-lock!");
         ReentrantReadWriteLock.WriteLock writeLock = lock.writeLock();
         writeLock.lock();
         clearCachedLists();

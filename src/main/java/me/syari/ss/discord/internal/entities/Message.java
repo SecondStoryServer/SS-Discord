@@ -69,7 +69,7 @@ public class Message {
             String tmp = content;
             for (User user : getMentionedUsers()) {
                 Member member = getGuild().getMember(user);
-                String name = (member != null)? member.getDisplayName() : user.getName();
+                String name = (member != null) ? member.getDisplayName() : user.getName();
                 tmp = tmp.replaceAll("<@!?" + Pattern.quote(user.getId()) + '>', '@' + Matcher.quoteReplacement(name));
             }
             for (Emote emote : getEmotes()) {
@@ -102,7 +102,8 @@ public class Message {
 
     @NotNull
     private synchronized List<User> getMentionedUsers() {
-        if (userMentions == null) userMentions = Collections.unmodifiableList(processMentions(Message.MentionType.USER, new ArrayList<>(), this::matchUser));
+        if (userMentions == null)
+            userMentions = Collections.unmodifiableList(processMentions(Message.MentionType.USER, new ArrayList<>(), this::matchUser));
         return userMentions;
     }
 
@@ -111,13 +112,15 @@ public class Message {
         if (!mentionedUsers.contains(userId)) return null;
         User user = getJDA().getUserById(userId);
         if (user == null) user = api.getFakeUserMap().get(userId);
-        if (user == null && userMentions != null) user = userMentions.stream().filter(it -> it.getIdLong() == userId).findFirst().orElse(null);
+        if (user == null && userMentions != null)
+            user = userMentions.stream().filter(it -> it.getIdLong() == userId).findFirst().orElse(null);
         return user;
     }
 
     @NotNull
     private synchronized List<TextChannel> getMentionedChannels() {
-        if (channelMentions == null) channelMentions = Collections.unmodifiableList(processMentions(Message.MentionType.CHANNEL, new ArrayList<>(), this::matchTextChannel));
+        if (channelMentions == null)
+            channelMentions = Collections.unmodifiableList(processMentions(Message.MentionType.CHANNEL, new ArrayList<>(), this::matchTextChannel));
         return channelMentions;
     }
 
@@ -128,7 +131,8 @@ public class Message {
 
     @NotNull
     private synchronized List<Role> getMentionedRoles() {
-        if (roleMentions == null) roleMentions = Collections.unmodifiableList(processMentions(Message.MentionType.ROLE, new ArrayList<>(), this::matchRole));
+        if (roleMentions == null)
+            roleMentions = Collections.unmodifiableList(processMentions(Message.MentionType.ROLE, new ArrayList<>(), this::matchRole));
         return roleMentions;
     }
 
@@ -140,7 +144,8 @@ public class Message {
 
     @NotNull
     private synchronized List<Emote> getEmotes() {
-        if (this.emoteMentions == null) emoteMentions = Collections.unmodifiableList(processMentions(Message.MentionType.EMOTE, new ArrayList<>(), this::matchEmote));
+        if (this.emoteMentions == null)
+            emoteMentions = Collections.unmodifiableList(processMentions(Message.MentionType.EMOTE, new ArrayList<>(), this::matchEmote));
         return emoteMentions;
     }
 
