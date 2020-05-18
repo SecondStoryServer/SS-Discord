@@ -323,7 +323,7 @@ public class EntityBuilder {
         if (role == null) {
             SnowflakeCacheViewImpl<Role> roleView = guild.getRolesView();
             try (UnlockHook hook = roleView.writeLock()) {
-                role = new Role(id, guild);
+                role = new Role(id);
                 playbackCache = roleView.getMap().put(id, role) == null;
             }
         }

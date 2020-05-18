@@ -28,8 +28,9 @@ public class UnifiedCacheViewImpl<T, E extends CacheView<T>> implements CacheVie
     public void forEach(Consumer<? super T> action) {
         Objects.requireNonNull(action);
         try (ClosableIterator<T> iterator = lockedIterator()) {
-            while (iterator.hasNext())
+            while (iterator.hasNext()) {
                 action.accept(iterator.next());
+            }
         }
     }
 
@@ -64,8 +65,7 @@ public class UnifiedCacheViewImpl<T, E extends CacheView<T>> implements CacheVie
         return generator.get().distinct();
     }
 
-    public static class UnifiedSnowflakeCacheView<T extends ISnowflake>
-            extends UnifiedCacheViewImpl<T, SnowflakeCacheView<T>> implements SnowflakeCacheView<T> {
+    public static class UnifiedSnowflakeCacheView<T extends ISnowflake> extends UnifiedCacheViewImpl<T, SnowflakeCacheView<T>> implements SnowflakeCacheView<T> {
         public UnifiedSnowflakeCacheView(Supplier<? extends Stream<? extends SnowflakeCacheView<T>>> generator) {
             super(generator);
         }

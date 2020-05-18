@@ -9,14 +9,11 @@ import java.time.OffsetDateTime;
 
 public class Role implements ISnowflake {
     private final long id;
-    private final SnowflakeReference<Guild> guild;
 
     private String name;
 
-    public Role(long id, @NotNull Guild guild) {
+    public Role(long id) {
         this.id = id;
-        JDAImpl api = guild.getJDA();
-        this.guild = new SnowflakeReference<>(guild, api::getGuildById);
     }
 
     @NotNull

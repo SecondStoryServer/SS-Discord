@@ -6,11 +6,9 @@ import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.utils.JDALogger;
 import me.syari.ss.discord.internal.utils.cache.MemberCacheView;
 import me.syari.ss.discord.internal.utils.cache.SnowflakeCacheViewImpl;
-import me.syari.ss.discord.internal.utils.cache.SortedSnowflakeCacheViewImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Comparator;
 import java.util.concurrent.CompletableFuture;
 
 public class Guild implements ISnowflake {
