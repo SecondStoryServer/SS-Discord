@@ -99,21 +99,4 @@ public class User implements Mentionable {
         this.fake = fake;
         return this;
     }
-
-    @Override
-    public void formatTo(Formatter formatter, int flags, int width, int precision) {
-        boolean alt = (flags & FormattableFlags.ALTERNATE) == FormattableFlags.ALTERNATE;
-        boolean upper = (flags & FormattableFlags.UPPERCASE) == FormattableFlags.UPPERCASE;
-        boolean leftJustified = (flags & FormattableFlags.LEFT_JUSTIFY) == FormattableFlags.LEFT_JUSTIFY;
-
-        String out;
-        if (!alt)
-            out = getAsMention();
-        else if (upper)
-            out = getAsTag().toUpperCase();
-        else
-            out = getAsTag();
-
-        MiscUtil.appendTo(formatter, width, precision, leftJustified, out);
-    }
 }
