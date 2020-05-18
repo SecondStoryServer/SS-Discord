@@ -106,7 +106,7 @@ public class JDA {
     }
 
     public void verifyToken() throws LoginException {
-        RestAction<DataObject> login = new RestAction<DataObject>(this, Route.GET_SELF.compile()) {
+        RestAction<DataObject> login = new RestAction<DataObject>(this, Route.getSelfRoute()) {
             @Override
             public void handleResponse(@NotNull Response response, Request<DataObject> request) {
                 if (response.isOk()) {

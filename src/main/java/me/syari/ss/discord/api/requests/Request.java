@@ -20,7 +20,7 @@ public class Request<T> {
     private final Consumer<? super Throwable> onFailure;
     private final boolean shouldQueue;
     private final RequestBody body;
-    private final Route.CompiledRoute route;
+    private final Route route;
     private final JDA api;
     private final String localReason = ThreadLocalReason.getCurrent();
     private boolean isCanceled = false;
@@ -30,7 +30,7 @@ public class Request<T> {
                    Consumer<? super Throwable> onFailure,
                    boolean shouldQueue,
                    RequestBody body,
-                   Route.CompiledRoute route) {
+                   Route route) {
         this.restAction = restAction;
         this.onSuccess = onSuccess;
         if (onFailure instanceof ContextException.ContextConsumer) {
@@ -77,7 +77,7 @@ public class Request<T> {
     }
 
     @NotNull
-    public Route.CompiledRoute getRoute() {
+    public Route getRoute() {
         return route;
     }
 

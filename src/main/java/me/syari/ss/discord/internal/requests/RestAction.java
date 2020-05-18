@@ -23,14 +23,14 @@ public class RestAction<T> {
 
     protected final JDA api;
 
-    private final Route.CompiledRoute route;
+    private final Route route;
     private final BiFunction<Response, Request<T>, T> handler;
 
-    public RestAction(@NotNull JDA api, Route.CompiledRoute route) {
+    public RestAction(@NotNull JDA api, Route route) {
         this(api, route, null);
     }
 
-    public RestAction(JDA api, Route.CompiledRoute route, BiFunction<Response, Request<T>, T> handler) {
+    public RestAction(JDA api, Route route, BiFunction<Response, Request<T>, T> handler) {
         this.api = api;
         this.route = route;
         this.handler = handler;
@@ -42,14 +42,14 @@ public class RestAction<T> {
     }
 
     public void queue() {
-        Route.CompiledRoute route = finalizeRoute();
+        Route route = finalizeRoute();
         RequestBody data = finalizeData();
         api.getRequester().request(new Request<>(this, DEFAULT_SUCCESS, DEFAULT_FAILURE, true, data, route));
     }
 
     @NotNull
     private CompletableFuture<T> submit(boolean shouldQueue) {
-        Route.CompiledRoute route = finalizeRoute();
+        Route route = finalizeRoute();
         RequestBody data = finalizeData();
         return new RestFuture<>(this, shouldQueue, data, route);
     }
@@ -85,7 +85,7 @@ public class RestAction<T> {
         return null;
     }
 
-    protected Route.CompiledRoute finalizeRoute() {
+    protected Route finalizeRoute() {
         return route;
     }
 

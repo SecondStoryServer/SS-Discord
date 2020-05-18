@@ -51,14 +51,14 @@ public class Requester {
     }
 
     public Long execute(@NotNull Request<?> apiRequest, boolean retried, boolean handleOnRatelimit) {
-        Route.CompiledRoute route = apiRequest.getRoute();
+        Route route = apiRequest.getRoute();
         Long retryAfter = rateLimiter.getRateLimit(route);
         if (retryAfter != null && retryAfter > 0) {
             if (handleOnRatelimit) apiRequest.handleResponse(new Response(retryAfter));
             return retryAfter;
         }
         okhttp3.Request.Builder builder = new okhttp3.Request.Builder();
-        String url = DISCORD_API_PREFIX + route.getCompiledRoute();
+        String url = DISCORD_API_PREFIX + route.getRoute();
         builder.url(url);
         String method = apiRequest.getRoute().getMethod().toString();
         RequestBody body = apiRequest.getBody();

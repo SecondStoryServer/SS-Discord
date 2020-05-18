@@ -68,7 +68,7 @@ public class TextChannel implements ISnowflake, Comparable<TextChannel> {
             sendMessage(text.substring(2000));
             return;
         }
-        Route.CompiledRoute route = Route.SEND_MESSAGE.compile(getId());
+        Route route = Route.getSendMessageRoute(getId());
         MessageAction messageAction = new MessageAction(getJDA(), route, this, text);
         messageAction.queue();
     }
@@ -101,7 +101,7 @@ public class TextChannel implements ISnowflake, Comparable<TextChannel> {
         protected final String content;
         protected final TextChannel channel;
 
-        public MessageAction(JDA api, Route.CompiledRoute route, TextChannel channel, @NotNull String content) {
+        public MessageAction(JDA api, Route route, TextChannel channel, @NotNull String content) {
             super(api, route);
             this.content = content;
             this.channel = channel;

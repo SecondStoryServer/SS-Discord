@@ -12,7 +12,7 @@ public class RestFuture<T> extends CompletableFuture<T> {
     public RestFuture(final RestAction<T> restAction,
                       final boolean shouldQueue,
                       final RequestBody data,
-                      final Route.CompiledRoute route) {
+                      final Route route) {
         this.request = new Request<>(restAction, this::complete, this::completeExceptionally, shouldQueue, data, route);
         restAction.getJDA().getRequester().request(this.request);
     }

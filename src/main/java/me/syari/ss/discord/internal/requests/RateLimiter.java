@@ -21,7 +21,7 @@ public class RateLimiter {
     private static final String UNLIMITED_BUCKET = "unlimited";
     protected final Requester requester;
     private final ReentrantLock bucketLock = new ReentrantLock();
-    private final Map<Route, String> hash = new ConcurrentHashMap<>();
+    private final Map<String, String> hash = new ConcurrentHashMap<>();
     private final Map<String, Bucket> bucket = new ConcurrentHashMap<>();
     private final Map<Bucket, Future<?>> rateLimitQueue = new ConcurrentHashMap<>();
     private Future<?> cleanupWorker;
@@ -77,7 +77,7 @@ public class RateLimiter {
         if (cleanupWorker != null) cleanupWorker.cancel(false);
     }
 
-    public Long getRateLimit(Route.CompiledRoute route) {
+    public Long getRateLimit(Route route) {
         Bucket bucket = getBucket(route, false);
         return bucket == null ? 0L : bucket.getRateLimit();
     }
@@ -91,7 +91,7 @@ public class RateLimiter {
         });
     }
 
-    public Long handleResponse(Route.CompiledRoute route, okhttp3.Response response) {
+    public Long handleResponse(Route route, okhttp3.Response response) {
         bucketLock.lock();
         try {
             long rateLimit = updateBucket(route, response).getRateLimit();
@@ -105,7 +105,7 @@ public class RateLimiter {
         }
     }
 
-    private Bucket updateBucket(Route.CompiledRoute route, okhttp3.Response response) {
+    private Bucket updateBucket(Route route, okhttp3.Response response) {
         return MiscUtil.locked(bucketLock, () -> {
             try {
                 Bucket bucket = getBucket(route, true);
@@ -113,7 +113,7 @@ public class RateLimiter {
                 boolean global = headers.get(GLOBAL_HEADER) != null;
                 String hash = headers.get(HASH_HEADER);
                 long now = getNow();
-                Route baseRoute = route.getBaseRoute();
+                String baseRoute = route.getBaseRoute();
                 if (hash != null) {
                     if (!this.hash.containsKey(baseRoute)) this.hash.put(baseRoute, hash);
                     bucket = getBucket(route, true);
@@ -140,11 +140,11 @@ public class RateLimiter {
         });
     }
 
-    private Bucket getBucket(Route.CompiledRoute route, boolean create) {
+    private Bucket getBucket(Route route, boolean create) {
         return MiscUtil.locked(bucketLock, () ->
         {
-            String hash = getRouteHash(route.getBaseRoute());
-            String bucketId = hash + ":" + route.getMajorParameters();
+            String bucketId = route.getMethod() + "/" + route.getBaseRoute() + ":" + route.getMajorParameters();
+            System.out.println(bucketId);
             Bucket bucket = this.bucket.get(bucketId);
             if (bucket == null && create) this.bucket.put(bucketId, bucket = new Bucket(bucketId));
             return bucket;
