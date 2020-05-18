@@ -1,13 +1,13 @@
 package me.syari.ss.discord.internal.entities;
 
-import me.syari.ss.discord.api.entities.Mentionable;
+import me.syari.ss.discord.api.entities.ISnowflake;
 import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.utils.cache.SnowflakeReference;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.OffsetDateTime;
 
-public class Role implements Mentionable, Comparable<Role> {
+public class Role implements ISnowflake, Comparable<Role> {
     private final long id;
     private final SnowflakeReference<Guild> guild;
 
@@ -25,7 +25,6 @@ public class Role implements Mentionable, Comparable<Role> {
     }
 
     @NotNull
-    @Override
     public String getAsMention() {
         return "<@&" + getId() + '>';
     }

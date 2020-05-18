@@ -1,14 +1,10 @@
 package me.syari.ss.discord.internal.entities;
 
-import me.syari.ss.discord.api.entities.Mentionable;
-import me.syari.ss.discord.api.utils.MiscUtil;
+import me.syari.ss.discord.api.entities.ISnowflake;
 import me.syari.ss.discord.internal.JDAImpl;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.FormattableFlags;
-import java.util.Formatter;
-
-public class User implements Mentionable {
+public class User implements ISnowflake {
     protected final long id;
     protected final JDAImpl api;
 
@@ -32,11 +28,6 @@ public class User implements Mentionable {
         return String.format("%04d", discriminator);
     }
 
-    @NotNull
-    private String getAsTag() {
-        return getName() + '#' + getDiscriminator();
-    }
-
     public boolean isBot() {
         return bot;
     }
@@ -44,12 +35,6 @@ public class User implements Mentionable {
     @NotNull
     public JDAImpl getJDA() {
         return api;
-    }
-
-    @NotNull
-    @Override
-    public String getAsMention() {
-        return "<@" + getId() + '>';
     }
 
     @Override

@@ -1,6 +1,6 @@
 package me.syari.ss.discord.internal.entities;
 
-import me.syari.ss.discord.api.entities.Mentionable;
+import me.syari.ss.discord.api.entities.ISnowflake;
 import me.syari.ss.discord.internal.JDAImpl;
 import me.syari.ss.discord.internal.utils.cache.SnowflakeReference;
 import org.jetbrains.annotations.NotNull;
@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class Member implements Mentionable {
+public class Member implements ISnowflake {
     private final SnowflakeReference<Guild> guild;
     private final User user;
     private final Set<Role> roles = ConcurrentHashMap.newKeySet();
@@ -85,9 +85,4 @@ public class Member implements Mentionable {
         return "MB:" + getDisplayName() + '(' + getUser().toString() + " / " + getGuild().toString() + ')';
     }
 
-    @NotNull
-    @Override
-    public String getAsMention() {
-        return (nickname == null ? "<@" : "<@!") + user.getId() + '>';
-    }
 }

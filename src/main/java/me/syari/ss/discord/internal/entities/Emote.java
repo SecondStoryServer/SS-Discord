@@ -1,11 +1,11 @@
 package me.syari.ss.discord.internal.entities;
 
-import me.syari.ss.discord.api.entities.Mentionable;
+import me.syari.ss.discord.api.entities.ISnowflake;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
-public class Emote implements Mentionable {
+public class Emote implements ISnowflake {
     private final long id;
     private final Set<Role> roles;
 
@@ -33,7 +33,6 @@ public class Emote implements Mentionable {
     }
 
     @NotNull
-    @Override
     public String getAsMention() {
         return (isAnimated() ? "<a:" : "<:") + getName() + ":" + getId() + ">";
     }
