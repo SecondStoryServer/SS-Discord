@@ -5,15 +5,15 @@ import org.jetbrains.annotations.NotNull;
 
 public class Route {
     public static class Misc {
-        public static final Route GATEWAY = new Route(Method.GET, "gateway");
+        public static final Route GATEWAY = new Route(Method.GET, "gateway", 0);
     }
 
     public static class Self {
-        public static final Route GET_SELF = new Route(Method.GET, "users/@me");
+        public static final Route GET_SELF = new Route(Method.GET, "users/@me", 0);
     }
 
     public static class Messages {
-        public static final Route SEND_MESSAGE = new Route(Method.POST, "channels/{channel_id}/messages");
+        public static final Route SEND_MESSAGE = new Route(Method.POST, "channels/{channel_id}/messages", 1);
     }
 
     private static final String majorParameters = "guild_id:channel_id:webhook_id";
@@ -21,13 +21,10 @@ public class Route {
     private final Method method;
     private final int paramCount;
 
-    private Route(Method method, String route) {
+    private Route(Method method, String route, int paramCount) {
         this.method = method;
         this.route = route;
-        this.paramCount = Helpers.countMatches(route, '{');
-
-        if (paramCount != Helpers.countMatches(route, '}'))
-            throw new IllegalArgumentException("An argument does not have both {}'s for route: " + method + "  " + route);
+        this.paramCount = paramCount;
     }
 
     public String getRoute() {
