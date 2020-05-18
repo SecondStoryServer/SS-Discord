@@ -67,8 +67,9 @@ public class ChainedClosableIterator<T> implements ClosableIterator<T> {
     private boolean findNext() {
         while (currentIterator.hasNext()) {
             T next = currentIterator.next();
-            if (items.contains(next))
+            if (items.contains(next)) {
                 continue;
+            }
             item = next;
             items.add(item);
             return true;

@@ -1,5 +1,5 @@
-import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.JDABuilder;
+import me.syari.ss.discord.internal.JDA;
 import me.syari.ss.discord.internal.entities.Member;
 import me.syari.ss.discord.internal.entities.TextChannel;
 import me.syari.ss.discord.internal.entities.User;

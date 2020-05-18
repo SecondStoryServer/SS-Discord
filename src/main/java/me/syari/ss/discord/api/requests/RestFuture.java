@@ -1,6 +1,6 @@
 package me.syari.ss.discord.api.requests;
 
-import me.syari.ss.discord.internal.JDAImpl;
+import me.syari.ss.discord.internal.JDA;
 import me.syari.ss.discord.internal.requests.RestAction;
 import me.syari.ss.discord.internal.requests.Route;
 import okhttp3.RequestBody;
@@ -15,7 +15,7 @@ public class RestFuture<T> extends CompletableFuture<T> {
                       final RequestBody data,
                       final Route.CompiledRoute route) {
         this.request = new Request<>(restAction, this::complete, this::completeExceptionally, shouldQueue, data, route);
-        ((JDAImpl) restAction.getJDA()).getRequester().request(this.request);
+        ((JDA) restAction.getJDA()).getRequester().request(this.request);
     }
 
     @Override

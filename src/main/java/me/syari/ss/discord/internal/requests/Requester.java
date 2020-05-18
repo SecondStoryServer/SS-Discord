@@ -1,9 +1,8 @@
 package me.syari.ss.discord.internal.requests;
 
-import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.requests.Request;
 import me.syari.ss.discord.api.requests.Response;
-import me.syari.ss.discord.internal.JDAImpl;
+import me.syari.ss.discord.internal.JDA;
 import me.syari.ss.discord.internal.utils.JDALogger;
 import okhttp3.Call;
 import okhttp3.MediaType;
@@ -26,7 +25,7 @@ public class Requester {
     public static final RequestBody EMPTY_BODY = RequestBody.create(null, new byte[0]);
     public static final MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json; charset=utf-8");
 
-    protected final JDAImpl api;
+    protected final JDA api;
     private final RateLimiter rateLimiter = new RateLimiter(this);
 
     private final OkHttpClient httpClient;
@@ -34,11 +33,11 @@ public class Requester {
     private volatile boolean retryOnTimeout = false;
 
     public Requester(JDA api) {
-        this.api = (JDAImpl) api;
+        this.api = api;
         this.httpClient = this.api.getHttpClient();
     }
 
-    public JDAImpl getJDA() {
+    public JDA getJDA() {
         return api;
     }
 

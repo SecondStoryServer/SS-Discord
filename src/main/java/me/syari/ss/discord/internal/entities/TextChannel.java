@@ -1,8 +1,7 @@
 package me.syari.ss.discord.internal.entities;
 
 import me.syari.ss.discord.api.ISnowflake;
-import me.syari.ss.discord.api.JDA;
-import me.syari.ss.discord.internal.JDAImpl;
+import me.syari.ss.discord.internal.JDA;
 import me.syari.ss.discord.internal.requests.MessageAction;
 import me.syari.ss.discord.internal.requests.Route;
 import me.syari.ss.discord.internal.utils.Checks;
@@ -12,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 public class TextChannel implements ISnowflake, Comparable<TextChannel> {
     protected final long id;
     protected final SnowflakeReference<Guild> guild;
-    protected final JDAImpl api;
+    protected final JDA api;
     protected String name;
 
     public TextChannel(long id, @NotNull Guild guild) {

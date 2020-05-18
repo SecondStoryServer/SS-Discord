@@ -1,12 +1,11 @@
 package me.syari.ss.discord.internal.requests;
 
-import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.exceptions.ErrorResponseException;
 import me.syari.ss.discord.api.exceptions.RateLimitedException;
 import me.syari.ss.discord.api.requests.Request;
 import me.syari.ss.discord.api.requests.Response;
 import me.syari.ss.discord.api.requests.RestFuture;
-import me.syari.ss.discord.internal.JDAImpl;
+import me.syari.ss.discord.internal.JDA;
 import me.syari.ss.discord.internal.utils.JDALogger;
 import okhttp3.RequestBody;
 import org.jetbrains.annotations.NotNull;
@@ -35,7 +34,7 @@ public class RestAction<T> {
     };
 
     protected static final boolean passContext = true;
-    protected final JDAImpl api;
+    protected final JDA api;
 
     private final Route.CompiledRoute route;
     private final RequestBody data;
@@ -54,7 +53,7 @@ public class RestAction<T> {
     }
 
     public RestAction(@NotNull JDA api, Route.CompiledRoute route, RequestBody data, BiFunction<Response, Request<T>, T> handler) {
-        this.api = (JDAImpl) api;
+        this.api = api;
         this.route = route;
         this.data = data;
         this.handler = handler;

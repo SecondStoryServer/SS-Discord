@@ -4,7 +4,7 @@ import me.syari.ss.discord.api.ThreadLocalReason;
 import me.syari.ss.discord.api.exceptions.ContextException;
 import me.syari.ss.discord.api.exceptions.ErrorResponseException;
 import me.syari.ss.discord.api.exceptions.RateLimitedException;
-import me.syari.ss.discord.internal.JDAImpl;
+import me.syari.ss.discord.internal.JDA;
 import me.syari.ss.discord.internal.requests.CallbackContext;
 import me.syari.ss.discord.internal.requests.RestAction;
 import me.syari.ss.discord.internal.requests.Route;
@@ -15,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.function.Consumer;
 
 public class Request<T> {
-    private final JDAImpl api;
+    private final JDA api;
     private final RestAction<T> restAction;
     private final Consumer<? super T> onSuccess;
     private final Consumer<? super Throwable> onFailure;
@@ -46,7 +46,7 @@ public class Request<T> {
         this.body = body;
         this.route = route;
 
-        this.api = (JDAImpl) restAction.getJDA();
+        this.api = (JDA) restAction.getJDA();
         this.localReason = ThreadLocalReason.getCurrent();
     }
 

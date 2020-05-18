@@ -1,15 +1,15 @@
 package me.syari.ss.discord.internal.handle;
 
 import me.syari.ss.discord.api.utils.data.DataObject;
-import me.syari.ss.discord.internal.JDAImpl;
+import me.syari.ss.discord.internal.JDA;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class SocketHandler {
-    protected final JDAImpl api;
+    protected final JDA api;
     protected long responseNumber;
     protected DataObject allContent;
 
-    public SocketHandler(JDAImpl api) {
+    public SocketHandler(JDA api) {
         this.api = api;
     }
 
@@ -22,7 +22,7 @@ public abstract class SocketHandler {
         this.allContent = null;
     }
 
-    protected JDAImpl getJDA() {
+    protected JDA getJDA() {
         return api;
     }
 

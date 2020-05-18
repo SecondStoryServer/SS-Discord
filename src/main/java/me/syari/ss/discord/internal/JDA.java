@@ -4,7 +4,6 @@ import com.neovisionaries.ws.client.WebSocketFactory;
 import gnu.trove.impl.sync.TSynchronizedLongObjectMap;
 import gnu.trove.map.TLongObjectMap;
 import gnu.trove.map.hash.TLongObjectHashMap;
-import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.MessageReceivedEvent;
 import me.syari.ss.discord.api.exceptions.RateLimitedException;
 import me.syari.ss.discord.api.requests.Request;
@@ -24,11 +23,11 @@ import me.syari.ss.discord.internal.requests.WebSocketClient;
 import me.syari.ss.discord.internal.utils.Checks;
 import me.syari.ss.discord.internal.utils.JDALogger;
 import me.syari.ss.discord.internal.utils.cache.SnowflakeCacheViewImpl;
-import me.syari.ss.discord.internal.utils.config.MetaConfig;
 import me.syari.ss.discord.internal.utils.config.SessionConfig;
 import me.syari.ss.discord.internal.utils.config.ThreadingConfig;
 import okhttp3.OkHttpClient;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.MDC;
 
@@ -36,10 +35,12 @@ import javax.security.auth.login.LoginException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.Consumer;
 
-public class JDAImpl implements JDA {
+public class JDA {
     public static final Logger LOG = JDALogger.getLog(JDA.class);
 
     protected final SnowflakeCacheViewImpl<User> userCache = new SnowflakeCacheViewImpl<>(User.class);
@@ -57,7 +58,6 @@ public class JDAImpl implements JDA {
     protected final String token;
     protected final ThreadingConfig threadConfig;
     protected final SessionConfig sessionConfig;
-    protected final MetaConfig metaConfig;
     private final Consumer<MessageReceivedEvent> messageReceivedEvent;
 
     protected WebSocketClient client;
@@ -67,16 +67,14 @@ public class JDAImpl implements JDA {
     protected String gatewayUrl;
     protected final ChunkingFilter chunkingFilter;
 
-    public JDAImpl(@NotNull String token,
-                   @NotNull SessionConfig sessionConfig,
-                   @NotNull ThreadingConfig threadConfig,
-                   @NotNull MetaConfig metaConfig,
-                   @NotNull ChunkingFilter chunkingFilter,
-                   @NotNull Consumer<MessageReceivedEvent> messageReceivedEvent) {
+    public JDA(@NotNull String token,
+               @NotNull SessionConfig sessionConfig,
+               @NotNull ThreadingConfig threadConfig,
+               @NotNull ChunkingFilter chunkingFilter,
+               @NotNull Consumer<MessageReceivedEvent> messageReceivedEvent) {
         this.token = "Bot " + token;
         this.threadConfig = threadConfig;
         this.sessionConfig = sessionConfig;
-        this.metaConfig = metaConfig;
         this.chunkingFilter = chunkingFilter;
         this.messageReceivedEvent = messageReceivedEvent;
         this.shutdownHook = new Thread(this::shutdown, "JDA Shutdown Hook");
@@ -110,9 +108,7 @@ public class JDAImpl implements JDA {
 
         setStatus(Status.LOGGING_IN);
 
-        ConcurrentMap<String, String> contextMap = metaConfig.getMdcContextMap();
         Map<String, String> previousContext = MDC.getCopyOfContextMap();
-        contextMap.forEach(MDC::put);
         verifyToken();
         LOG.info("Login Successful!");
 
@@ -127,15 +123,6 @@ public class JDAImpl implements JDA {
 
     public String getGateway() {
         return getSessionController().getGateway(this);
-    }
-
-
-    public ConcurrentMap<String, String> getContextMap() {
-        return new ConcurrentHashMap<>(metaConfig.getMdcContextMap());
-    }
-
-    public void setContext() {
-        metaConfig.getMdcContextMap().forEach(MDC::put);
     }
 
     public void setStatus(Status status) {
@@ -197,7 +184,6 @@ public class JDAImpl implements JDA {
         return status;
     }
 
-    @Override
     public void awaitStatus(@NotNull Status status, @NotNull Status... failOn) throws InterruptedException {
         Checks.check(status.isInit(), "Cannot await the status %s as it is not part of the login cycle!", status);
         if (getStatus() == Status.CONNECTED)
@@ -210,6 +196,10 @@ public class JDAImpl implements JDA {
                 return;
             Thread.sleep(50);
         }
+    }
+
+    public void awaitReady() throws InterruptedException {
+        awaitStatus(Status.CONNECTED);
     }
 
     @NotNull
@@ -233,9 +223,13 @@ public class JDAImpl implements JDA {
     }
 
     @NotNull
-    @Override
     public SnowflakeCacheView<Guild> getGuildCache() {
         return guildCache;
+    }
+
+    @Nullable
+    public Guild getGuildById(long id) {
+        return getGuildCache().getElementById(id);
     }
 
     public boolean isUnavailable(long guildId) {
@@ -243,22 +237,33 @@ public class JDAImpl implements JDA {
     }
 
     @NotNull
-    @Override
     public SnowflakeCacheView<Emote> getEmoteCache() {
         return CacheView.allSnowflakes(() -> guildCache.stream().map(Guild::getEmoteCache));
     }
 
+    @Nullable
+    public Emote getEmoteById(long id) {
+        return getEmoteCache().getElementById(id);
+    }
+
     @NotNull
-    @Override
     public SnowflakeCacheView<TextChannel> getTextChannelCache() {
         return textChannelCache;
     }
 
+    @Nullable
+    public TextChannel getTextChannelById(long id) {
+        return getTextChannelCache().getElementById(id);
+    }
 
     @NotNull
-    @Override
     public SnowflakeCacheView<User> getUserCache() {
         return userCache;
+    }
+
+    @Nullable
+    public User getUserById(long id) {
+        return getUserCache().getElementById(id);
     }
 
     private synchronized void shutdownNow() {
@@ -266,7 +271,6 @@ public class JDAImpl implements JDA {
         threadConfig.shutdownNow();
     }
 
-    @Override
     public synchronized void shutdown() {
         if (status == Status.SHUTDOWN || status == Status.SHUTTING_DOWN) {
             return;
@@ -354,5 +358,32 @@ public class JDAImpl implements JDA {
 
     public void resetGatewayUrl() {
         this.gatewayUrl = getGateway();
+    }
+
+    public enum Status {
+        INITIALIZING(true),
+        INITIALIZED(true),
+        LOGGING_IN(true),
+        CONNECTING_TO_WEBSOCKET(true),
+        IDENTIFYING_SESSION(true),
+        AWAITING_LOGIN_CONFIRMATION(true),
+        LOADING_SUBSYSTEMS(true),
+        CONNECTED(true),
+        DISCONNECTED(false),
+        RECONNECT_QUEUED(false),
+        WAITING_TO_RECONNECT(false),
+        ATTEMPTING_TO_RECONNECT(false),
+        SHUTTING_DOWN(false),
+        SHUTDOWN(false);
+
+        private final boolean isInit;
+
+        Status(boolean isInit) {
+            this.isInit = isInit;
+        }
+
+        public boolean isInit() {
+            return isInit;
+        }
     }
 }

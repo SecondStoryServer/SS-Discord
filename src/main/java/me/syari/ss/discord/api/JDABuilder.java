@@ -1,8 +1,7 @@
 package me.syari.ss.discord.api;
 
 import me.syari.ss.discord.api.utils.ChunkingFilter;
-import me.syari.ss.discord.internal.JDAImpl;
-import me.syari.ss.discord.internal.utils.config.MetaConfig;
+import me.syari.ss.discord.internal.JDA;
 import me.syari.ss.discord.internal.utils.config.SessionConfig;
 import me.syari.ss.discord.internal.utils.config.ThreadingConfig;
 import okhttp3.OkHttpClient;
@@ -28,9 +27,8 @@ public class JDABuilder {
     public JDA build() throws LoginException {
         ThreadingConfig threadingConfig = new ThreadingConfig();
         SessionConfig sessionConfig = new SessionConfig(new OkHttpClient.Builder().build());
-        MetaConfig metaConfig = new MetaConfig();
 
-        JDAImpl jda = new JDAImpl(token, sessionConfig, threadingConfig, metaConfig, chunkingFilter, messageReceivedEvent);
+        JDA jda = new JDA(token, sessionConfig, threadingConfig, chunkingFilter, messageReceivedEvent);
 
         jda.setStatus(JDA.Status.INITIALIZED);
 

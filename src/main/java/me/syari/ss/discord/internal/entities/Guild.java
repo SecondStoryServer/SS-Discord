@@ -2,7 +2,7 @@ package me.syari.ss.discord.internal.entities;
 
 import me.syari.ss.discord.api.ISnowflake;
 import me.syari.ss.discord.api.utils.cache.SnowflakeCacheView;
-import me.syari.ss.discord.internal.JDAImpl;
+import me.syari.ss.discord.internal.JDA;
 import me.syari.ss.discord.internal.utils.JDALogger;
 import me.syari.ss.discord.internal.utils.cache.MemberCacheView;
 import me.syari.ss.discord.internal.utils.cache.SnowflakeCacheViewImpl;
@@ -13,7 +13,7 @@ import java.util.concurrent.CompletableFuture;
 
 public class Guild implements ISnowflake {
     private final long id;
-    private final JDAImpl api;
+    private final JDA api;
 
     private final SnowflakeCacheViewImpl<TextChannel> textChannelCache = new SnowflakeCacheViewImpl<>(TextChannel.class);
     private final SnowflakeCacheViewImpl<Role> roleCache = new SnowflakeCacheViewImpl<>(Role.class);
@@ -27,7 +27,7 @@ public class Guild implements ISnowflake {
     private long ownerId;
     private int memberCount;
 
-    public Guild(JDAImpl api, long id) {
+    public Guild(JDA api, long id) {
         this.id = id;
         this.api = api;
     }
@@ -77,7 +77,7 @@ public class Guild implements ISnowflake {
     }
 
     @NotNull
-    public JDAImpl getJDA() {
+    public JDA getJDA() {
         return api;
     }
 

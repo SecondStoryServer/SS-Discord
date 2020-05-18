@@ -1,13 +1,12 @@
 package me.syari.ss.discord.internal.requests;
 
 import com.neovisionaries.ws.client.*;
-import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.exceptions.ParsingException;
 import me.syari.ss.discord.api.requests.CloseCode;
 import me.syari.ss.discord.api.utils.SessionController;
 import me.syari.ss.discord.api.utils.data.DataArray;
 import me.syari.ss.discord.api.utils.data.DataObject;
-import me.syari.ss.discord.internal.JDAImpl;
+import me.syari.ss.discord.internal.JDA;
 import me.syari.ss.discord.internal.handle.*;
 import me.syari.ss.discord.internal.utils.IOUtil;
 import me.syari.ss.discord.internal.utils.JDALogger;
@@ -22,7 +21,6 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 import java.util.zip.DataFormatException;
 
 public class WebSocketClient extends WebSocketAdapter implements WebSocketListener {
@@ -32,7 +30,7 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
     protected static final String INVALIDATE_REASON = "INVALIDATE_SESSION";
     protected static final long IDENTIFY_BACKOFF = TimeUnit.SECONDS.toMillis(SessionController.IDENTIFY_DELAY);
 
-    protected final JDAImpl api;
+    protected final JDA api;
     protected final Map<String, SocketHandler> handlers;
 
     public WebSocket socket;
@@ -68,7 +66,7 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
 
     protected volatile ConnectNode connectNode;
 
-    public WebSocketClient(@NotNull JDAImpl api) {
+    public WebSocketClient(@NotNull JDA api) {
         this.api = api;
         this.executor = api.getGatewayPool();
         this.shouldReconnect = true;
@@ -102,12 +100,12 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
             processingReady = false;
             if (firstInit) {
                 firstInit = false;
-                JDAImpl.LOG.info("Finished Loading!");
+                JDA.LOG.info("Finished Loading!");
             } else {
-                JDAImpl.LOG.info("Finished (Re)Loading!");
+                JDA.LOG.info("Finished (Re)Loading!");
             }
         } else {
-            JDAImpl.LOG.info("Successfully resumed Session!");
+            JDA.LOG.info("Successfully resumed Session!");
         }
         api.setStatus(JDA.Status.CONNECTED);
     }
@@ -207,7 +205,6 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
 
     @Override
     public void onThreadStarted(WebSocket websocket, ThreadType threadType, Thread thread) {
-        api.setContext();
     }
 
     @Override
@@ -331,15 +328,10 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
     }
 
     public void reconnect(boolean callFromQueue) throws InterruptedException {
-        Set<MDC.MDCCloseable> contextEntries = null;
         Map<String, String> previousContext = null;
         {
-            ConcurrentMap<String, String> contextMap = api.getContextMap();
-            if (callFromQueue && contextMap != null) {
+            if (callFromQueue) {
                 previousContext = MDC.getCopyOfContextMap();
-                contextEntries = contextMap.entrySet().stream()
-                        .map((entry) -> MDC.putCloseable(entry.getKey(), entry.getValue()))
-                        .collect(Collectors.toSet());
             }
         }
         if (shutdown) {
@@ -368,18 +360,17 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
                 LOG.warn("Reconnect failed! Next attempt in {}s", reconnectTimeoutS);
             }
         }
-        if (contextEntries != null)
-            contextEntries.forEach(MDC.MDCCloseable::close);
-        if (previousContext != null)
+        if (previousContext != null) {
             previousContext.forEach(MDC::put);
+        }
     }
 
     protected void setupKeepAlive(long timeout) {
         keepAliveThread = executor.scheduleAtFixedRate(() ->
         {
-            api.setContext();
-            if (connected)
+            if (connected) {
                 sendKeepAlive();
+            }
         }, 0, timeout, TimeUnit.MILLISECONDS);
     }
 
@@ -532,7 +523,7 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
         DataObject content = raw.getObject("d");
         LOG.trace("{} -> {}", type, content);
 
-        JDAImpl jda = (JDAImpl) getJDA();
+        JDA jda = (JDA) getJDA();
         try {
             switch (type) {
                 case "READY":

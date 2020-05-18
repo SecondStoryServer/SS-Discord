@@ -1,7 +1,7 @@
 package me.syari.ss.discord.internal.handle;
 
 import me.syari.ss.discord.api.utils.data.DataObject;
-import me.syari.ss.discord.internal.JDAImpl;
+import me.syari.ss.discord.internal.JDA;
 import me.syari.ss.discord.internal.entities.EntityBuilder;
 import me.syari.ss.discord.internal.entities.Message;
 import me.syari.ss.discord.internal.requests.WebSocketClient;
@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import static me.syari.ss.discord.util.Check.isDefaultMessage;
 
 public class MessageCreateHandler extends SocketHandler {
-    public MessageCreateHandler(JDAImpl api) {
+    public MessageCreateHandler(JDA api) {
         super(api);
     }
 
@@ -22,7 +22,7 @@ public class MessageCreateHandler extends SocketHandler {
             return null;
         }
 
-        JDAImpl jda = getJDA();
+        JDA jda = getJDA();
         if (!content.isNull("guild_id")) {
             long guildId = content.getLong("guild_id");
             if (jda.getGuildSetupController().isLocked(guildId))

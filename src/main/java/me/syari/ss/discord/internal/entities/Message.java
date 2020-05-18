@@ -1,9 +1,8 @@
 package me.syari.ss.discord.internal.entities;
 
 import gnu.trove.set.TLongSet;
-import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.utils.MiscUtil;
-import me.syari.ss.discord.internal.JDAImpl;
+import me.syari.ss.discord.internal.JDA;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,7 +16,7 @@ public class Message {
 
     private final Object mutex = new Object();
 
-    protected final JDAImpl api;
+    protected final JDA api;
     protected final long id;
     protected final TextChannel channel;
     protected final User author;
@@ -49,7 +48,7 @@ public class Message {
         this.content = content;
         this.author = author;
         this.member = member;
-        this.api = (JDAImpl) channel.getJDA();
+        this.api = channel.getJDA();
     }
 
     @NotNull

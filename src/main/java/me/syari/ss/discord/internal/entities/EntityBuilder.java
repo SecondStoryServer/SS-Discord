@@ -3,10 +3,9 @@ package me.syari.ss.discord.internal.entities;
 import gnu.trove.map.TLongObjectMap;
 import gnu.trove.set.TLongSet;
 import gnu.trove.set.hash.TLongHashSet;
-import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.utils.data.DataArray;
 import me.syari.ss.discord.api.utils.data.DataObject;
-import me.syari.ss.discord.internal.JDAImpl;
+import me.syari.ss.discord.internal.JDA;
 import me.syari.ss.discord.internal.handle.EventCache;
 import me.syari.ss.discord.internal.utils.JDALogger;
 import me.syari.ss.discord.internal.utils.UnlockHook;
@@ -30,13 +29,13 @@ public class EntityBuilder {
     public static final String MISSING_USER = "MISSING_USER";
     public static final String UNKNOWN_MESSAGE_TYPE = "UNKNOWN_MESSAGE_TYPE";
 
-    protected final JDAImpl api;
+    protected final JDA api;
 
     public EntityBuilder(JDA api) {
-        this.api = (JDAImpl) api;
+        this.api = api;
     }
 
-    public JDAImpl getJDA() {
+    public JDA getJDA() {
         return api;
     }
 

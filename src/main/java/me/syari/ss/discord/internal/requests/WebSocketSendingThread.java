@@ -1,6 +1,5 @@
 package me.syari.ss.discord.internal.requests;
 
-import me.syari.ss.discord.internal.JDAImpl;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
@@ -14,7 +13,6 @@ class WebSocketSendingThread implements Runnable {
     private static final Logger LOG = WebSocketClient.LOG;
 
     private final WebSocketClient client;
-    private final JDAImpl api;
     private final ReentrantLock queueLock;
     private final Queue<String> chunkSyncQueue;
     private final Queue<String> ratelimitQueue;
@@ -27,7 +25,6 @@ class WebSocketSendingThread implements Runnable {
 
     WebSocketSendingThread(@NotNull WebSocketClient client) {
         this.client = client;
-        this.api = client.api;
         this.queueLock = client.queueLock;
         this.chunkSyncQueue = client.chunkSyncQueue;
         this.ratelimitQueue = client.ratelimitQueue;
@@ -71,7 +68,6 @@ class WebSocketSendingThread implements Runnable {
         }
 
         try {
-            api.setContext();
             attemptedToSend = false;
             needRateLimit = false;
             queueLock.lockInterruptibly();

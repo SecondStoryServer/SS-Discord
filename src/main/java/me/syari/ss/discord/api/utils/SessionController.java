@@ -1,7 +1,7 @@
 package me.syari.ss.discord.api.utils;
 
 import com.neovisionaries.ws.client.OpeningHandshakeException;
-import me.syari.ss.discord.api.JDA;
+import me.syari.ss.discord.internal.JDA;
 import me.syari.ss.discord.internal.requests.RestAction;
 import me.syari.ss.discord.internal.requests.Route;
 import me.syari.ss.discord.internal.utils.JDALogger;

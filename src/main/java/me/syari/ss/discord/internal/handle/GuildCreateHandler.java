@@ -1,12 +1,12 @@
 package me.syari.ss.discord.internal.handle;
 
 import me.syari.ss.discord.api.utils.data.DataObject;
-import me.syari.ss.discord.internal.JDAImpl;
+import me.syari.ss.discord.internal.JDA;
 import me.syari.ss.discord.internal.entities.Guild;
 import org.jetbrains.annotations.NotNull;
 
 public class GuildCreateHandler extends SocketHandler {
-    public GuildCreateHandler(JDAImpl api) {
+    public GuildCreateHandler(JDA api) {
         super(api);
     }
 

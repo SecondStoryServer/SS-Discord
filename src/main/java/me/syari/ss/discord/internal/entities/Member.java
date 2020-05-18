@@ -1,7 +1,7 @@
 package me.syari.ss.discord.internal.entities;
 
 import me.syari.ss.discord.api.ISnowflake;
-import me.syari.ss.discord.internal.JDAImpl;
+import me.syari.ss.discord.internal.JDA;
 import me.syari.ss.discord.internal.utils.cache.SnowflakeReference;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,7 +17,7 @@ public class Member implements ISnowflake {
     private long boostDate;
 
     public Member(Guild guild, @NotNull User user) {
-        JDAImpl api = user.getJDA();
+        JDA api = user.getJDA();
         this.guild = new SnowflakeReference<>(guild, api::getGuildById);
         this.user = user;
     }

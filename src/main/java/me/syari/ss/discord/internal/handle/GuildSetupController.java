@@ -9,7 +9,7 @@ import gnu.trove.set.TLongSet;
 import gnu.trove.set.hash.TLongHashSet;
 import me.syari.ss.discord.api.utils.data.DataArray;
 import me.syari.ss.discord.api.utils.data.DataObject;
-import me.syari.ss.discord.internal.JDAImpl;
+import me.syari.ss.discord.internal.JDA;
 import me.syari.ss.discord.internal.requests.WebSocketClient;
 import me.syari.ss.discord.internal.requests.WebSocketCode;
 import me.syari.ss.discord.internal.utils.JDALogger;
@@ -20,7 +20,7 @@ public class GuildSetupController {
     protected static final int CHUNK_TIMEOUT = 10000;
     protected static final Logger log = JDALogger.getLog(GuildSetupController.class);
 
-    private final JDAImpl api;
+    private final JDA api;
     private final TLongObjectMap<GuildSetupNode> setupNodes = new TLongObjectHashMap<>();
     private final TLongSet chunkingGuilds = new TLongHashSet();
     private final TLongLongMap pendingChunks = new TLongLongHashMap();
@@ -30,11 +30,11 @@ public class GuildSetupController {
 
     protected final StatusListener listener = (id, oldStatus, newStatus) -> log.trace("[{}] Updated status {}->{}", id, oldStatus, newStatus);
 
-    public GuildSetupController(JDAImpl api) {
+    public GuildSetupController(JDA api) {
         this.api = api;
     }
 
-    JDAImpl getJDA() {
+    JDA getJDA() {
         return api;
     }
 

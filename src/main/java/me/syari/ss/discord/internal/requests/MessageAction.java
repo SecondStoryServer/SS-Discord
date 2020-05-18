@@ -1,9 +1,9 @@
 package me.syari.ss.discord.internal.requests;
 
-import me.syari.ss.discord.api.JDA;
 import me.syari.ss.discord.api.requests.Request;
 import me.syari.ss.discord.api.requests.Response;
 import me.syari.ss.discord.api.utils.data.DataObject;
+import me.syari.ss.discord.internal.JDA;
 import me.syari.ss.discord.internal.entities.Message;
 import me.syari.ss.discord.internal.entities.TextChannel;
 import me.syari.ss.discord.internal.utils.Checks;

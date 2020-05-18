@@ -1,19 +1,19 @@
 package me.syari.ss.discord.internal.entities;
 
 import me.syari.ss.discord.api.ISnowflake;
-import me.syari.ss.discord.internal.JDAImpl;
+import me.syari.ss.discord.internal.JDA;
 import org.jetbrains.annotations.NotNull;
 
 public class User implements ISnowflake {
     protected final long id;
-    protected final JDAImpl api;
+    protected final JDA api;
 
     protected short discriminator;
     protected String name;
     protected boolean bot;
     protected boolean fake = false;
 
-    public User(long id, JDAImpl api) {
+    public User(long id, JDA api) {
         this.id = id;
         this.api = api;
     }
@@ -33,7 +33,7 @@ public class User implements ISnowflake {
     }
 
     @NotNull
-    public JDAImpl getJDA() {
+    public JDA getJDA() {
         return api;
     }
 
