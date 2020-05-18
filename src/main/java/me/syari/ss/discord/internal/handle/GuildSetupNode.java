@@ -150,10 +150,10 @@ public class GuildSetupNode {
         removedMembers.clear();
         Guild guild = api.getEntityBuilder().createGuild(id, partialGuild, expectedMemberCount);
         if (requestedChunk) {
-                getController().ready(id);
-            } else {
-                getController().remove(id);
-            }
+            getController().ready(id);
+        } else {
+            getController().remove(id);
+        }
         updateStatus(GuildSetupController.Status.READY);
         GuildSetupController.log.debug("Finished setup for guild {} firing cached events {}", id, cachedEvents.size());
         api.getClient().handle(cachedEvents);

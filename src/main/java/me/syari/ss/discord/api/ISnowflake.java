@@ -1,9 +1,6 @@
 package me.syari.ss.discord.api;
 
-import me.syari.ss.discord.api.utils.TimeUtil;
 import org.jetbrains.annotations.NotNull;
-
-import java.time.OffsetDateTime;
 
 public interface ISnowflake {
     @NotNull
@@ -13,8 +10,4 @@ public interface ISnowflake {
 
     long getIdLong();
 
-    @NotNull
-    default OffsetDateTime getTimeCreated() {
-        return TimeUtil.getTimeCreated(getIdLong());
-    }
 }
