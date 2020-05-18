@@ -45,7 +45,7 @@ public class DataArray implements Iterable<Object> {
     public DataObject getObject(int index) {
         Map<String, Object> child = null;
         try {
-            child = (Map<String, Object>) get(Map.class, index);
+            child = get(Map.class, index, null, null);
         } catch (ClassCastException ex) {
             log.error("Unable to extract child data", ex);
         }
@@ -99,11 +99,6 @@ public class DataArray implements Iterable<Object> {
     @Contract("_, _ -> new")
     private @NotNull ParsingException valueError(int index, String expectedType) {
         return new ParsingException("Unable to resolve value at " + index + " to type " + expectedType + ": " + data.get(index));
-    }
-
-    @Nullable
-    private <T> T get(@NotNull Class<T> type, int index) {
-        return get(type, index, null, null);
     }
 
     @Nullable

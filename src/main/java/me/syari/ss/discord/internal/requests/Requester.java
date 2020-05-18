@@ -26,7 +26,6 @@ public class Requester {
     public static final String USER_AGENT = "SS-Discord";
     public static final RequestBody EMPTY_BODY = RequestBody.create(null, new byte[0]);
     public static final MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json; charset=utf-8");
-    public static final MediaType MEDIA_TYPE_OCTET = MediaType.parse("application/octet-stream; charset=utf-8");
 
     protected final JDAImpl api;
     private final RateLimiter rateLimiter = new RateLimiter(this);
