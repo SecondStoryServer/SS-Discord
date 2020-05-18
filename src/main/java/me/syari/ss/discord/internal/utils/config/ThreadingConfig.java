@@ -9,19 +9,14 @@ import java.util.function.Supplier;
 public class ThreadingConfig {
     private ScheduledExecutorService rateLimitPool;
     private ScheduledExecutorService gatewayPool;
-    private final ExecutorService callbackPool;
+    private final ExecutorService callbackPool = ForkJoinPool.commonPool();
 
     public ThreadingConfig() {
-        this.callbackPool = ForkJoinPool.commonPool();
-        this.rateLimitPool = null;
-        this.gatewayPool = null;
     }
 
     public void init(@NotNull Supplier<String> identifier) {
-        if (this.rateLimitPool == null)
-            this.rateLimitPool = newScheduler(5, identifier, "RateLimit");
-        if (this.gatewayPool == null)
-            this.gatewayPool = newScheduler(1, identifier, "Gateway");
+        this.rateLimitPool = newScheduler(5, identifier, "RateLimit");
+        this.gatewayPool = newScheduler(1, identifier, "Gateway");
     }
 
     public void shutdown() {

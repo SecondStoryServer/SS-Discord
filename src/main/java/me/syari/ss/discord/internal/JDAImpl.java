@@ -10,7 +10,6 @@ import me.syari.ss.discord.api.exceptions.RateLimitedException;
 import me.syari.ss.discord.api.requests.Request;
 import me.syari.ss.discord.api.requests.Response;
 import me.syari.ss.discord.api.utils.ChunkingFilter;
-import me.syari.ss.discord.api.utils.MiscUtil;
 import me.syari.ss.discord.api.utils.SessionController;
 import me.syari.ss.discord.api.utils.cache.CacheView;
 import me.syari.ss.discord.api.utils.cache.SnowflakeCacheView;
@@ -120,12 +119,9 @@ public class JDAImpl implements JDA {
 
         setStatus(Status.LOGGING_IN);
 
-        Map<String, String> previousContext = null;
         ConcurrentMap<String, String> contextMap = metaConfig.getMdcContextMap();
-        if (contextMap != null) {
-            previousContext = MDC.getCopyOfContextMap();
-            contextMap.forEach(MDC::put);
-        }
+        Map<String, String> previousContext = MDC.getCopyOfContextMap();
+        contextMap.forEach(MDC::put);
         verifyToken();
         LOG.info("Login Successful!");
 
@@ -144,12 +140,11 @@ public class JDAImpl implements JDA {
 
 
     public ConcurrentMap<String, String> getContextMap() {
-        return metaConfig.getMdcContextMap() == null ? null : new ConcurrentHashMap<>(metaConfig.getMdcContextMap());
+        return new ConcurrentHashMap<>(metaConfig.getMdcContextMap());
     }
 
     public void setContext() {
-        if (metaConfig.getMdcContextMap() != null)
-            metaConfig.getMdcContextMap().forEach(MDC::put);
+        metaConfig.getMdcContextMap().forEach(MDC::put);
     }
 
     public void setStatus(Status status) {

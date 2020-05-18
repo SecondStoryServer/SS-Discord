@@ -1,8 +1,5 @@
 package me.syari.ss.discord.internal.utils;
 
-import okhttp3.MediaType;
-import okhttp3.RequestBody;
-import okio.Okio;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -33,10 +30,6 @@ public class IOUtil {
             }
             return bos.toByteArray();
         }
-    }
-
-    public static RequestBody createRequestBody(final MediaType contentType, final InputStream stream) {
-        return new BufferedRequestBody(Okio.source(stream), contentType);
     }
 
     public static int getIntBigEndian(byte @NotNull [] array, int offset) {
