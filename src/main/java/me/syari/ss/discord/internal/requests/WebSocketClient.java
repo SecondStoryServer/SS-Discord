@@ -312,7 +312,6 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
         sessionId = null;
         sentAuthInfo = false;
         locked(chunkSyncQueue::clear);
-        api.getTextChannelsView().clear();
         api.getGuildsView().clear();
         api.getUsersView().clear();
         api.getFakeUserMap().clear();

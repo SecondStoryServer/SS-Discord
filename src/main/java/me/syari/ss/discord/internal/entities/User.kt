@@ -3,18 +3,7 @@ package me.syari.ss.discord.internal.entities
 import me.syari.ss.discord.api.ISnowflake
 import me.syari.ss.discord.internal.JDA
 
-class User(override val idLong: Long, val api: JDA, var isFake: Boolean): ISnowflake {
-    private var discriminator: Short = 0
-    private var name: String? = null
-    var isBot = false
-    fun getName(): String {
-        return name!!
-    }
-
-    fun getDiscriminator(): String {
-        return String.format("%04d", discriminator)
-    }
-
+class User(override val idLong: Long, val api: JDA, var name: String, val isBot: Boolean): ISnowflake {
     override fun equals(other: Any?): Boolean {
         if (other === this) return true
         if (other !is User) return false
@@ -26,15 +15,6 @@ class User(override val idLong: Long, val api: JDA, var isFake: Boolean): ISnowf
     }
 
     override fun toString(): String {
-        return "U:" + getName() + '(' + idLong + ')'
+        return "U:$name($idLong)"
     }
-
-    fun setName(name: String?) {
-        this.name = name
-    }
-
-    fun setDiscriminator(discriminator: String) {
-        this.discriminator = discriminator.toShort()
-    }
-
 }

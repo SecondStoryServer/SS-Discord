@@ -28,6 +28,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.security.auth.login.LoginException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -45,7 +46,6 @@ public class JDA {
 
     protected final SnowflakeCacheView<User> userCache = new SnowflakeCacheView<>(User.class);
     protected final SnowflakeCacheView<Guild> guildCache = new SnowflakeCacheView<>(Guild.class);
-    protected final SnowflakeCacheView<TextChannel> textChannelCache = new SnowflakeCacheView<>(TextChannel.class);
     protected final TLongObjectMap<User> fakeUsers = new TSynchronizedLongObjectMap<>(new TLongObjectHashMap<>(), new Object());
     protected final Thread shutdownHook = new Thread(this::shutdown, "JDA Shutdown Hook");
     protected final EntityBuilder entityBuilder = new EntityBuilder(this);
@@ -216,14 +216,15 @@ public class JDA {
         return getEmoteCache().getElementById(id);
     }
 
-    @NotNull
-    public ISnowflakeCacheView<TextChannel> getTextChannelCache() {
-        return textChannelCache;
-    }
-
     @Nullable
     public TextChannel getTextChannelById(long id) {
-        return getTextChannelCache().getElementById(id);
+        for(Guild guild : Guild.Companion.getGuildList()){
+            TextChannel textChannel = guild.getTextChannel(id);
+            if(textChannel != null){
+                return textChannel;
+            }
+        }
+        return null;
     }
 
     @NotNull
@@ -291,10 +292,6 @@ public class JDA {
 
     public SnowflakeCacheView<Guild> getGuildsView() {
         return guildCache;
-    }
-
-    public SnowflakeCacheView<TextChannel> getTextChannelsView() {
-        return textChannelCache;
     }
 
     public TLongObjectMap<User> getFakeUserMap() {

@@ -15,21 +15,8 @@ import java.io.InputStream
 import java.util.HashSet
 import java.util.function.LongFunction
 
-class TextChannel(override val idLong: Long, guild: Guild): ISnowflake, Comparable<TextChannel> {
-    val api: JDA = guild.jDA
-    private val guild: SnowflakeReference<Guild?>
-    private var name: String? = null
-    fun setName(name: String?) {
-        this.name = name
-    }
-
-    fun getName(): String {
-        return name!!
-    }
-
-    fun getGuild(): Guild {
-        return guild.resolve()
-    }
+class TextChannel(override val idLong: Long, val guild: Guild, val name: String): ISnowflake, Comparable<TextChannel> {
+    val api: JDA = guild.api
 
     val asMention: String
         get() = "<#$idLong>"
@@ -48,7 +35,7 @@ class TextChannel(override val idLong: Long, guild: Guild): ISnowflake, Comparab
     }
 
     override fun toString(): String {
-        return "TextChannel:" + getName() + '(' + idLong + ')'
+        return "TextChannel:$name($idLong)"
     }
 
     override fun compareTo(other: TextChannel): Int {
@@ -105,9 +92,5 @@ class TextChannel(override val idLong: Long, guild: Guild): ISnowflake, Comparab
 
     companion object {
         private const val MAX_CONTENT_LENGTH = 2000
-    }
-
-    init {
-        this.guild = SnowflakeReference(guild, LongFunction { id: Long -> api.getGuildById(id) })
     }
 }

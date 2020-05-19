@@ -14,7 +14,7 @@ class Member(guild: Guild?, user: User): ISnowflake {
     }
 
     val displayName: String
-        get() = (if (nickname != null) nickname!! else user.getName())
+        get() = (if (nickname != null) nickname else user.name) ?: "null"
 
     override val idLong: Long
         get() = user.idLong

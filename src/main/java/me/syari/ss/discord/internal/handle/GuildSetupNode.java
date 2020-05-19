@@ -102,7 +102,7 @@ public class GuildSetupNode {
             members.remove(iterator.next());
         }
         removedMembers.clear();
-        Guild guild = api.getEntityBuilder().createGuild(id, partialGuild, expectedMemberCount);
+        api.getEntityBuilder().createGuild(id, partialGuild);
         if (requestedChunk) {
             controller.ready(id);
         } else {
@@ -111,7 +111,6 @@ public class GuildSetupNode {
         updateStatus(GuildSetupController.Status.READY);
         api.getClient().handle(cachedEvents);
         api.getEventCache().playbackCache(EventCache.Type.GUILD, id);
-        guild.acknowledgeMembers();
     }
 
     private void ensureMembers() {

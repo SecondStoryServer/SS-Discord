@@ -14,7 +14,7 @@ class Message(
     val channel: TextChannel,
     private val mentionedUsers: TLongSet,
     private val mentionedRoles: TLongSet,
-    val contentRaw: String,
+    private val contentRaw: String,
     val author: User,
     val member: Member?
 ) {
@@ -32,16 +32,16 @@ class Message(
             synchronized(mutex) {
                 altContent?.let { return it }
                 var tmp = contentRaw
-                for (user in getMentionedUsers()) {
-                    val member = guild.getMember(user!!)
-                    val name = member?.displayName ?: user.getName()
+                for (user in getMentionedUsers().filterNotNull()) {
+                    val member = guild.getMember(user)
+                    val name = member?.displayName ?: user.name
                     tmp = tmp.replace("<@!?${Pattern.quote(user.id)}>", "@${Matcher.quoteReplacement(name)}")
                 }
                 for (emote in emotes) {
                     tmp = tmp.replace(emote.asMention, ":${emote.name}:")
                 }
                 for (mentionedChannel in mentionedChannels) {
-                    tmp = tmp.replace(mentionedChannel.asMention, "#${mentionedChannel.getName()}")
+                    tmp = tmp.replace(mentionedChannel.asMention, "#${mentionedChannel.name}")
                 }
                 for (mentionedRole in getMentionedRoles()) {
                     tmp = tmp.replace(mentionedRole.asMention, "@${mentionedRole.name}")
@@ -51,7 +51,7 @@ class Message(
         }
 
     val guild: Guild
-        get() = channel.getGuild()
+        get() = channel.guild
 
     @Synchronized
     private fun getMentionedUsers(): List<User?> {
