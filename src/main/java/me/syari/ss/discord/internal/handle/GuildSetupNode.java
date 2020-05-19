@@ -67,7 +67,7 @@ public class GuildSetupNode {
                 partialGuild.put(key, obj.opt(key).orElse(null));
             }
         }
-        boolean unavailable = partialGuild.getBoolean("unavailable");
+        boolean unavailable = partialGuild.getBoolean("unavailable", false);
         this.markedUnavailable = unavailable;
         if (unavailable) return;
         ensureMembers();

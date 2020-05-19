@@ -15,6 +15,6 @@ class User(override val idLong: Long, val api: JDA, var name: String, val isBot:
     }
 
     override fun toString(): String {
-        return "U:$name($idLong)"
+        return "User:$name($idLong)"
     }
 }

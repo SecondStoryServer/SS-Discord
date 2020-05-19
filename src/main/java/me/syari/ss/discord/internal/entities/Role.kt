@@ -16,7 +16,7 @@ class Role(override val idLong: Long, val name: String): ISnowflake {
     }
 
     override fun toString(): String {
-        return "R:$name($idLong)"
+        return "Role:$name($idLong)"
     }
 
 }

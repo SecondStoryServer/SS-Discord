@@ -1,8 +1,6 @@
 package me.syari.ss.discord.internal.entities
 
-import gnu.trove.set.TLongSet
 import gnu.trove.set.hash.TLongHashSet
-import me.syari.ss.discord.api.utils.data.DataArray
 import me.syari.ss.discord.api.utils.data.DataObject
 import me.syari.ss.discord.internal.JDA
 import me.syari.ss.discord.internal.utils.Check
@@ -36,7 +34,7 @@ class EntityBuilder(private val api: JDA) {
         val id = userData.getLong("id")
         return userCache.getOrPut(id){
             val name = userData.getString("username")
-            val isBot = userData.getBoolean("bot")
+            val isBot = userData.getBoolean("bot", false)
             User(id, api, name, isBot)
         }
     }
@@ -97,42 +95,41 @@ class EntityBuilder(private val api: JDA) {
                 user.name = name
             }
         }
-        val mentionedRoles: TLongSet = TLongHashSet()
-        val mentionedUsers: TLongSet = TLongHashSet(map(messageData, "mentions", Function { o: DataObject -> o.getLong("id") }))
+        val mentionedRoles = TLongHashSet()
         val roleMentionArray = messageData.optArray("mention_roles")
-        roleMentionArray.ifPresent { array: DataArray ->
+        roleMentionArray.ifPresent { array ->
             for (i in 0 until array.length()) {
                 mentionedRoles.add(array.getLong(i))
             }
         }
-        val content = messageData.getString("content", "")
-        val message = if (Check.isDefaultMessage(messageData.getInt("type"))) {
-            Message(
-                id, channel, mentionedUsers, mentionedRoles, content, user, member
-            )
-        } else {
-            throw IllegalArgumentException(UNKNOWN_MESSAGE_TYPE)
-        }
-        val mentionedUsersList: MutableList<User> = ArrayList()
-        val mentionedMembersList: MutableList<Member> = ArrayList()
+        val mentionedUsersList = mutableListOf<User>()
+        val mentionedMembersList = mutableListOf<Member>()
         val userMentions = messageData.getArray("mentions")
         for (i in 0 until userMentions.length()) {
-            val mentionJson = userMentions.getObject(i)
-            if (mentionJson.isNull("member")) {
-                val mentionedUser = createUser(mentionJson)
+            val mentionData = userMentions.getObject(i)
+            if (mentionData.isNull("member")) {
+                val mentionedUser = createUser(mentionData)
                 mentionedUsersList.add(mentionedUser)
                 val mentionedMember = guild.getMember(mentionedUser)
                 if (mentionedMember != null) mentionedMembersList.add(mentionedMember)
             } else {
-                val memberJson = mentionJson.getObject("member")
-                mentionJson.remove("member")
-                memberJson.put("user", mentionJson)
-                val mentionedMember = createMember(guild, memberJson)
+                val mentionedMemberData = mentionData.getObject("member")
+                mentionData.remove("member")
+                mentionedMemberData.put("user", mentionData)
+                val mentionedMember = createMember(guild, mentionedMemberData)
                 mentionedMembersList.add(mentionedMember)
                 mentionedUsersList.add(mentionedMember.user)
             }
         }
+        val mentionedUsers = TLongHashSet(map(messageData, "mentions", Function { it.getLong("id") }))
+        val content = messageData.getString("content", "")
+        val message = if (Check.isDefaultMessage(messageData.getInt("type"))) {
+            Message(id, channel, mentionedUsers, mentionedRoles, content, user, member)
+        } else {
+            throw IllegalArgumentException(UNKNOWN_MESSAGE_TYPE)
+        }
         if (mentionedUsersList.isNotEmpty()) message.setMentions(mentionedUsersList, mentionedMembersList)
+        println(messageData.toString())
         return message
     }
 

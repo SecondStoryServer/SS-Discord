@@ -362,7 +362,7 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
             case WebSocketCode.INVALIDATE_SESSION:
                 handleIdentifyRateLimit = handleIdentifyRateLimit && System.currentTimeMillis() - identifyTime < IDENTIFY_BACKOFF;
                 sentAuthInfo = false;
-                final boolean isResume = content.getBoolean("d");
+                final boolean isResume = content.getBoolean("d", false);
                 int closeCode = isResume ? 4000 : 1000;
                 if (!isResume) {
                     invalidate();

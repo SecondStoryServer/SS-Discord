@@ -68,7 +68,7 @@ class Message(
         var user = api.getUserById(userId)
         if (user == null) user = api.fakeUserMap[userId]
         if (user == null && userMentions != null) user =
-            userMentions!!.stream().filter { it: User? -> it!!.idLong == userId }.findFirst().orElse(null)
+            userMentions!!.stream().filter { it!!.idLong == userId }.findFirst().orElse(null)
         return user
     }
 
@@ -113,17 +113,13 @@ class Message(
             return emoteMentions!!
         }
 
-    private fun matchEmote(m: Matcher): Emote {
-        val emoteId = parseSnowflake(m.group(2))
-        val name = m.group(1)
-        val animated = m.group(0).startsWith("<a:")
-        var emote = api.getEmoteById(emoteId)
-        if (emote == null) {
-            emote = Emote(emoteId)
-            emote.name = name
-            emote.isAnimated = animated
-        }
-        return emote
+    private fun matchEmote(matcher: Matcher): Emote {
+        val emoteId = parseSnowflake(matcher.group(2))
+        return api.getEmoteById(emoteId) ?: {
+            val name = matcher.group(1)
+            val animated = matcher.group(0).startsWith("<a:")
+            Emote(emoteId, name, animated)
+        }.invoke()
     }
 
     fun setMentions(
@@ -165,7 +161,7 @@ class Message(
     }
 
     override fun toString(): String {
-        return String.format("M:%s:%.20s(%s)", author, this, id)
+        return String.format("Message:%s:%.20s(%s)", author, this, id)
     }
 
     private enum class MentionType(regex: String) {
@@ -186,9 +182,7 @@ class Message(
                     java.lang.Long.parseUnsignedLong(input)
                 }
             } catch (ex: NumberFormatException) {
-                throw NumberFormatException(
-                    String.format("The specified ID is not a valid snowflake (%s). Expecting a valid long value!", input)
-                )
+                throw NumberFormatException("The specified ID is not a valid snowflake ($input). Expecting a valid long value!")
             }
         }
     }

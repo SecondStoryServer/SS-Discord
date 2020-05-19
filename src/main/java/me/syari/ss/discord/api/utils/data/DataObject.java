@@ -108,28 +108,20 @@ public class DataObject {
     @NotNull
     public Object get(@NotNull String key) {
         Object value = data.get(key);
-        if (value == null) {
-            throw valueError(key, "any");
-        }
+        if (value == null) throw valueError(key, "any");
         return value;
     }
 
     @NotNull
     public String getString(@NotNull String key) {
         String value = getString(key, null);
-        if (value == null)
-            throw valueError(key, "String");
+        if (value == null) throw valueError(key, "String");
         return value;
     }
 
-    @Contract("_, !null -> !null")
     public String getString(@NotNull String key, @Nullable String defaultValue) {
         String value = get(String.class, key, UnaryOperator.identity(), String::valueOf);
         return value == null ? defaultValue : value;
-    }
-
-    public boolean getBoolean(@NotNull String key) {
-        return getBoolean(key, false);
     }
 
     public boolean getBoolean(@NotNull String key, boolean defaultValue) {
@@ -139,9 +131,7 @@ public class DataObject {
 
     public long getLong(@NotNull String key) {
         Long value = get(Long.class, key, Long::parseLong, Number::longValue);
-        if (value == null) {
-            throw valueError(key, "long");
-        }
+        if (value == null) throw valueError(key, "long");
         return value;
     }
 
@@ -152,9 +142,7 @@ public class DataObject {
 
     public int getInt(@NotNull String key) {
         Integer value = get(Integer.class, key, Integer::parseInt, Number::intValue);
-        if (value == null) {
-            throw valueError(key, "int");
-        }
+        if (value == null) throw valueError(key, "int");
         return value;
     }
 
@@ -164,12 +152,9 @@ public class DataObject {
 
     @NotNull
     public DataObject put(@NotNull String key, @Nullable Object value) {
-        if (value instanceof DataObject)
-            data.put(key, ((DataObject) value).toData().data);
-        else if (value instanceof DataArray)
-            data.put(key, ((DataArray) value).data);
-        else
-            data.put(key, value);
+        if (value instanceof DataObject) data.put(key, ((DataObject) value).toData().data);
+        else if (value instanceof DataArray) data.put(key, ((DataArray) value).data);
+        else data.put(key, value);
         return this;
     }
 
@@ -205,15 +190,10 @@ public class DataObject {
     @Nullable
     private <T> T get(@NotNull Class<T> type, @NotNull String key, @Nullable Function<String, T> stringParse, @Nullable Function<Number, T> numberParse) {
         Object value = data.get(key);
-        if (value == null)
-            return null;
-        if (type.isAssignableFrom(value.getClass()))
-            return type.cast(value);
-        if (value instanceof Number && numberParse != null)
-            return numberParse.apply((Number) value);
-        else if (value instanceof String && stringParse != null)
-            return stringParse.apply((String) value);
-
+        if (value == null) return null;
+        if (type.isAssignableFrom(value.getClass())) return type.cast(value);
+        if (value instanceof Number && numberParse != null) return numberParse.apply((Number) value);
+        else if (value instanceof String && stringParse != null) return stringParse.apply((String) value);
         throw new ParsingException(String.format("Cannot parse value for %s into type %s: %s instance of %s", key, type.getSimpleName(), value, value.getClass().getSimpleName()));
     }
 }

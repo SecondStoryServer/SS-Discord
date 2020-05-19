@@ -2,10 +2,7 @@ package me.syari.ss.discord.internal.entities
 
 import me.syari.ss.discord.api.ISnowflake
 
-class Emote(override val idLong: Long): ISnowflake {
-    var isAnimated = false
-    var name = ""
-
+class Emote(override val idLong: Long, val name: String, val isAnimated: Boolean): ISnowflake {
     val asMention: String
         get() = (if (isAnimated) "<a:" else "<:") + name + ":" + id + ">"
 
@@ -20,6 +17,6 @@ class Emote(override val idLong: Long): ISnowflake {
     }
 
     override fun toString(): String {
-        return "E:$name($idLong)"
+        return "Emote:$name($idLong)"
     }
 }

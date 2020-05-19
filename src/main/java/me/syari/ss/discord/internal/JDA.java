@@ -63,8 +63,7 @@ public class JDA {
     protected long responseTotal;
     protected String gatewayUrl;
 
-    public JDA(@NotNull String token,
-               @NotNull Consumer<MessageReceivedEvent> messageReceivedEvent) {
+    public JDA(@NotNull String token, @NotNull Consumer<MessageReceivedEvent> messageReceivedEvent) {
         this.token = "Bot " + token;
         this.messageReceivedEvent = messageReceivedEvent;
     }

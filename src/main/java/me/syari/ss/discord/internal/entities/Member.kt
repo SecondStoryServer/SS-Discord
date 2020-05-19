@@ -30,7 +30,7 @@ class Member(guild: Guild?, user: User): ISnowflake {
     }
 
     override fun toString(): String {
-        return "MB:" + displayName + '(' + user.toString() + " / " + getGuild().toString() + ')'
+        return "Member:" + displayName + '(' + user.toString() + " / " + getGuild().toString() + ')'
     }
 
     init {

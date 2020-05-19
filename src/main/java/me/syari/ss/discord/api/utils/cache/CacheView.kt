@@ -1,24 +1,20 @@
-package me.syari.ss.discord.api.utils.cache;
+package me.syari.ss.discord.api.utils.cache
 
-import me.syari.ss.discord.api.ISnowflake;
-import me.syari.ss.discord.api.utils.ClosableIterator;
-import me.syari.ss.discord.internal.utils.cache.UnifiedSnowflakeCacheView;
-import org.jetbrains.annotations.NotNull;
+import me.syari.ss.discord.api.ISnowflake
+import me.syari.ss.discord.api.utils.ClosableIterator
+import me.syari.ss.discord.internal.utils.cache.UnifiedSnowflakeCacheView
+import java.util.function.Supplier
+import java.util.stream.Stream
 
-import java.util.function.Supplier;
-import java.util.stream.Stream;
+interface CacheView<T>: Iterable<T> {
+    fun lockedIterator(): ClosableIterator<T>
+    val isEmpty: Boolean
+    fun stream(): Stream<T>
 
-public interface CacheView<T> extends Iterable<T> {
-    @NotNull
-    ClosableIterator<T> lockedIterator();
-
-    boolean isEmpty();
-
-    @NotNull
-    Stream<T> stream();
-
-    @NotNull
-    static <E extends ISnowflake> ISnowflakeCacheView<E> allSnowflakes(@NotNull Supplier<? extends Stream<? extends ISnowflakeCacheView<E>>> generator) {
-        return new UnifiedSnowflakeCacheView<>(generator);
+    companion object {
+        @JvmStatic
+        fun <E: ISnowflake?> allSnowflakes(generator: Supplier<out Stream<out ISnowflakeCacheView<E>?>?>): ISnowflakeCacheView<E> {
+            return UnifiedSnowflakeCacheView(generator)
+        }
     }
 }
