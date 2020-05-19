@@ -41,7 +41,7 @@ class Guild(
         return memberCache.getOrPut(id, run)
     }
 
-    fun getMember(id: Long): Member? {
+    private fun getMember(id: Long): Member? {
         return memberCache[id]
     }
 

@@ -4,8 +4,6 @@ import gnu.trove.set.hash.TLongHashSet
 import me.syari.ss.discord.api.utils.data.DataObject
 import me.syari.ss.discord.internal.JDA
 import me.syari.ss.discord.internal.utils.Check
-import java.util.ArrayList
-import java.util.function.Function
 
 class EntityBuilder(private val api: JDA) {
     fun createGuild(id: Long, guildData: DataObject): Guild {
@@ -122,20 +120,6 @@ class EntityBuilder(private val api: JDA) {
         } else {
             throw IllegalArgumentException(UNKNOWN_MESSAGE_TYPE)
         }
-    }
-
-    private fun <T> map(
-        jsonObject: DataObject, key: String, convert: Function<DataObject, T>
-    ): List<T> {
-        if (jsonObject.isNull(key)) return emptyList()
-        val array = jsonObject.getArray(key)
-        val mappedObjects: MutableList<T> = ArrayList(array.length())
-        for (i in 0 until array.length()) {
-            val obj = array.getObject(i)
-            val result: T? = convert.apply(obj)
-            if (result != null) mappedObjects.add(result)
-        }
-        return mappedObjects
     }
 
     companion object {
