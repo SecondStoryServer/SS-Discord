@@ -7,18 +7,18 @@ public class Route {
     private static final String DEFAULT_MAJOR_PARAMETERS = "guild_id:channel_id:webhook_id";
 
     @Contract(value = " -> new", pure = true)
-    public static @NotNull Route getGatewayRoute(){
+    public static @NotNull Route getGatewayRoute() {
         return new Route(Method.GET, "gateway");
     }
 
     @Contract(value = " -> new", pure = true)
-    public static @NotNull Route getSelfRoute(){
+    public static @NotNull Route getSelfRoute() {
         return new Route(Method.GET, "users/@me");
     }
 
     @Contract(value = "_ -> new", pure = true)
-    public static @NotNull Route getSendMessageRoute(String channelID){
-        return new Route(Method.POST, "channels/{channel_id}/messages", "channels/" + channelID + "/messages", "guild_id:" +  channelID + ":webhook_id");
+    public static @NotNull Route getSendMessageRoute(String channelID) {
+        return new Route(Method.POST, "channels/{channel_id}/messages", "channels/" + channelID + "/messages", "guild_id:" + channelID + ":webhook_id");
     }
 
     private final Method method;
@@ -27,11 +27,11 @@ public class Route {
     private final String majorParameters;
 
 
-    public Route(@NotNull Method method, @NotNull String route){
+    public Route(@NotNull Method method, @NotNull String route) {
         this(method, route, route, DEFAULT_MAJOR_PARAMETERS);
     }
 
-    public Route(@NotNull Method method, @NotNull String baseRoute, @NotNull String route, @NotNull String majorParameters){
+    public Route(@NotNull Method method, @NotNull String baseRoute, @NotNull String route, @NotNull String majorParameters) {
         this.method = method;
         this.baseRoute = baseRoute;
         this.route = route;
@@ -44,7 +44,7 @@ public class Route {
     }
 
     @NotNull
-    public String getBaseRoute(){
+    public String getBaseRoute() {
         return baseRoute;
     }
 
@@ -54,7 +54,7 @@ public class Route {
     }
 
     @NotNull
-    public String getMajorParameters(){
+    public String getMajorParameters() {
         return majorParameters;
     }
 

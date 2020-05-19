@@ -2,7 +2,6 @@ package me.syari.ss.discord.internal.entities;
 
 import gnu.trove.set.TLongSet;
 import me.syari.ss.discord.internal.JDA;
-import me.syari.ss.discord.internal.utils.MiscUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -108,7 +107,7 @@ public class Message {
     }
 
     private @Nullable User matchUser(@NotNull Matcher matcher) {
-        long userId = MiscUtil.parseSnowflake(matcher.group(1));
+        long userId = parseSnowflake(matcher.group(1));
         if (!mentionedUsers.contains(userId)) return null;
         User user = getJDA().getUserById(userId);
         if (user == null) user = api.getFakeUserMap().get(userId);
@@ -125,7 +124,7 @@ public class Message {
     }
 
     private TextChannel matchTextChannel(@NotNull Matcher matcher) {
-        long channelId = MiscUtil.parseSnowflake(matcher.group(1));
+        long channelId = parseSnowflake(matcher.group(1));
         return getJDA().getTextChannelById(channelId);
     }
 
@@ -137,7 +136,7 @@ public class Message {
     }
 
     private @Nullable Role matchRole(@NotNull Matcher matcher) {
-        long roleId = MiscUtil.parseSnowflake(matcher.group(1));
+        long roleId = parseSnowflake(matcher.group(1));
         if (!mentionedRoles.contains(roleId)) return null;
         return getGuild().getRoleById(roleId);
     }
@@ -150,7 +149,7 @@ public class Message {
     }
 
     private Emote matchEmote(@NotNull Matcher m) {
-        long emoteId = MiscUtil.parseSnowflake(m.group(2));
+        long emoteId = parseSnowflake(m.group(2));
         String name = m.group(1);
         boolean animated = m.group(0).startsWith("<a:");
         Emote emote = getJDA().getEmoteById(emoteId);
@@ -206,6 +205,18 @@ public class Message {
     @Override
     public String toString() {
         return author != null ? String.format("M:%s:%.20s(%s)", author, this, id) : String.format("M:%.20s", this);
+    }
+
+    private static long parseSnowflake(@NotNull String input) {
+        try {
+            if (input.startsWith("-")) {
+                return Long.parseLong(input);
+            } else {
+                return Long.parseUnsignedLong(input);
+            }
+        } catch (NumberFormatException ex) {
+            throw new NumberFormatException(String.format("The specified ID is not a valid snowflake (%s). Expecting a valid long value!", input));
+        }
     }
 
     private enum MentionType {

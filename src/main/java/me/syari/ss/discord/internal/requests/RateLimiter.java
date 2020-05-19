@@ -1,7 +1,6 @@
 package me.syari.ss.discord.internal.requests;
 
 import me.syari.ss.discord.api.requests.Request;
-import me.syari.ss.discord.internal.utils.MiscUtil;
 import okhttp3.Headers;
 import org.jetbrains.annotations.NotNull;
 
@@ -10,6 +9,7 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.*;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Supplier;
 
 public class RateLimiter {
     private static final String RESET_AFTER_HEADER = "X-RateLimit-Reset-After";
@@ -18,10 +18,8 @@ public class RateLimiter {
     private static final String GLOBAL_HEADER = "X-RateLimit-Global";
     private static final String HASH_HEADER = "X-RateLimit-Bucket";
     private static final String RETRY_AFTER_HEADER = "Retry-After";
-    private static final String UNLIMITED_BUCKET = "unlimited";
     protected final Requester requester;
     private final ReentrantLock bucketLock = new ReentrantLock();
-    private final Map<String, String> hash = new ConcurrentHashMap<>();
     private final Map<String, Bucket> bucket = new ConcurrentHashMap<>();
     private final Map<Bucket, Future<?>> rateLimitQueue = new ConcurrentHashMap<>();
     private Future<?> cleanupWorker;
@@ -39,7 +37,7 @@ public class RateLimiter {
     }
 
     private void cleanup() {
-        MiscUtil.locked(bucketLock, () -> {
+        locked(bucketLock, () -> {
             Iterator<Map.Entry<String, Bucket>> entries = bucket.entrySet().iterator();
             while (entries.hasNext()) {
                 Map.Entry<String, Bucket> entry = entries.next();
@@ -49,10 +47,6 @@ public class RateLimiter {
                 }
             }
         });
-    }
-
-    private String getRouteHash(Route route) {
-        return hash.getOrDefault(route, UNLIMITED_BUCKET + "+" + route);
     }
 
     protected boolean isSkipped(Iterator<Request> it, Request request) {
@@ -84,7 +78,7 @@ public class RateLimiter {
 
     @SuppressWarnings("rawtypes")
     public void queueRequest(Request request) {
-        MiscUtil.locked(bucketLock, () -> {
+        locked(bucketLock, () -> {
             Bucket bucket = getBucket(request.getRoute(), true);
             bucket.enqueue(request);
             runBucket(bucket);
@@ -106,16 +100,14 @@ public class RateLimiter {
     }
 
     private Bucket updateBucket(Route route, okhttp3.Response response) {
-        return MiscUtil.locked(bucketLock, () -> {
+        return locked(bucketLock, () -> {
             try {
                 Bucket bucket = getBucket(route, true);
                 Headers headers = response.headers();
                 boolean global = headers.get(GLOBAL_HEADER) != null;
                 String hash = headers.get(HASH_HEADER);
                 long now = getNow();
-                String baseRoute = route.getBaseRoute();
                 if (hash != null) {
-                    if (!this.hash.containsKey(baseRoute)) this.hash.put(baseRoute, hash);
                     bucket = getBucket(route, true);
                 }
                 if (global) {
@@ -141,10 +133,9 @@ public class RateLimiter {
     }
 
     private Bucket getBucket(Route route, boolean create) {
-        return MiscUtil.locked(bucketLock, () ->
+        return locked(bucketLock, () ->
         {
             String bucketId = route.getMethod() + "/" + route.getBaseRoute() + ":" + route.getMajorParameters();
-            System.out.println(bucketId);
             Bucket bucket = this.bucket.get(bucketId);
             if (bucket == null && create) this.bucket.put(bucketId, bucket = new Bucket(bucketId));
             return bucket;
@@ -152,7 +143,7 @@ public class RateLimiter {
     }
 
     private void runBucket(Bucket bucket) {
-        MiscUtil.locked(bucketLock, () -> rateLimitQueue.computeIfAbsent(bucket, (k) -> getScheduler().schedule(bucket, bucket.getRateLimit(), TimeUnit.MILLISECONDS)));
+        locked(bucketLock, () -> rateLimitQueue.computeIfAbsent(bucket, (k) -> getScheduler().schedule(bucket, bucket.getRateLimit(), TimeUnit.MILLISECONDS)));
     }
 
     private long parseLong(String input) {
@@ -200,7 +191,7 @@ public class RateLimiter {
         }
 
         private void backoff() {
-            MiscUtil.locked(bucketLock, () -> {
+            locked(bucketLock, () -> {
                 rateLimitQueue.remove(this);
                 if (!requests.isEmpty()) runBucket(this);
             });
@@ -214,7 +205,7 @@ public class RateLimiter {
                 if (0L < rateLimit) break;
                 Request request = iterator.next();
                 if (isUnlimited()) {
-                    boolean shouldSkip = MiscUtil.locked(bucketLock, () -> {
+                    boolean shouldSkip = locked(bucketLock, () -> {
                         Bucket bucket = getBucket(request.getRoute(), true);
                         if (bucket != this) {
                             bucket.enqueue(request);
@@ -244,6 +235,28 @@ public class RateLimiter {
         @Override
         public String toString() {
             return bucketId;
+        }
+    }
+
+    private static <E> E locked(@NotNull ReentrantLock lock, @NotNull Supplier<E> task) {
+        try {
+            lock.lockInterruptibly();
+            return task.get();
+        } catch (InterruptedException ex) {
+            throw new IllegalStateException(ex);
+        } finally {
+            if (lock.isHeldByCurrentThread()) lock.unlock();
+        }
+    }
+
+    private static void locked(@NotNull ReentrantLock lock, @NotNull Runnable task) {
+        try {
+            lock.lockInterruptibly();
+            task.run();
+        } catch (InterruptedException e) {
+            throw new IllegalStateException(e);
+        } finally {
+            if (lock.isHeldByCurrentThread()) lock.unlock();
         }
     }
 }
