@@ -19,12 +19,7 @@ class Guild(
         }
     }
 
-    val rolesView = SnowflakeCacheView(Role::class.java)
     val emoteCache = SnowflakeCacheView(Emote::class.java)
-
-    private fun getRoleCache(): ISnowflakeCacheView<Role> {
-        return rolesView
-    }
 
     private val textChannelCache = mutableMapOf<Long, TextChannel>()
 
@@ -38,7 +33,7 @@ class Guild(
 
     private val memberCache = mutableMapOf<Long, Member>()
 
-    private fun getMemberOrPut(id: Long, run: () -> Member): Member {
+    fun getMemberOrPut(id: Long, run: () -> Member): Member {
         return memberCache.getOrPut(id, run)
     }
 
@@ -54,8 +49,14 @@ class Guild(
         return getMember(user.idLong)
     }
 
-    fun getRoleById(id: Long): Role? {
-        return getRoleCache().getElementById(id)
+    private val roleCache = mutableMapOf<Long, Role>()
+
+    fun getRoleOrPut(id: Long, run: () -> Role): Role {
+        return roleCache.getOrPut(id, run)
+    }
+
+    fun getRole(id: Long): Role? {
+        return roleCache[id]
     }
 
     override fun equals(other: Any?): Boolean {

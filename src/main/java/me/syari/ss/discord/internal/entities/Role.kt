@@ -2,16 +2,13 @@ package me.syari.ss.discord.internal.entities
 
 import me.syari.ss.discord.api.ISnowflake
 
-class Role(override val idLong: Long): ISnowflake {
-    var name: String? = null
+class Role(override val idLong: Long, val name: String): ISnowflake {
+    val asMention = "<@&$idLong>"
 
-    val asMention: String
-        get() = "<@&" + idLong + '>'
-
-    override fun equals(`object`: Any?): Boolean {
-        if (`object` === this) return true
-        if (`object` !is Role) return false
-        return idLong == `object`.idLong
+    override fun equals(other: Any?): Boolean {
+        if (other === this) return true
+        if (other !is Role) return false
+        return idLong == other.idLong
     }
 
     override fun hashCode(): Int {
@@ -19,7 +16,7 @@ class Role(override val idLong: Long): ISnowflake {
     }
 
     override fun toString(): String {
-        return "R:" + name + '(' + idLong + ')'
+        return "R:$name($idLong)"
     }
 
 }

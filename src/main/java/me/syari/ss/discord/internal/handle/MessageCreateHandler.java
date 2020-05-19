@@ -24,7 +24,7 @@ public class MessageCreateHandler extends SocketHandler {
         }
         Message message;
         try {
-            message = api.getEntityBuilder().createMessage(content, true);
+            message = api.getEntityBuilder().createMessage(content);
         } catch (IllegalArgumentException ex) {
             switch (ex.getMessage()) {
                 case EntityBuilder.MISSING_CHANNEL: {

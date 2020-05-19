@@ -100,7 +100,7 @@ class Message(
 
     private fun matchRole(matcher: Matcher): Role? {
         val roleId = parseSnowflake(matcher.group(1))
-        return if (!mentionedRoles.contains(roleId)) null else guild.getRoleById(roleId)
+        return if (!mentionedRoles.contains(roleId)) null else guild.getRole(roleId)
     }
 
     @get:Synchronized

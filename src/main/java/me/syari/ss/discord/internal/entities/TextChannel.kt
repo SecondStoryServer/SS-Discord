@@ -80,7 +80,7 @@ class TextChannel(override val idLong: Long, val guild: Guild, val name: String)
         override fun handleSuccess(
             response: Response, request: Request<Message>
         ) {
-            request.onSuccess(api.entityBuilder.createMessage(response.dataObject, channel, false))
+            request.onSuccess(api.entityBuilder.createMessage(response.dataObject, channel))
         }
 
         protected fun finalize() {
