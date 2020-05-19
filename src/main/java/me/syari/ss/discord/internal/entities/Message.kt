@@ -1,153 +1,87 @@
 package me.syari.ss.discord.internal.entities
 
-import gnu.trove.set.TLongSet
-import me.syari.ss.discord.internal.JDA
-import java.util.ArrayList
-import java.util.Collections
-import java.util.Comparator
-import java.util.function.Function
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 class Message(
-    private val id: Long,
-    val channel: TextChannel,
-    private val mentionedUsers: TLongSet,
-    private val mentionedRoles: TLongSet,
-    private val contentRaw: String,
-    val author: User,
-    val member: Member?
+    private val id: Long, val channel: TextChannel, private val content: String, val author: User, val member: Member?
 ) {
     private val mutex = Any()
-    val api: JDA = channel.api
-    private var altContent: String? = null
-    private var userMentions: List<User?>? = null
-    private var emoteMentions: List<Emote>? = null
-    private var roleMentions: List<Role>? = null
-    private var channelMentions: List<TextChannel>? = null
+    val api = channel.api
+    val guild = channel.guild
 
-    val contentDisplay: String
-        get() {
-            altContent?.let { return it }
-            synchronized(mutex) {
-                altContent?.let { return it }
-                var tmp = contentRaw
-                for (user in getMentionedUsers().filterNotNull()) {
-                    val member = guild.getMember(user)
-                    val name = member?.displayName ?: user.name
-                    tmp = tmp.replace("<@!?${Pattern.quote(user.id)}>", "@${Matcher.quoteReplacement(name)}")
-                }
-                for (emote in emotes) {
-                    tmp = tmp.replace(emote.asMention, ":${emote.name}:")
-                }
-                for (mentionedChannel in mentionedChannels) {
-                    tmp = tmp.replace(mentionedChannel.asMention, "#${mentionedChannel.name}")
-                }
-                for (mentionedRole in getMentionedRoles()) {
-                    tmp = tmp.replace(mentionedRole.asMention, "@${mentionedRole.name}")
-                }
-                return tmp.also { altContent = it }
+    val contentDisplay by lazy {
+        synchronized(mutex) {
+            var contentDisplay = content
+            for (user in mentionedUser) {
+                val member = guild.getMember(user)
+                val name = member?.displayName ?: user.name
+                contentDisplay = contentDisplay.replace("<@!?${user.id}>", "@$name")
+            }
+            for (emote in emotes) {
+                contentDisplay = contentDisplay.replace(emote.asMention, ":${emote.name}:")
+            }
+            for (mentionedChannel in mentionedChannels) {
+                contentDisplay = contentDisplay.replace(mentionedChannel.asMention, "#${mentionedChannel.name}")
+            }
+            for (mentionedRole in mentionedRoles) {
+                contentDisplay = contentDisplay.replace(mentionedRole.asMention, "@${mentionedRole.name}")
+            }
+            contentDisplay
+        }
+    }
+
+    @get:Synchronized
+    private val mentionedUser by lazy {
+        processMentions(MentionType.USER) { matcher ->
+            val userId = parseSnowflake(matcher.group(1))
+            User.get(userId)
+        }
+    }
+
+    @get:Synchronized
+    private val mentionedChannels by lazy {
+        processMentions(MentionType.CHANNEL) { matcher ->
+            val channelId = parseSnowflake(matcher.group(1))
+            TextChannel.get(channelId)
+        }
+    }
+
+    @get:Synchronized
+    private val mentionedRoles by lazy {
+        processMentions(MentionType.ROLE) { matcher ->
+            val roleId = parseSnowflake(matcher.group(1))
+            guild.getRole(roleId)
+        }
+    }
+
+    @get:Synchronized
+    private val emotes by lazy {
+        processMentions(MentionType.EMOTE) { matcher ->
+            val emoteId = parseSnowflake(matcher.group(2))
+            Emote.get(emoteId) {
+                val name = matcher.group(1)
+                val animated = matcher.group(0).startsWith("<a:")
+                Emote(emoteId, name, animated)
             }
         }
-
-    val guild: Guild
-        get() = channel.guild
-
-    @Synchronized
-    private fun getMentionedUsers(): List<User?> {
-        if (userMentions == null) userMentions =
-            Collections.unmodifiableList(processMentions(MentionType.USER, ArrayList(), Function { matcher: Matcher ->
-                matchUser(matcher)
-            }))
-        return userMentions!!
     }
 
-    private fun matchUser(matcher: Matcher): User? {
-        val userId = parseSnowflake(matcher.group(1))
-        if (!mentionedUsers.contains(userId)) return null
-        var user = api.getUserById(userId)
-        if (user == null) user = api.fakeUserMap[userId]
-        if (user == null && userMentions != null) user =
-            userMentions!!.stream().filter { it!!.idLong == userId }.findFirst().orElse(null)
-        return user
-    }
-
-    @get:Synchronized
-    private val mentionedChannels: List<TextChannel>
-        get() {
-            if (channelMentions == null) channelMentions =
-                Collections.unmodifiableList(processMentions(MentionType.CHANNEL,
-                    ArrayList(),
-                    Function { matcher: Matcher ->
-                        matchTextChannel(matcher)
-                    })).filterNotNull()
-            return channelMentions!!
-        }
-
-    private fun matchTextChannel(matcher: Matcher): TextChannel? {
-        val channelId = parseSnowflake(matcher.group(1))
-        return api.getTextChannelById(channelId)
-    }
-
-    @Synchronized
-    private fun getMentionedRoles(): List<Role> {
-        if (roleMentions == null) roleMentions =
-            Collections.unmodifiableList(processMentions(MentionType.ROLE, ArrayList(), Function { matcher: Matcher ->
-                matchRole(matcher)
-            })).filterNotNull()
-        return roleMentions!!
-    }
-
-    private fun matchRole(matcher: Matcher): Role? {
-        val roleId = parseSnowflake(matcher.group(1))
-        return if (!mentionedRoles.contains(roleId)) null else guild.getRole(roleId)
-    }
-
-    @get:Synchronized
-    private val emotes: List<Emote>
-        get() {
-            if (emoteMentions == null) emoteMentions =
-                Collections.unmodifiableList(processMentions(MentionType.EMOTE, ArrayList(), Function { m: Matcher ->
-                    matchEmote(m)
-                }))
-            return emoteMentions!!
-        }
-
-    private fun matchEmote(matcher: Matcher): Emote {
-        val emoteId = parseSnowflake(matcher.group(2))
-        return api.getEmoteById(emoteId) ?: {
-            val name = matcher.group(1)
-            val animated = matcher.group(0).startsWith("<a:")
-            Emote(emoteId, name, animated)
-        }.invoke()
-    }
-
-    fun setMentions(
-        users: MutableList<User>, members: MutableList<Member>
-    ) {
-        users.sortWith(Comparator.comparing { user: User ->
-            contentRaw.indexOf("<@" + user.id + ">").coerceAtLeast(contentRaw.indexOf("<@!" + user.id + ">"))
-        })
-        members.sortWith(Comparator.comparing { user: Member ->
-            contentRaw.indexOf("<@" + user.id + ">").coerceAtLeast(contentRaw.indexOf("<@!" + user.id + ">"))
-        })
-        userMentions = Collections.unmodifiableList(users)
-    }
-
-    private fun <T, C: MutableCollection<T>> processMentions(
-        type: MentionType, collection: C, map: Function<Matcher, T>
-    ): C {
-        val matcher = type.pattern.matcher(contentRaw)
+    private fun <T> processMentions(
+        type: MentionType, run: (Matcher) -> T?
+    ): Set<T> {
+        val list = mutableSetOf<T>()
+        val matcher = type.pattern.matcher(content)
         while (matcher.find()) {
             try {
-                val elem: T? = map.apply(matcher)
-                if (elem == null || collection.contains(elem)) continue
-                collection.add(elem)
+                run.invoke(matcher)?.let {
+                    list.add(it)
+                }
             } catch (ex: NumberFormatException) {
                 ex.printStackTrace()
             }
         }
-        return collection
+        return list
     }
 
     override fun equals(other: Any?): Boolean {
@@ -177,6 +111,7 @@ class Message(
         private fun parseSnowflake(input: String): Long {
             return try {
                 if (input.startsWith("-")) {
+                    println("pass")
                     input.toLong()
                 } else {
                     java.lang.Long.parseUnsignedLong(input)

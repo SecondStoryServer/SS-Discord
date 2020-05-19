@@ -8,14 +8,29 @@ import me.syari.ss.discord.internal.JDA
 import me.syari.ss.discord.internal.requests.Requester
 import me.syari.ss.discord.internal.requests.RestAction
 import me.syari.ss.discord.internal.requests.Route
-import me.syari.ss.discord.internal.utils.cache.SnowflakeReference
 import okhttp3.RequestBody
 import java.io.IOException
 import java.io.InputStream
 import java.util.HashSet
-import java.util.function.LongFunction
 
 class TextChannel(override val idLong: Long, val guild: Guild, val name: String): ISnowflake, Comparable<TextChannel> {
+    companion object {
+        private const val MAX_CONTENT_LENGTH = 2000
+
+        private val textChannelCache = mutableMapOf<Long, TextChannel?>()
+
+        fun get(id: Long): TextChannel? {
+            return textChannelCache.getOrPut(id) { getFromGuild(id) }
+        }
+
+        private fun getFromGuild(id: Long): TextChannel? {
+            for (guild in Guild.allGuild) {
+                return guild.getTextChannel(id) ?: continue
+            }
+            return null
+        }
+    }
+
     val api: JDA = guild.api
 
     val asMention: String
@@ -88,9 +103,5 @@ class TextChannel(override val idLong: Long, val guild: Guild, val name: String)
             clearResources()
         }
 
-    }
-
-    companion object {
-        private const val MAX_CONTENT_LENGTH = 2000
     }
 }

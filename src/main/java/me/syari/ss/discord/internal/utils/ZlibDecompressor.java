@@ -20,7 +20,8 @@ public class ZlibDecompressor {
     private SoftReference<ByteArrayOutputStream> decompressBuffer = null;
 
     @Contract(" -> new")
-    private @NotNull SoftReference<ByteArrayOutputStream> newDecompressBuffer() {
+    private @NotNull
+    SoftReference<ByteArrayOutputStream> newDecompressBuffer() {
         return new SoftReference<>(new ByteArrayOutputStream(Math.min(1024, maxBufferSize)));
     }
 
@@ -42,7 +43,8 @@ public class ZlibDecompressor {
         return suffix == Z_SYNC_FLUSH;
     }
 
-    private @NotNull ByteBuffer reallocate(ByteBuffer original, int length) {
+    private @NotNull
+    ByteBuffer reallocate(ByteBuffer original, int length) {
         ByteBuffer buffer = ByteBuffer.allocate(length);
         buffer.put(original);
         return buffer;

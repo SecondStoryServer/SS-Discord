@@ -5,9 +5,7 @@ import me.syari.ss.discord.api.requests.Response
 import org.jetbrains.annotations.Contract
 
 class ErrorResponseException private constructor(
-    response: Response?,
-    code: Int,
-    meaning: String
+    response: Response?, code: Int, meaning: String
 ): RuntimeException("$code: $meaning") {
     init {
         if (response != null && response.exception != null) {

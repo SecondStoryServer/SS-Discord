@@ -45,7 +45,10 @@ enum class ErrorResponse(val code: Int, val meaning: String) {
     MISSING_PERMISSIONS(50013, "Missing Permissions"),
     INVALID_TOKEN(50014, "Invalid Authentication Token"),
     NOTE_TOO_LONG(50015, "Note is too long"),
-    INVALID_BULK_DELETE(50016, "Provided too few or too many messages to delete. Must provided at least 2 and fewer than 100 messages to delete"),
+    INVALID_BULK_DELETE(
+        50016,
+        "Provided too few or too many messages to delete. Must provided at least 2 and fewer than 100 messages to delete"
+    ),
     INVALID_MFA_LEVEL(50017, "Provided MFA level was invalid."),
     INVALID_PASSWORD(50018, "Provided password was invalid"),
     INVALID_PIN(50019, "A message can only be pinned to the channel it was sent in"),

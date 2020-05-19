@@ -8,17 +8,12 @@ import java.util.ArrayList
 import java.util.function.Function
 
 class EntityBuilder(private val api: JDA) {
-    private val guildCache = mutableMapOf<Long, Guild>()
-    private val userCache = mutableMapOf<Long, User>()
-
     fun createGuild(id: Long, guildData: DataObject): Guild {
         val name = guildData.getString("name", "")
         val allRole = guildData.getArray("roles")
         val guild = Guild(api, id, name)
-        Guild.add(guild)
-        guildCache[id] = guild
         val roles = mutableMapOf<Long, Role>()
-        for(i in 0 until allRole.length()){
+        for (i in 0 until allRole.length()) {
             val role = createRole(guild, allRole.getObject(i))
             roles[role.idLong] = role
         }
@@ -32,7 +27,7 @@ class EntityBuilder(private val api: JDA) {
 
     private fun createUser(userData: DataObject): User {
         val id = userData.getLong("id")
-        return userCache.getOrPut(id){
+        return User.get(id) {
             val name = userData.getString("username")
             val isBot = userData.getBoolean("bot", false)
             User(id, api, name, isBot)
@@ -41,7 +36,7 @@ class EntityBuilder(private val api: JDA) {
 
     private fun createMember(guild: Guild, memberData: DataObject): Member {
         val user = createUser(memberData.getObject("user"))
-        val member = guild.getMemberOrPut(user){ Member(guild, user) }
+        val member = guild.getMemberOrPut(user) { Member(guild, user) }
         if (memberData.hasKey("nick")) {
             val lastNickName = member.nickname
             val nickName = memberData.getString("nick", null)
@@ -63,7 +58,7 @@ class EntityBuilder(private val api: JDA) {
         guild: Guild, roleData: DataObject
     ): Role {
         val id = roleData.getLong("id")
-        return guild.getRoleOrPut(id){
+        return guild.getRoleOrPut(id) {
             val name = roleData.getString("name")
             Role(id, name)
         }
@@ -71,7 +66,7 @@ class EntityBuilder(private val api: JDA) {
 
     fun createMessage(jsonObject: DataObject): Message {
         val channelId = jsonObject.getLong("channel_id")
-        val channel = api.getTextChannelById(channelId) ?: throw IllegalArgumentException(MISSING_CHANNEL)
+        val channel = TextChannel.get(channelId) ?: throw IllegalArgumentException(MISSING_CHANNEL)
         return createMessage(jsonObject, channel)
     }
 
@@ -81,7 +76,7 @@ class EntityBuilder(private val api: JDA) {
         val id = messageData.getLong("id")
         val authorData = messageData.getObject("author")
         val guild = channel.guild
-        val member = guild.getMemberOrPut(id){
+        val member = guild.getMemberOrPut(id) {
             val memberData = messageData.getObject("member")
             memberData.put("user", authorData)
             createMember(guild, memberData)
@@ -121,16 +116,12 @@ class EntityBuilder(private val api: JDA) {
                 mentionedUsersList.add(mentionedMember.user)
             }
         }
-        val mentionedUsers = TLongHashSet(map(messageData, "mentions", Function { it.getLong("id") }))
         val content = messageData.getString("content", "")
-        val message = if (Check.isDefaultMessage(messageData.getInt("type"))) {
-            Message(id, channel, mentionedUsers, mentionedRoles, content, user, member)
+        return if (Check.isDefaultMessage(messageData.getInt("type"))) {
+            Message(id, channel, content, user, member)
         } else {
             throw IllegalArgumentException(UNKNOWN_MESSAGE_TYPE)
         }
-        if (mentionedUsersList.isNotEmpty()) message.setMentions(mentionedUsersList, mentionedMembersList)
-        println(messageData.toString())
-        return message
     }
 
     private fun <T> map(

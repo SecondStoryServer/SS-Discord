@@ -16,7 +16,11 @@ enum class CloseCode(private val code: Int, private val meaning: String, val isR
     RATE_LIMITED(4008, "Woah nelly! You're sending payloads to us too quickly. Slow it down!", true),
     SESSION_TIMEOUT(4009, "Your session timed out. Reconnect and start a new one.", true),
     INVALID_SHARD(4010, "You sent an invalid shard when identifying.", false),
-    SHARDING_REQUIRED(4011, "The session would have handled too many guilds - you are required to shard your connection in order to connect.", false);
+    SHARDING_REQUIRED(
+        4011,
+        "The session would have handled too many guilds - you are required to shard your connection in order to connect.",
+        false
+    );
 
     @Contract(pure = true)
     override fun toString(): String {

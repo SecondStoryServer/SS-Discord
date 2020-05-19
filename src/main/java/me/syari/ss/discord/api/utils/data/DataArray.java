@@ -78,7 +78,8 @@ public class DataArray implements Iterable<Object> {
     }
 
     @Contract("_, _ -> new")
-    private @NotNull ParsingException valueError(int index, String expectedType) {
+    private @NotNull
+    ParsingException valueError(int index, String expectedType) {
         return new ParsingException("Unable to resolve value at " + index + " to type " + expectedType + ": " + data.get(index));
     }
 

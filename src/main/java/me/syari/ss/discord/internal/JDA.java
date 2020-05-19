@@ -1,34 +1,27 @@
 package me.syari.ss.discord.internal;
 
 import com.neovisionaries.ws.client.WebSocketFactory;
-import gnu.trove.impl.sync.TSynchronizedLongObjectMap;
-import gnu.trove.map.TLongObjectMap;
-import gnu.trove.map.hash.TLongObjectHashMap;
 import me.syari.ss.discord.api.MessageReceivedEvent;
 import me.syari.ss.discord.api.exceptions.RateLimitedException;
 import me.syari.ss.discord.api.requests.Request;
 import me.syari.ss.discord.api.requests.Response;
 import me.syari.ss.discord.api.utils.SessionController;
-import me.syari.ss.discord.api.utils.cache.CacheView;
-import me.syari.ss.discord.api.utils.cache.ISnowflakeCacheView;
 import me.syari.ss.discord.api.utils.data.DataObject;
-import me.syari.ss.discord.internal.entities.*;
+import me.syari.ss.discord.internal.entities.EntityBuilder;
+import me.syari.ss.discord.internal.entities.Message;
 import me.syari.ss.discord.internal.handle.EventCache;
 import me.syari.ss.discord.internal.handle.GuildSetupController;
 import me.syari.ss.discord.internal.requests.Requester;
 import me.syari.ss.discord.internal.requests.RestAction;
 import me.syari.ss.discord.internal.requests.Route;
 import me.syari.ss.discord.internal.requests.WebSocketClient;
-import me.syari.ss.discord.internal.utils.cache.SnowflakeCacheView;
 import me.syari.ss.discord.internal.utils.config.ThreadingConfig;
 import okhttp3.OkHttpClient;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import javax.security.auth.login.LoginException;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -37,16 +30,14 @@ import java.util.function.Consumer;
 
 public class JDA {
     @Contract(pure = true)
-    public static @NotNull JDA build(@NotNull String token, Consumer<MessageReceivedEvent> messageReceivedEvent) throws LoginException {
+    public static @NotNull
+    JDA build(@NotNull String token, Consumer<MessageReceivedEvent> messageReceivedEvent) throws LoginException {
         JDA jda = new JDA(token, messageReceivedEvent);
         jda.setStatus(JDA.Status.INITIALIZED);
         jda.login();
         return jda;
     }
 
-    protected final SnowflakeCacheView<User> userCache = new SnowflakeCacheView<>(User.class);
-    protected final SnowflakeCacheView<Guild> guildCache = new SnowflakeCacheView<>(Guild.class);
-    protected final TLongObjectMap<User> fakeUsers = new TSynchronizedLongObjectMap<>(new TLongObjectHashMap<>(), new Object());
     protected final Thread shutdownHook = new Thread(this::shutdown, "JDA Shutdown Hook");
     protected final EntityBuilder entityBuilder = new EntityBuilder(this);
     protected final EventCache eventCache = new EventCache();
@@ -191,49 +182,8 @@ public class JDA {
         return httpClient;
     }
 
-    @NotNull
-    public ISnowflakeCacheView<Guild> getGuildCache() {
-        return guildCache;
-    }
-
-    @Nullable
-    public Guild getGuildById(long id) {
-        return getGuildCache().getElementById(id);
-    }
-
     public boolean isUnavailable(long guildId) {
         return guildSetupController.isUnavailable(guildId);
-    }
-
-    @NotNull
-    public ISnowflakeCacheView<Emote> getEmoteCache() {
-        return CacheView.allSnowflakes(() -> guildCache.stream().map(Guild::getEmoteCache));
-    }
-
-    @Nullable
-    public Emote getEmoteById(long id) {
-        return getEmoteCache().getElementById(id);
-    }
-
-    @Nullable
-    public TextChannel getTextChannelById(long id) {
-        for(Guild guild : Guild.Companion.getGuildList()){
-            TextChannel textChannel = guild.getTextChannel(id);
-            if(textChannel != null){
-                return textChannel;
-            }
-        }
-        return null;
-    }
-
-    @NotNull
-    public ISnowflakeCacheView<User> getUserCache() {
-        return userCache;
-    }
-
-    @Nullable
-    public User getUserById(long id) {
-        return getUserCache().getElementById(id);
     }
 
     private synchronized void shutdownNow() {
@@ -283,18 +233,6 @@ public class JDA {
 
     public WebSocketClient getClient() {
         return client;
-    }
-
-    public SnowflakeCacheView<User> getUsersView() {
-        return userCache;
-    }
-
-    public SnowflakeCacheView<Guild> getGuildsView() {
-        return guildCache;
-    }
-
-    public TLongObjectMap<User> getFakeUserMap() {
-        return fakeUsers;
     }
 
     public void setResponseTotal(int responseTotal) {

@@ -32,7 +32,8 @@ public class RateLimiter {
         cleanupWorker = getScheduler().scheduleAtFixedRate(this::cleanup, 30, 30, TimeUnit.SECONDS);
     }
 
-    private @NotNull ScheduledExecutorService getScheduler() {
+    private @NotNull
+    ScheduledExecutorService getScheduler() {
         return requester.getJDA().getRateLimitPool();
     }
 

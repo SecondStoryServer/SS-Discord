@@ -33,7 +33,8 @@ class Request<T>(
     fun onSuccess(successObj: T) {
         api.callbackPool.execute {
             try {
-                ThreadLocalReason.closable(localReason).use { CallbackContext.getInstance().use { onSuccess.accept(successObj) } }
+                ThreadLocalReason.closable(localReason)
+                    .use { CallbackContext.getInstance().use { onSuccess.accept(successObj) } }
             } catch (ex: Throwable) {
                 ex.printStackTrace()
             }

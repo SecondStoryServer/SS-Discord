@@ -1,29 +1,33 @@
 package me.syari.ss.discord.internal.entities
 
 import me.syari.ss.discord.api.ISnowflake
-import me.syari.ss.discord.api.utils.cache.ISnowflakeCacheView
 import me.syari.ss.discord.internal.JDA
-import me.syari.ss.discord.internal.utils.cache.SnowflakeCacheView
-import java.util.concurrent.CompletableFuture
 
 class Guild(
-    val api: JDA,
-    override val idLong: Long,
-    private val name: String
+    val api: JDA, override val idLong: Long, private val name: String
 ): ISnowflake {
     companion object {
-        val guildList = mutableListOf<Guild>()
+        private val guildList = mutableMapOf<Long, Guild>()
 
-        fun add(guild: Guild){
-            guildList.add(guild)
+        fun contains(id: Long): Boolean {
+            return guildList.containsKey(id)
         }
+
+        fun get(id: Long): Guild? {
+            return guildList[id]
+        }
+
+        val allGuild
+            get() = guildList.values
     }
 
-    val emoteCache = SnowflakeCacheView(Emote::class.java)
+    init {
+        guildList[idLong] = this
+    }
 
     private val textChannelCache = mutableMapOf<Long, TextChannel>()
 
-    fun addTextChannel(id: Long, textChannel: TextChannel){
+    fun addTextChannel(id: Long, textChannel: TextChannel) {
         textChannelCache[id] = textChannel
     }
 
@@ -70,7 +74,7 @@ class Guild(
     }
 
     override fun toString(): String {
-        return "G:$name($id)"
+        return "Guild:$name($id)"
     }
 
 }

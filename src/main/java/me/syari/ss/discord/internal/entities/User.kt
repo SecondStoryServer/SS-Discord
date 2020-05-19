@@ -4,6 +4,22 @@ import me.syari.ss.discord.api.ISnowflake
 import me.syari.ss.discord.internal.JDA
 
 class User(override val idLong: Long, val api: JDA, var name: String, val isBot: Boolean): ISnowflake {
+    companion object {
+        private val userList = mutableMapOf<Long, User>()
+
+        fun get(id: Long): User? {
+            return userList[id]
+        }
+
+        fun get(id: Long, run: () -> User): User {
+            return get(id) ?: run.invoke()
+        }
+    }
+
+    init {
+        userList[idLong] = this
+    }
+
     override fun equals(other: Any?): Boolean {
         if (other === this) return true
         if (other !is User) return false

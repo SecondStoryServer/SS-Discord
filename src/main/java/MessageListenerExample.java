@@ -23,7 +23,7 @@ public class MessageListenerExample {
             String message = event.getMessage().getContentDisplay();
             TextChannel channel = event.getChannel();
             channel.sendMessage("Chat -> " + name + ": " + message + "\r\n" +
-                    "GetTextChannel -> " + (jda.getTextChannelById(710828174686027790L) != null)
+                    "GetTextChannel -> " + (TextChannel.Companion.get(710828174686027790L) != null)
             );
         } else {
             sendMessageCount ++;

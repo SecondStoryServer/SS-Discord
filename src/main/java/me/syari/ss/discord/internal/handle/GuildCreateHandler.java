@@ -15,8 +15,7 @@ public class GuildCreateHandler extends SocketHandler {
         System.out.println(">> GuildCreateHandler");
         final long id = content.getLong("id");
         JDA api = getJDA();
-        Guild guild = api.getGuildById(id);
-        if (guild == null) api.getGuildSetupController().onCreate(id, content);
+        if (!Guild.Companion.contains(id)) api.getGuildSetupController().onCreate(id, content);
         return null;
     }
 }

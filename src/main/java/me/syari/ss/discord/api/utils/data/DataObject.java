@@ -178,7 +178,8 @@ public class DataObject {
     }
 
     @Contract("_, _ -> new")
-    private @NotNull ParsingException valueError(String key, String expectedType) {
+    private @NotNull
+    ParsingException valueError(String key, String expectedType) {
         return new ParsingException("Unable to resolve value with key " + key + " to type " + expectedType + ": " + data.get(key));
     }
 

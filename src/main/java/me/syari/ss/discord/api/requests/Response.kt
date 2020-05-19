@@ -98,7 +98,7 @@ class Response(private val rawResponse: Response?, val code: Int, val retryAfter
     ): Optional<T> {
         if (attemptedParsing) {
             return anyData?.let {
-                if(clazz.isAssignableFrom(it.javaClass)){
+                if (clazz.isAssignableFrom(it.javaClass)) {
                     Optional.of(clazz.cast(it))
                 } else {
                     null

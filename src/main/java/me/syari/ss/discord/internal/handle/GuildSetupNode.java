@@ -8,7 +8,6 @@ import gnu.trove.set.hash.TLongHashSet;
 import me.syari.ss.discord.api.utils.data.DataArray;
 import me.syari.ss.discord.api.utils.data.DataObject;
 import me.syari.ss.discord.internal.JDA;
-import me.syari.ss.discord.internal.entities.Guild;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
