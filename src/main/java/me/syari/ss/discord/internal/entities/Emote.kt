@@ -1,59 +1,25 @@
-package me.syari.ss.discord.internal.entities;
+package me.syari.ss.discord.internal.entities
 
-import me.syari.ss.discord.api.ISnowflake;
-import org.jetbrains.annotations.NotNull;
+import me.syari.ss.discord.api.ISnowflake
 
-public class Emote implements ISnowflake {
-    private final long id;
-    private boolean animated = false;
-    private String name = "";
+class Emote(override val idLong: Long): ISnowflake {
+    var isAnimated = false
+    var name = ""
 
-    public Emote(long id) {
-        this.id = id;
+    val asMention: String
+        get() = (if (isAnimated) "<a:" else "<:") + name + ":" + id + ">"
+
+    override fun equals(other: Any?): Boolean {
+        if (other === this) return true
+        if (other !is Emote) return false
+        return idLong == other.idLong && name == other.name
     }
 
-    @NotNull
-    public String getName() {
-        return name;
+    override fun hashCode(): Int {
+        return java.lang.Long.hashCode(idLong)
     }
 
-    @Override
-    public long getIdLong() {
-        return id;
-    }
-
-    public boolean isAnimated() {
-        return animated;
-    }
-
-    @NotNull
-    public String getAsMention() {
-        return (isAnimated() ? "<a:" : "<:") + getName() + ":" + getId() + ">";
-    }
-
-    public void setName(@NotNull String name) {
-        this.name = name;
-    }
-
-    public void setAnimated(boolean animated) {
-        this.animated = animated;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        if (object == this) return true;
-        if (!(object instanceof Emote)) return false;
-        Emote emote = (Emote) object;
-        return this.id == emote.id && getName().equals(emote.getName());
-    }
-
-    @Override
-    public int hashCode() {
-        return Long.hashCode(id);
-    }
-
-    @Override
-    public String toString() {
-        return "E:" + getName() + '(' + getIdLong() + ')';
+    override fun toString(): String {
+        return "E:$name($idLong)"
     }
 }

@@ -1,51 +1,25 @@
-package me.syari.ss.discord.internal.entities;
+package me.syari.ss.discord.internal.entities
 
-import me.syari.ss.discord.api.ISnowflake;
-import org.jetbrains.annotations.NotNull;
+import me.syari.ss.discord.api.ISnowflake
 
-public class Role implements ISnowflake {
-    private final long id;
+class Role(override val idLong: Long): ISnowflake {
+    var name: String? = null
 
-    private String name;
+    val asMention: String
+        get() = "<@&" + idLong + '>'
 
-    public Role(long id) {
-        this.id = id;
+    override fun equals(`object`: Any?): Boolean {
+        if (`object` === this) return true
+        if (`object` !is Role) return false
+        return idLong == `object`.idLong
     }
 
-    @NotNull
-    public String getName() {
-        return name;
+    override fun hashCode(): Int {
+        return java.lang.Long.hashCode(idLong)
     }
 
-    @NotNull
-    public String getAsMention() {
-        return "<@&" + getId() + '>';
+    override fun toString(): String {
+        return "R:" + name + '(' + idLong + ')'
     }
 
-    @Override
-    public long getIdLong() {
-        return id;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        if (object == this) return true;
-        if (!(object instanceof Role)) return false;
-        Role role = (Role) object;
-        return this.getIdLong() == role.getIdLong();
-    }
-
-    @Override
-    public int hashCode() {
-        return Long.hashCode(id);
-    }
-
-    @Override
-    public String toString() {
-        return "R:" + getName() + '(' + id + ')';
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 }

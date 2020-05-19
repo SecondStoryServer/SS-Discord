@@ -1,305 +1,251 @@
-package me.syari.ss.discord.internal.entities;
+package me.syari.ss.discord.internal.entities
 
-import gnu.trove.map.TLongObjectMap;
-import gnu.trove.set.TLongSet;
-import gnu.trove.set.hash.TLongHashSet;
-import me.syari.ss.discord.api.utils.data.DataArray;
-import me.syari.ss.discord.api.utils.data.DataObject;
-import me.syari.ss.discord.internal.JDA;
-import me.syari.ss.discord.internal.handle.EventCache;
-import me.syari.ss.discord.internal.utils.UnlockHook;
-import me.syari.ss.discord.internal.utils.cache.MemberCacheView;
-import me.syari.ss.discord.internal.utils.cache.SnowflakeCacheView;
-import org.jetbrains.annotations.NotNull;
+import gnu.trove.set.TLongSet
+import gnu.trove.set.hash.TLongHashSet
+import me.syari.ss.discord.api.utils.data.DataArray
+import me.syari.ss.discord.api.utils.data.DataObject
+import me.syari.ss.discord.internal.JDA
+import me.syari.ss.discord.internal.handle.EventCache
+import me.syari.ss.discord.internal.utils.Check
+import java.util.ArrayList
+import java.util.function.Function
 
-import java.util.*;
-import java.util.function.Function;
+class EntityBuilder(private val api: JDA) {
+    private val guildCache = mutableMapOf<Long, Guild>()
+    private val userCache = mutableMapOf<Long, User>()
 
-import static me.syari.ss.discord.internal.utils.Check.isDefaultMessage;
-import static me.syari.ss.discord.internal.utils.Check.isTextChannel;
-
-public class EntityBuilder {
-    public static final String MISSING_CHANNEL = "MISSING_CHANNEL";
-    public static final String MISSING_USER = "MISSING_USER";
-    public static final String UNKNOWN_MESSAGE_TYPE = "UNKNOWN_MESSAGE_TYPE";
-
-    protected final JDA api;
-
-    public EntityBuilder(JDA api) {
-        this.api = api;
+    fun createGuild(id: Long, data: DataObject, memberCount: Int): Guild {
+        val name = data.getString("name", "")
+        val roleData = data.getArray("roles")
+        val guild = Guild(api, id, name, memberCount)
+        guildCache[id] = guild
+        val roles = mutableMapOf<Long, Role>()
+        for(i in 0 until roleData.length()){
+            val role = createRole(guild, roleData.getObject(i))
+            roles[role.idLong] = role
+        }
+        val channelData = data.getArray("channels")
+        val guildView = api.guildsView
+        guildView.writeLock().use { guildView.map.put(id, guild) }
+        for (i in 0 until channelData.length()) {
+            val channelJson = channelData.getObject(i)
+            createTextChannel(guild, channelJson)
+        }
+        return guild
     }
 
-    public JDA getJDA() {
-        return api;
+    private fun createFakeUser(user: DataObject): User {
+        return createUser(user, true)
     }
 
-    private void createTextChannel(Guild guildObj, @NotNull DataObject channelData) {
-        if (isTextChannel(channelData.getInt("type"))) {
-            createTextChannel(guildObj, channelData, guildObj.getIdLong());
+    private fun createUser(user: DataObject): User {
+        return createUser(user, false)
+    }
+
+    private fun createUser(userData: DataObject, fake: Boolean): User {
+        val id = userData.getLong("id")
+        val user = userCache.getOrPut(id){ User(id, api, fake) }
+        if (!fake || user.isFake) {
+            user.setName(userData.getString("username"))
+            user.setDiscriminator(userData["discriminator"].toString())
+            user.isBot = userData.getBoolean("bot")
+        } else if (!user.isFake) {
+            updateUser(user, userData)
+        }
+        if (!fake) api.eventCache.playbackCache(EventCache.Type.USER, id)
+        return user
+    }
+
+    private fun updateUser(user: User, userData: DataObject) {
+        val lastName = user.getName()
+        val name = userData.getString("username")
+        if (name != lastName) {
+            user.setName(name)
+        }
+        val lastDiscriminator = user.getDiscriminator()
+        val discriminator = userData["discriminator"].toString()
+        if (discriminator != lastDiscriminator) {
+            user.setDiscriminator(discriminator)
         }
     }
 
-    public Guild createGuild(long guildId, @NotNull DataObject guildJson, int memberCount) {
-        final Guild guildObj = new Guild(getJDA(), guildId);
-        final String name = guildJson.getString("name", "");
-        final DataArray roleArray = guildJson.getArray("roles");
-        final DataArray channelArray = guildJson.getArray("channels");
-
-        guildObj.setName(name);
-        guildObj.setMemberCount(memberCount);
-
-        SnowflakeCacheView<Guild> guildView = getJDA().getGuildsView();
-        try (UnlockHook hook = guildView.writeLock()) {
-            guildView.getMap().put(guildId, guildObj);
-        }
-
-        SnowflakeCacheView<Role> roleView = guildObj.getRolesView();
-        try (UnlockHook hook = roleView.writeLock()) {
-            TLongObjectMap<Role> map = roleView.getMap();
-            for (int i = 0; i < roleArray.length(); i++) {
-                DataObject obj = roleArray.getObject(i);
-                Role role = createRole(guildObj, obj, guildId);
-                map.put(role.getIdLong(), role);
+    private fun createMember(guild: Guild, memberJson: DataObject): Member {
+        var playbackCache = false
+        val user = createUser(memberJson.getObject("user"))
+        var member = guild.getMember(user)
+        if (member == null) {
+            val memberView = guild.membersView
+            memberView.writeLock().use {
+                member = Member(guild, user)
+                playbackCache = true
             }
         }
-
-        for (int i = 0; i < channelArray.length(); i++) {
-            DataObject channelJson = channelArray.getObject(i);
-            createTextChannel(guildObj, channelJson);
+        if (playbackCache) {
+            loadMember(memberJson, member!!)
+            val hashId = guild.idLong xor user.idLong
+            api.eventCache.playbackCache(EventCache.Type.MEMBER, hashId)
+            guild.acknowledgeMembers()
+        } else {
+            updateMember(member!!, memberJson)
         }
-        return guildObj;
+        return member!!
     }
 
-    private @NotNull User createFakeUser(DataObject user) {
-        return createUser(user, true);
+    private fun loadMember(memberJson: DataObject, member: Member) {
+        member.nickname = memberJson.getString("nick", null)
     }
 
-    private @NotNull User createUser(DataObject user) {
-        return createUser(user, false);
+    private fun updateMember(member: Member, content: DataObject) {
+        if (content.hasKey("nick")) {
+            val lastNickName = member.nickname
+            val nickName = content.getString("nick", null)
+            if (nickName != lastNickName) {
+                member.nickname = nickName
+            }
+        }
     }
 
-    private @NotNull User createUser(@NotNull DataObject userData, boolean fake) {
-        final long id = userData.getLong("id");
-        User user;
-        SnowflakeCacheView<User> userView = getJDA().getUsersView();
-        try (UnlockHook hook = userView.writeLock()) {
-            user = userView.getElementById(id);
-            if (user == null) {
-                user = getJDA().getFakeUserMap().get(id);
-                if (user != null) {
-                    if (!fake) {
-                        getJDA().getFakeUserMap().remove(id);
-                        user.setFake(false);
-                        userView.getMap().put(user.getIdLong(), user);
-                    }
-                } else {
-                    user = new User(id, getJDA());
-                    user.setFake(fake);
-                    if (!fake) userView.getMap().put(id, user);
+    private fun createTextChannel(guildObj: Guild, channelData: DataObject) {
+        if (Check.isTextChannel(channelData.getInt("type"))) {
+            createTextChannel(guildObj, channelData, guildObj.idLong)
+        }
+    }
+
+    private fun createTextChannel(guild: Guild, json: DataObject, guildId: Long) {
+        var playbackCache = false
+        val id = json.getLong("id")
+        var channel = api.textChannelsView[id]
+        if (channel == null) {
+            val guildTextView = guild.textChannelsView
+            val textView = api.textChannelsView
+            guildTextView.writeLock().use {
+                textView.writeLock().use {
+                    channel = TextChannel(id, guild)
+                    guildTextView.map.put(id, channel)
+                    playbackCache = textView.map.put(id, channel) == null
                 }
             }
         }
-
-        if (!fake || user.isFake()) {
-            user.setName(userData.getString("username"));
-            user.setDiscriminator(userData.get("discriminator").toString());
-            user.setBot(userData.getBoolean("bot"));
-        } else if (!user.isFake()) {
-            updateUser(user, userData);
-        }
-        if (!fake) getJDA().getEventCache().playbackCache(EventCache.Type.USER, id);
-        return user;
+        channel.setName(json.getString("name"))
+        if (playbackCache) api.eventCache.playbackCache(EventCache.Type.CHANNEL, id)
     }
 
-    private void updateUser(@NotNull User user, @NotNull DataObject userData) {
-        String lastName = user.getName();
-        String name = userData.getString("username");
-        String lastDiscriminator = user.getDiscriminator();
-        String discriminator = userData.get("discriminator").toString();
-
-        if (!name.equals(lastName)) {
-            user.setName(name);
-        }
-
-        if (!discriminator.equals(lastDiscriminator)) {
-            user.setDiscriminator(discriminator);
-        }
-    }
-
-    private Member createMember(@NotNull Guild guild, @NotNull DataObject memberJson) {
-        boolean playbackCache = false;
-        User user = createUser(memberJson.getObject("user"));
-        Member member = guild.getMember(user);
-        if (member == null) {
-            MemberCacheView memberView = guild.getMembersView();
-            try (UnlockHook hook = memberView.writeLock()) {
-                member = new Member(guild, user);
-                playbackCache = true;
-            }
-        }
-
-        if (playbackCache) {
-            loadMember(memberJson, member);
-            long hashId = guild.getIdLong() ^ user.getIdLong();
-            getJDA().getEventCache().playbackCache(EventCache.Type.MEMBER, hashId);
-            guild.acknowledgeMembers();
-        } else {
-            updateMember(member, memberJson);
-        }
-        return member;
-    }
-
-    private void loadMember(@NotNull DataObject memberJson, @NotNull Member member) {
-        member.setNickname(memberJson.getString("nick", null));
-    }
-
-    private void updateMember(Member member, @NotNull DataObject content) {
-        if (content.hasKey("nick")) {
-            String lastNickName = member.getNickname();
-            String nickName = content.getString("nick", null);
-            if (!Objects.equals(nickName, lastNickName)) {
-                member.setNickname(nickName);
-            }
-        }
-    }
-
-    private void createTextChannel(Guild guildObj, @NotNull DataObject json, long guildId) {
-        boolean playbackCache = false;
-        final long id = json.getLong("id");
-        TextChannel channel = getJDA().getTextChannelsView().get(id);
-        if (channel == null) {
-            if (guildObj == null) guildObj = getJDA().getGuildsView().get(guildId);
-            SnowflakeCacheView<TextChannel>
-                    guildTextView = guildObj.getTextChannelsView(),
-                    textView = getJDA().getTextChannelsView();
-            try (
-                    UnlockHook glock = guildTextView.writeLock();
-                    UnlockHook jlock = textView.writeLock()) {
-                channel = new TextChannel(id, guildObj);
-                guildTextView.getMap().put(id, channel);
-                playbackCache = textView.getMap().put(id, channel) == null;
-            }
-        }
-
-        channel.setName(json.getString("name"));
-        if (playbackCache) getJDA().getEventCache().playbackCache(EventCache.Type.CHANNEL, id);
-    }
-
-    private @NotNull Role createRole(Guild guild, @NotNull DataObject roleJson, long guildId) {
-        boolean playbackCache = false;
-        final long id = roleJson.getLong("id");
-        if (guild == null) guild = getJDA().getGuildsView().get(guildId);
-        Role role = guild.getRolesView().get(id);
+    private fun createRole(
+        guild: Guild, roleJson: DataObject
+    ): Role {
+        var playbackCache = false
+        val id = roleJson.getLong("id")
+        var role = guild.rolesView[id]
         if (role == null) {
-            SnowflakeCacheView<Role> roleView = guild.getRolesView();
-            try (UnlockHook hook = roleView.writeLock()) {
-                role = new Role(id);
-                playbackCache = roleView.getMap().put(id, role) == null;
+            val roleView = guild.rolesView
+            roleView.writeLock().use {
+                role = Role(id)
+                playbackCache = roleView.map.put(id, role) == null
             }
         }
-        role.setName(roleJson.getString("name"));
-        if (playbackCache) getJDA().getEventCache().playbackCache(EventCache.Type.ROLE, id);
-        return role;
+        role.name = roleJson.getString("name")
+        if (playbackCache) api.eventCache.playbackCache(EventCache.Type.ROLE, id)
+        return role
     }
 
-    public Message createMessage(@NotNull DataObject jsonObject, boolean modifyCache) {
-        final long channelId = jsonObject.getLong("channel_id");
-        TextChannel channel = getJDA().getTextChannelById(channelId);
-        if (channel == null) throw new IllegalArgumentException(MISSING_CHANNEL);
-        return createMessage(jsonObject, channel, modifyCache);
+    fun createMessage(jsonObject: DataObject, modifyCache: Boolean): Message {
+        val channelId = jsonObject.getLong("channel_id")
+        val channel = api.getTextChannelById(channelId) ?: throw IllegalArgumentException(MISSING_CHANNEL)
+        return createMessage(jsonObject, channel, modifyCache)
     }
 
-    public Message createMessage(@NotNull DataObject jsonObject, @NotNull TextChannel channel, boolean modifyCache) {
-        final long id = jsonObject.getLong("id");
-        final DataObject author = jsonObject.getObject("author");
-        final long authorId = author.getLong("id");
-        Member member = null;
-
+    fun createMessage(
+        jsonObject: DataObject, channel: TextChannel, modifyCache: Boolean
+    ): Message {
+        val id = jsonObject.getLong("id")
+        val author = jsonObject.getObject("author")
+        val authorId = author.getLong("id")
+        var member: Member? = null
         if (!jsonObject.isNull("member") && modifyCache) {
-            Guild guild = channel.getGuild();
-            Member cachedMember = guild.getMemberById(authorId);
-            if (cachedMember == null) {
-                DataObject memberJson = jsonObject.getObject("member");
-                memberJson.put("user", author);
-                member = createMember(guild, memberJson);
+            val guild = channel.getGuild()
+            val cachedMember = guild.getMemberById(authorId)
+            member = if (cachedMember == null) {
+                val memberJson = jsonObject.getObject("member")
+                memberJson.put("user", author)
+                createMember(guild, memberJson)
             } else {
-                member = cachedMember;
+                cachedMember
             }
         }
-
-        final String content = jsonObject.getString("content", "");
-        final boolean fromWebhook = jsonObject.hasKey("webhook_id");
-
-        User user;
-        Guild guild = channel.getGuild();
-        if (member == null)
-            member = guild.getMemberById(authorId);
-        user = member != null ? member.getUser() : null;
+        val content = jsonObject.getString("content", "")
+        val fromWebhook = jsonObject.hasKey("webhook_id")
+        var user: User?
+        val guild = channel.getGuild()
+        if (member == null) member = guild.getMemberById(authorId)
+        user = member?.user
         if (user == null) {
-            if (fromWebhook || !modifyCache) {
-                user = createFakeUser(author);
+            user = if (fromWebhook || !modifyCache) {
+                createFakeUser(author)
             } else {
-                throw new IllegalArgumentException(MISSING_USER);
+                throw IllegalArgumentException(MISSING_USER)
             }
         }
-
-        if (modifyCache && !fromWebhook) updateUser(user, author);
-
-        TLongSet mentionedRoles = new TLongHashSet();
-        TLongSet mentionedUsers = new TLongHashSet(map(jsonObject, "mentions", (o) -> o.getLong("id")));
-        Optional<DataArray> roleMentionArray = jsonObject.optArray("mention_roles");
-        roleMentionArray.ifPresent((array) ->
-        {
-            for (int i = 0; i < array.length(); i++) {
-                mentionedRoles.add(array.getLong(i));
+        if (modifyCache && !fromWebhook) updateUser(user, author)
+        val mentionedRoles: TLongSet = TLongHashSet()
+        val mentionedUsers: TLongSet =
+            TLongHashSet(map(jsonObject, "mentions", Function { o: DataObject -> o.getLong("id") }))
+        val roleMentionArray = jsonObject.optArray("mention_roles")
+        roleMentionArray.ifPresent { array: DataArray ->
+            for (i in 0 until array.length()) {
+                mentionedRoles.add(array.getLong(i))
             }
-        });
-
-        Message message;
-        if (isDefaultMessage(jsonObject.getInt("type"))) {
-            message = new Message(id, channel, mentionedUsers, mentionedRoles, content, user, member);
+        }
+        val message: Message
+        message = if (Check.isDefaultMessage(jsonObject.getInt("type"))) {
+            Message(
+                id, channel, mentionedUsers, mentionedRoles, content, user, member
+            )
         } else {
-            throw new IllegalArgumentException(UNKNOWN_MESSAGE_TYPE);
+            throw IllegalArgumentException(UNKNOWN_MESSAGE_TYPE)
         }
-
-        Guild guildImpl = message.getGuild();
-
-        if (guildImpl.isLoaded()) return message;
-
-        List<User> mentionedUsersList = new ArrayList<>();
-        List<Member> mentionedMembersList = new ArrayList<>();
-        DataArray userMentions = jsonObject.getArray("mentions");
-
-        for (int i = 0; i < userMentions.length(); i++) {
-            DataObject mentionJson = userMentions.getObject(i);
+        val guildImpl = message.guild
+        if (guildImpl.isLoaded) return message
+        val mentionedUsersList: MutableList<User> = ArrayList()
+        val mentionedMembersList: MutableList<Member> = ArrayList()
+        val userMentions = jsonObject.getArray("mentions")
+        for (i in 0 until userMentions.length()) {
+            val mentionJson = userMentions.getObject(i)
             if (mentionJson.isNull("member")) {
-                User mentionedUser = createFakeUser(mentionJson);
-                mentionedUsersList.add(mentionedUser);
-                Member mentionedMember = guildImpl.getMember(mentionedUser);
-                if (mentionedMember != null) mentionedMembersList.add(mentionedMember);
+                val mentionedUser = createFakeUser(mentionJson)
+                mentionedUsersList.add(mentionedUser)
+                val mentionedMember = guildImpl.getMember(mentionedUser)
+                if (mentionedMember != null) mentionedMembersList.add(mentionedMember)
             } else {
-                DataObject memberJson = mentionJson.getObject("member");
-                mentionJson.remove("member");
-                memberJson.put("user", mentionJson);
-                Member mentionedMember = createMember(guildImpl, memberJson);
-                mentionedMembersList.add(mentionedMember);
-                mentionedUsersList.add(mentionedMember.getUser());
+                val memberJson = mentionJson.getObject("member")
+                mentionJson.remove("member")
+                memberJson.put("user", mentionJson)
+                val mentionedMember = createMember(guildImpl, memberJson)
+                mentionedMembersList.add(mentionedMember)
+                mentionedUsersList.add(mentionedMember.user)
             }
         }
-
-        if (!mentionedUsersList.isEmpty()) message.setMentions(mentionedUsersList, mentionedMembersList);
-        return message;
+        if (mentionedUsersList.isNotEmpty()) message.setMentions(mentionedUsersList, mentionedMembersList)
+        return message
     }
 
-    private <T> @NotNull List<T> map(@NotNull DataObject jsonObject, String key, Function<DataObject, T> convert) {
-        if (jsonObject.isNull(key)) return Collections.emptyList();
-        final DataArray array = jsonObject.getArray(key);
-        final List<T> mappedObjects = new ArrayList<>(array.length());
-        for (int i = 0; i < array.length(); i++) {
-            DataObject obj = array.getObject(i);
-            T result = convert.apply(obj);
-            if (result != null) mappedObjects.add(result);
+    private fun <T> map(
+        jsonObject: DataObject, key: String, convert: Function<DataObject, T>
+    ): List<T> {
+        if (jsonObject.isNull(key)) return emptyList()
+        val array = jsonObject.getArray(key)
+        val mappedObjects: MutableList<T> = ArrayList(array.length())
+        for (i in 0 until array.length()) {
+            val obj = array.getObject(i)
+            val result: T? = convert.apply(obj)
+            if (result != null) mappedObjects.add(result)
         }
-        return mappedObjects;
+        return mappedObjects
     }
+
+    companion object {
+        const val MISSING_CHANNEL = "MISSING_CHANNEL"
+        const val MISSING_USER = "MISSING_USER"
+        const val UNKNOWN_MESSAGE_TYPE = "UNKNOWN_MESSAGE_TYPE"
+    }
+
 }

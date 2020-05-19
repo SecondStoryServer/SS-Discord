@@ -26,7 +26,7 @@ class Request<T>(
     private val body: RequestBody?
     val route: Route
     private val api: JDA
-    private val localReason = ThreadLocalReason.getCurrent()
+    private val localReason = ThreadLocalReason.current
     var isCanceled = false
         private set
 

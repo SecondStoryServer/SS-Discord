@@ -1,144 +1,113 @@
-package me.syari.ss.discord.internal.entities;
+package me.syari.ss.discord.internal.entities
 
-import me.syari.ss.discord.api.ISnowflake;
-import me.syari.ss.discord.api.requests.Request;
-import me.syari.ss.discord.api.requests.Response;
-import me.syari.ss.discord.api.utils.data.DataObject;
-import me.syari.ss.discord.internal.JDA;
-import me.syari.ss.discord.internal.requests.Requester;
-import me.syari.ss.discord.internal.requests.RestAction;
-import me.syari.ss.discord.internal.requests.Route;
-import me.syari.ss.discord.internal.utils.cache.SnowflakeReference;
-import okhttp3.RequestBody;
-import org.jetbrains.annotations.NotNull;
+import me.syari.ss.discord.api.ISnowflake
+import me.syari.ss.discord.api.requests.Request
+import me.syari.ss.discord.api.requests.Response
+import me.syari.ss.discord.api.utils.data.DataObject
+import me.syari.ss.discord.internal.JDA
+import me.syari.ss.discord.internal.requests.Requester
+import me.syari.ss.discord.internal.requests.RestAction
+import me.syari.ss.discord.internal.requests.Route
+import me.syari.ss.discord.internal.utils.cache.SnowflakeReference
+import okhttp3.RequestBody
+import java.io.IOException
+import java.io.InputStream
+import java.util.HashSet
+import java.util.function.LongFunction
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashSet;
-import java.util.Set;
-
-public class TextChannel implements ISnowflake, Comparable<TextChannel> {
-    private static final int MAX_CONTENT_LENGTH = 2000;
-
-    protected final long id;
-    protected final JDA api;
-    protected final SnowflakeReference<Guild> guild;
-    protected String name;
-
-    public TextChannel(long id, @NotNull Guild guild) {
-        this.id = id;
-        this.api = guild.getJDA();
-        this.guild = new SnowflakeReference<>(guild, api::getGuildById);
+class TextChannel(override val idLong: Long, guild: Guild): ISnowflake, Comparable<TextChannel> {
+    val api: JDA = guild.jDA
+    private val guild: SnowflakeReference<Guild?>
+    private var name: String? = null
+    fun setName(name: String?) {
+        this.name = name
     }
 
-    public void setName(String name) {
-        this.name = name;
+    fun getName(): String {
+        return name!!
     }
 
-    @NotNull
-    public String getName() {
-        return name;
+    fun getGuild(): Guild {
+        return guild.resolve()
     }
 
-    @NotNull
-    public Guild getGuild() {
-        return guild.resolve();
-    }
+    val asMention: String
+        get() = "<#$idLong>"
 
-    @Override
-    public long getIdLong() {
-        return id;
-    }
-
-    @NotNull
-    public String getAsMention() {
-        return "<#" + id + '>';
-    }
-
-    @NotNull
-    public JDA getJDA() {
-        return api;
-    }
-
-    public void sendMessage(@NotNull String text) {
-        int length = text.length();
-        if (length == 0) return;
+    fun sendMessage(text: String) {
+        val length = text.length
+        if (length == 0) return
         if (MAX_CONTENT_LENGTH < length) {
-            sendMessage(text.substring(0, 2000));
-            sendMessage(text.substring(2000));
-            return;
+            sendMessage(text.substring(0, 2000))
+            sendMessage(text.substring(2000))
+            return
         }
-        Route route = Route.getSendMessageRoute(getId());
-        MessageAction messageAction = new MessageAction(getJDA(), route, this, text);
-        messageAction.queue();
+        val route = Route.getSendMessageRoute(id)
+        val messageAction = MessageAction(api, route, this, text)
+        messageAction.queue()
     }
 
-    @Override
-    public String toString() {
-        return "TextChannel:" + getName() + '(' + id + ')';
+    override fun toString(): String {
+        return "TextChannel:" + getName() + '(' + idLong + ')'
     }
 
-    @Override
-    public int compareTo(@NotNull TextChannel channel) {
-        return Long.compareUnsigned(id, channel.getIdLong());
+    override fun compareTo(other: TextChannel): Int {
+        return java.lang.Long.compareUnsigned(idLong, other.idLong)
     }
 
-    @Override
-    public int hashCode() {
-        return Long.hashCode(id);
+    override fun hashCode(): Int {
+        return java.lang.Long.hashCode(idLong)
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == this) return true;
-        if (!(obj instanceof TextChannel)) return false;
-        TextChannel channel = (TextChannel) obj;
-        return channel.getIdLong() == getIdLong();
+    override fun equals(other: Any?): Boolean {
+        if (other === this) return true
+        if (other !is TextChannel) return false
+        return other.idLong == idLong
     }
 
-    private static class MessageAction extends RestAction<Message> {
-        protected final Set<InputStream> ownedResources = new HashSet<>();
-        protected final String content;
-        protected final TextChannel channel;
-
-        public MessageAction(JDA api, Route route, TextChannel channel, @NotNull String content) {
-            super(api, route);
-            this.content = content;
-            this.channel = channel;
-        }
-
-        private void clearResources() {
-            for (InputStream ownedResource : ownedResources) {
+    private class MessageAction(
+        api: JDA, route: Route?, private val channel: TextChannel, private val content: String
+    ): RestAction<Message>(api, route) {
+        private val ownedResources: MutableSet<InputStream> = HashSet()
+        private fun clearResources() {
+            for (ownedResource in ownedResources) {
                 try {
-                    ownedResource.close();
-                } catch (IOException ex) {
-                    ex.printStackTrace();
+                    ownedResource.close()
+                } catch (ex: IOException) {
+                    ex.printStackTrace()
                 }
             }
-            ownedResources.clear();
+            ownedResources.clear()
         }
 
-        protected RequestBody asJSON() {
-            final DataObject json = DataObject.empty();
-            json.put("content", content);
-            return RequestBody.create(Requester.MEDIA_TYPE_JSON, json.toString());
+        private fun asJSON(): RequestBody {
+            val json = DataObject.empty()
+            json.put("content", content)
+            return RequestBody.create(Requester.MEDIA_TYPE_JSON, json.toString())
         }
 
-        @Override
-        protected RequestBody finalizeData() {
-            return asJSON();
+        override fun finalizeData(): RequestBody {
+            return asJSON()
         }
 
-        @Override
-        protected void handleSuccess(@NotNull Response response, @NotNull Request<Message> request) {
-            request.onSuccess(api.getEntityBuilder().createMessage(response.getDataObject(), channel, false));
+        override fun handleSuccess(
+            response: Response, request: Request<Message>
+        ) {
+            request.onSuccess(api.entityBuilder.createMessage(response.dataObject, channel, false))
         }
 
-        @Override
-        protected void finalize() {
-            if (ownedResources.isEmpty()) return;
-            clearResources();
+        protected fun finalize() {
+            if (ownedResources.isEmpty()) return
+            clearResources()
         }
+
     }
 
+    companion object {
+        private const val MAX_CONTENT_LENGTH = 2000
+    }
+
+    init {
+        this.guild = SnowflakeReference(guild, LongFunction { id: Long -> api.getGuildById(id) })
+    }
 }

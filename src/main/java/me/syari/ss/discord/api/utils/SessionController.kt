@@ -1,105 +1,107 @@
-package me.syari.ss.discord.api.utils;
+package me.syari.ss.discord.api.utils
 
-import me.syari.ss.discord.internal.JDA;
-import me.syari.ss.discord.internal.requests.RestAction;
-import me.syari.ss.discord.internal.requests.Route;
-import org.jetbrains.annotations.NotNull;
+import me.syari.ss.discord.api.requests.Request
+import me.syari.ss.discord.api.requests.Response
+import me.syari.ss.discord.internal.JDA
+import me.syari.ss.discord.internal.requests.RestAction
+import me.syari.ss.discord.internal.requests.Route
+import java.util.Queue
+import java.util.concurrent.ConcurrentLinkedQueue
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicLong
+import java.util.function.BiFunction
 
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
+class SessionController {
+    private val lock = Any()
+    private val connectQueue: Queue<SessionConnectNode> = ConcurrentLinkedQueue()
+    private val globalRatelimit = AtomicLong(Long.MIN_VALUE)
+    private var workerHandle: Thread? = null
+    private var lastConnect = 0L
 
-public class SessionController {
-    public final static int IDENTIFY_DELAY = 5;
-    protected final Object lock = new Object();
-    protected final Queue<SessionConnectNode> connectQueue = new ConcurrentLinkedQueue<>();
-    protected final AtomicLong globalRatelimit = new AtomicLong(Long.MIN_VALUE);
-    protected Thread workerHandle;
-    protected long lastConnect = 0;
-
-    public void appendSession(@NotNull SessionConnectNode node) {
-        removeSession(node);
-        connectQueue.add(node);
-        runWorker();
+    fun appendSession(node: SessionConnectNode) {
+        removeSession(node)
+        connectQueue.add(node)
+        runWorker()
     }
 
-    public void removeSession(@NotNull SessionConnectNode node) {
-        connectQueue.remove(node);
+    fun removeSession(node: SessionConnectNode) {
+        connectQueue.remove(node)
     }
 
-    public long getGlobalRatelimit() {
-        return globalRatelimit.get();
+    fun getGlobalRatelimit(): Long {
+        return globalRatelimit.get()
     }
 
-    public void setGlobalRatelimit(long ratelimit) {
-        globalRatelimit.set(ratelimit);
+    fun setGlobalRatelimit(ratelimit: Long) {
+        globalRatelimit.set(ratelimit)
     }
 
-    @NotNull
-    public String getGateway(@NotNull JDA api) {
-        Route route = Route.getGatewayRoute();
-        return new RestAction<String>(api, route, (response, request) -> response.getDataObject().getString("url")).complete();
+    fun getGateway(api: JDA): String {
+        val route = Route.getGatewayRoute()
+        return RestAction(api, route, BiFunction { response: Response, request: Request<String>? ->
+            response.dataObject.getString("url")
+        }).complete()
     }
 
-    protected void runWorker() {
-        synchronized (lock) {
+    private fun runWorker() {
+        synchronized(lock) {
             if (workerHandle == null) {
-                workerHandle = new QueueWorker();
-                workerHandle.start();
+                workerHandle = QueueWorker().apply {
+                    start()
+                }
             }
         }
     }
 
-    private class QueueWorker extends Thread {
-        private final long delay = TimeUnit.SECONDS.toMillis(IDENTIFY_DELAY);
-
-        public QueueWorker() {
-            super("SessionControllerAdapter-Worker");
-        }
-
-        @Override
-        public void run() {
+    private inner class QueueWorker: Thread("SessionControllerAdapter-Worker") {
+        private val delay = TimeUnit.SECONDS.toMillis(IDENTIFY_DELAY.toLong())
+        override fun run() {
             try {
-                if (0 < this.delay) {
-                    final long interval = System.currentTimeMillis() - lastConnect;
-                    if (interval < this.delay) {
-                        Thread.sleep(this.delay - interval);
+                if (0 < delay) {
+                    val interval = System.currentTimeMillis() - lastConnect
+                    if (interval < delay) {
+                        sleep(delay - interval)
                     }
                 }
-            } catch (InterruptedException ex) {
-                ex.printStackTrace();
+            } catch (ex: InterruptedException) {
+                ex.printStackTrace()
             }
-            processQueue();
-            synchronized (lock) {
-                workerHandle = null;
+            processQueue()
+            synchronized(lock) {
+                workerHandle = null
                 if (!connectQueue.isEmpty()) {
-                    runWorker();
+                    runWorker()
                 }
             }
         }
 
-        private void processQueue() {
-            boolean isMultiple = connectQueue.size() > 1;
+        private fun processQueue() {
+            var isMultiple = connectQueue.size > 1
             while (!connectQueue.isEmpty()) {
-                SessionConnectNode node = connectQueue.poll();
+                val node = connectQueue.poll()
                 try {
-                    node.run(isMultiple && connectQueue.isEmpty());
-                    isMultiple = true;
-                    lastConnect = System.currentTimeMillis();
-                    if (connectQueue.isEmpty())
-                        break;
-                    if (this.delay > 0) {
-                        Thread.sleep(this.delay);
+                    node.run(isMultiple && connectQueue.isEmpty())
+                    isMultiple = true
+                    lastConnect = System.currentTimeMillis()
+                    if (connectQueue.isEmpty()) break
+                    if (delay > 0) {
+                        sleep(delay)
                     }
-                } catch (IllegalStateException | InterruptedException e) {
-                    appendSession(node);
+                } catch (e: IllegalStateException) {
+                    appendSession(node)
+                } catch (e: InterruptedException) {
+                    appendSession(node)
                 }
             }
         }
     }
 
-    public interface SessionConnectNode {
-        void run(boolean isLast) throws InterruptedException;
+    interface SessionConnectNode {
+        @Throws(InterruptedException::class)
+        fun run(isLast: Boolean)
+    }
+
+    companion object {
+        const val IDENTIFY_DELAY = 5
     }
 }

@@ -48,4 +48,10 @@ public class SnowflakeReference<T extends ISnowflake> implements ISnowflake {
     public long getIdLong() {
         return id;
     }
+
+    @NotNull
+    @Override
+    public String getId() {
+        return java.lang.Long.toUnsignedString(id);
+    }
 }

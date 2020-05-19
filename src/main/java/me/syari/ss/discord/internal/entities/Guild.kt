@@ -1,122 +1,53 @@
-package me.syari.ss.discord.internal.entities;
+package me.syari.ss.discord.internal.entities
 
-import me.syari.ss.discord.api.ISnowflake;
-import me.syari.ss.discord.api.utils.cache.ISnowflakeCacheView;
-import me.syari.ss.discord.internal.JDA;
-import me.syari.ss.discord.internal.utils.cache.MemberCacheView;
-import me.syari.ss.discord.internal.utils.cache.SnowflakeCacheView;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import me.syari.ss.discord.api.ISnowflake
+import me.syari.ss.discord.api.utils.cache.ISnowflakeCacheView
+import me.syari.ss.discord.internal.JDA
+import me.syari.ss.discord.internal.utils.cache.MemberCacheView
+import me.syari.ss.discord.internal.utils.cache.SnowflakeCacheView
+import java.util.concurrent.CompletableFuture
 
-import java.util.concurrent.CompletableFuture;
+class Guild(val jDA: JDA, override val idLong: Long, private val name: String, private val memberCount: Int): ISnowflake {
+    val textChannelsView = SnowflakeCacheView(TextChannel::class.java)
+    val rolesView = SnowflakeCacheView(Role::class.java)
+    val emoteCache = SnowflakeCacheView(Emote::class.java)
+    val membersView = MemberCacheView()
+    private val chunkingCallback = CompletableFuture<Void?>()
+    val isLoaded: Boolean
+        get() = memberCount.toLong() <= membersView.size()
 
-public class Guild implements ISnowflake {
-    private final SnowflakeCacheView<TextChannel> textChannelCache = new SnowflakeCacheView<>(TextChannel.class);
-    private final SnowflakeCacheView<Role> roleCache = new SnowflakeCacheView<>(Role.class);
-    private final SnowflakeCacheView<Emote> emoteCache = new SnowflakeCacheView<>(Emote.class);
-    private final MemberCacheView memberCache = new MemberCacheView();
-    private final CompletableFuture<Void> chunkingCallback = new CompletableFuture<>();
-    private final long id;
-    private final JDA api;
-    private String name;
-    private int memberCount;
-
-    public Guild(JDA api, long id) {
-        this.id = id;
-        this.api = api;
+    fun getMember(user: User): Member? {
+        return getMemberById(user.idLong)
     }
 
-    public boolean isLoaded() {
-        return (long) getMemberCount() <= getMemberCache().size();
+    private fun getRoleCache(): ISnowflakeCacheView<Role> {
+        return rolesView
     }
 
-    private int getMemberCount() {
-        return memberCount;
+    fun getMemberById(userId: Long): Member? {
+        return membersView.getElementById(userId)
     }
 
-    @NotNull
-    private String getName() {
-        return name;
+    fun getRoleById(id: Long): Role? {
+        return getRoleCache().getElementById(id)
     }
 
-    public Member getMember(@NotNull User user) {
-        return getMemberById(user.getIdLong());
+    fun acknowledgeMembers() {
+        if (membersView.size() == memberCount.toLong() && !chunkingCallback.isDone) chunkingCallback.complete(null)
     }
 
-    @NotNull
-    public MemberCacheView getMemberCache() {
-        return memberCache;
+    override fun equals(other: Any?): Boolean {
+        if (other === this) return true
+        if (other !is Guild) return false
+        return idLong == other.idLong
     }
 
-    @NotNull
-    public ISnowflakeCacheView<Role> getRoleCache() {
-        return roleCache;
+    override fun hashCode(): Int {
+        return java.lang.Long.hashCode(idLong)
     }
 
-    @NotNull
-    public ISnowflakeCacheView<Emote> getEmoteCache() {
-        return emoteCache;
+    override fun toString(): String {
+        return "G:$name($id)"
     }
 
-    @NotNull
-    public JDA getJDA() {
-        return api;
-    }
-
-    @Override
-    public long getIdLong() {
-        return id;
-    }
-
-    @Nullable
-    public Member getMemberById(long userId) {
-        return getMemberCache().getElementById(userId);
-    }
-
-    @Nullable
-    public Role getRoleById(long id) {
-        return getRoleCache().getElementById(id);
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setMemberCount(int count) {
-        this.memberCount = count;
-    }
-
-    public SnowflakeCacheView<TextChannel> getTextChannelsView() {
-        return textChannelCache;
-    }
-
-    public SnowflakeCacheView<Role> getRolesView() {
-        return roleCache;
-    }
-
-    public MemberCacheView getMembersView() {
-        return memberCache;
-    }
-
-    public void acknowledgeMembers() {
-        if (memberCache.size() == memberCount && !chunkingCallback.isDone()) chunkingCallback.complete(null);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (o == this) return true;
-        if (!(o instanceof Guild)) return false;
-        Guild oGuild = (Guild) o;
-        return this.id == oGuild.id;
-    }
-
-    @Override
-    public int hashCode() {
-        return Long.hashCode(id);
-    }
-
-    @Override
-    public String toString() {
-        return "G:" + getName() + '(' + id + ')';
-    }
 }

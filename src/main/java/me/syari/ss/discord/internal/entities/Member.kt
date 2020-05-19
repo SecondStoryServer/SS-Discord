@@ -1,63 +1,40 @@
-package me.syari.ss.discord.internal.entities;
+package me.syari.ss.discord.internal.entities
 
-import me.syari.ss.discord.api.ISnowflake;
-import me.syari.ss.discord.internal.utils.cache.SnowflakeReference;
-import org.jetbrains.annotations.NotNull;
+import me.syari.ss.discord.api.ISnowflake
+import me.syari.ss.discord.internal.utils.cache.SnowflakeReference
+import java.util.function.LongFunction
 
-public class Member implements ISnowflake {
-    private final SnowflakeReference<Guild> guild;
-    private final User user;
-    private String nickname;
+class Member(guild: Guild?, user: User): ISnowflake {
+    private val guild: SnowflakeReference<Guild?>
+    val user: User
+    var nickname: String? = null
 
-    public Member(Guild guild, @NotNull User user) {
-        this.guild = new SnowflakeReference<>(guild, user.getJDA()::getGuildById);
-        this.user = user;
+    private fun getGuild(): Guild {
+        return guild.resolve()
     }
 
-    @NotNull
-    public User getUser() {
-        return user;
+    val displayName: String
+        get() = (if (nickname != null) nickname!! else user.getName())
+
+    override val idLong: Long
+        get() = user.idLong
+
+    override fun equals(other: Any?): Boolean {
+        if (other === this) return true
+        if (other !is Member) return false
+        return other.user.idLong == user.idLong && other.guild.idLong == guild.idLong
     }
 
-    @NotNull
-    private Guild getGuild() {
-        return guild.resolve();
+    override fun hashCode(): Int {
+        return (guild.idLong.toString() + user.idLong.toString()).hashCode()
     }
 
-    public String getNickname() {
-        return nickname;
+    override fun toString(): String {
+        return "MB:" + displayName + '(' + user.toString() + " / " + getGuild().toString() + ')'
     }
 
-    @NotNull
-    public String getDisplayName() {
-        return nickname != null ? nickname : getUser().getName();
+    init {
+        this.guild = SnowflakeReference(guild, LongFunction { id: Long -> user.api.getGuildById(id) })
+        this.user = user
     }
-
-    @Override
-    public long getIdLong() {
-        return user.getIdLong();
-    }
-
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        if (object == this) return true;
-        if (!(object instanceof Member)) return false;
-        Member member = (Member) object;
-        return member.user.getIdLong() == user.getIdLong() && member.guild.getIdLong() == guild.getIdLong();
-    }
-
-    @Override
-    public int hashCode() {
-        return (guild.getIdLong() + user.getId()).hashCode();
-    }
-
-    @Override
-    public String toString() {
-        return "MB:" + getDisplayName() + '(' + getUser().toString() + " / " + getGuild().toString() + ')';
-    }
-
 }

@@ -1,12 +1,8 @@
-package me.syari.ss.discord.api;
+package me.syari.ss.discord.api
 
-import org.jetbrains.annotations.NotNull;
+interface ISnowflake {
+    val id: String
+        get() = java.lang.Long.toUnsignedString(idLong)
 
-public interface ISnowflake {
-    @NotNull
-    default String getId() {
-        return Long.toUnsignedString(getIdLong());
-    }
-
-    long getIdLong();
+    val idLong: Long
 }

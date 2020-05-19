@@ -1,47 +1,38 @@
-package me.syari.ss.discord.api.utils;
+package me.syari.ss.discord.api.utils
 
-import org.jetbrains.annotations.NotNull;
+import java.util.NoSuchElementException
+import java.util.concurrent.locks.Lock
 
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-import java.util.concurrent.locks.Lock;
-
-public class LockIterator<T> implements ClosableIterator<T> {
-    private final Iterator<? extends T> iterator;
-    private Lock lock;
-
-    public LockIterator(@NotNull Iterator<? extends T> iterator, Lock lock) {
-        this.iterator = iterator;
-        this.lock = lock;
-    }
-
-    @Override
-    public void close() {
-        if (lock != null) {
-            lock.unlock();
-            lock = null;
+class LockIterator<T>(
+    private val iterator: Iterator<T>, private var lock: Lock?
+): ClosableIterator<T> {
+    override fun close() {
+        lock?.let {
+            it.unlock()
+            lock = null
         }
     }
 
-    @Override
-    public boolean hasNext() {
+    override fun hasNext(): Boolean {
         if (lock == null) {
-            return false;
+            return false
         }
-        boolean hasNext = iterator.hasNext();
+        val hasNext = iterator.hasNext()
         if (!hasNext) {
-            close();
+            close()
         }
-        return hasNext;
+        return hasNext
     }
 
-    @NotNull
-    @Override
-    public T next() {
-        if (lock != null) {
-            return iterator.next();
+    override fun next(): T {
+        return if (lock != null) {
+            iterator.next()
         } else {
-            throw new NoSuchElementException();
+            throw NoSuchElementException()
         }
+    }
+
+    override fun remove() {
+        throw UnsupportedOperationException("remove")
     }
 }

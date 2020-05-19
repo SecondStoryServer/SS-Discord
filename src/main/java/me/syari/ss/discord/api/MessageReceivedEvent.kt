@@ -1,38 +1,16 @@
-package me.syari.ss.discord.api;
+package me.syari.ss.discord.api
 
-import me.syari.ss.discord.internal.entities.Member;
-import me.syari.ss.discord.internal.entities.Message;
-import me.syari.ss.discord.internal.entities.TextChannel;
-import me.syari.ss.discord.internal.entities.User;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import me.syari.ss.discord.internal.entities.Member
+import me.syari.ss.discord.internal.entities.Message
+import me.syari.ss.discord.internal.entities.TextChannel
+import me.syari.ss.discord.internal.entities.User
 
-public class MessageReceivedEvent {
-    protected final TextChannel channel;
-    private final Message message;
+class MessageReceivedEvent(val message: Message) {
+    val channel: TextChannel = message.channel
 
-    public MessageReceivedEvent(@NotNull Message message) {
-        this.channel = message.getChannel();
-        this.message = message;
-    }
+    val author: User
+        get() = message.author
 
-    @NotNull
-    public Message getMessage() {
-        return message;
-    }
-
-    @NotNull
-    public User getAuthor() {
-        return message.getAuthor();
-    }
-
-    @Nullable
-    public Member getMember() {
-        return message.getMember();
-    }
-
-    @NotNull
-    public TextChannel getChannel() {
-        return channel;
-    }
+    val member: Member?
+        get() = message.member
 }

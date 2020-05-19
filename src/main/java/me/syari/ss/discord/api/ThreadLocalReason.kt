@@ -1,47 +1,36 @@
-package me.syari.ss.discord.api;
+package me.syari.ss.discord.api
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+class ThreadLocalReason private constructor() {
+    class Closable(reason: String?): AutoCloseable {
+        private val previous = current
 
-public final class ThreadLocalReason {
-    private static ThreadLocal<String> currentReason;
+        override fun close() {
+            current = previous
+        }
 
-    private ThreadLocalReason() {
-        throw new UnsupportedOperationException();
+        init {
+            current = reason
+        }
     }
 
-    public static void setCurrent(@Nullable String reason) {
-        if (reason != null) {
-            if (currentReason == null) {
-                currentReason = new ThreadLocal<>();
+    companion object {
+        private var currentReason: ThreadLocal<String>? = null
+
+        var current: String?
+            get() = currentReason?.get()
+            set(reason) {
+                if (reason != null) {
+                    if (currentReason == null) {
+                        currentReason = ThreadLocal()
+                    }
+                    currentReason?.set(reason)
+                } else if (currentReason != null) {
+                    currentReason?.remove()
+                }
             }
-            currentReason.set(reason);
-        } else if (currentReason != null) {
-            currentReason.remove();
-        }
-    }
 
-    @Nullable
-    public static String getCurrent() {
-        return currentReason == null ? null : currentReason.get();
-    }
-
-    @NotNull
-    public static Closable closable(@Nullable String reason) {
-        return new Closable(reason);
-    }
-
-    public static class Closable implements AutoCloseable {
-        private final String previous;
-
-        public Closable(@Nullable String reason) {
-            this.previous = getCurrent();
-            setCurrent(reason);
-        }
-
-        @Override
-        public void close() {
-            setCurrent(previous);
+        fun closable(reason: String?): Closable {
+            return Closable(reason)
         }
     }
 }

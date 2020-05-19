@@ -1,82 +1,40 @@
-package me.syari.ss.discord.internal.entities;
+package me.syari.ss.discord.internal.entities
 
-import me.syari.ss.discord.api.ISnowflake;
-import me.syari.ss.discord.internal.JDA;
-import org.jetbrains.annotations.NotNull;
+import me.syari.ss.discord.api.ISnowflake
+import me.syari.ss.discord.internal.JDA
 
-public class User implements ISnowflake {
-    protected final long id;
-    protected final JDA api;
-
-    protected short discriminator;
-    protected String name;
-    protected boolean bot;
-    protected boolean fake = false;
-
-    public User(long id, JDA api) {
-        this.id = id;
-        this.api = api;
+class User(override val idLong: Long, val api: JDA, var isFake: Boolean): ISnowflake {
+    private var discriminator: Short = 0
+    private var name: String? = null
+    var isBot = false
+    fun getName(): String {
+        return name!!
     }
 
-    @NotNull
-    public String getName() {
-        return name;
+    fun getDiscriminator(): String {
+        return String.format("%04d", discriminator)
     }
 
-    @NotNull
-    public String getDiscriminator() {
-        return String.format("%04d", discriminator);
+    override fun equals(other: Any?): Boolean {
+        if (other === this) return true
+        if (other !is User) return false
+        return idLong == other.idLong
     }
 
-    public boolean isBot() {
-        return bot;
+    override fun hashCode(): Int {
+        return java.lang.Long.hashCode(idLong)
     }
 
-    @NotNull
-    public JDA getJDA() {
-        return api;
+    override fun toString(): String {
+        return "U:" + getName() + '(' + idLong + ')'
     }
 
-    @Override
-    public long getIdLong() {
-        return id;
+    fun setName(name: String?) {
+        this.name = name
     }
 
-    public boolean isFake() {
-        return fake;
+    fun setDiscriminator(discriminator: String) {
+        this.discriminator = discriminator.toShort()
     }
 
-    @Override
-    public boolean equals(Object object) {
-        if (object == this) return true;
-        if (!(object instanceof User)) return false;
-        User user = (User) object;
-        return this.id == user.id;
-    }
-
-    @Override
-    public int hashCode() {
-        return Long.hashCode(id);
-    }
-
-    @Override
-    public String toString() {
-        return "U:" + getName() + '(' + id + ')';
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setDiscriminator(String discriminator) {
-        this.discriminator = Short.parseShort(discriminator);
-    }
-
-    public void setBot(boolean bot) {
-        this.bot = bot;
-    }
-
-    public void setFake(boolean fake) {
-        this.fake = fake;
-    }
 }
