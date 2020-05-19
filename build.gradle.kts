@@ -19,11 +19,6 @@ dependencies {
     implementation("com.neovisionaries:nv-websocket-client:2.9")
     implementation("com.squareup.okhttp3:okhttp:4.6.0")
 
-
-    //Collections Utility
-    api("org.apache.commons:commons-collections4:4.4")
-
-
     /* Internal dependencies */
 
     //General Utility
