@@ -25,7 +25,7 @@ public class Requester {
 
     private final OkHttpClient httpClient;
 
-    public Requester(JDA api) {
+    public Requester(@NotNull JDA api) {
         this.api = api;
         this.httpClient = api.getHttpClient();
     }

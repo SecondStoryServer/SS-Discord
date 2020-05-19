@@ -1,7 +1,6 @@
 package me.syari.ss.discord.api.requests
 
 import me.syari.ss.discord.api.exceptions.ParsingException
-import me.syari.ss.discord.api.utils.IOFunction
 import me.syari.ss.discord.api.utils.data.DataObject
 import okhttp3.Response
 import java.io.BufferedInputStream
@@ -19,7 +18,7 @@ import java.util.zip.InflaterInputStream
 import java.util.zip.ZipException
 
 class Response(private val rawResponse: Response?, val code: Int, val retryAfter: Long): Closeable {
-    private var body: InputStream? = null
+    private var body: InputStream?
     private var fallbackString: String? = null
     private var anyData: Any? = null
     private var attemptedParsing = false
@@ -57,16 +56,16 @@ class Response(private val rawResponse: Response?, val code: Int, val retryAfter
     constructor(response: Response, retryAfter: Long): this(response, response.code, retryAfter)
 
     val dataObject: DataObject
-        get() = parseBody(DataObject::class.java, JSON_SERIALIZE_OBJECT).orElseThrow { IllegalStateException() }
+        get() = parseBody(DataObject::class.java, JSON_SERIALIZE_OBJECT) ?: throw IllegalStateException()
 
-    fun optObject(): Optional<DataObject> {
+    fun optObject(): DataObject? {
         return parseBody(true, DataObject::class.java, JSON_SERIALIZE_OBJECT)
     }
 
     val string: String
-        get() = parseBody(
-            String::class.java,
-            IOFunction { reader: BufferedReader -> readString(reader) }).orElseGet { if (fallbackString == null) "N/A" else fallbackString }
+        get() = parseBody(String::class.java){
+                reader -> readString(reader)
+        } ?: fallbackString ?: "N/A"
 
     val isError: Boolean
         get() = code == ERROR_CODE
@@ -89,32 +88,32 @@ class Response(private val rawResponse: Response?, val code: Int, val retryAfter
         return reader.lines().collect(Collectors.joining("\n"))
     }
 
-    private fun <T> parseBody(clazz: Class<T>, parser: IOFunction<BufferedReader, T>): Optional<T> {
+    private fun <T> parseBody(clazz: Class<T>, parser: (BufferedReader) -> T): T? {
         return parseBody(false, clazz, parser)
     }
 
     private fun <T> parseBody(
-        opt: Boolean, clazz: Class<T>, parser: IOFunction<BufferedReader, T>
-    ): Optional<T> {
+        opt: Boolean, clazz: Class<T>, parser: (BufferedReader) -> T
+    ): T? {
         if (attemptedParsing) {
             return anyData?.let {
                 if (clazz.isAssignableFrom(it.javaClass)) {
-                    Optional.of(clazz.cast(it))
+                    clazz.cast(it)
                 } else {
                     null
                 }
-            } ?: Optional.empty()
+            }
         }
         attemptedParsing = true
         if (body == null || rawResponse == null || rawResponse.body!!.contentLength() == 0L) {
-            return Optional.empty()
+            return null
         }
         val reader = BufferedReader(InputStreamReader(body))
         return try {
             reader.mark(1024)
-            val t = parser.apply(reader)
-            this.anyData = t
-            Optional.ofNullable(t)
+            parser.invoke(reader).apply {
+                anyData = this
+            }
         } catch (ex1: Exception) {
             try {
                 reader.reset()
@@ -126,7 +125,7 @@ class Response(private val rawResponse: Response?, val code: Int, val retryAfter
                 ex2.printStackTrace()
             }
             if (opt && ex1 is ParsingException) {
-                Optional.empty()
+                null
             } else {
                 throw IllegalStateException("An error occurred while parsing the response for a RestAction", ex1)
             }
@@ -135,7 +134,7 @@ class Response(private val rawResponse: Response?, val code: Int, val retryAfter
 
     companion object {
         const val ERROR_CODE = -1
-        val JSON_SERIALIZE_OBJECT = IOFunction { stream: BufferedReader -> DataObject.fromJson(stream) }
+        val JSON_SERIALIZE_OBJECT = { stream: BufferedReader -> DataObject.fromJson(stream) }
     }
 
     init {

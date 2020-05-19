@@ -63,7 +63,7 @@ public class EventCache {
     }
 
     public enum Type {
-        USER, MEMBER, GUILD, CHANNEL, ROLE
+        GUILD, CHANNEL
     }
 
     private static class CacheNode {

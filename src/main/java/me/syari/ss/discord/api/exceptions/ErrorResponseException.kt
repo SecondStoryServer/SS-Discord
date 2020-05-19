@@ -8,7 +8,7 @@ class ErrorResponseException private constructor(
     response: Response?, code: Int, meaning: String
 ): RuntimeException("$code: $meaning") {
     init {
-        if (response != null && response.exception != null) {
+        if (response?.exception != null) {
             initCause(response.exception)
         }
     }
@@ -19,14 +19,13 @@ class ErrorResponseException private constructor(
         fun create(
             errorResponse: ErrorResponse, response: Response
         ): ErrorResponseException {
-            val optObject = response.optObject()
+            val dataObject = response.optObject()
             var meaning = errorResponse.meaning
             var code = errorResponse.code
             if (response.isError && response.exception != null) {
                 code = response.code
                 meaning = response.exception!!.javaClass.name
-            } else if (optObject.isPresent) {
-                val dataObject = optObject.get()
+            } else if (dataObject != null) {
                 val isNullCode = dataObject.isNull("code")
                 val isNullMessage = dataObject.isNull("message")
                 if (!isNullCode || !isNullMessage) {

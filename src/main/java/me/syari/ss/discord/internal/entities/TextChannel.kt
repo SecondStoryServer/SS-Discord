@@ -9,6 +9,7 @@ import me.syari.ss.discord.internal.requests.Requester
 import me.syari.ss.discord.internal.requests.RestAction
 import me.syari.ss.discord.internal.requests.Route
 import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.IOException
 import java.io.InputStream
 import java.util.HashSet
@@ -71,7 +72,19 @@ class TextChannel(override val idLong: Long, val guild: Guild, val name: String)
         api: JDA, route: Route?, private val channel: TextChannel, private val content: String
     ): RestAction<Message>(api, route) {
         private val ownedResources: MutableSet<InputStream> = HashSet()
-        private fun clearResources() {
+
+        override fun finalizeData(): RequestBody {
+            return DataObject.empty().apply {
+                put("content", content)
+            }.toString().toRequestBody(Requester.MEDIA_TYPE_JSON)
+        }
+
+        override fun handleSuccess(response: Response, request: Request<Message>) {
+            api.entityBuilder.createMessage(response.dataObject, channel)?.let { request.onSuccess(it) }
+        }
+
+        protected fun finalize() {
+            if (ownedResources.isEmpty()) return
             for (ownedResource in ownedResources) {
                 try {
                     ownedResource.close()
@@ -81,27 +94,5 @@ class TextChannel(override val idLong: Long, val guild: Guild, val name: String)
             }
             ownedResources.clear()
         }
-
-        private fun asJSON(): RequestBody {
-            val json = DataObject.empty()
-            json.put("content", content)
-            return RequestBody.create(Requester.MEDIA_TYPE_JSON, json.toString())
-        }
-
-        override fun finalizeData(): RequestBody {
-            return asJSON()
-        }
-
-        override fun handleSuccess(
-            response: Response, request: Request<Message>
-        ) {
-            request.onSuccess(api.entityBuilder.createMessage(response.dataObject, channel))
-        }
-
-        protected fun finalize() {
-            if (ownedResources.isEmpty()) return
-            clearResources()
-        }
-
     }
 }

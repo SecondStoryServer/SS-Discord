@@ -1,99 +1,60 @@
-package me.syari.ss.discord.internal.requests;
+package me.syari.ss.discord.internal.requests
 
-import org.jetbrains.annotations.NotNull;
+import java.util.concurrent.Future
+import java.util.concurrent.TimeUnit
 
-import java.util.Queue;
-import java.util.concurrent.Future;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.ReentrantLock;
+internal class WebSocketSendingThread(private val client: WebSocketClient): Runnable {
+    private val chunkSyncQueue = client.chunkSyncQueue
+    private val ratelimitQueue = client.ratelimitQueue
+    private val executor = client.executor
+    private var handle: Future<*>? = null
+    private var needRateLimit = false
+    private var attemptedToSend = false
+    private var shutdown = false
 
-class WebSocketSendingThread implements Runnable {
-    private final WebSocketClient client;
-    private final ReentrantLock queueLock;
-    private final Queue<String> chunkSyncQueue;
-    private final Queue<String> ratelimitQueue;
-    private final ScheduledExecutorService executor;
-    private Future<?> handle;
-    private boolean needRateLimit = false;
-    private boolean attemptedToSend = false;
-    private boolean shutdown = false;
-
-    WebSocketSendingThread(@NotNull WebSocketClient client) {
-        this.client = client;
-        this.queueLock = client.queueLock;
-        this.chunkSyncQueue = client.chunkSyncQueue;
-        this.ratelimitQueue = client.ratelimitQueue;
-        this.executor = client.executor;
+    fun shutdown() {
+        shutdown = true
+        handle?.cancel(false)
     }
 
-    public void shutdown() {
-        shutdown = true;
-        if (handle != null) handle.cancel(false);
+    fun start() {
+        shutdown = false
+        handle = executor.submit(this)
     }
 
-    public void start() {
-        shutdown = false;
-        handle = executor.submit(this);
-    }
-
-    private void scheduleIdle() {
-        if (shutdown) return;
-        handle = executor.schedule(this, 500, TimeUnit.MILLISECONDS);
-    }
-
-    private void scheduleSentMessage() {
-        if (shutdown) return;
-        handle = executor.schedule(this, 10, TimeUnit.MILLISECONDS);
-    }
-
-    private void scheduleRateLimit() {
-        if (shutdown) return;
-        handle = executor.schedule(this, 1, TimeUnit.MINUTES);
-    }
-
-    @Override
-    public void run() {
+    override fun run() {
         if (!client.sentAuthInfo) {
-            scheduleIdle();
-            return;
+            if (shutdown) return
+            handle = executor.schedule(this, 500, TimeUnit.MILLISECONDS)
+            return
         }
         try {
-            attemptedToSend = false;
-            needRateLimit = false;
-            queueLock.lockInterruptibly();
-            String chunkOrSyncRequest = chunkSyncQueue.peek();
+            attemptedToSend = false
+            needRateLimit = false
+            client.queueLock.lockInterruptibly()
+            val chunkOrSyncRequest = chunkSyncQueue.peek()
             if (chunkOrSyncRequest != null) {
-                handleChunkSync(chunkOrSyncRequest);
+                if (send(chunkOrSyncRequest)) chunkSyncQueue.remove()
             } else {
-                handleNormalRequest();
+                val message = ratelimitQueue.peek()
+                if (message != null && send(message)) ratelimitQueue.remove()
             }
-            if (needRateLimit) {
-                scheduleRateLimit();
-            } else if (!attemptedToSend) {
-                scheduleIdle();
-            } else {
-                scheduleSentMessage();
+            if (shutdown) return
+            handle = when {
+                needRateLimit -> executor.schedule(this, 1, TimeUnit.MINUTES)
+                attemptedToSend -> executor.schedule(this, 10, TimeUnit.MILLISECONDS)
+                else -> executor.schedule(this, 500, TimeUnit.MILLISECONDS)
             }
-        } catch (InterruptedException ex) {
-            ex.printStackTrace();
+        } catch (ex: InterruptedException) {
+            ex.printStackTrace()
         } finally {
-            client.maybeUnlock();
+            client.maybeUnlock()
         }
     }
 
-    private void handleChunkSync(String chunkOrSyncRequest) {
-        if (send(chunkOrSyncRequest)) chunkSyncQueue.remove();
-    }
-
-    private void handleNormalRequest() {
-        String message = ratelimitQueue.peek();
-        if (message != null && send(message)) ratelimitQueue.remove();
-    }
-
-    private boolean send(String request) {
-        needRateLimit = !client.send(request, false);
-        attemptedToSend = true;
-        return !needRateLimit;
+    private fun send(request: String): Boolean {
+        needRateLimit = !client.send(request, false)
+        attemptedToSend = true
+        return !needRateLimit
     }
 }

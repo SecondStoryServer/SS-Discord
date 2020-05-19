@@ -1,50 +1,42 @@
-package me.syari.ss.discord.internal.handle;
+package me.syari.ss.discord.internal.handle
 
-import me.syari.ss.discord.api.utils.data.DataObject;
-import me.syari.ss.discord.internal.JDA;
-import me.syari.ss.discord.internal.entities.EntityBuilder;
-import me.syari.ss.discord.internal.entities.Message;
-import org.jetbrains.annotations.NotNull;
+import me.syari.ss.discord.api.utils.data.DataObject
+import me.syari.ss.discord.internal.JDA
+import me.syari.ss.discord.internal.entities.EntityBuilder
 
-import static me.syari.ss.discord.internal.utils.Check.isDefaultMessage;
-
-public class MessageCreateHandler extends SocketHandler {
-    public MessageCreateHandler(JDA api) {
-        super(api);
-    }
-
-    @Override
-    protected Long handleInternally(@NotNull DataObject content) {
-        System.out.println(">> MessageCreateHandler");
-        if (!isDefaultMessage(content.getInt("type"))) return null;
-        JDA api = getJDA();
+class MessageCreateHandler(api: JDA): SocketHandler(api) {
+    override fun handleInternally(content: DataObject): Long? {
+        println(">> MessageCreateHandler")
+        if (content.getInt("type") != 0) return null
         if (!content.isNull("guild_id")) {
-            long guildId = content.getLong("guild_id");
-            if (api.getGuildSetupController().isLocked(guildId)) return guildId;
+            val guildId = content.getLong("guild_id")
+            if (api.guildSetupController.isLocked(guildId)) return guildId
         }
-        Message message;
-        try {
-            message = api.getEntityBuilder().createMessage(content);
-        } catch (IllegalArgumentException ex) {
-            switch (ex.getMessage()) {
-                case EntityBuilder.MISSING_CHANNEL: {
-                    final long channelId = content.getLong("channel_id");
-                    api.getEventCache().cache(EventCache.Type.CHANNEL, channelId, responseNumber, allContent, this::handle);
-                    return null;
+        val message = try {
+            api.entityBuilder.createMessage(content)
+        } catch (ex: IllegalArgumentException) {
+            return when (ex.message) {
+                EntityBuilder.MISSING_CHANNEL -> {
+                    val channelId = content.getLong("channel_id")
+                    api.eventCache.cache(
+                        EventCache.Type.CHANNEL,
+                        channelId,
+                        responseNumber,
+                        allContent
+                    ) { responseTotal: Long, dataObject: DataObject ->
+                        handle(responseTotal, dataObject)
+                    }
+                    null
                 }
-                case EntityBuilder.MISSING_USER: {
-                    final long authorId = content.getObject("author").getLong("id");
-                    api.getEventCache().cache(EventCache.Type.USER, authorId, responseNumber, allContent, this::handle);
-                    return null;
+                EntityBuilder.UNKNOWN_MESSAGE_TYPE -> {
+                    null
                 }
-                case EntityBuilder.UNKNOWN_MESSAGE_TYPE: {
-                    return null;
+                else -> {
+                    throw ex
                 }
-                default:
-                    throw ex;
             }
         }
-        api.callMessageReceiveEvent(message);
-        return null;
+        api.callMessageReceiveEvent(message)
+        return null
     }
 }

@@ -45,11 +45,7 @@ class Request<T>(
         if (response.code == 429) {
             onFailure(RateLimitedException(route, response.retryAfter))
         } else {
-            onFailure(
-                create(
-                    fromJSON(response.optObject().orElse(null)), response
-                )
-            )
+            onFailure(create(fromJSON(response.optObject()), response))
         }
     }
 

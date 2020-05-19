@@ -3,7 +3,6 @@ package me.syari.ss.discord.internal.entities
 import gnu.trove.set.hash.TLongHashSet
 import me.syari.ss.discord.api.utils.data.DataObject
 import me.syari.ss.discord.internal.JDA
-import me.syari.ss.discord.internal.utils.Check
 
 class EntityBuilder(private val api: JDA) {
     fun createGuild(id: Long, guildData: DataObject): Guild {
@@ -62,15 +61,15 @@ class EntityBuilder(private val api: JDA) {
         }
     }
 
-    fun createMessage(jsonObject: DataObject): Message {
-        val channelId = jsonObject.getLong("channel_id")
-        val channel = TextChannel.get(channelId) ?: throw IllegalArgumentException(MISSING_CHANNEL)
-        return createMessage(jsonObject, channel)
+    fun createMessage(messageData: DataObject): Message? {
+        val channelId = messageData.getLong("channel_id")
+        val channel = TextChannel.get(channelId)
+        return channel?.let { createMessage(messageData, it) }
     }
 
     fun createMessage(
         messageData: DataObject, channel: TextChannel
-    ): Message {
+    ): Message? {
         val id = messageData.getLong("id")
         val authorData = messageData.getObject("author")
         val guild = channel.guild
@@ -115,16 +114,15 @@ class EntityBuilder(private val api: JDA) {
             }
         }
         val content = messageData.getString("content", "")
-        return if (Check.isDefaultMessage(messageData.getInt("type"))) {
+        return if (messageData.getInt("type") == 0) {
             Message(id, channel, content, user, member)
         } else {
-            throw IllegalArgumentException(UNKNOWN_MESSAGE_TYPE)
+            null
         }
     }
 
     companion object {
         const val MISSING_CHANNEL = "MISSING_CHANNEL"
-        const val MISSING_USER = "MISSING_USER"
         const val UNKNOWN_MESSAGE_TYPE = "UNKNOWN_MESSAGE_TYPE"
     }
 
