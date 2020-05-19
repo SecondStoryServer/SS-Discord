@@ -1,10 +1,8 @@
-package me.syari.ss.discord.api.requests;
+package me.syari.ss.discord.api.requests
 
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Contract
 
-public enum CloseCode {
+enum class CloseCode(private val code: Int, private val meaning: String, val isReconnect: Boolean) {
     GRACEFUL_CLOSE(1000, "The connection was closed gracefully or your heartbeats timed out.", true),
     CLOUD_FLARE_LOAD(1001, "The connection was closed due to CloudFlare load balancing.", true),
     INTERNAL_SERVER_ERROR(1006, "Something broke on the remote's end, sorry 'bout that... Try reconnecting!", true),
@@ -20,30 +18,16 @@ public enum CloseCode {
     INVALID_SHARD(4010, "You sent an invalid shard when identifying.", false),
     SHARDING_REQUIRED(4011, "The session would have handled too many guilds - you are required to shard your connection in order to connect.", false);
 
-    private final int code;
-    private final boolean isReconnect;
-    private final String meaning;
-
-    CloseCode(int code, String meaning, boolean isReconnect) {
-        this.code = code;
-        this.meaning = meaning;
-        this.isReconnect = isReconnect;
-    }
-
-    public boolean isReconnect() {
-        return isReconnect;
-    }
-
     @Contract(pure = true)
-    @Override
-    public @NotNull String toString() {
-        return "CloseCode(" + code + " / " + meaning + ")";
+    override fun toString(): String {
+        return "CloseCode($code / $meaning)"
     }
 
-    @Nullable
-    public static CloseCode from(int code) {
-        for (CloseCode c : values())
-            if (c.code == code) return c;
-        return null;
+    companion object {
+        @JvmStatic
+        fun from(code: Int): CloseCode? {
+            for (c in values()) if (c.code == code) return c
+            return null
+        }
     }
 }

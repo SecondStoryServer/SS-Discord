@@ -1,10 +1,8 @@
-package me.syari.ss.discord.api.requests;
+package me.syari.ss.discord.api.requests
 
-import me.syari.ss.discord.api.utils.data.DataObject;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import me.syari.ss.discord.api.utils.data.DataObject
 
-public enum ErrorResponse {
+enum class ErrorResponse(val code: Int, val meaning: String) {
     UNKNOWN_ACCOUNT(10001, "Unknown Account"),
     UNKNOWN_APPLICATION(10002, "Unknown Application"),
     UNKNOWN_CHANNEL(10003, "Unknown Channel"),
@@ -64,36 +62,18 @@ public enum ErrorResponse {
     RESOURCES_OVERLOADED(130000, "Resource overloaded"),
     SERVER_ERROR(0, "Discord encountered an internal server error! Not good!");
 
-    private final int code;
-    private final String meaning;
-
-    ErrorResponse(int code, String meaning) {
-        this.code = code;
-        this.meaning = meaning;
-    }
-
-    public int getCode() {
-        return code;
-    }
-
-    @NotNull
-    public String getMeaning() {
-        return meaning;
-    }
-
-    @NotNull
-    public static ErrorResponse fromCode(int code) {
-        for (ErrorResponse error : values()) {
-            if (code == error.getCode())
-                return error;
+    companion object {
+        private fun fromCode(code: Int): ErrorResponse {
+            for (error in values()) {
+                if (code == error.code) return error
+            }
+            return SERVER_ERROR
         }
-        return SERVER_ERROR;
+
+        @JvmStatic
+        fun fromJSON(obj: DataObject?): ErrorResponse {
+            return if (obj == null || obj.isNull("code")) SERVER_ERROR else fromCode(obj.getInt("code"))
+        }
     }
 
-    @NotNull
-    public static ErrorResponse fromJSON(@Nullable DataObject obj) {
-        if (obj == null || obj.isNull("code"))
-            return SERVER_ERROR;
-        return ErrorResponse.fromCode(obj.getInt("code"));
-    }
 }

@@ -1,104 +1,94 @@
-package me.syari.ss.discord.api.requests;
+package me.syari.ss.discord.api.requests
 
-import me.syari.ss.discord.api.ThreadLocalReason;
-import me.syari.ss.discord.api.exceptions.ContextException;
-import me.syari.ss.discord.api.exceptions.ErrorResponseException;
-import me.syari.ss.discord.api.exceptions.RateLimitedException;
-import me.syari.ss.discord.internal.JDA;
-import me.syari.ss.discord.internal.requests.CallbackContext;
-import me.syari.ss.discord.internal.requests.RestAction;
-import me.syari.ss.discord.internal.requests.Route;
-import okhttp3.RequestBody;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import me.syari.ss.discord.api.ThreadLocalReason
+import me.syari.ss.discord.api.exceptions.ContextException.ContextConsumer
+import me.syari.ss.discord.api.exceptions.ContextException.from
+import me.syari.ss.discord.api.exceptions.ErrorResponseException.Companion.create
+import me.syari.ss.discord.api.exceptions.RateLimitedException
+import me.syari.ss.discord.api.requests.ErrorResponse.Companion.fromJSON
+import me.syari.ss.discord.internal.JDA
+import me.syari.ss.discord.internal.requests.CallbackContext
+import me.syari.ss.discord.internal.requests.RestAction
+import me.syari.ss.discord.internal.requests.Route
+import okhttp3.RequestBody
+import java.util.function.Consumer
 
-import java.util.function.Consumer;
+class Request<T>(
+    private val restAction: RestAction<T>,
+    private val onSuccess: Consumer<in T>,
+    onFailure: Consumer<in Throwable>?,
+    shouldQueue: Boolean,
+    body: RequestBody?,
+    route: Route
+) {
+    private var onFailure: Consumer<in Throwable>? = null
+    private val shouldQueue: Boolean
+    private val body: RequestBody?
+    val route: Route
+    private val api: JDA
+    private val localReason = ThreadLocalReason.getCurrent()
+    var isCanceled = false
+        private set
 
-public class Request<T> {
-    private final RestAction<T> restAction;
-    private final Consumer<? super T> onSuccess;
-    private final Consumer<? super Throwable> onFailure;
-    private final boolean shouldQueue;
-    private final RequestBody body;
-    private final Route route;
-    private final JDA api;
-    private final String localReason = ThreadLocalReason.getCurrent();
-    private boolean isCanceled = false;
-
-    public Request(RestAction<T> restAction,
-                   Consumer<? super T> onSuccess,
-                   Consumer<? super Throwable> onFailure,
-                   boolean shouldQueue,
-                   RequestBody body,
-                   Route route) {
-        this.restAction = restAction;
-        this.onSuccess = onSuccess;
-        if (onFailure instanceof ContextException.ContextConsumer) {
-            this.onFailure = onFailure;
-        } else {
-            this.onFailure = ContextException.from(onFailure);
-        }
-        this.shouldQueue = shouldQueue;
-        this.body = body;
-        this.route = route;
-        this.api = restAction.getJDA();
-    }
-
-    public void onSuccess(T successObj) {
-        api.getCallbackPool().execute(() ->
-        {
-            try (ThreadLocalReason.Closable __ = ThreadLocalReason.closable(localReason);
-                 CallbackContext ___ = CallbackContext.getInstance()) {
-                onSuccess.accept(successObj);
-            } catch (Throwable ex) {
-                ex.printStackTrace();
+    fun onSuccess(successObj: T) {
+        api.callbackPool.execute {
+            try {
+                ThreadLocalReason.closable(localReason).use { CallbackContext.getInstance().use { onSuccess.accept(successObj) } }
+            } catch (ex: Throwable) {
+                ex.printStackTrace()
             }
-        });
+        }
     }
 
-    public void onFailure(@NotNull Response response) {
+    fun onFailure(response: Response) {
         if (response.code == 429) {
-            onFailure(new RateLimitedException(route, response.retryAfter));
+            onFailure(RateLimitedException(route, response.retryAfter))
         } else {
-            onFailure(ErrorResponseException.create(ErrorResponse.fromJSON(response.optObject().orElse(null)), response));
+            onFailure(
+                create(
+                    fromJSON(response.optObject().orElse(null)), response
+                )
+            )
         }
     }
 
-    public void onFailure(Throwable failException) {
-        api.getCallbackPool().execute(() ->
-        {
-            try (ThreadLocalReason.Closable __ = ThreadLocalReason.closable(localReason);
-                 CallbackContext ___ = CallbackContext.getInstance()) {
-                onFailure.accept(failException);
-            } catch (Throwable t) {
-                t.printStackTrace();
+    fun onFailure(failException: Throwable) {
+        api.callbackPool.execute {
+            try {
+                ThreadLocalReason.closable(localReason).use {
+                    CallbackContext.getInstance().use { onFailure?.accept(failException) }
+                }
+            } catch (t: Throwable) {
+                t.printStackTrace()
             }
-        });
+        }
     }
 
-    @NotNull
-    public Route getRoute() {
-        return route;
+    fun getBody(): RequestBody? {
+        return body
     }
 
-    @Nullable
-    public RequestBody getBody() {
-        return body;
+    fun shouldQueue(): Boolean {
+        return shouldQueue
     }
 
-    public boolean shouldQueue() {
-        return shouldQueue;
+    fun cancel() {
+        isCanceled = true
     }
 
-    public void cancel() {
-        this.isCanceled = true;
+    fun handleResponse(response: Response) {
+        restAction.handleResponse(response, this)
     }
 
-    public boolean isCanceled() {
-        return isCanceled;
-    }
-
-    public void handleResponse(@NotNull Response response) {
-        restAction.handleResponse(response, this);
+    init {
+        this.onFailure = if (onFailure is ContextConsumer) {
+            onFailure
+        } else {
+            onFailure?.let { from(it) }
+        }
+        this.shouldQueue = shouldQueue
+        this.body = body
+        this.route = route
+        api = restAction.jda
     }
 }

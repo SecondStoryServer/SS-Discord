@@ -131,7 +131,7 @@ public class TextChannel implements ISnowflake, Comparable<TextChannel> {
 
         @Override
         protected void handleSuccess(@NotNull Response response, @NotNull Request<Message> request) {
-            request.onSuccess(api.getEntityBuilder().createMessage(response.getObject(), channel, false));
+            request.onSuccess(api.getEntityBuilder().createMessage(response.getDataObject(), channel, false));
         }
 
         @Override

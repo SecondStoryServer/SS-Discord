@@ -32,11 +32,11 @@ public class ZlibDecompressor {
         return buffer;
     }
 
-    private int getIntBigEndian(byte @NotNull [] array, int offset) {
+    private int getIntBigEndian(@NotNull byte[] array, int offset) {
         return array[offset + 3] & 0xFF | (array[offset + 2] & 0xFF) << 8 | (array[offset + 1] & 0xFF) << 16 | (array[offset] & 0xFF) << 24;
     }
 
-    private boolean isFlush(byte @NotNull [] data) {
+    private boolean isFlush(@NotNull byte[] data) {
         if (data.length < 4) return false;
         int suffix = getIntBigEndian(data, data.length - 4);
         return suffix == Z_SYNC_FLUSH;

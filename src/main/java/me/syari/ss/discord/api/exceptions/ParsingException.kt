@@ -1,11 +1,6 @@
-package me.syari.ss.discord.api.exceptions;
+package me.syari.ss.discord.api.exceptions
 
-public class ParsingException extends IllegalStateException {
-    public ParsingException(String message) {
-        super(message);
-    }
-
-    public ParsingException(Exception cause) {
-        super(cause);
-    }
+class ParsingException: IllegalStateException {
+    constructor(message: String?): super(message)
+    constructor(cause: Exception?): super(cause)
 }

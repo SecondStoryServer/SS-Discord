@@ -1,167 +1,151 @@
-package me.syari.ss.discord.api.requests;
+package me.syari.ss.discord.api.requests
 
-import me.syari.ss.discord.api.exceptions.ParsingException;
-import me.syari.ss.discord.api.utils.IOFunction;
-import me.syari.ss.discord.api.utils.data.DataObject;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import me.syari.ss.discord.api.exceptions.ParsingException
+import me.syari.ss.discord.api.utils.IOFunction
+import me.syari.ss.discord.api.utils.data.DataObject
+import okhttp3.Response
+import java.io.BufferedInputStream
+import java.io.BufferedReader
+import java.io.Closeable
+import java.io.EOFException
+import java.io.IOException
+import java.io.InputStream
+import java.io.InputStreamReader
+import java.util.Optional
+import java.util.stream.Collectors
+import java.util.zip.GZIPInputStream
+import java.util.zip.Inflater
+import java.util.zip.InflaterInputStream
+import java.util.zip.ZipException
 
-import java.io.*;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.Inflater;
-import java.util.zip.InflaterInputStream;
-import java.util.zip.ZipException;
+class Response(private val rawResponse: Response?, val code: Int, val retryAfter: Long): Closeable {
+    private var body: InputStream? = null
+    private var fallbackString: String? = null
+    private var anyData: Any? = null
+    private var attemptedParsing = false
+    var exception: Exception? = null
+        private set
 
-public class Response implements Closeable {
-    public static final int ERROR_CODE = -1;
-    public static final IOFunction<BufferedReader, DataObject> JSON_SERIALIZE_OBJECT = DataObject::fromJson;
-
-    public final int code;
-    public final long retryAfter;
-    private final InputStream body;
-    private final okhttp3.Response rawResponse;
-    private String fallbackString;
-    private Object object;
-    private boolean attemptedParsing = false;
-    private Exception exception;
-
-    public Response(@Nullable final okhttp3.Response response, @NotNull final Exception exception) {
-        this(response, response != null ? response.code() : ERROR_CODE, -1);
-        this.exception = exception;
+    constructor(response: Response?, exception: Exception): this(
+        response, response?.code ?: ERROR_CODE, -1
+    ) {
+        this.exception = exception
     }
 
-    @SuppressWarnings("ConstantConditions")
-    private @Nullable InputStream getBody(okhttp3.@NotNull Response response) throws IOException {
-        String encoding = response.header("content-encoding", "");
-        InputStream data = new BufferedInputStream(response.body().byteStream());
-        data.mark(256);
+    @Throws(IOException::class)
+    private fun getBody(response: Response): InputStream? {
+        val encoding = response.header("content-encoding", "")
+        val data: InputStream = BufferedInputStream(response.body!!.byteStream())
+        data.mark(256)
         try {
-            if (encoding.equalsIgnoreCase("gzip")) {
-                return new GZIPInputStream(data);
-            } else if (encoding.equalsIgnoreCase("deflate")) {
-                return new InflaterInputStream(data, new Inflater(true));
+            if (encoding.equals("gzip", ignoreCase = true)) {
+                return GZIPInputStream(data)
+            } else if (encoding.equals("deflate", ignoreCase = true)) {
+                return InflaterInputStream(data, Inflater(true))
             }
-        } catch (ZipException | EOFException ex) {
-            data.reset();
-            return null;
+        } catch (ex: ZipException) {
+            data.reset()
+            return null
+        } catch (ex: EOFException) {
+            data.reset()
+            return null
         }
-        return data;
+        return data
     }
 
-    public Response(@Nullable final okhttp3.Response response, final int code, final long retryAfter) {
-        this.rawResponse = response;
-        this.code = code;
-        this.exception = null;
-        this.retryAfter = retryAfter;
+    constructor(retryAfter: Long): this(null, 429, retryAfter)
+    constructor(response: Response, retryAfter: Long): this(response, response.code, retryAfter)
 
-        if (response == null) {
-            this.body = null;
+    val dataObject: DataObject
+        get() = parseBody(DataObject::class.java, JSON_SERIALIZE_OBJECT).orElseThrow { IllegalStateException() }
+
+    fun optObject(): Optional<DataObject> {
+        return parseBody(true, DataObject::class.java, JSON_SERIALIZE_OBJECT)
+    }
+
+    val string: String
+        get() = parseBody(
+            String::class.java,
+            IOFunction { reader: BufferedReader -> readString(reader) }).orElseGet { if (fallbackString == null) "N/A" else fallbackString }
+
+    val isError: Boolean
+        get() = code == ERROR_CODE
+
+    val isOk: Boolean
+        get() = code in 200..299
+
+    val isRateLimit: Boolean
+        get() = code == 429
+
+    override fun toString(): String {
+        return if (exception == null) "HTTPResponse[" + code + (if (this.anyData == null) "" else ", " + this.anyData.toString()) + ']' else "HTTPException[" + exception!!.message + ']'
+    }
+
+    override fun close() {
+        rawResponse?.close()
+    }
+
+    private fun readString(reader: BufferedReader): String {
+        return reader.lines().collect(Collectors.joining("\n"))
+    }
+
+    private fun <T> parseBody(clazz: Class<T>, parser: IOFunction<BufferedReader, T>): Optional<T> {
+        return parseBody(false, clazz, parser)
+    }
+
+    private fun <T> parseBody(
+        opt: Boolean, clazz: Class<T>, parser: IOFunction<BufferedReader, T>
+    ): Optional<T> {
+        if (attemptedParsing) {
+            return anyData?.let {
+                if(clazz.isAssignableFrom(it.javaClass)){
+                    Optional.of(clazz.cast(it))
+                } else {
+                    null
+                }
+            } ?: Optional.empty()
+        }
+        attemptedParsing = true
+        if (body == null || rawResponse == null || rawResponse.body!!.contentLength() == 0L) {
+            return Optional.empty()
+        }
+        val reader = BufferedReader(InputStreamReader(body))
+        return try {
+            reader.mark(1024)
+            val t = parser.apply(reader)
+            this.anyData = t
+            Optional.ofNullable(t)
+        } catch (ex1: Exception) {
+            try {
+                reader.reset()
+                fallbackString = readString(reader)
+                reader.close()
+            } catch (ex2: NullPointerException) {
+                ex2.printStackTrace()
+            } catch (ex2: IOException) {
+                ex2.printStackTrace()
+            }
+            if (opt && ex1 is ParsingException) {
+                Optional.empty()
+            } else {
+                throw IllegalStateException("An error occurred while parsing the response for a RestAction", ex1)
+            }
+        }
+    }
+
+    companion object {
+        const val ERROR_CODE = -1
+        val JSON_SERIALIZE_OBJECT = IOFunction { stream: BufferedReader -> DataObject.fromJson(stream) }
+    }
+
+    init {
+        body = if (rawResponse == null) {
+            null
         } else {
             try {
-                this.body = getBody(response);
-            } catch (final Exception ex) {
-                throw new IllegalStateException("An error occurred while parsing the response for a RestAction", ex);
-            }
-        }
-    }
-
-    public Response(final long retryAfter) {
-        this(null, 429, retryAfter);
-    }
-
-    public Response(@NotNull final okhttp3.Response response, final long retryAfter) {
-        this(response, response.code(), retryAfter);
-    }
-
-    @NotNull
-    public DataObject getObject() {
-        return parseBody(DataObject.class, Response.JSON_SERIALIZE_OBJECT).orElseThrow(IllegalStateException::new);
-    }
-
-    @NotNull
-    public Optional<DataObject> optObject() {
-        return parseBody(true, DataObject.class, JSON_SERIALIZE_OBJECT);
-    }
-
-    @NotNull
-    public String getString() {
-        return parseBody(String.class, this::readString).orElseGet(() -> fallbackString == null ? "N/A" : fallbackString);
-    }
-
-    @Nullable
-    public Exception getException() {
-        return exception;
-    }
-
-    public boolean isError() {
-        return this.code == Response.ERROR_CODE;
-    }
-
-    public boolean isOk() {
-        return 199 < this.code && this.code < 300;
-    }
-
-    public boolean isRateLimit() {
-        return this.code == 429;
-    }
-
-    @Override
-    public String toString() {
-        return this.exception == null
-                ? "HTTPResponse[" + this.code + (this.object == null ? "" : ", " + this.object.toString()) + ']'
-                : "HTTPException[" + this.exception.getMessage() + ']';
-    }
-
-    @Override
-    public void close() {
-        if (rawResponse != null) {
-            rawResponse.close();
-        }
-    }
-
-    private String readString(@NotNull BufferedReader reader) {
-        return reader.lines().collect(Collectors.joining("\n"));
-    }
-
-    private <T> Optional<T> parseBody(Class<T> clazz, IOFunction<BufferedReader, T> parser) {
-        return parseBody(false, clazz, parser);
-    }
-
-    @SuppressWarnings("ConstantConditions")
-    private <T> Optional<T> parseBody(boolean opt, Class<T> clazz, IOFunction<BufferedReader, T> parser) {
-        if (attemptedParsing) {
-            if (object != null && clazz.isAssignableFrom(object.getClass())) {
-                return Optional.of(clazz.cast(object));
-            } else {
-                return Optional.empty();
-            }
-        }
-
-        attemptedParsing = true;
-        if (body == null || rawResponse == null || rawResponse.body().contentLength() == 0) {
-            return Optional.empty();
-        }
-
-        BufferedReader reader = new BufferedReader(new InputStreamReader(body));
-        try {
-            reader.mark(1024);
-            T t = parser.apply(reader);
-            this.object = t;
-            return Optional.ofNullable(t);
-        } catch (final Exception ex1) {
-            try {
-                reader.reset();
-                this.fallbackString = readString(reader);
-                reader.close();
-            } catch (NullPointerException | IOException ex2) {
-                ex2.printStackTrace();
-            }
-            if (opt && ex1 instanceof ParsingException) {
-                return Optional.empty();
-            } else {
-                throw new IllegalStateException("An error occurred while parsing the response for a RestAction", ex1);
+                getBody(rawResponse)
+            } catch (ex: Exception) {
+                throw IllegalStateException("An error occurred while parsing the response for a RestAction", ex)
             }
         }
     }

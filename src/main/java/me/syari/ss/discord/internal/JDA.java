@@ -110,10 +110,10 @@ public class JDA {
             @Override
             public void handleResponse(@NotNull Response response, Request<DataObject> request) {
                 if (response.isOk()) {
-                    request.onSuccess(response.getObject());
+                    request.onSuccess(response.getDataObject());
                 } else if (response.isRateLimit()) {
-                    request.onFailure(new RateLimitedException(request.getRoute(), response.retryAfter));
-                } else if (response.code == 401) {
+                    request.onFailure(new RateLimitedException(request.getRoute(), response.getRetryAfter()));
+                } else if (response.getCode() == 401) {
                     request.onSuccess(null);
                 } else {
                     request.onFailure(new LoginException("When verifying the authenticity of the provided token, Discord returned an unknown response:\n" + response.toString()));

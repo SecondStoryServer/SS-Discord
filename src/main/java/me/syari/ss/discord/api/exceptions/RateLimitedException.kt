@@ -1,14 +1,9 @@
-package me.syari.ss.discord.api.exceptions;
+package me.syari.ss.discord.api.exceptions
 
-import me.syari.ss.discord.internal.requests.Route;
-import org.jetbrains.annotations.NotNull;
+import me.syari.ss.discord.internal.requests.Route
 
-public class RateLimitedException extends Exception {
-    public RateLimitedException(@NotNull Route route, long retryAfter) {
-        this(route.getBaseRoute() + ":" + route.getMajorParameters(), retryAfter);
-    }
-
-    public RateLimitedException(String route, long retryAfter) {
-        super(String.format("The request was ratelimited! Retry-After: %d  Route: %s", retryAfter, route));
-    }
+class RateLimitedException(
+    route: String?, retryAfter: Long
+): Exception(String.format("The request was ratelimited! Retry-After: %d  Route: %s", retryAfter, route)) {
+    constructor(route: Route, retryAfter: Long): this(route.baseRoute + ":" + route.majorParameters, retryAfter)
 }
