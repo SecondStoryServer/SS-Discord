@@ -21,9 +21,9 @@ public class DataArray implements Iterable<Object> {
         mapper.registerModule(module);
     }
 
-    protected final List<Object> data;
+    final List<Object> data;
 
-    protected DataArray(List<Object> data) {
+    DataArray(List<Object> data) {
         this.data = data;
     }
 

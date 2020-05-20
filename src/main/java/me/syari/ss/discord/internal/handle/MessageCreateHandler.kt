@@ -5,7 +5,7 @@ import me.syari.ss.discord.internal.JDA
 import me.syari.ss.discord.internal.entities.EntityBuilder
 import me.syari.ss.discord.internal.entities.TextChannel
 
-class MessageCreateHandler(api: JDA): SocketHandler(api) {
+class MessageCreateHandler(val jda: JDA): SocketHandler(jda) {
     override fun handleInternally(content: DataObject): Long? {
         println(">> MessageCreateHandler")
         if (content.getInt("type") != 0) return null

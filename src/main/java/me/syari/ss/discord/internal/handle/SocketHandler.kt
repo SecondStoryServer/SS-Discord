@@ -3,7 +3,7 @@ package me.syari.ss.discord.internal.handle
 import me.syari.ss.discord.api.data.DataObject
 import me.syari.ss.discord.internal.JDA
 
-abstract class SocketHandler(protected val jda: JDA) {
+abstract class SocketHandler(private val jda: JDA) {
     var responseNumber: Long = 0
     var allContent: DataObject? = null
 
@@ -16,5 +16,5 @@ abstract class SocketHandler(protected val jda: JDA) {
         allContent = null
     }
 
-    protected abstract fun handleInternally(content: DataObject): Long?
+    abstract fun handleInternally(content: DataObject): Long?
 }

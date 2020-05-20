@@ -27,9 +27,9 @@ public class DataObject {
         mapType = mapper.getTypeFactory().constructRawMapType(HashMap.class);
     }
 
-    protected final Map<String, Object> data;
+    final Map<String, Object> data;
 
-    protected DataObject(@NotNull Map<String, Object> data) {
+    DataObject(@NotNull Map<String, Object> data) {
         this.data = data;
     }
 

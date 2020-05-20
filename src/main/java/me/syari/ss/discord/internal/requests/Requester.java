@@ -20,7 +20,7 @@ public class Requester {
     public static final RequestBody EMPTY_BODY = RequestBody.create(null, new byte[0]);
     public static final MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json; charset=utf-8");
 
-    protected final JDA api;
+    private final JDA api;
     private final RateLimiter rateLimiter = new RateLimiter(this);
 
     private final OkHttpClient httpClient;

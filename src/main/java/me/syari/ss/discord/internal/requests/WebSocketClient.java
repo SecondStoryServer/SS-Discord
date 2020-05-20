@@ -50,7 +50,7 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
     private boolean handleIdentifyRateLimit = false;
     private boolean connected = false;
     public volatile boolean sentAuthInfo = false;
-    protected boolean processingReady = true;
+    private boolean processingReady = true;
     private volatile SessionController.SessionConnectNode connectNode;
 
     public WebSocketClient(@NotNull JDA api) {
@@ -94,7 +94,7 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
         locked(() -> chunkSyncQueue.add(request.toString()));
     }
 
-    protected boolean send(String message, boolean skipQueue) {
+    boolean send(String message, boolean skipQueue) {
         if (!connected) return false;
         long now = System.currentTimeMillis();
         if (this.ratelimitResetTime <= now) {
@@ -110,7 +110,7 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
         }
     }
 
-    protected void setupSendingThread() {
+    private void setupSendingThread() {
         ratelimitThread = new WebSocketSendingThread(this);
         ratelimitThread.start();
     }
@@ -130,7 +130,7 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
         close(1000, "Shutting down");
     }
 
-    protected synchronized void connect() {
+    private synchronized void connect() {
         if (api.getStatus() != JDA.Status.ATTEMPTING_TO_RECONNECT) api.setStatus(JDA.Status.CONNECTING_TO_WEBSOCKET);
         if (shutdown) throw new RejectedExecutionException("JDA is shutdown!");
         initiating = true;
@@ -220,7 +220,7 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
         }
     }
 
-    protected void queueReconnect() {
+    private void queueReconnect() {
         try {
             this.api.setStatus(JDA.Status.RECONNECT_QUEUED);
             this.connectNode = new ReconnectNode();
@@ -230,7 +230,7 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
         }
     }
 
-    protected void reconnect() throws InterruptedException {
+    private void reconnect() throws InterruptedException {
         if (shutdown) {
             api.setStatus(JDA.Status.SHUTDOWN);
             return;
@@ -254,19 +254,19 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
         }
     }
 
-    protected void setupKeepAlive(long timeout) {
+    private void setupKeepAlive(long timeout) {
         keepAliveThread = executor.scheduleAtFixedRate(() ->
         {
             if (connected) sendKeepAlive();
         }, 0, timeout, TimeUnit.MILLISECONDS);
     }
 
-    protected void sendKeepAlive() {
+    private void sendKeepAlive() {
         String keepAlivePacket = DataObject.empty().put("op", WebSocketCode.HEARTBEAT).put("d", api.getResponseTotal()).toString();
         send(keepAlivePacket, true);
     }
 
-    protected void sendIdentify() {
+    private void sendIdentify() {
         DataObject connectionProperties = DataObject.empty()
                 .put("$os", System.getProperty("os.name"))
                 .put("$browser", "JDA")
@@ -292,7 +292,7 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
         api.setStatus(JDA.Status.AWAITING_LOGIN_CONFIRMATION);
     }
 
-    protected void sendResume() {
+    private void sendResume() {
         DataObject resume = DataObject.empty()
                 .put("op", WebSocketCode.RESUME)
                 .put("d", DataObject.empty().put("session_id", sessionId).put("token", getToken()).put("seq", api.getResponseTotal()));
@@ -300,7 +300,7 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
         api.setStatus(JDA.Status.AWAITING_LOGIN_CONFIRMATION);
     }
 
-    protected void invalidate() {
+    private void invalidate() {
         sessionId = null;
         sentAuthInfo = false;
         locked(chunkSyncQueue::clear);
@@ -308,11 +308,11 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
         api.getGuildSetupController().clearCache();
     }
 
-    protected String getToken() {
+    private String getToken() {
         return api.getToken().substring("Bot ".length());
     }
 
-    protected void handleEvent(DataObject content) {
+    private void handleEvent(DataObject content) {
         try {
             onEvent(content);
         } catch (Exception ex) {
@@ -320,7 +320,7 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
         }
     }
 
-    protected void onEvent(@NotNull DataObject content) {
+    private void onEvent(@NotNull DataObject content) {
         int opCode = content.getInt("op");
         if (!content.isNull("s")) api.setResponseTotal(content.getInt("s"));
         switch (opCode) {
@@ -350,7 +350,7 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
         }
     }
 
-    protected void onDispatch(@NotNull DataObject raw) {
+    private void onDispatch(@NotNull DataObject raw) {
         String type = raw.getString("t");
         long responseTotal = api.getResponseTotal();
         if (!(raw.get("d") instanceof Map)) {
@@ -398,7 +398,7 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
         if (json != null) handleEvent(json);
     }
 
-    protected DataObject handleBinary(byte[] binary) throws DataFormatException {
+    private DataObject handleBinary(byte[] binary) throws DataFormatException {
         String json;
         try {
             json = decompressor.decompress(binary);
@@ -411,11 +411,11 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
         return DataObject.fromJson(json);
     }
 
-    protected void maybeUnlock() {
+    void maybeUnlock() {
         if (queueLock.isHeldByCurrentThread()) queueLock.unlock();
     }
 
-    protected void locked(@NotNull Runnable task) {
+    private void locked(@NotNull Runnable task) {
         try {
             queueLock.lockInterruptibly();
             task.run();
@@ -426,7 +426,7 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
         }
     }
 
-    protected <T> void locked(@NotNull Supplier<T> task) {
+    private <T> void locked(@NotNull Supplier<T> task) {
         try {
             queueLock.lockInterruptibly();
             task.get();

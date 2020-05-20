@@ -18,7 +18,7 @@ public class RateLimiter {
     private static final String GLOBAL_HEADER = "X-RateLimit-Global";
     private static final String HASH_HEADER = "X-RateLimit-Bucket";
     private static final String RETRY_AFTER_HEADER = "Retry-After";
-    protected final Requester requester;
+    private final Requester requester;
     private final ReentrantLock bucketLock = new ReentrantLock();
     private final Map<String, Bucket> bucket = new ConcurrentHashMap<>();
     private final Map<Bucket, Future<?>> rateLimitQueue = new ConcurrentHashMap<>();
@@ -50,7 +50,7 @@ public class RateLimiter {
         });
     }
 
-    protected boolean isSkipped(Iterator<Request> it, Request request) {
+    private boolean isSkipped(Iterator<Request> it, Request request) {
         try {
             if (request.isCanceled()) {
                 cancel(it, request, new CancellationException("RestAction has been cancelled"));

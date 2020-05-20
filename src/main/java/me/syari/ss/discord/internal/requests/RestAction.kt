@@ -73,7 +73,7 @@ open class RestAction<T>(
         }
     }
 
-    protected open fun handleSuccess(
+    open fun handleSuccess(
         response: Response, request: Request<T>
     ) {
         if (handler == null) {
