@@ -1,264 +1,265 @@
-package me.syari.ss.discord.internal.requests;
+package me.syari.ss.discord.internal.requests
 
-import me.syari.ss.discord.api.requests.Request;
-import okhttp3.Headers;
-import org.jetbrains.annotations.NotNull;
+import me.syari.ss.discord.api.requests.Request
+import okhttp3.Response
+import java.util.Queue
+import java.util.concurrent.CancellationException
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.ConcurrentLinkedQueue
+import java.util.concurrent.Future
+import java.util.concurrent.ScheduledExecutorService
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.locks.ReentrantLock
+import java.util.function.Supplier
 
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Queue;
-import java.util.concurrent.*;
-import java.util.concurrent.locks.ReentrantLock;
-import java.util.function.Supplier;
-
-public class RateLimiter {
-    private static final String RESET_AFTER_HEADER = "X-RateLimit-Reset-After";
-    private static final String LIMIT_HEADER = "X-RateLimit-Limit";
-    private static final String REMAINING_HEADER = "X-RateLimit-Remaining";
-    private static final String GLOBAL_HEADER = "X-RateLimit-Global";
-    private static final String HASH_HEADER = "X-RateLimit-Bucket";
-    private static final String RETRY_AFTER_HEADER = "Retry-After";
-    private final Requester requester;
-    private final ReentrantLock bucketLock = new ReentrantLock();
-    private final Map<String, Bucket> bucket = new ConcurrentHashMap<>();
-    private final Map<Bucket, Future<?>> rateLimitQueue = new ConcurrentHashMap<>();
-    private Future<?> cleanupWorker;
-
-    public RateLimiter(Requester requester) {
-        this.requester = requester;
+class RateLimiter(private val requester: Requester) {
+    private val bucketLock = ReentrantLock()
+    private val bucket: MutableMap<String, Bucket> = ConcurrentHashMap()
+    private val rateLimitQueue: MutableMap<Bucket?, Future<*>> = ConcurrentHashMap()
+    private var cleanupWorker: Future<*>? = null
+    fun init() {
+        cleanupWorker = scheduler.scheduleAtFixedRate({ cleanup() }, 30, 30, TimeUnit.SECONDS)
     }
 
-    public void init() {
-        cleanupWorker = getScheduler().scheduleAtFixedRate(this::cleanup, 30, 30, TimeUnit.SECONDS);
-    }
+    private val scheduler: ScheduledExecutorService
+        get() = requester.jda.rateLimitPool
 
-    private @NotNull
-    ScheduledExecutorService getScheduler() {
-        return requester.getJDA().getRateLimitPool();
-    }
-
-    private void cleanup() {
-        locked(bucketLock, () -> {
-            Iterator<Map.Entry<String, Bucket>> entries = bucket.entrySet().iterator();
+    private fun cleanup() {
+        locked(bucketLock, Runnable {
+            val entries: MutableIterator<Map.Entry<String, Bucket>> = bucket.entries.iterator()
             while (entries.hasNext()) {
-                Map.Entry<String, Bucket> entry = entries.next();
-                Bucket bucket = entry.getValue();
-                if ((bucket.isUnlimited() && bucket.requests.isEmpty()) || (bucket.requests.isEmpty() && bucket.reset <= getNow())) {
-                    entries.remove();
+                val entry = entries.next()
+                val bucket = entry.value
+                if (bucket.isUnlimited && bucket.requests.isEmpty() || bucket.requests.isEmpty() && bucket.reset <= now) {
+                    entries.remove()
                 }
             }
-        });
+        })
     }
 
-    private boolean isSkipped(Iterator<Request> it, Request request) {
+    private fun isSkipped(
+        it: MutableIterator<Request<*>>, request: Request<*>
+    ): Boolean {
         try {
-            if (request.isCanceled()) {
-                cancel(it, request, new CancellationException("RestAction has been cancelled"));
-                return true;
+            if (request.isCanceled) {
+                cancel(it, request, CancellationException("RestAction has been cancelled"))
+                return true
             }
-        } catch (Throwable ex) {
-            cancel(it, request, ex);
-            return true;
+        } catch (ex: Throwable) {
+            cancel(it, request, ex)
+            return true
         }
-        return false;
+        return false
     }
 
-    private void cancel(@NotNull Iterator<Request> iterator, @NotNull Request request, Throwable exception) {
-        request.onFailure(exception);
-        iterator.remove();
+    private fun cancel(
+        iterator: MutableIterator<Request<*>>, request: Request<*>, exception: Throwable
+    ) {
+        request.onFailure(exception)
+        iterator.remove()
     }
 
-    public void shutdown() {
-        if (cleanupWorker != null) cleanupWorker.cancel(false);
+    fun shutdown() {
+        cleanupWorker?.cancel(false)
     }
 
-    public Long getRateLimit(Route route) {
-        Bucket bucket = getBucket(route, false);
-        return bucket == null ? 0L : bucket.getRateLimit();
+    fun getRateLimit(route: Route): Long {
+        val bucket = getBucket(route, false)
+        return bucket?.rateLimit ?: 0L
     }
 
-    @SuppressWarnings("rawtypes")
-    public void queueRequest(Request request) {
-        locked(bucketLock, () -> {
-            Bucket bucket = getBucket(request.getRoute(), true);
-            bucket.enqueue(request);
-            runBucket(bucket);
-        });
+    fun queueRequest(request: Request<*>) {
+        locked(bucketLock, Runnable {
+            val bucket = getBucket(request.route, true)
+            bucket!!.enqueue(request)
+            runBucket(bucket)
+        })
     }
 
-    public Long handleResponse(Route route, okhttp3.Response response) {
-        bucketLock.lock();
-        try {
-            long rateLimit = updateBucket(route, response).getRateLimit();
-            if (response.code() == 429) {
-                return rateLimit;
+    fun handleResponse(route: Route, response: Response): Long? {
+        bucketLock.lock()
+        return try {
+            val rateLimit = updateBucket(route, response).rateLimit
+            if (response.code == 429) {
+                rateLimit
             } else {
-                return null;
+                null
             }
         } finally {
-            bucketLock.unlock();
+            bucketLock.unlock()
         }
     }
 
-    private Bucket updateBucket(Route route, okhttp3.Response response) {
-        return locked(bucketLock, () -> {
+    private fun updateBucket(
+        route: Route, response: Response
+    ): Bucket {
+        return locked(bucketLock, Supplier<Bucket> {
             try {
-                Bucket bucket = getBucket(route, true);
-                Headers headers = response.headers();
-                boolean global = headers.get(GLOBAL_HEADER) != null;
-                String hash = headers.get(HASH_HEADER);
-                long now = getNow();
+                var bucket = getBucket(route, true)
+                val headers = response.headers
+                val global = headers[GLOBAL_HEADER] != null
+                val hash = headers[HASH_HEADER]
+                val now = now
                 if (hash != null) {
-                    bucket = getBucket(route, true);
+                    bucket = getBucket(route, true)
                 }
                 if (global) {
-                    String retryAfterHeader = headers.get(RETRY_AFTER_HEADER);
-                    long retryAfter = parseLong(retryAfterHeader);
-                    requester.getJDA().getSessionController().setGlobalRatelimit(now + retryAfter);
-                } else if (response.code() == 429) {
-                    String retryAfterHeader = headers.get(RETRY_AFTER_HEADER);
-                    long retryAfter = parseLong(retryAfterHeader);
-                    bucket.remaining = 0;
-                    bucket.reset = getNow() + retryAfter;
-                    return bucket;
+                    val retryAfterHeader = headers[RETRY_AFTER_HEADER]
+                    val retryAfter = parseLong(retryAfterHeader)
+                    requester.jda.sessionController.setGlobalRatelimit(now + retryAfter)
+                } else if (response.code == 429) {
+                    val retryAfterHeader = headers[RETRY_AFTER_HEADER]
+                    val retryAfter = parseLong(retryAfterHeader)
+                    bucket!!.remaining = 0
+                    bucket.reset = now + retryAfter
+                    return@Supplier bucket
                 }
-                if (hash == null) return bucket;
-                bucket.limit = (int) Math.max(1L, parseLong(headers.get(LIMIT_HEADER)));
-                bucket.remaining = (int) parseLong(headers.get(REMAINING_HEADER));
-                bucket.reset = now + parseDouble(headers.get(RESET_AFTER_HEADER));
-                return bucket;
-            } catch (Exception e) {
-                return getBucket(route, true);
+                if (hash == null) return@Supplier bucket!!
+                bucket!!.limit = Math.max(1L, parseLong(headers[LIMIT_HEADER])).toInt()
+                bucket.remaining = parseLong(headers[REMAINING_HEADER]).toInt()
+                bucket.reset = now + parseDouble(headers[RESET_AFTER_HEADER])
+                return@Supplier bucket
+            } catch (e: Exception) {
+                return@Supplier getBucket(route, true)!!
             }
-        });
+        })
     }
 
-    private Bucket getBucket(Route route, boolean create) {
-        return locked(bucketLock, () ->
-        {
-            String bucketId = route.getMethod() + "/" + route.getBaseRoute() + ":" + route.getMajorParameters();
-            Bucket bucket = this.bucket.get(bucketId);
+    private fun getBucket(
+        route: Route, create: Boolean
+    ): Bucket? {
+        return locked(bucketLock, Supplier {
+            val bucketId = route.method.toString() + "/" + route.baseRoute + ":" + route.majorParameters
+            var bucket = bucket[bucketId]
             if (bucket == null && create) {
-                this.bucket.put(bucketId, bucket = new Bucket(bucketId));
+                this.bucket[bucketId] = Bucket(bucketId).also { bucket = it }
             }
-            return bucket;
-        });
+            bucket
+        })
     }
 
-    private void runBucket(Bucket bucket) {
-        locked(bucketLock, () -> rateLimitQueue.computeIfAbsent(bucket, (k) -> getScheduler().schedule(bucket, bucket.getRateLimit(), TimeUnit.MILLISECONDS)));
-    }
-
-    private long parseLong(String input) {
-        return input == null ? 0L : Long.parseLong(input);
-    }
-
-    private long parseDouble(String input) {
-        return input == null ? 0L : (long) (Double.parseDouble(input) * 1000);
-    }
-
-    public long getNow() {
-        return System.currentTimeMillis();
-    }
-
-    private class Bucket implements Runnable {
-        private final String bucketId;
-        private final Queue<Request> requests = new ConcurrentLinkedQueue<>();
-
-        private long reset = 0;
-        private int remaining = 1;
-        private int limit = 1;
-
-        private Bucket(String bucketId) {
-            this.bucketId = bucketId;
-        }
-
-        public void enqueue(Request request) {
-            requests.add(request);
-        }
-
-        public long getRateLimit() {
-            long now = getNow();
-            long global = requester.getJDA().getSessionController().getGlobalRatelimit();
-            if (now < global) return global - now;
-            if (reset <= now) {
-                remaining = limit;
-                return 0L;
+    private fun runBucket(bucket: Bucket?) {
+        locked(bucketLock, Supplier {
+            rateLimitQueue.computeIfAbsent(
+                bucket
+            ) {
+                scheduler.schedule(
+                    bucket, bucket!!.rateLimit, TimeUnit.MILLISECONDS
+                )
             }
-            return remaining < 1 ? reset - now : 0L;
+        })
+    }
+
+    private fun parseLong(input: String?): Long {
+        return input?.toLong() ?: 0L
+    }
+
+    private fun parseDouble(input: String?): Long {
+        return if (input == null) 0L else (input.toDouble() * 1000).toLong()
+    }
+
+    val now: Long
+        get() = System.currentTimeMillis()
+
+    private inner class Bucket(private val bucketId: String): Runnable {
+        val requests: Queue<Request<*>> = ConcurrentLinkedQueue()
+        var reset: Long = 0
+        var remaining = 1
+        var limit = 1
+        fun enqueue(request: Request<*>) {
+            requests.add(request)
         }
 
-        private boolean isUnlimited() {
-            return bucketId.startsWith("unlimited");
+        val rateLimit: Long
+            get() {
+                val now = now
+                val global = requester.jda.sessionController.getGlobalRatelimit()
+                if (now < global) return global - now
+                if (reset <= now) {
+                    remaining = limit
+                    return 0L
+                }
+                return if (remaining < 1) reset - now else 0L
+            }
+
+        val isUnlimited: Boolean
+            get() = bucketId.startsWith("unlimited")
+
+        private fun backoff() {
+            locked(bucketLock, Runnable {
+                rateLimitQueue.remove(this)
+                if (!requests.isEmpty()) runBucket(this)
+            })
         }
 
-        private void backoff() {
-            locked(bucketLock, () -> {
-                rateLimitQueue.remove(this);
-                if (!requests.isEmpty()) runBucket(this);
-            });
-        }
-
-        @Override
-        public void run() {
-            Iterator<Request> iterator = requests.iterator();
+        override fun run() {
+            val iterator = requests.iterator()
             while (iterator.hasNext()) {
-                Long rateLimit = getRateLimit();
-                if (0L < rateLimit) break;
-                Request request = iterator.next();
-                if (isUnlimited()) {
-                    boolean shouldSkip = locked(bucketLock, () -> {
-                        Bucket bucket = getBucket(request.getRoute(), true);
-                        if (bucket != this) {
-                            bucket.enqueue(request);
-                            iterator.remove();
-                            runBucket(bucket);
-                            return true;
+                var rateLimit: Long? = rateLimit
+                if (0L < rateLimit!!) break
+                val request = iterator.next()
+                if (isUnlimited) {
+                    val shouldSkip = locked(bucketLock, Supplier {
+                        val bucket = getBucket(request.route, true)
+                        if (bucket !== this) {
+                            bucket!!.enqueue(request)
+                            iterator.remove()
+                            runBucket(bucket)
+                            return@Supplier true
                         }
-                        return false;
-                    });
-                    if (shouldSkip) continue;
+                        false
+                    })
+                    if (shouldSkip) continue
                 }
-                if (isSkipped(iterator, request)) continue;
+                if (isSkipped(iterator, request)) continue
                 try {
-                    rateLimit = requester.execute(request, false);
+                    rateLimit = requester.execute(request, false)
                     if (rateLimit == null) {
-                        iterator.remove();
+                        iterator.remove()
                     } else {
-                        break;
+                        break
                     }
-                } catch (Exception ex) {
-                    break;
+                } catch (ex: Exception) {
+                    break
                 }
             }
-            backoff();
+            backoff()
         }
 
-        @Override
-        public String toString() {
-            return bucketId;
+        override fun toString(): String {
+            return bucketId
+        }
+
+    }
+
+    companion object {
+        private const val RESET_AFTER_HEADER = "X-RateLimit-Reset-After"
+        private const val LIMIT_HEADER = "X-RateLimit-Limit"
+        private const val REMAINING_HEADER = "X-RateLimit-Remaining"
+        private const val GLOBAL_HEADER = "X-RateLimit-Global"
+        private const val HASH_HEADER = "X-RateLimit-Bucket"
+        private const val RETRY_AFTER_HEADER = "Retry-After"
+        private fun <E> locked(lock: ReentrantLock, task: Supplier<E>): E {
+            return try {
+                lock.lockInterruptibly()
+                task.get()
+            } catch (ex: InterruptedException) {
+                throw IllegalStateException(ex)
+            } finally {
+                if (lock.isHeldByCurrentThread) lock.unlock()
+            }
+        }
+
+        private fun locked(lock: ReentrantLock, task: Runnable) {
+            try {
+                lock.lockInterruptibly()
+                task.run()
+            } catch (e: InterruptedException) {
+                throw IllegalStateException(e)
+            } finally {
+                if (lock.isHeldByCurrentThread) lock.unlock()
+            }
         }
     }
 
-    private static <E> E locked(@NotNull ReentrantLock lock, @NotNull Supplier<E> task) {
-        try {
-            lock.lockInterruptibly();
-            return task.get();
-        } catch (InterruptedException ex) {
-            throw new IllegalStateException(ex);
-        } finally {
-            if (lock.isHeldByCurrentThread()) lock.unlock();
-        }
-    }
-
-    private static void locked(@NotNull ReentrantLock lock, @NotNull Runnable task) {
-        try {
-            lock.lockInterruptibly();
-            task.run();
-        } catch (InterruptedException e) {
-            throw new IllegalStateException(e);
-        } finally {
-            if (lock.isHeldByCurrentThread()) lock.unlock();
-        }
-    }
 }
