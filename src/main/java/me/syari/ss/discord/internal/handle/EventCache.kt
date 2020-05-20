@@ -16,7 +16,7 @@ class EventCache {
     fun timeout(responseTotal: Long) {
         if (eventCache.isEmpty()) return
         val count = AtomicInteger()
-        eventCache.forEach { (type: Type?, map: TLongObjectMap<MutableList<CacheNode>>) ->
+        eventCache.forEach { (_: Type?, map: TLongObjectMap<MutableList<CacheNode>>) ->
             if (map.isEmpty) return@forEach
             val iterator = map.iterator()
             while (iterator.hasNext()) {

@@ -29,7 +29,7 @@ public class GuildSetupNode {
     GuildSetupNode(long id, @NotNull GuildSetupController controller) {
         this.id = id;
         this.controller = controller;
-        api = controller.getJDA();
+        api = controller.getJda();
     }
 
     @Override

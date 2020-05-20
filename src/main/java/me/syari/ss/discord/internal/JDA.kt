@@ -1,257 +1,196 @@
-package me.syari.ss.discord.internal;
+package me.syari.ss.discord.internal
 
-import com.neovisionaries.ws.client.WebSocketFactory;
-import me.syari.ss.discord.api.MessageReceivedEvent;
-import me.syari.ss.discord.api.exceptions.RateLimitedException;
-import me.syari.ss.discord.api.requests.Request;
-import me.syari.ss.discord.api.requests.Response;
-import me.syari.ss.discord.api.utils.SessionController;
-import me.syari.ss.discord.api.utils.data.DataObject;
-import me.syari.ss.discord.internal.entities.EntityBuilder;
-import me.syari.ss.discord.internal.entities.Message;
-import me.syari.ss.discord.internal.handle.EventCache;
-import me.syari.ss.discord.internal.handle.GuildSetupController;
-import me.syari.ss.discord.internal.requests.Requester;
-import me.syari.ss.discord.internal.requests.RestAction;
-import me.syari.ss.discord.internal.requests.Route;
-import me.syari.ss.discord.internal.requests.WebSocketClient;
-import me.syari.ss.discord.internal.utils.config.ThreadingConfig;
-import okhttp3.OkHttpClient;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
+import com.neovisionaries.ws.client.WebSocketFactory
+import me.syari.ss.discord.api.MessageReceivedEvent
+import me.syari.ss.discord.api.exceptions.RateLimitedException
+import me.syari.ss.discord.api.requests.Request
+import me.syari.ss.discord.api.requests.Response
+import me.syari.ss.discord.api.utils.SessionController
+import me.syari.ss.discord.api.utils.data.DataObject
+import me.syari.ss.discord.internal.entities.EntityBuilder
+import me.syari.ss.discord.internal.entities.Message
+import me.syari.ss.discord.internal.handle.EventCache
+import me.syari.ss.discord.internal.handle.GuildSetupController
+import me.syari.ss.discord.internal.requests.Requester
+import me.syari.ss.discord.internal.requests.RestAction
+import me.syari.ss.discord.internal.requests.Route.Companion.selfRoute
+import me.syari.ss.discord.internal.requests.WebSocketClient
+import me.syari.ss.discord.internal.utils.config.ThreadingConfig
+import okhttp3.OkHttpClient
+import org.jetbrains.annotations.Contract
+import java.util.concurrent.ExecutionException
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.ScheduledExecutorService
+import java.util.function.Consumer
+import java.util.function.Supplier
+import javax.security.auth.login.LoginException
 
-import javax.security.auth.login.LoginException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.function.Consumer;
+class JDA(token: String, messageReceivedEvent: Consumer<MessageReceivedEvent>) {
+    protected val shutdownHook = Thread(Runnable { shutdown() }, "JDA Shutdown Hook")
+    val entityBuilder = EntityBuilder(this)
+    val eventCache = EventCache()
+    val guildSetupController = GuildSetupController(this)
+    val token: String
+    protected val threadConfig = ThreadingConfig()
+    val sessionController = SessionController()
+    val httpClient = OkHttpClient.Builder().build()
+    val webSocketFactory = WebSocketFactory()
+    private val messageReceivedEvent: Consumer<MessageReceivedEvent>
+    lateinit var client: WebSocketClient
+        protected set
+    val requester = Requester(this)
+    var status = Status.INITIALIZING
+        set(value) {
+            synchronized(field) { field = value }
+        }
 
-public class JDA {
-    @Contract(pure = true)
-    public static @NotNull
-    JDA build(@NotNull String token, Consumer<MessageReceivedEvent> messageReceivedEvent) throws LoginException {
-        JDA jda = new JDA(token, messageReceivedEvent);
-        jda.setStatus(JDA.Status.INITIALIZED);
-        jda.login();
-        return jda;
-    }
+    var responseTotal: Long = 0
+        protected set
+    var gatewayUrl: String? = null
+        protected set
 
-    protected final Thread shutdownHook = new Thread(this::shutdown, "JDA Shutdown Hook");
-    protected final EntityBuilder entityBuilder = new EntityBuilder(this);
-    protected final EventCache eventCache = new EventCache();
-    protected final GuildSetupController guildSetupController = new GuildSetupController(this);
-    protected final String token;
-    protected final ThreadingConfig threadConfig = new ThreadingConfig();
-    private final SessionController sessionController = new SessionController();
-    private final OkHttpClient httpClient = new OkHttpClient.Builder().build();
-    private final WebSocketFactory webSocketFactory = new WebSocketFactory();
-    private final Consumer<MessageReceivedEvent> messageReceivedEvent;
-    protected WebSocketClient client;
-    protected final Requester requester = new Requester(this);
-    protected Status status = Status.INITIALIZING;
-    protected long responseTotal;
-    protected String gatewayUrl;
-
-    public JDA(@NotNull String token, @NotNull Consumer<MessageReceivedEvent> messageReceivedEvent) {
-        this.token = "Bot " + token;
-        this.messageReceivedEvent = messageReceivedEvent;
-    }
-
-    public boolean chunkGuild(long id) {
-        try {
-            return ChunkingFilter.ALL.filter(id);
-        } catch (Exception e) {
-            return true;
+    fun chunkGuild(id: Long): Boolean {
+        return try {
+            true
+        } catch (e: Exception) {
+            true
         }
     }
 
-    public SessionController getSessionController() {
-        return sessionController;
+    @Throws(LoginException::class)
+    fun login() {
+        threadConfig.init(Supplier { "JDA" })
+        requester.rateLimiter.init()
+        gatewayUrl = gateway
+        status = Status.LOGGING_IN
+        verifyToken()
+        client = WebSocketClient(this)
+        Runtime.getRuntime().addShutdownHook(shutdownHook)
     }
 
-    public GuildSetupController getGuildSetupController() {
-        return guildSetupController;
-    }
+    val gateway: String
+        get() = sessionController.getGateway(this)
 
-    public void login() throws LoginException {
-        threadConfig.init(() -> "JDA");
-        requester.getRateLimiter().init();
-        this.gatewayUrl = getGateway();
-        setStatus(Status.LOGGING_IN);
-        verifyToken();
-        client = new WebSocketClient(this);
-        Runtime.getRuntime().addShutdownHook(shutdownHook);
-    }
 
-    public String getGateway() {
-        return sessionController.getGateway(this);
-    }
 
-    public void setStatus(Status status) {
-        synchronized (this.status) {
-            this.status = status;
-        }
-    }
-
-    public void verifyToken() throws LoginException {
-        RestAction<DataObject> login = new RestAction<DataObject>(this, Route.getSelfRoute()) {
-            @Override
-            public void handleResponse(@NotNull Response response, Request<DataObject> request) {
-                if (response.isOk()) {
-                    request.onSuccess(response.getDataObject());
-                } else if (response.isRateLimit()) {
-                    request.onFailure(new RateLimitedException(request.getRoute(), response.getRetryAfter()));
-                } else if (response.getCode() == 401) {
-                    request.onSuccess(null);
-                } else {
-                    request.onFailure(new LoginException("When verifying the authenticity of the provided token, Discord returned an unknown response:\n" + response.toString()));
+    @Throws(LoginException::class)
+    fun verifyToken() {
+        val login: RestAction<DataObject> = object: RestAction<DataObject>(this@JDA, selfRoute) {
+            override fun handleResponse(
+                response: Response, request: Request<DataObject>
+            ) {
+                when {
+                    response.isOk -> request.onSuccess(response.dataObject)
+                    response.isRateLimit -> request.onFailure(RateLimitedException(request.route, response.retryAfter))
+                    response.code == 401 -> request.onSuccess(null)
+                    else -> request.onFailure(LoginException("When verifying the authenticity of the provided token, Discord returned an unknown response:\n$response"))
                 }
             }
-        };
-        DataObject userResponse = checkToken(login);
-        if (userResponse != null) return;
-        userResponse = checkToken(login);
-        shutdownNow();
-        if (userResponse == null) throw new LoginException("The provided token is invalid!");
+        }
+        var userResponse = checkToken(login)
+        if (userResponse != null) return
+        userResponse = checkToken(login)
+        shutdownNow()
+        if (userResponse == null) throw LoginException("The provided token is invalid!")
     }
 
-    private DataObject checkToken(RestAction<DataObject> login) throws LoginException {
-        DataObject userResponse;
-        try {
-            userResponse = login.complete();
-        } catch (RuntimeException ex) {
-            Throwable throwable = ex.getCause() instanceof ExecutionException ? ex.getCause().getCause() : null;
-            if (throwable instanceof LoginException) {
-                throw new LoginException(throwable.getMessage());
+    @Throws(LoginException::class)
+    private fun checkToken(login: RestAction<DataObject>): DataObject {
+        val userResponse: DataObject
+        userResponse = try {
+            login.complete()
+        } catch (ex: RuntimeException) {
+            val cause = ex.cause
+            val throwable = if (cause is ExecutionException) cause.cause else null
+            if (throwable is LoginException) {
+                throw LoginException(throwable.message)
             } else {
-                throw ex;
+                throw ex
             }
         }
-        return userResponse;
+        return userResponse
     }
 
-    @NotNull
-    public String getToken() {
-        return token;
-    }
-
-    @NotNull
-    public Status getStatus() {
-        return status;
-    }
-
-    public void awaitStatus(@NotNull Status status, @NotNull Status... failOn) throws InterruptedException {
-        if (!status.isInit())
-            throw new IllegalArgumentException(String.format("Cannot await the status %s as it is not part of the login cycle!", status));
-        if (getStatus() == Status.CONNECTED) return;
-        List<Status> failStatus = Arrays.asList(failOn);
-        while (!getStatus().isInit() || getStatus().ordinal() < status.ordinal()) {
-            if (getStatus() == Status.SHUTDOWN) {
-                throw new IllegalStateException("Was shutdown trying to await status");
-            } else if (failStatus.contains(getStatus())) {
-                return;
+    @Throws(InterruptedException::class)
+    fun awaitStatus(
+        status: Status, vararg failOn: Status
+    ) {
+        require(status.isInit) {
+            String.format(
+                "Cannot await the status %s as it is not part of the login cycle!", status
+            )
+        }
+        if (status == Status.CONNECTED) return
+        val failStatus = listOf(*failOn)
+        while (!status.isInit || status.ordinal < status.ordinal) {
+            check(status != Status.SHUTDOWN) { "Was shutdown trying to await status" }
+            if (failStatus.contains(status)) {
+                return
             } else {
-                Thread.sleep(50);
+                Thread.sleep(50)
             }
         }
     }
 
-    public void awaitReady() throws InterruptedException {
-        awaitStatus(Status.CONNECTED);
+    @Throws(InterruptedException::class)
+    fun awaitReady() {
+        awaitStatus(Status.CONNECTED)
     }
 
-    @NotNull
-    public ScheduledExecutorService getRateLimitPool() {
-        return threadConfig.getRateLimitPool();
+    val rateLimitPool: ScheduledExecutorService
+        get() = threadConfig.getRateLimitPool()
+
+    val gatewayPool: ScheduledExecutorService
+        get() = threadConfig.getGatewayPool()
+
+    val callbackPool: ExecutorService
+        get() = threadConfig.callbackPool
+
+    fun isUnavailable(guildId: Long): Boolean {
+        return guildSetupController.isUnavailable(guildId)
     }
 
-    @NotNull
-    public ScheduledExecutorService getGatewayPool() {
-        return threadConfig.getGatewayPool();
+    @Synchronized
+    private fun shutdownNow() {
+        shutdown()
+        threadConfig.shutdownNow()
     }
 
-    @NotNull
-    public ExecutorService getCallbackPool() {
-        return threadConfig.getCallbackPool();
+    @Synchronized
+    fun shutdown() {
+        if (status == Status.SHUTDOWN || status == Status.SHUTTING_DOWN) return
+        status = Status.SHUTTING_DOWN
+        val client = client
+        client?.shutdown()
+        shutdownInternals()
     }
 
-    @NotNull
-    public OkHttpClient getHttpClient() {
-        return httpClient;
+    fun callMessageReceiveEvent(message: Message?) {
+        messageReceivedEvent.accept(MessageReceivedEvent(message!!))
     }
 
-    public boolean isUnavailable(long guildId) {
-        return guildSetupController.isUnavailable(guildId);
-    }
-
-    private synchronized void shutdownNow() {
-        shutdown();
-        threadConfig.shutdownNow();
-    }
-
-    public synchronized void shutdown() {
-        if (status == Status.SHUTDOWN || status == Status.SHUTTING_DOWN) return;
-        setStatus(Status.SHUTTING_DOWN);
-        WebSocketClient client = getClient();
-        if (client != null) client.shutdown();
-        shutdownInternals();
-    }
-
-    public void callMessageReceiveEvent(Message message) {
-        messageReceivedEvent.accept(new MessageReceivedEvent(message));
-    }
-
-    public synchronized void shutdownInternals() {
-        if (status == Status.SHUTDOWN) return;
-        getRequester().shutdown();
-        threadConfig.shutdown();
+    @Synchronized
+    fun shutdownInternals() {
+        if (status == Status.SHUTDOWN) return
+        requester.shutdown()
+        threadConfig.shutdown()
         try {
-            Runtime.getRuntime().removeShutdownHook(shutdownHook);
-        } catch (Exception ex) {
-            ex.printStackTrace();
+            Runtime.getRuntime().removeShutdownHook(shutdownHook)
+        } catch (ex: Exception) {
+            ex.printStackTrace()
         }
-        setStatus(Status.SHUTDOWN);
+        status = Status.SHUTDOWN
     }
 
-    public long getResponseTotal() {
-        return responseTotal;
+    fun setResponseTotal(responseTotal: Int) {
+        this.responseTotal = responseTotal.toLong()
     }
 
-    public EntityBuilder getEntityBuilder() {
-        return entityBuilder;
+    fun resetGatewayUrl() {
+        gatewayUrl = gateway
     }
 
-    public Requester getRequester() {
-        return requester;
-    }
-
-    public WebSocketFactory getWebSocketFactory() {
-        return webSocketFactory;
-    }
-
-    public WebSocketClient getClient() {
-        return client;
-    }
-
-    public void setResponseTotal(int responseTotal) {
-        this.responseTotal = responseTotal;
-    }
-
-    public EventCache getEventCache() {
-        return eventCache;
-    }
-
-    public String getGatewayUrl() {
-        return gatewayUrl;
-    }
-
-    public void resetGatewayUrl() {
-        this.gatewayUrl = getGateway();
-    }
-
-    public enum Status {
+    enum class Status(val isInit: Boolean) {
         INITIALIZING(true),
         INITIALIZED(true),
         LOGGING_IN(true),
@@ -267,21 +206,22 @@ public class JDA {
         SHUTTING_DOWN(false),
         SHUTDOWN(false);
 
-        private final boolean isInit;
+    }
 
-        Status(boolean isInit) {
-            this.isInit = isInit;
-        }
-
-        public boolean isInit() {
-            return isInit;
+    companion object {
+        @JvmStatic
+        @Contract(pure = true)
+        @Throws(LoginException::class)
+        fun build(token: String, messageReceivedEvent: Consumer<MessageReceivedEvent>): JDA {
+            val jda = JDA(token, messageReceivedEvent)
+            jda.status = Status.INITIALIZED
+            jda.login()
+            return jda
         }
     }
 
-    @FunctionalInterface
-    private interface ChunkingFilter {
-        ChunkingFilter ALL = (x) -> true;
-
-        boolean filter(long guildId);
+    init {
+        this.token = "Bot $token"
+        this.messageReceivedEvent = messageReceivedEvent
     }
 }

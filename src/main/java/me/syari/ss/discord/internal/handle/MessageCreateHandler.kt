@@ -10,19 +10,19 @@ class MessageCreateHandler(api: JDA): SocketHandler(api) {
         if (content.getInt("type") != 0) return null
         if (!content.isNull("guild_id")) {
             val guildId = content.getLong("guild_id")
-            if (api.guildSetupController.isLocked(guildId)) return guildId
+            if (jda.guildSetupController.isLocked(guildId)) return guildId
         }
         val message = try {
-            api.entityBuilder.createMessage(content)
+            jda.entityBuilder.createMessage(content)
         } catch (ex: IllegalArgumentException) {
             return when (ex.message) {
                 EntityBuilder.MISSING_CHANNEL -> {
                     val channelId = content.getLong("channel_id")
-                    api.eventCache.cache(
+                    jda.eventCache.cache(
                         EventCache.Type.CHANNEL,
                         channelId,
                         responseNumber,
-                        allContent
+                        allContent!!
                     ) { responseTotal: Long, dataObject: DataObject ->
                         handle(responseTotal, dataObject)
                     }
@@ -36,7 +36,7 @@ class MessageCreateHandler(api: JDA): SocketHandler(api) {
                 }
             }
         }
-        api.callMessageReceiveEvent(message)
+        jda.callMessageReceiveEvent(message)
         return null
     }
 }

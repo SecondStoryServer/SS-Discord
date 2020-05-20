@@ -1,21 +1,14 @@
-package me.syari.ss.discord.internal.handle;
+package me.syari.ss.discord.internal.handle
 
-import me.syari.ss.discord.api.utils.data.DataObject;
-import me.syari.ss.discord.internal.JDA;
-import me.syari.ss.discord.internal.entities.Guild;
-import org.jetbrains.annotations.NotNull;
+import me.syari.ss.discord.api.utils.data.DataObject
+import me.syari.ss.discord.internal.JDA
+import me.syari.ss.discord.internal.entities.Guild.Companion.contains
 
-public class GuildCreateHandler extends SocketHandler {
-    public GuildCreateHandler(JDA api) {
-        super(api);
-    }
-
-    @Override
-    protected Long handleInternally(@NotNull DataObject content) {
-        System.out.println(">> GuildCreateHandler");
-        final long id = content.getLong("id");
-        JDA api = getJDA();
-        if (!Guild.Companion.contains(id)) api.getGuildSetupController().onCreate(id, content);
-        return null;
+class GuildCreateHandler(jda: JDA): SocketHandler(jda) {
+    override fun handleInternally(content: DataObject): Long? {
+        println(">> GuildCreateHandler")
+        val id = content.getLong("id")
+        if (!contains(id)) jda.guildSetupController.onCreate(id, content)
+        return null
     }
 }

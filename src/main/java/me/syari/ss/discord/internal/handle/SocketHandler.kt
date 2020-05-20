@@ -1,29 +1,20 @@
-package me.syari.ss.discord.internal.handle;
+package me.syari.ss.discord.internal.handle
 
-import me.syari.ss.discord.api.utils.data.DataObject;
-import me.syari.ss.discord.internal.JDA;
-import org.jetbrains.annotations.NotNull;
+import me.syari.ss.discord.api.utils.data.DataObject
+import me.syari.ss.discord.internal.JDA
 
-public abstract class SocketHandler {
-    protected final JDA api;
-    protected long responseNumber;
-    protected DataObject allContent;
+abstract class SocketHandler(protected val jda: JDA) {
+    var responseNumber: Long = 0
+    var allContent: DataObject? = null
 
-    public SocketHandler(JDA api) {
-        this.api = api;
+    @Synchronized
+    fun handle(responseTotal: Long, dataObject: DataObject) {
+        allContent = dataObject
+        responseNumber = responseTotal
+        val guildId = handleInternally(dataObject.getObject("d"))
+        if (guildId != null) jda.guildSetupController.cacheEvent(guildId, dataObject)
+        allContent = null
     }
 
-    public final synchronized void handle(long responseTotal, @NotNull DataObject object) {
-        this.allContent = object;
-        this.responseNumber = responseTotal;
-        final Long guildId = handleInternally(object.getObject("d"));
-        if (guildId != null) getJDA().getGuildSetupController().cacheEvent(guildId, object);
-        this.allContent = null;
-    }
-
-    protected JDA getJDA() {
-        return api;
-    }
-
-    protected abstract Long handleInternally(DataObject content);
+    protected abstract fun handleInternally(content: DataObject): Long?
 }
