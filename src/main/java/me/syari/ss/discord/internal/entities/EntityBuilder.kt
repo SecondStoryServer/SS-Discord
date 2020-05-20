@@ -61,15 +61,9 @@ class EntityBuilder(private val api: JDA) {
         }
     }
 
-    fun createMessage(messageData: DataObject): Message? {
-        val channelId = messageData.getLong("channel_id")
-        val channel = TextChannel.get(channelId)
-        return channel?.let { createMessage(messageData, it) }
-    }
-
     fun createMessage(
         messageData: DataObject, channel: TextChannel
-    ): Message? {
+    ): Message {
         val id = messageData.getLong("id")
         val authorData = messageData.getObject("author")
         val guild = channel.guild
@@ -114,11 +108,7 @@ class EntityBuilder(private val api: JDA) {
             }
         }
         val content = messageData.getString("content", "")
-        return if (messageData.getInt("type") == 0) {
-            Message(id, channel, content, user, member)
-        } else {
-            null
-        }
+        return Message(id, channel, content, user, member)
     }
 
     companion object {

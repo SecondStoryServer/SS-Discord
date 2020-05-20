@@ -21,11 +21,10 @@ import org.jetbrains.annotations.Contract
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.ScheduledExecutorService
-import java.util.function.Consumer
 import java.util.function.Supplier
 import javax.security.auth.login.LoginException
 
-class JDA(token: String, private val messageReceivedEvent: Consumer<MessageReceivedEvent>) {
+class JDA(token: String, private val messageReceivedEvent: MessageReceivedEvent.() -> Unit) {
     private val shutdownHook = Thread(Runnable { shutdown() }, "JDA Shutdown Hook")
     val entityBuilder = EntityBuilder(this)
     val eventCache = EventCache()
@@ -139,8 +138,8 @@ class JDA(token: String, private val messageReceivedEvent: Consumer<MessageRecei
         shutdownInternals()
     }
 
-    fun callMessageReceiveEvent(message: Message?) {
-        messageReceivedEvent.accept(MessageReceivedEvent(message!!))
+    fun callMessageReceiveEvent(message: Message) {
+        messageReceivedEvent.invoke(MessageReceivedEvent(message))
     }
 
     @Synchronized
@@ -186,7 +185,7 @@ class JDA(token: String, private val messageReceivedEvent: Consumer<MessageRecei
         @JvmStatic
         @Contract(pure = true)
         @Throws(LoginException::class)
-        fun build(token: String, messageReceivedEvent: Consumer<MessageReceivedEvent>): JDA {
+        fun build(token: String, messageReceivedEvent: MessageReceivedEvent.() -> Unit): JDA {
             val jda = JDA(token, messageReceivedEvent)
             jda.status = Status.INITIALIZED
             jda.login()
