@@ -1,27 +1,24 @@
-package me.syari.ss.discord.internal.requests;
+package me.syari.ss.discord.internal.requests
 
-public class CallbackContext implements AutoCloseable {
-    private static final ThreadLocal<Boolean> callback = ThreadLocal.withInitial(() -> false);
-    private static final CallbackContext instance = new CallbackContext();
-
-    private CallbackContext() {
+class CallbackContext private constructor(): AutoCloseable {
+    override fun close() {
+        callback.set(false)
     }
 
-    public static CallbackContext getInstance() {
-        startCallback();
-        return instance;
-    }
+    companion object {
+        private val callback = ThreadLocal.withInitial { false }
 
-    static boolean isCallbackContext() {
-        return callback.get();
-    }
+        val instance = CallbackContext()
+            get() {
+                startCallback()
+                return field
+            }
 
-    private static void startCallback() {
-        callback.set(true);
-    }
+        val isCallbackContext: Boolean
+            get() = callback.get()
 
-    @Override
-    public void close() {
-        callback.set(false);
+        private fun startCallback() {
+            callback.set(true)
+        }
     }
 }

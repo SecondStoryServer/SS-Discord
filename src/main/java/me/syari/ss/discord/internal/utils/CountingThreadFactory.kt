@@ -1,24 +1,19 @@
-package me.syari.ss.discord.internal.utils;
+package me.syari.ss.discord.internal.utils
 
-import org.jetbrains.annotations.NotNull;
+import java.util.concurrent.ThreadFactory
+import java.util.concurrent.atomic.AtomicLong
+import java.util.function.Supplier
 
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.Supplier;
-
-public class CountingThreadFactory implements ThreadFactory {
-    private final Supplier<String> identifier;
-    private final AtomicLong count = new AtomicLong(1);
-
-    public CountingThreadFactory(@NotNull Supplier<String> identifier, @NotNull String specifier) {
-        this.identifier = () -> identifier.get() + " " + specifier;
+class CountingThreadFactory(identifier: Supplier<String>, specifier: String): ThreadFactory {
+    private val identifier: Supplier<String>
+    private val count = AtomicLong(1)
+    override fun newThread(r: Runnable): Thread {
+        val thread = Thread(r, identifier.get() + "-Worker " + count.getAndIncrement())
+        thread.isDaemon = true
+        return thread
     }
 
-    @NotNull
-    @Override
-    public Thread newThread(@NotNull Runnable r) {
-        final Thread thread = new Thread(r, identifier.get() + "-Worker " + count.getAndIncrement());
-        thread.setDaemon(true);
-        return thread;
+    init {
+        this.identifier = Supplier { identifier.get() + " " + specifier }
     }
 }

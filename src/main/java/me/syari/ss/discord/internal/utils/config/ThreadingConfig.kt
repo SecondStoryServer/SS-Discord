@@ -1,57 +1,53 @@
-package me.syari.ss.discord.internal.utils.config;
+package me.syari.ss.discord.internal.utils.config
 
-import me.syari.ss.discord.internal.utils.CountingThreadFactory;
-import org.jetbrains.annotations.NotNull;
+import me.syari.ss.discord.internal.utils.CountingThreadFactory
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.ForkJoinPool
+import java.util.concurrent.ScheduledExecutorService
+import java.util.concurrent.ScheduledThreadPoolExecutor
+import java.util.concurrent.TimeUnit
+import java.util.function.Supplier
 
-import java.util.concurrent.*;
-import java.util.function.Supplier;
-
-public class ThreadingConfig {
-    private ScheduledExecutorService rateLimitPool;
-    private ScheduledExecutorService gatewayPool;
-    private final ExecutorService callbackPool = ForkJoinPool.commonPool();
-
-    public void init(@NotNull Supplier<String> identifier) {
-        this.rateLimitPool = newScheduler(5, identifier, "RateLimit");
-        this.gatewayPool = newScheduler(1, identifier, "Gateway");
+class ThreadingConfig {
+    private var rateLimitPool: ScheduledExecutorService? = null
+    private var gatewayPool: ScheduledExecutorService? = null
+    val callbackPool: ExecutorService = ForkJoinPool.commonPool()
+    fun init(identifier: Supplier<String>) {
+        rateLimitPool = newScheduler(5, identifier, "RateLimit")
+        gatewayPool = newScheduler(1, identifier, "Gateway")
     }
 
-    public void shutdown() {
-        callbackPool.shutdown();
-        gatewayPool.shutdown();
-        if (rateLimitPool instanceof ScheduledThreadPoolExecutor) {
-            ScheduledThreadPoolExecutor executor = (ScheduledThreadPoolExecutor) rateLimitPool;
-            executor.setKeepAliveTime(5L, TimeUnit.SECONDS);
-            executor.allowCoreThreadTimeOut(true);
+    fun shutdown() {
+        callbackPool.shutdown()
+        gatewayPool!!.shutdown()
+        if (rateLimitPool is ScheduledThreadPoolExecutor) {
+            val executor = rateLimitPool as ScheduledThreadPoolExecutor
+            executor.setKeepAliveTime(5L, TimeUnit.SECONDS)
+            executor.allowCoreThreadTimeOut(true)
         } else {
-            rateLimitPool.shutdown();
+            rateLimitPool!!.shutdown()
         }
     }
 
-    public void shutdownNow() {
-        callbackPool.shutdownNow();
-        gatewayPool.shutdownNow();
-        rateLimitPool.shutdownNow();
+    fun shutdownNow() {
+        callbackPool.shutdownNow()
+        gatewayPool!!.shutdownNow()
+        rateLimitPool!!.shutdownNow()
     }
 
-    @NotNull
-    public ScheduledExecutorService getRateLimitPool() {
-        return rateLimitPool;
+    fun getRateLimitPool(): ScheduledExecutorService {
+        return rateLimitPool!!
     }
 
-    @NotNull
-    public ScheduledExecutorService getGatewayPool() {
-        return gatewayPool;
+    fun getGatewayPool(): ScheduledExecutorService {
+        return gatewayPool!!
     }
 
-    @NotNull
-    public ExecutorService getCallbackPool() {
-        return callbackPool;
+    companion object {
+        fun newScheduler(
+            coreSize: Int, identifier: Supplier<String>, baseName: String
+        ): ScheduledThreadPoolExecutor {
+            return ScheduledThreadPoolExecutor(coreSize, CountingThreadFactory(identifier, baseName))
+        }
     }
-
-    @NotNull
-    public static ScheduledThreadPoolExecutor newScheduler(int coreSize, Supplier<String> identifier, String baseName) {
-        return new ScheduledThreadPoolExecutor(coreSize, new CountingThreadFactory(identifier, baseName));
-    }
-
 }

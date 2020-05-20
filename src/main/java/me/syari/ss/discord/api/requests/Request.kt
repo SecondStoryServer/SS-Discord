@@ -34,7 +34,7 @@ class Request<T>(
         api.callbackPool.execute {
             try {
                 ThreadLocalReason.closable(localReason)
-                    .use { CallbackContext.getInstance().use { onSuccess.accept(successObj) } }
+                    .use { CallbackContext.instance.use { onSuccess.accept(successObj) } }
             } catch (ex: Throwable) {
                 ex.printStackTrace()
             }
@@ -53,7 +53,7 @@ class Request<T>(
         api.callbackPool.execute {
             try {
                 ThreadLocalReason.closable(localReason).use {
-                    CallbackContext.getInstance().use { onFailure?.accept(failException) }
+                    CallbackContext.instance.use { onFailure?.accept(failException) }
                 }
             } catch (t: Throwable) {
                 t.printStackTrace()

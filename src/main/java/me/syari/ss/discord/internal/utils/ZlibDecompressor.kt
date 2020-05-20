@@ -1,91 +1,97 @@
-package me.syari.ss.discord.internal.utils;
+package me.syari.ss.discord.internal.utils
 
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
+import okhttp3.internal.and
+import org.jetbrains.annotations.Contract
+import java.io.ByteArrayOutputStream
+import java.io.IOException
+import java.lang.ref.SoftReference
+import java.nio.ByteBuffer
+import java.util.zip.DataFormatException
+import java.util.zip.Inflater
+import java.util.zip.InflaterOutputStream
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.lang.ref.SoftReference;
-import java.nio.ByteBuffer;
-import java.util.zip.DataFormatException;
-import java.util.zip.Inflater;
-import java.util.zip.InflaterOutputStream;
-
-public class ZlibDecompressor {
-    private static final int Z_SYNC_FLUSH = 0x0000FFFF;
-
-    private final int maxBufferSize = 2048;
-    private final Inflater inflater = new Inflater();
-    private ByteBuffer flushBuffer = null;
-    private SoftReference<ByteArrayOutputStream> decompressBuffer = null;
+class ZlibDecompressor {
+    private val maxBufferSize = 2048
+    private val inflater = Inflater()
+    private var flushBuffer: ByteBuffer? = null
+    private var decompressBuffer: SoftReference<ByteArrayOutputStream>? = null
 
     @Contract(" -> new")
-    private @NotNull
-    SoftReference<ByteArrayOutputStream> newDecompressBuffer() {
-        return new SoftReference<>(new ByteArrayOutputStream(Math.min(1024, maxBufferSize)));
+    private fun newDecompressBuffer(): SoftReference<ByteArrayOutputStream> {
+        return SoftReference(ByteArrayOutputStream(Math.min(1024, maxBufferSize)))
     }
 
-    private ByteArrayOutputStream getDecompressBuffer() {
-        if (decompressBuffer == null) decompressBuffer = newDecompressBuffer();
-        ByteArrayOutputStream buffer = decompressBuffer.get();
-        if (buffer == null)
-            decompressBuffer = new SoftReference<>(buffer = new ByteArrayOutputStream(Math.min(1024, maxBufferSize)));
-        return buffer;
+    private fun getDecompressBuffer(): ByteArrayOutputStream? {
+        if (decompressBuffer == null) decompressBuffer = newDecompressBuffer()
+        var buffer = decompressBuffer!!.get()
+        if (buffer == null) decompressBuffer = SoftReference(ByteArrayOutputStream(
+            Math.min(
+                1024, maxBufferSize
+            )
+        ).also { buffer = it })
+        return buffer
     }
 
-    private int getIntBigEndian(@NotNull byte[] array, int offset) {
-        return array[offset + 3] & 0xFF | (array[offset + 2] & 0xFF) << 8 | (array[offset + 1] & 0xFF) << 16 | (array[offset] & 0xFF) << 24;
+    private fun getIntBigEndian(array: ByteArray, offset: Int): Int {
+        return array[offset + 3] and 0xFF or (array[offset + 2] and 0xFF shl 8) or (array[offset + 1] and 0xFF shl 16) or (array[offset] and 0xFF shl 24)
     }
 
-    private boolean isFlush(@NotNull byte[] data) {
-        if (data.length < 4) return false;
-        int suffix = getIntBigEndian(data, data.length - 4);
-        return suffix == Z_SYNC_FLUSH;
+    private fun isFlush(data: ByteArray): Boolean {
+        if (data.size < 4) return false
+        val suffix = getIntBigEndian(data, data.size - 4)
+        return suffix == Z_SYNC_FLUSH
     }
 
-    private @NotNull
-    ByteBuffer reallocate(ByteBuffer original, int length) {
-        ByteBuffer buffer = ByteBuffer.allocate(length);
-        buffer.put(original);
-        return buffer;
+    private fun reallocate(original: ByteBuffer?, length: Int): ByteBuffer {
+        val buffer = ByteBuffer.allocate(length)
+        buffer.put(original)
+        return buffer
     }
 
-    private void buffer(byte[] data) {
-        if (flushBuffer == null) flushBuffer = ByteBuffer.allocate(data.length * 2);
-        if (flushBuffer.capacity() < data.length + flushBuffer.position()) {
-            flushBuffer.flip();
-            flushBuffer = reallocate(flushBuffer, (flushBuffer.capacity() + data.length) * 2);
+    private fun buffer(data: ByteArray) {
+        if (flushBuffer == null) flushBuffer = ByteBuffer.allocate(data.size * 2)
+        if (flushBuffer!!.capacity() < data.size + flushBuffer!!.position()) {
+            flushBuffer!!.flip()
+            flushBuffer = reallocate(flushBuffer, (flushBuffer!!.capacity() + data.size) * 2)
         }
-        flushBuffer.put(data);
+        flushBuffer!!.put(data)
     }
 
-    public void reset() {
-        inflater.reset();
+    fun reset() {
+        inflater.reset()
     }
 
-    public String decompress(byte[] data) throws DataFormatException {
+    @Throws(DataFormatException::class)
+    fun decompress(data: ByteArray): String? {
+        var data = data
         if (!isFlush(data)) {
-            buffer(data);
-            return null;
+            buffer(data)
+            return null
         } else if (flushBuffer != null) {
-            buffer(data);
-            byte[] arr = flushBuffer.array();
-            data = new byte[flushBuffer.position()];
-            System.arraycopy(arr, 0, data, 0, data.length);
-            flushBuffer = null;
+            buffer(data)
+            val arr = flushBuffer!!.array()
+            data = ByteArray(flushBuffer!!.position())
+            System.arraycopy(arr, 0, data, 0, data.size)
+            flushBuffer = null
         }
-        ByteArrayOutputStream buffer = getDecompressBuffer();
-        try (InflaterOutputStream decompressor = new InflaterOutputStream(buffer, inflater)) {
-            decompressor.write(data);
-            return buffer.toString("UTF-8");
-        } catch (IOException e) {
-            throw (DataFormatException) new DataFormatException("Malformed").initCause(e);
+        val buffer = getDecompressBuffer()
+        try {
+            InflaterOutputStream(buffer, inflater).use { decompressor ->
+                decompressor.write(data)
+                return buffer!!.toString("UTF-8")
+            }
+        } catch (e: IOException) {
+            throw (DataFormatException("Malformed").initCause(e) as DataFormatException)
         } finally {
-            if (buffer.size() > maxBufferSize) {
-                decompressBuffer = newDecompressBuffer();
+            if (buffer!!.size() > maxBufferSize) {
+                decompressBuffer = newDecompressBuffer()
             } else {
-                buffer.reset();
+                buffer.reset()
             }
         }
+    }
+
+    companion object {
+        private const val Z_SYNC_FLUSH = 0x0000FFFF
     }
 }
