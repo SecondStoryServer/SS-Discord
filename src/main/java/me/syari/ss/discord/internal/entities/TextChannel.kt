@@ -10,9 +10,6 @@ import me.syari.ss.discord.internal.requests.RestAction
 import me.syari.ss.discord.internal.requests.Route
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
-import java.io.IOException
-import java.io.InputStream
-import java.util.HashSet
 
 class TextChannel(override val idLong: Long, val guild: Guild, val name: String): WithId, Comparable<TextChannel> {
     companion object {

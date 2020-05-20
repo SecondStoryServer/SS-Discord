@@ -135,11 +135,6 @@ public class DataObject {
         return value;
     }
 
-    public long getLong(@NotNull String key, long defaultValue) {
-        Long value = get(Long.class, key, Long::parseLong, Number::longValue);
-        return value == null ? defaultValue : value;
-    }
-
     public int getInt(@NotNull String key) {
         Integer value = get(Integer.class, key, Integer::parseInt, Number::intValue);
         if (value == null) throw valueError(key, "int");

@@ -49,7 +49,7 @@ class EventCache {
     fun playbackCache(type: Type, triggerId: Long) {
         val typeCache = eventCache[type] ?: return
         val items: List<CacheNode>? = typeCache.remove(triggerId)
-        if (items != null && !items.isEmpty()) {
+        if (items != null && items.isNotEmpty()) {
             for (item in items) {
                 item.execute()
             }

@@ -19,10 +19,7 @@ class MessageCreateHandler(api: JDA): SocketHandler(api) {
                 EntityBuilder.MISSING_CHANNEL -> {
                     val channelId = content.getLong("channel_id")
                     jda.eventCache.cache(
-                        EventCache.Type.CHANNEL,
-                        channelId,
-                        responseNumber,
-                        allContent!!
+                        EventCache.Type.CHANNEL, channelId, responseNumber, allContent!!
                     ) { responseTotal: Long, dataObject: DataObject ->
                         handle(responseTotal, dataObject)
                     }

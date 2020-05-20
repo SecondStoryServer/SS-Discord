@@ -29,8 +29,8 @@ class ErrorResponseException private constructor(
                 val isNullCode = dataObject.isNull("code")
                 val isNullMessage = dataObject.isNull("message")
                 if (!isNullCode || !isNullMessage) {
-                    if (!isNullCode) code = dataObject.getInt("code")!!
-                    if (!isNullMessage) meaning = dataObject.getString("message")!!
+                    if (!isNullCode) code = dataObject.getInt("code")
+                    if (!isNullMessage) meaning = dataObject.getString("message")
                 } else {
                     code = response.code
                     meaning = dataObject.toString()

@@ -59,10 +59,6 @@ class GuildSetupController(val jda: JDA) {
         return setupNodes.containsKey(id)
     }
 
-    fun isUnavailable(id: Long): Boolean {
-        return unavailableGuilds.contains(id)
-    }
-
     fun cacheEvent(guildId: Long, event: DataObject?) {
         val node = setupNodes[guildId]
         node?.cacheEvent(event!!)
@@ -123,7 +119,7 @@ class GuildSetupController(val jda: JDA) {
     }
 
     companion object {
-        protected const val CHUNK_TIMEOUT = 10000
+        private const val CHUNK_TIMEOUT = 10000
     }
 
 }

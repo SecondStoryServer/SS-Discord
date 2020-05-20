@@ -61,8 +61,6 @@ class JDA(token: String, private val messageReceivedEvent: Consumer<MessageRecei
     private val gateway: String
         get() = sessionController.getGateway(this)
 
-
-
     @Throws(LoginException::class)
     fun verifyToken() {
         val login: RestAction<DataObject> = object: RestAction<DataObject>(this@JDA, selfRoute) {
@@ -132,16 +130,6 @@ class JDA(token: String, private val messageReceivedEvent: Consumer<MessageRecei
 
     val callbackPool: ExecutorService
         get() = threadConfig.callbackPool
-
-    fun isUnavailable(guildId: Long): Boolean {
-        return guildSetupController.isUnavailable(guildId)
-    }
-
-    @Synchronized
-    private fun shutdownNow() {
-        shutdown()
-        threadConfig.shutdownNow()
-    }
 
     @Synchronized
     fun shutdown() {
