@@ -1,4 +1,4 @@
-package me.syari.ss.discord.api.utils.data;
+package me.syari.ss.discord.api.data;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

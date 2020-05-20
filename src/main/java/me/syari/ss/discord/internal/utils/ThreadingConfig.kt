@@ -1,6 +1,5 @@
-package me.syari.ss.discord.internal.utils.config
+package me.syari.ss.discord.internal.utils
 
-import me.syari.ss.discord.internal.utils.CountingThreadFactory
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.ForkJoinPool
 import java.util.concurrent.ScheduledExecutorService
@@ -14,8 +13,16 @@ class ThreadingConfig {
     val callbackPool: ExecutorService = ForkJoinPool.commonPool()
 
     fun init(identifier: Supplier<String>) {
-        rateLimitPool = newScheduler(5, identifier, "RateLimit")
-        gatewayPool = newScheduler(1, identifier, "Gateway")
+        rateLimitPool = newScheduler(
+            5,
+            identifier,
+            "RateLimit"
+        )
+        gatewayPool = newScheduler(
+            1,
+            identifier,
+            "Gateway"
+        )
     }
 
     fun shutdown() {

@@ -1,7 +1,7 @@
 package me.syari.ss.discord.api.requests
 
 import me.syari.ss.discord.api.exceptions.ParsingException
-import me.syari.ss.discord.api.utils.data.DataObject
+import me.syari.ss.discord.api.data.DataObject
 import okhttp3.Response
 import java.io.BufferedInputStream
 import java.io.BufferedReader

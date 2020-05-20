@@ -6,8 +6,8 @@ import gnu.trove.map.hash.TLongLongHashMap
 import gnu.trove.map.hash.TLongObjectHashMap
 import gnu.trove.set.TLongSet
 import gnu.trove.set.hash.TLongHashSet
-import me.syari.ss.discord.api.utils.data.DataArray
-import me.syari.ss.discord.api.utils.data.DataObject
+import me.syari.ss.discord.api.data.DataArray
+import me.syari.ss.discord.api.data.DataObject
 import me.syari.ss.discord.internal.JDA
 import me.syari.ss.discord.internal.requests.WebSocketCode
 

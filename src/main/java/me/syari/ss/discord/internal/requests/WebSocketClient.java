@@ -2,9 +2,9 @@ package me.syari.ss.discord.internal.requests;
 
 import com.neovisionaries.ws.client.*;
 import me.syari.ss.discord.api.requests.CloseCode;
-import me.syari.ss.discord.api.utils.SessionController;
-import me.syari.ss.discord.api.utils.data.DataArray;
-import me.syari.ss.discord.api.utils.data.DataObject;
+import me.syari.ss.discord.api.SessionController;
+import me.syari.ss.discord.api.data.DataArray;
+import me.syari.ss.discord.api.data.DataObject;
 import me.syari.ss.discord.internal.JDA;
 import me.syari.ss.discord.internal.handle.EventCache;
 import me.syari.ss.discord.internal.handle.GuildCreateHandler;
@@ -49,7 +49,6 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
     private boolean shouldReconnect;
     private boolean handleIdentifyRateLimit = false;
     private boolean connected = false;
-    private volatile boolean printedRateLimitMessage = false;
     public volatile boolean sentAuthInfo = false;
     private volatile SessionController.SessionConnectNode connectNode;
 
@@ -99,14 +98,12 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
         if (this.ratelimitResetTime <= now) {
             this.messagesSent.set(0);
             this.ratelimitResetTime = now + 60000;
-            this.printedRateLimitMessage = false;
         }
         if (this.messagesSent.get() <= 115 || (skipQueue && this.messagesSent.get() <= 119)) {
             socket.sendText(message);
             this.messagesSent.getAndIncrement();
             return true;
         } else {
-            if (!printedRateLimitMessage) printedRateLimitMessage = true;
             return false;
         }
     }
@@ -389,16 +386,16 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
     }
 
     protected DataObject handleBinary(byte[] binary) throws DataFormatException {
-        String jsonString;
+        String json;
         try {
-            jsonString = decompressor.decompress(binary);
-            if (jsonString == null) return null;
+            json = decompressor.decompress(binary);
+            if (json == null) return null;
         } catch (DataFormatException ex) {
             close(4000, "MALFORMED_PACKAGE");
             throw ex;
         }
 
-        return DataObject.fromJson(jsonString);
+        return DataObject.fromJson(json);
     }
 
     protected void maybeUnlock() {
@@ -447,14 +444,13 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
         }
 
         @Override
-        public boolean equals(Object obj) {
-            if (obj == this) return true;
-            return obj instanceof StartingNode;
+        public boolean equals(Object other) {
+            if (other == this) return true;
+            return other instanceof StartingNode;
         }
     }
 
     private class ReconnectNode implements SessionController.SessionConnectNode {
-
         @Override
         public void run(boolean isLast) throws InterruptedException {
             if (shutdown) return;

@@ -1,6 +1,5 @@
 package me.syari.ss.discord.internal.entities
 
-import me.syari.ss.discord.api.WithId
 import me.syari.ss.discord.internal.JDA
 
 class User(override val idLong: Long, val api: JDA, var name: String, val isBot: Boolean): WithId {

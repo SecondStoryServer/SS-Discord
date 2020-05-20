@@ -2,7 +2,7 @@ package me.syari.ss.discord.internal.handle
 
 import gnu.trove.map.TLongObjectMap
 import gnu.trove.map.hash.TLongObjectHashMap
-import me.syari.ss.discord.api.utils.data.DataObject
+import me.syari.ss.discord.api.data.DataObject
 import java.util.EnumMap
 import java.util.LinkedList
 import java.util.concurrent.atomic.AtomicInteger

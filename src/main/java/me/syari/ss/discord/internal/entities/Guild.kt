@@ -1,6 +1,5 @@
 package me.syari.ss.discord.internal.entities
 
-import me.syari.ss.discord.api.WithId
 import me.syari.ss.discord.internal.JDA
 
 class Guild(

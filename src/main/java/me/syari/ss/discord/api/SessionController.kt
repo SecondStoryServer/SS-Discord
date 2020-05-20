@@ -1,4 +1,4 @@
-package me.syari.ss.discord.api.utils
+package me.syari.ss.discord.api
 
 import me.syari.ss.discord.api.requests.Request
 import me.syari.ss.discord.api.requests.Response

@@ -1,6 +1,6 @@
 package me.syari.ss.discord.api.requests
 
-import me.syari.ss.discord.api.utils.data.DataObject
+import me.syari.ss.discord.api.data.DataObject
 
 enum class ErrorResponse(val code: Int, val meaning: String) {
     UNKNOWN_ACCOUNT(10001, "Unknown Account"),

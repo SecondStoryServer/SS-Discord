@@ -53,12 +53,16 @@ class ZlibDecompressor {
     }
 
     private fun buffer(data: ByteArray) {
-        if (flushBuffer == null) flushBuffer = ByteBuffer.allocate(data.size * 2)
-        if (flushBuffer!!.capacity() < data.size + flushBuffer!!.position()) {
-            flushBuffer!!.flip()
-            flushBuffer = reallocate(flushBuffer, (flushBuffer!!.capacity() + data.size) * 2)
+        val notNullFlushBuffer = flushBuffer ?: {
+            ByteBuffer.allocate(data.size * 2).apply {
+                flushBuffer = this
+            }
+        }.invoke()
+        if (notNullFlushBuffer.capacity() < data.size + notNullFlushBuffer.position()) {
+            notNullFlushBuffer.flip()
+            flushBuffer = reallocate(notNullFlushBuffer, (notNullFlushBuffer.capacity() + data.size) * 2)
         }
-        flushBuffer!!.put(data)
+        notNullFlushBuffer.put(data)
     }
 
     fun reset() {

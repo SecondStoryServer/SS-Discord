@@ -1,7 +1,7 @@
 package me.syari.ss.discord.internal.entities
 
 import gnu.trove.set.hash.TLongHashSet
-import me.syari.ss.discord.api.utils.data.DataObject
+import me.syari.ss.discord.api.data.DataObject
 import me.syari.ss.discord.internal.JDA
 
 class EntityBuilder(private val api: JDA) {

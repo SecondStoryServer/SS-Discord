@@ -1,4 +1,4 @@
-package me.syari.ss.discord.api
+package me.syari.ss.discord.internal.entities
 
 interface WithId {
     val id: String

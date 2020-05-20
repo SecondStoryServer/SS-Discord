@@ -5,8 +5,8 @@ import me.syari.ss.discord.api.MessageReceivedEvent
 import me.syari.ss.discord.api.exceptions.RateLimitedException
 import me.syari.ss.discord.api.requests.Request
 import me.syari.ss.discord.api.requests.Response
-import me.syari.ss.discord.api.utils.SessionController
-import me.syari.ss.discord.api.utils.data.DataObject
+import me.syari.ss.discord.api.SessionController
+import me.syari.ss.discord.api.data.DataObject
 import me.syari.ss.discord.internal.entities.EntityBuilder
 import me.syari.ss.discord.internal.entities.Message
 import me.syari.ss.discord.internal.handle.EventCache
@@ -15,7 +15,7 @@ import me.syari.ss.discord.internal.requests.Requester
 import me.syari.ss.discord.internal.requests.RestAction
 import me.syari.ss.discord.internal.requests.Route.Companion.selfRoute
 import me.syari.ss.discord.internal.requests.WebSocketClient
-import me.syari.ss.discord.internal.utils.config.ThreadingConfig
+import me.syari.ss.discord.internal.utils.ThreadingConfig
 import okhttp3.OkHttpClient
 import org.jetbrains.annotations.Contract
 import java.util.concurrent.ExecutionException
