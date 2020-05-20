@@ -1,43 +1,42 @@
-import me.syari.ss.discord.api.MessageReceivedEvent;
-import me.syari.ss.discord.internal.JDA;
-import me.syari.ss.discord.internal.entities.Member;
-import me.syari.ss.discord.internal.entities.TextChannel;
-import me.syari.ss.discord.internal.entities.User;
+import me.syari.ss.discord.api.MessageReceivedEvent
+import me.syari.ss.discord.internal.JDA
+import me.syari.ss.discord.internal.JDA.Companion.build
+import me.syari.ss.discord.internal.entities.TextChannel.Companion.get
+import javax.security.auth.login.LoginException
 
-import javax.security.auth.login.LoginException;
+object MessageListenerExample {
+    private var jda: JDA? = null
+    private var sendMessageCount = 0
+    private const val token = DiscordToken.BOT_TOKEN
 
-public class MessageListenerExample {
-    private static JDA jda;
-
-    private static int sendMessageCount = 0;
-
-    private static final String token = DiscordToken.BOT_TOKEN;
-
-    public static void main(String[] args) {
+    @JvmStatic
+    fun main(args: Array<String>) {
         try {
-            jda = JDA.build(token, (MessageReceivedEvent event) -> {
-                User authorUser = event.getAuthor();
-                if (!authorUser.isBot()) {
-                    Member authorMember = event.getMember();
-                    if (authorMember == null) return null;
-                    String name = authorMember.getDisplayName();
-                    String message = event.getMessage().getContentDisplay();
-                    TextChannel channel = event.getChannel();
-                    channel.sendMessage("Chat -> " + name + ": " + message + "\r\n" +
-                            "GetTextChannel -> " + (TextChannel.Companion.get(710828174686027790L) != null)
-                    );
+            jda = build(token) {
+                val authorUser = author
+                if (!authorUser.isBot) {
+                    val authorMember = member ?: return@build
+                    val name = authorMember.displayName
+                    val message = message.contentDisplay
+                    val channel = channel
+                    channel.sendMessage(
+                        "Chat -> $name: $message\r\nGetTextChannel -> " + (get(
+                            710828174686027790L
+                        ) != null)
+                    )
                 } else {
-                    sendMessageCount++;
+                    sendMessageCount++
                     if (sendMessageCount == 2) {
-                        System.out.println(">> Shutdown");
-                        jda.shutdown();
+                        println(">> Shutdown")
+                        jda?.shutdown()
                     }
                 }
-                return null;
-            });
-            jda.awaitReady();
-        } catch (LoginException | InterruptedException e) {
-            e.printStackTrace();
+            }
+            jda?.awaitReady()
+        } catch (e: LoginException) {
+            e.printStackTrace()
+        } catch (e: InterruptedException) {
+            e.printStackTrace()
         }
     }
 }

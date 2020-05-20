@@ -14,9 +14,8 @@ import javax.net.ssl.SSLPeerUnverifiedException
 
 class Requester(val jda: JDA) {
     val rateLimiter = RateLimiter(this)
-    private val httpClient: OkHttpClient
 
-    fun <T> request(apiRequest: Request<T?>) {
+    fun <T> request(apiRequest: Request<T>) {
         if (apiRequest.shouldQueue()) {
             rateLimiter.queueRequest(apiRequest)
         } else {
@@ -52,7 +51,7 @@ class Requester(val jda: JDA) {
         return try {
             var attempt = 0
             do {
-                val call = httpClient.newCall(request)
+                val call = jda.httpClient.newCall(request)
                 lastResponse = call.execute()
                 responses[attempt] = lastResponse
                 if (lastResponse.code < 500) break
@@ -105,7 +104,4 @@ class Requester(val jda: JDA) {
         }
     }
 
-    init {
-        httpClient = jda.httpClient
-    }
 }
