@@ -38,7 +38,7 @@ class SessionController {
 
     fun getGateway(api: JDA): String {
         val route = Route.gatewayRoute
-        return RestAction(api, route, BiFunction { response: Response, request: Request<String>? ->
+        return RestAction(api, route, BiFunction { response: Response, request: Request<String> ->
             response.dataObject.getString("url")
         }).complete()
     }

@@ -3,7 +3,7 @@ package me.syari.ss.discord.internal.requests
 import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit
 
-internal class WebSocketSendingThread(private val client: WebSocketClient): Runnable {
+class WebSocketSendingThread(private val client: WebSocketClient): Runnable {
     private val chunkSyncQueue = client.chunkSyncQueue
     private val ratelimitQueue = client.ratelimitQueue
     private val executor = client.executor
