@@ -1,8 +1,8 @@
 package me.syari.ss.discord.internal.entities
 
-import me.syari.ss.discord.api.ISnowflake
+import me.syari.ss.discord.api.WithId
 
-class Member(val guild: Guild, val user: User): ISnowflake {
+class Member(val guild: Guild, val user: User): WithId {
     var nickname: String? = null
 
     val displayName: String

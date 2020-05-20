@@ -1,6 +1,6 @@
 package me.syari.ss.discord.api
 
-interface ISnowflake {
+interface WithId {
     val id: String
         get() = java.lang.Long.toUnsignedString(idLong)
 

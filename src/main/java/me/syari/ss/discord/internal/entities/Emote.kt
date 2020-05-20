@@ -1,8 +1,8 @@
 package me.syari.ss.discord.internal.entities
 
-import me.syari.ss.discord.api.ISnowflake
+import me.syari.ss.discord.api.WithId
 
-class Emote(override val idLong: Long, val name: String, private val isAnimated: Boolean): ISnowflake {
+class Emote(override val idLong: Long, val name: String, private val isAnimated: Boolean): WithId {
     companion object {
         private val emoteList = mutableMapOf<Long, Emote>()
 

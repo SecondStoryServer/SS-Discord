@@ -1,8 +1,8 @@
 package me.syari.ss.discord.internal.entities
 
-import me.syari.ss.discord.api.ISnowflake
+import me.syari.ss.discord.api.WithId
 
-class Role(override val idLong: Long, val name: String): ISnowflake {
+class Role(override val idLong: Long, val name: String): WithId {
     companion object {
         private val roleList = mutableListOf<Role>()
 

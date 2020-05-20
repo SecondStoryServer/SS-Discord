@@ -1,11 +1,11 @@
 package me.syari.ss.discord.internal.entities
 
-import me.syari.ss.discord.api.ISnowflake
+import me.syari.ss.discord.api.WithId
 import me.syari.ss.discord.internal.JDA
 
 class Guild(
     val api: JDA, override val idLong: Long, private val name: String
-): ISnowflake {
+): WithId {
     companion object {
         private val guildList = mutableMapOf<Long, Guild>()
 

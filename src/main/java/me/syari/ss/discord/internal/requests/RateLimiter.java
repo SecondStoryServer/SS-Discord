@@ -161,7 +161,6 @@ public class RateLimiter {
         return System.currentTimeMillis();
     }
 
-    @SuppressWarnings("rawtypes")
     private class Bucket implements Runnable {
         private final String bucketId;
         private final Queue<Request> requests = new ConcurrentLinkedQueue<>();

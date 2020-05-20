@@ -1,6 +1,6 @@
 package me.syari.ss.discord.internal.entities
 
-import me.syari.ss.discord.api.ISnowflake
+import me.syari.ss.discord.api.WithId
 import me.syari.ss.discord.api.requests.Request
 import me.syari.ss.discord.api.requests.Response
 import me.syari.ss.discord.api.utils.data.DataObject
@@ -14,7 +14,7 @@ import java.io.IOException
 import java.io.InputStream
 import java.util.HashSet
 
-class TextChannel(override val idLong: Long, val guild: Guild, val name: String): ISnowflake, Comparable<TextChannel> {
+class TextChannel(override val idLong: Long, val guild: Guild, val name: String): WithId, Comparable<TextChannel> {
     companion object {
         private const val MAX_CONTENT_LENGTH = 2000
 
