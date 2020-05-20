@@ -1,10 +1,10 @@
 package me.syari.ss.discord.internal.requests;
 
 import com.neovisionaries.ws.client.*;
-import me.syari.ss.discord.api.requests.CloseCode;
 import me.syari.ss.discord.api.SessionController;
 import me.syari.ss.discord.api.data.DataArray;
 import me.syari.ss.discord.api.data.DataObject;
+import me.syari.ss.discord.api.requests.CloseCode;
 import me.syari.ss.discord.internal.JDA;
 import me.syari.ss.discord.internal.handle.EventCache;
 import me.syari.ss.discord.internal.handle.GuildCreateHandler;
@@ -50,6 +50,7 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
     private boolean handleIdentifyRateLimit = false;
     private boolean connected = false;
     public volatile boolean sentAuthInfo = false;
+    protected boolean processingReady = true;
     private volatile SessionController.SessionConnectNode connectNode;
 
     public WebSocketClient(@NotNull JDA api) {
@@ -76,6 +77,7 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
     public void ready() {
         if (initiating) {
             initiating = false;
+            processingReady = false;
         }
         api.setStatus(JDA.Status.CONNECTED);
     }
@@ -361,8 +363,19 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
                 case "READY":
                     reconnectTimeoutS = 2;
                     api.setStatus(JDA.Status.LOADING_SUBSYSTEMS);
+                    processingReady = true;
                     handleIdentifyRateLimit = false;
                     sessionId = content.getString("session_id");
+                    break;
+                case "RESUMED":
+                    reconnectTimeoutS = 2;
+                    sentAuthInfo = true;
+                    if (!processingReady) {
+                        initiating = false;
+                        ready();
+                    } else {
+                        jda.setStatus(JDA.Status.LOADING_SUBSYSTEMS);
+                    }
                     break;
                 case "GUILD_CREATE":
                     new GuildCreateHandler(api).handle(responseTotal, raw);

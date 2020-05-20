@@ -2,11 +2,11 @@ package me.syari.ss.discord.internal
 
 import com.neovisionaries.ws.client.WebSocketFactory
 import me.syari.ss.discord.api.MessageReceivedEvent
+import me.syari.ss.discord.api.SessionController
+import me.syari.ss.discord.api.data.DataObject
 import me.syari.ss.discord.api.exceptions.RateLimitedException
 import me.syari.ss.discord.api.requests.Request
 import me.syari.ss.discord.api.requests.Response
-import me.syari.ss.discord.api.SessionController
-import me.syari.ss.discord.api.data.DataObject
 import me.syari.ss.discord.internal.entities.EntityBuilder
 import me.syari.ss.discord.internal.entities.Message
 import me.syari.ss.discord.internal.handle.EventCache
@@ -21,7 +21,6 @@ import org.jetbrains.annotations.Contract
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.ScheduledExecutorService
-import java.util.function.Supplier
 import javax.security.auth.login.LoginException
 
 class JDA(token: String, private val messageReceivedEvent: MessageReceivedEvent.() -> Unit) {
@@ -48,7 +47,7 @@ class JDA(token: String, private val messageReceivedEvent: MessageReceivedEvent.
 
     @Throws(LoginException::class)
     fun login() {
-        threadConfig.init(Supplier { "JDA" })
+        threadConfig.init { "JDA" }
         requester.rateLimiter.init()
         gatewayUrl = gateway
         status = Status.LOGGING_IN
@@ -75,7 +74,6 @@ class JDA(token: String, private val messageReceivedEvent: MessageReceivedEvent.
             }
         }
         checkToken(login)
-        return
     }
 
     @Throws(LoginException::class)
@@ -99,11 +97,7 @@ class JDA(token: String, private val messageReceivedEvent: MessageReceivedEvent.
     fun awaitStatus(
         status: Status, vararg failOn: Status
     ) {
-        require(status.isInit) {
-            String.format(
-                "Cannot await the status %s as it is not part of the login cycle!", status
-            )
-        }
+        require(status.isInit) { "Cannot await the status $status as it is not part of the login cycle!" }
         if (status == Status.CONNECTED) return
         val failStatus = listOf(*failOn)
         while (!status.isInit || status.ordinal < status.ordinal) {
@@ -122,10 +116,10 @@ class JDA(token: String, private val messageReceivedEvent: MessageReceivedEvent.
     }
 
     val rateLimitPool: ScheduledExecutorService
-        get() = threadConfig.getRateLimitPool()
+        get() = threadConfig.rateLimitPool
 
     val gatewayPool: ScheduledExecutorService
-        get() = threadConfig.getGatewayPool()
+        get() = threadConfig.gatewayPool
 
     val callbackPool: ExecutorService
         get() = threadConfig.callbackPool

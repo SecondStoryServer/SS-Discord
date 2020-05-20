@@ -5,23 +5,20 @@ import java.util.concurrent.ForkJoinPool
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.ScheduledThreadPoolExecutor
 import java.util.concurrent.TimeUnit
-import java.util.function.Supplier
 
 class ThreadingConfig {
-    private lateinit var rateLimitPool: ScheduledExecutorService
-    private lateinit var gatewayPool: ScheduledExecutorService
+    lateinit var rateLimitPool: ScheduledExecutorService
+        private set
+    lateinit var gatewayPool: ScheduledExecutorService
+        private set
     val callbackPool: ExecutorService = ForkJoinPool.commonPool()
 
-    fun init(identifier: Supplier<String>) {
+    fun init(identifier: () -> String) {
         rateLimitPool = newScheduler(
-            5,
-            identifier,
-            "RateLimit"
+            5, identifier, "RateLimit"
         )
         gatewayPool = newScheduler(
-            1,
-            identifier,
-            "Gateway"
+            1, identifier, "Gateway"
         )
     }
 
@@ -37,23 +34,9 @@ class ThreadingConfig {
         }
     }
 
-    fun shutdownNow() {
-        callbackPool.shutdownNow()
-        gatewayPool.shutdownNow()
-        rateLimitPool.shutdownNow()
-    }
-
-    fun getRateLimitPool(): ScheduledExecutorService {
-        return rateLimitPool
-    }
-
-    fun getGatewayPool(): ScheduledExecutorService {
-        return gatewayPool
-    }
-
     companion object {
         fun newScheduler(
-            coreSize: Int, identifier: Supplier<String>, baseName: String
+            coreSize: Int, identifier: () -> String, baseName: String
         ): ScheduledThreadPoolExecutor {
             return ScheduledThreadPoolExecutor(coreSize, CountingThreadFactory(identifier, baseName))
         }
