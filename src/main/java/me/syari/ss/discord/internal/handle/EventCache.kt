@@ -67,9 +67,7 @@ class EventCache {
     }
 
     private class CacheNode(
-        val responseTotal: Long,
-        private val event: DataObject,
-        private val callback: (Long, DataObject) -> Unit
+        val responseTotal: Long, private val event: DataObject, private val callback: (Long, DataObject) -> Unit
     ) {
         fun execute() {
             callback.invoke(responseTotal, event)

@@ -1,133 +1,111 @@
-package me.syari.ss.discord.internal.handle;
+package me.syari.ss.discord.internal.handle
 
-import gnu.trove.iterator.TLongIterator;
-import gnu.trove.map.TLongObjectMap;
-import gnu.trove.map.hash.TLongObjectHashMap;
-import gnu.trove.set.TLongSet;
-import gnu.trove.set.hash.TLongHashSet;
-import me.syari.ss.discord.api.utils.data.DataArray;
-import me.syari.ss.discord.api.utils.data.DataObject;
-import me.syari.ss.discord.internal.JDA;
-import org.jetbrains.annotations.NotNull;
+import gnu.trove.map.TLongObjectMap
+import gnu.trove.map.hash.TLongObjectHashMap
+import gnu.trove.set.TLongSet
+import gnu.trove.set.hash.TLongHashSet
+import me.syari.ss.discord.api.utils.data.DataArray
+import me.syari.ss.discord.api.utils.data.DataObject
+import me.syari.ss.discord.internal.JDA
+import java.util.LinkedList
 
-import java.util.LinkedList;
-import java.util.List;
+class GuildSetupNode internal constructor(private val id: Long, private val controller: GuildSetupController) {
+    private val cachedEvents: MutableList<DataObject> = LinkedList()
+    private var members: TLongObjectMap<DataObject>? = null
+    private var removedMembers: TLongSet? = null
+    private var partialGuild: DataObject? = null
+    private var expectedMemberCount = 1
+    private var requestedChunk = false
+    private var status = GuildSetupController.Status.INIT
+    private val api: JDA = controller.jda
 
-public class GuildSetupNode {
-    private final List<DataObject> cachedEvents = new LinkedList<>();
-    private TLongObjectMap<DataObject> members;
-    private TLongSet removedMembers;
-    private DataObject partialGuild;
-    private int expectedMemberCount = 1;
-    boolean requestedChunk;
-    boolean markedUnavailable = false;
-    GuildSetupController.Status status = GuildSetupController.Status.INIT;
-    private final long id;
-    private final GuildSetupController controller;
-    private final JDA api;
-
-    GuildSetupNode(long id, @NotNull GuildSetupController controller) {
-        this.id = id;
-        this.controller = controller;
-        api = controller.getJda();
+    override fun toString(): String {
+        return "GuildSetupNode[$id|$status]{expectedMemberCount=$expectedMemberCount, requestedChunk=$requestedChunk}"
     }
 
-    @Override
-    public String toString() {
-        return "GuildSetupNode[" + id + "|" + status + ']' +
-                '{' +
-                "expectedMemberCount=" + expectedMemberCount + ", " +
-                "requestedChunk=" + requestedChunk + ", " +
-                "markedUnavailable=" + markedUnavailable +
-                '}';
+    override fun hashCode(): Int {
+        return java.lang.Long.hashCode(id)
     }
 
-    @Override
-    public int hashCode() {
-        return Long.hashCode(id);
+    override fun equals(other: Any?): Boolean {
+        if (other !is GuildSetupNode) return false
+        return other.id == id
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (!(obj instanceof GuildSetupNode)) return false;
-        GuildSetupNode node = (GuildSetupNode) obj;
-        return node.id == id;
+    fun updateStatus(status: GuildSetupController.Status) {
+        if (status !== this.status) this.status = status
     }
 
-    void updateStatus(GuildSetupController.Status status) {
-        if (status != this.status) this.status = status;
-    }
-
-    void handleCreate(DataObject obj) {
+    fun handleCreate(obj: DataObject) {
         if (partialGuild == null) {
-            partialGuild = obj;
+            partialGuild = obj
         } else {
-            for (String key : obj.keys()) {
-                partialGuild.put(key, obj.opt(key).orElse(null));
+            for (key in obj.keys()) {
+                partialGuild!!.put(key, obj.opt(key).orElse(null))
             }
         }
-        boolean unavailable = partialGuild.getBoolean("unavailable", false);
-        this.markedUnavailable = unavailable;
-        if (unavailable) return;
-        ensureMembers();
+        val unavailable = partialGuild!!.getBoolean("unavailable", false)
+        if (unavailable) return
+        ensureMembers()
     }
 
-    boolean handleMemberChunk(DataArray arr) {
-        if (partialGuild == null) return true;
-        for (int index = 0; index < arr.length(); index++) {
-            DataObject obj = arr.getObject(index);
-            long id = obj.getObject("user").getLong("id");
-            members.put(id, obj);
+    fun handleMemberChunk(arr: DataArray): Boolean {
+        if (partialGuild == null) return true
+        for (index in 0 until arr.length()) {
+            val obj = arr.getObject(index)
+            val id = obj.getObject("user").getLong("id")
+            members!!.put(id, obj)
         }
-        if (expectedMemberCount <= members.size() || !api.chunkGuild(id)) {
-            completeSetup();
-            return false;
+        if (expectedMemberCount <= members!!.size() || !api.chunkGuild(id)) {
+            completeSetup()
+            return false
         }
-        return true;
+        return true
     }
 
-    void cacheEvent(@NotNull DataObject event) {
-        cachedEvents.add(event);
-        int cacheSize = cachedEvents.size();
-        if (2000 <= cacheSize && cacheSize % 1000 == 0 && status == GuildSetupController.Status.CHUNKING) {
-            controller.sendChunkRequest(id);
+    fun cacheEvent(event: DataObject) {
+        cachedEvents.add(event)
+        val cacheSize = cachedEvents.size
+        if (2000 <= cacheSize && cacheSize % 1000 == 0 && status === GuildSetupController.Status.CHUNKING) {
+            controller.sendChunkRequest(id)
         }
     }
 
-    private void completeSetup() {
-        updateStatus(GuildSetupController.Status.BUILDING);
-        TLongIterator iterator = removedMembers.iterator();
+    private fun completeSetup() {
+        updateStatus(GuildSetupController.Status.BUILDING)
+        val iterator = removedMembers!!.iterator()
         while (iterator.hasNext()) {
-            members.remove(iterator.next());
+            members!!.remove(iterator.next())
         }
-        removedMembers.clear();
-        api.getEntityBuilder().createGuild(id, partialGuild);
+        removedMembers!!.clear()
+        api.entityBuilder.createGuild(id, partialGuild!!)
         if (requestedChunk) {
-            controller.ready(id);
+            controller.ready(id)
         } else {
-            controller.remove(id);
+            controller.remove(id)
         }
-        updateStatus(GuildSetupController.Status.READY);
-        api.getClient().handle(cachedEvents);
-        api.getEventCache().playbackCache(EventCache.Type.GUILD, id);
+        updateStatus(GuildSetupController.Status.READY)
+        api.client.handle(cachedEvents)
+        api.eventCache.playbackCache(EventCache.Type.GUILD, id)
     }
 
-    private void ensureMembers() {
-        expectedMemberCount = partialGuild.getInt("member_count");
-        members = new TLongObjectHashMap<>(expectedMemberCount);
-        removedMembers = new TLongHashSet();
-        DataArray memberArray = partialGuild.getArray("members");
+    private fun ensureMembers() {
+        expectedMemberCount = partialGuild!!.getInt("member_count")
+        members = TLongObjectHashMap(expectedMemberCount)
+        removedMembers = TLongHashSet()
+        val memberArray = partialGuild!!.getArray("members")
         if (!api.chunkGuild(id)) {
-            handleMemberChunk(memberArray);
+            handleMemberChunk(memberArray)
         } else if (memberArray.length() < expectedMemberCount && !requestedChunk) {
-            updateStatus(GuildSetupController.Status.CHUNKING);
-            controller.addGuildForChunking(id);
-            requestedChunk = true;
+            updateStatus(GuildSetupController.Status.CHUNKING)
+            controller.addGuildForChunking(id)
+            requestedChunk = true
         } else if (handleMemberChunk(memberArray) && !requestedChunk) {
-            members.clear();
-            updateStatus(GuildSetupController.Status.CHUNKING);
-            controller.addGuildForChunking(id);
-            requestedChunk = true;
+            members?.clear()
+            updateStatus(GuildSetupController.Status.CHUNKING)
+            controller.addGuildForChunking(id)
+            requestedChunk = true
         }
     }
+
 }

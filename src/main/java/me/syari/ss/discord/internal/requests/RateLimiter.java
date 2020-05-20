@@ -138,7 +138,9 @@ public class RateLimiter {
         {
             String bucketId = route.getMethod() + "/" + route.getBaseRoute() + ":" + route.getMajorParameters();
             Bucket bucket = this.bucket.get(bucketId);
-            if (bucket == null && create) this.bucket.put(bucketId, bucket = new Bucket(bucketId));
+            if (bucket == null && create) {
+                this.bucket.put(bucketId, bucket = new Bucket(bucketId));
+            }
             return bucket;
         });
     }
@@ -168,7 +170,7 @@ public class RateLimiter {
         private int remaining = 1;
         private int limit = 1;
 
-        public Bucket(String bucketId) {
+        private Bucket(String bucketId) {
             this.bucketId = bucketId;
         }
 

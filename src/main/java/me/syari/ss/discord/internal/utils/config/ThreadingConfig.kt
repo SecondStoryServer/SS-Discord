@@ -9,9 +9,10 @@ import java.util.concurrent.TimeUnit
 import java.util.function.Supplier
 
 class ThreadingConfig {
-    private var rateLimitPool: ScheduledExecutorService? = null
-    private var gatewayPool: ScheduledExecutorService? = null
+    private lateinit var rateLimitPool: ScheduledExecutorService
+    private lateinit var gatewayPool: ScheduledExecutorService
     val callbackPool: ExecutorService = ForkJoinPool.commonPool()
+
     fun init(identifier: Supplier<String>) {
         rateLimitPool = newScheduler(5, identifier, "RateLimit")
         gatewayPool = newScheduler(1, identifier, "Gateway")
@@ -19,28 +20,28 @@ class ThreadingConfig {
 
     fun shutdown() {
         callbackPool.shutdown()
-        gatewayPool!!.shutdown()
+        gatewayPool.shutdown()
         if (rateLimitPool is ScheduledThreadPoolExecutor) {
             val executor = rateLimitPool as ScheduledThreadPoolExecutor
             executor.setKeepAliveTime(5L, TimeUnit.SECONDS)
             executor.allowCoreThreadTimeOut(true)
         } else {
-            rateLimitPool!!.shutdown()
+            rateLimitPool.shutdown()
         }
     }
 
     fun shutdownNow() {
         callbackPool.shutdownNow()
-        gatewayPool!!.shutdownNow()
-        rateLimitPool!!.shutdownNow()
+        gatewayPool.shutdownNow()
+        rateLimitPool.shutdownNow()
     }
 
     fun getRateLimitPool(): ScheduledExecutorService {
-        return rateLimitPool!!
+        return rateLimitPool
     }
 
     fun getGatewayPool(): ScheduledExecutorService {
-        return gatewayPool!!
+        return gatewayPool
     }
 
     companion object {

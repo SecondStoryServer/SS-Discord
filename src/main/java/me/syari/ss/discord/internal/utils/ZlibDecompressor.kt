@@ -16,20 +16,25 @@ class ZlibDecompressor {
     private var flushBuffer: ByteBuffer? = null
     private var decompressBuffer: SoftReference<ByteArrayOutputStream>? = null
 
-    @Contract(" -> new")
+    private fun newDecompressBufferReferent(): ByteArrayOutputStream {
+        return ByteArrayOutputStream(1024.coerceAtMost(maxBufferSize))
+    }
+
     private fun newDecompressBuffer(): SoftReference<ByteArrayOutputStream> {
-        return SoftReference(ByteArrayOutputStream(Math.min(1024, maxBufferSize)))
+        return SoftReference(newDecompressBufferReferent())
     }
 
     private fun getDecompressBuffer(): ByteArrayOutputStream? {
-        if (decompressBuffer == null) decompressBuffer = newDecompressBuffer()
-        var buffer = decompressBuffer!!.get()
-        if (buffer == null) decompressBuffer = SoftReference(ByteArrayOutputStream(
-            Math.min(
-                1024, maxBufferSize
-            )
-        ).also { buffer = it })
-        return buffer
+        val notNullDecompressBuffer = decompressBuffer ?: {
+            newDecompressBuffer().apply {
+                decompressBuffer = this
+            }
+        }.invoke()
+        return notNullDecompressBuffer.get() ?: {
+            newDecompressBufferReferent().apply {
+                decompressBuffer = SoftReference(this)
+            }
+        }.invoke()
     }
 
     private fun getIntBigEndian(array: ByteArray, offset: Int): Int {
@@ -63,27 +68,29 @@ class ZlibDecompressor {
 
     @Throws(DataFormatException::class)
     fun decompress(data: ByteArray): String? {
-        var data = data
-        if (!isFlush(data)) {
-            buffer(data)
+        var dataAsMutable = data
+        if (!isFlush(dataAsMutable)) {
+            buffer(dataAsMutable)
             return null
-        } else if (flushBuffer != null) {
-            buffer(data)
-            val arr = flushBuffer!!.array()
-            data = ByteArray(flushBuffer!!.position())
-            System.arraycopy(arr, 0, data, 0, data.size)
-            flushBuffer = null
+        } else {
+            flushBuffer?.let { flushBuffer ->
+                buffer(dataAsMutable)
+                val arr = flushBuffer.array()
+                dataAsMutable = ByteArray(flushBuffer.position())
+                System.arraycopy(arr, 0, dataAsMutable, 0, dataAsMutable.size)
+                this.flushBuffer = null
+            }
         }
         val buffer = getDecompressBuffer()
         try {
             InflaterOutputStream(buffer, inflater).use { decompressor ->
-                decompressor.write(data)
+                decompressor.write(dataAsMutable)
                 return buffer!!.toString("UTF-8")
             }
         } catch (e: IOException) {
             throw (DataFormatException("Malformed").initCause(e) as DataFormatException)
         } finally {
-            if (buffer!!.size() > maxBufferSize) {
+            if (maxBufferSize < buffer!!.size()) {
                 decompressBuffer = newDecompressBuffer()
             } else {
                 buffer.reset()

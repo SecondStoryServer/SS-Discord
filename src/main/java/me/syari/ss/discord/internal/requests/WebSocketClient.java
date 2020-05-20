@@ -51,7 +51,7 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
     protected volatile boolean printedRateLimitMessage = false;
     protected volatile boolean sentAuthInfo = false;
     protected boolean processingReady = true;
-    protected volatile ConnectNode connectNode;
+    protected volatile SessionController.SessionConnectNode connectNode;
 
     public WebSocketClient(@NotNull JDA api) {
         this.api = api;
@@ -479,14 +479,7 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
         }
     }
 
-    protected abstract class ConnectNode implements SessionController.SessionConnectNode {
-        @NotNull
-        JDA getJDA() {
-            return api;
-        }
-    }
-
-    protected class StartingNode extends ConnectNode {
+    private class StartingNode implements SessionController.SessionConnectNode {
         @Override
         public void run(boolean isLast) throws InterruptedException {
             if (shutdown) return;
@@ -509,12 +502,13 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
         public boolean equals(Object obj) {
             if (obj == this) return true;
             if (!(obj instanceof StartingNode)) return false;
-            StartingNode node = (StartingNode) obj;
-            return node.getJDA().equals(getJDA());
+            // StartingNode node = (StartingNode) obj;
+            // return node.getJDA().equals(getJDA());
+            return true;
         }
     }
 
-    protected class ReconnectNode extends ConnectNode {
+    private class ReconnectNode implements SessionController.SessionConnectNode {
 
         @Override
         public void run(boolean isLast) throws InterruptedException {
@@ -537,8 +531,9 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
         public boolean equals(Object object) {
             if (object == this) return true;
             if (!(object instanceof ReconnectNode)) return false;
-            ReconnectNode node = (ReconnectNode) object;
-            return node.getJDA().equals(getJDA());
+            // ReconnectNode node = (ReconnectNode) object;
+            // return node.getJDA().equals(getJDA());
+            return true;
         }
     }
 }

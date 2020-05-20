@@ -10,7 +10,6 @@ import java.io.EOFException
 import java.io.IOException
 import java.io.InputStream
 import java.io.InputStreamReader
-import java.util.Optional
 import java.util.stream.Collectors
 import java.util.zip.GZIPInputStream
 import java.util.zip.Inflater
@@ -63,8 +62,8 @@ class Response(private val rawResponse: Response?, val code: Int, val retryAfter
     }
 
     val string: String
-        get() = parseBody(String::class.java){
-                reader -> readString(reader)
+        get() = parseBody(String::class.java) { reader ->
+            readString(reader)
         } ?: fallbackString ?: "N/A"
 
     val isError: Boolean
