@@ -17,18 +17,24 @@ class Request<T>(
     private val restAction: RestAction<T>,
     private val onSuccess: Consumer<in T>,
     onFailure: Consumer<in Throwable>?,
-    shouldQueue: Boolean,
-    body: RequestBody?,
-    route: Route
+    private val shouldQueue: Boolean,
+    private val body: RequestBody?,
+    val route: Route
 ) {
     private var onFailure: Consumer<in Throwable>? = null
-    private val shouldQueue: Boolean
-    private val body: RequestBody?
-    val route: Route
     private val api: JDA
     private val localReason = ThreadLocalReason.current
     var isCanceled = false
         private set
+
+    init {
+        this.onFailure = if (onFailure is ContextConsumer) {
+            onFailure
+        } else {
+            onFailure?.let { from(it) }
+        }
+        this.api = restAction.jda
+    }
 
     fun onSuccess(successObj: T?) {
         if (successObj == null) return
@@ -76,17 +82,5 @@ class Request<T>(
 
     fun handleResponse(response: Response) {
         restAction.handleResponse(response, this)
-    }
-
-    init {
-        this.onFailure = if (onFailure is ContextConsumer) {
-            onFailure
-        } else {
-            onFailure?.let { from(it) }
-        }
-        this.shouldQueue = shouldQueue
-        this.body = body
-        this.route = route
-        api = restAction.jda
     }
 }

@@ -32,7 +32,7 @@ class GuildSetupNode internal constructor(private val id: Long, private val cont
         return other.id == id
     }
 
-    fun updateStatus(status: GuildSetupController.Status) {
+    private fun updateStatus(status: GuildSetupController.Status) {
         if (status !== this.status) this.status = status
     }
 
@@ -49,14 +49,14 @@ class GuildSetupNode internal constructor(private val id: Long, private val cont
         ensureMembers()
     }
 
-    fun handleMemberChunk(arr: DataArray): Boolean {
+    private fun handleMemberChunk(arr: DataArray): Boolean {
         if (partialGuild == null) return true
         for (index in 0 until arr.length()) {
             val obj = arr.getObject(index)
             val id = obj.getObject("user").getLong("id")
             members!!.put(id, obj)
         }
-        if (expectedMemberCount <= members!!.size() || !api.chunkGuild(id)) {
+        if (expectedMemberCount <= members!!.size()) {
             completeSetup()
             return false
         }
@@ -94,9 +94,7 @@ class GuildSetupNode internal constructor(private val id: Long, private val cont
         members = TLongObjectHashMap(expectedMemberCount)
         removedMembers = TLongHashSet()
         val memberArray = partialGuild!!.getArray("members")
-        if (!api.chunkGuild(id)) {
-            handleMemberChunk(memberArray)
-        } else if (memberArray.length() < expectedMemberCount && !requestedChunk) {
+        if (memberArray.length() < expectedMemberCount && !requestedChunk) {
             updateStatus(GuildSetupController.Status.CHUNKING)
             controller.addGuildForChunking(id)
             requestedChunk = true

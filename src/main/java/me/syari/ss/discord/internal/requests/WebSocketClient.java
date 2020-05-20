@@ -9,7 +9,6 @@ import me.syari.ss.discord.internal.JDA;
 import me.syari.ss.discord.internal.handle.EventCache;
 import me.syari.ss.discord.internal.handle.GuildCreateHandler;
 import me.syari.ss.discord.internal.handle.MessageCreateHandler;
-import me.syari.ss.discord.internal.handle.SocketHandler;
 import me.syari.ss.discord.internal.utils.ZlibDecompressor;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,43 +26,35 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
     private static final String INVALIDATE_REASON = "INVALIDATE_SESSION";
     private static final long IDENTIFY_BACKOFF = TimeUnit.SECONDS.toMillis(SessionController.IDENTIFY_DELAY);
 
-    protected final JDA api;
-    protected final Map<String, SocketHandler> handlers;
+    private final JDA api;
     public WebSocket socket;
-    protected String sessionId = null;
-    protected final Object readLock = new Object();
-    protected final ZlibDecompressor decompressor = new ZlibDecompressor();
-    protected final ReentrantLock queueLock = new ReentrantLock();
-    protected final ScheduledExecutorService executor;
-    protected WebSocketSendingThread ratelimitThread;
-    protected volatile Future<?> keepAliveThread;
-    protected boolean initiating;
-    protected int reconnectTimeoutS = 2;
-    protected long identifyTime = 0;
-    protected final Queue<String> chunkSyncQueue = new ConcurrentLinkedQueue<>();
-    protected final Queue<String> ratelimitQueue = new ConcurrentLinkedQueue<>();
-    protected volatile long ratelimitResetTime;
-    protected final AtomicInteger messagesSent = new AtomicInteger(0);
-    protected volatile boolean shutdown = false;
-    protected boolean shouldReconnect;
-    protected boolean handleIdentifyRateLimit = false;
-    protected boolean connected = false;
-    protected volatile boolean printedRateLimitMessage = false;
-    protected volatile boolean sentAuthInfo = false;
-    protected boolean processingReady = true;
-    protected volatile SessionController.SessionConnectNode connectNode;
+    private String sessionId = null;
+    private final Object readLock = new Object();
+    private final ZlibDecompressor decompressor = new ZlibDecompressor();
+    public final ReentrantLock queueLock = new ReentrantLock();
+    public final ScheduledExecutorService executor;
+    private WebSocketSendingThread ratelimitThread;
+    private volatile Future<?> keepAliveThread;
+    private boolean initiating;
+    private int reconnectTimeoutS = 2;
+    private long identifyTime = 0;
+    public final Queue<String> chunkSyncQueue = new ConcurrentLinkedQueue<>();
+    public final Queue<String> ratelimitQueue = new ConcurrentLinkedQueue<>();
+    private volatile long ratelimitResetTime;
+    private final AtomicInteger messagesSent = new AtomicInteger(0);
+    private volatile boolean shutdown = false;
+    private boolean shouldReconnect;
+    private boolean handleIdentifyRateLimit = false;
+    private boolean connected = false;
+    private volatile boolean printedRateLimitMessage = false;
+    public volatile boolean sentAuthInfo = false;
+    private volatile SessionController.SessionConnectNode connectNode;
 
     public WebSocketClient(@NotNull JDA api) {
         this.api = api;
         this.executor = api.getGatewayPool();
         this.shouldReconnect = true;
         this.connectNode = new StartingNode();
-        this.handlers = new HashMap<String, SocketHandler>() {
-            {
-                put("GUILD_CREATE", new GuildCreateHandler(api));
-                put("MESSAGE_CREATE", new MessageCreateHandler(api));
-            }
-        };
         try {
             api.getSessionController().appendSession(connectNode);
         } catch (RuntimeException | Error e) {
@@ -83,7 +74,6 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
     public void ready() {
         if (initiating) {
             initiating = false;
-            processingReady = false;
         }
         api.setStatus(JDA.Status.CONNECTED);
     }
@@ -320,21 +310,6 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
         return api.getToken().substring("Bot ".length());
     }
 
-    protected List<DataObject> convertPresencesReplace(long responseTotal, @NotNull DataArray array) {
-        List<DataObject> output = new LinkedList<>();
-        for (int i = 0; i < array.length(); i++) {
-            DataObject presence = array.getObject(i);
-            final DataObject obj = DataObject.empty();
-            obj.put("comment", "This was constructed from a PRESENCES_REPLACE payload")
-                    .put("op", WebSocketCode.DISPATCH)
-                    .put("s", responseTotal)
-                    .put("d", presence)
-                    .put("t", "PRESENCE_UPDATE");
-            output.add(obj);
-        }
-        return output;
-    }
-
     protected void handleEvent(DataObject content) {
         try {
             onEvent(content);
@@ -377,14 +352,6 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
         String type = raw.getString("t");
         long responseTotal = api.getResponseTotal();
         if (!(raw.get("d") instanceof Map)) {
-            if (type.equals("PRESENCES_REPLACE")) {
-                final DataArray payload = raw.getArray("d");
-                final List<DataObject> converted = convertPresencesReplace(responseTotal, payload);
-                final SocketHandler handler = getHandler("PRESENCE_UPDATE");
-                for (DataObject object : converted) {
-                    handler.handle(responseTotal, object);
-                }
-            }
             return;
         }
         DataObject content = raw.getObject("d");
@@ -394,27 +361,14 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
                 case "READY":
                     reconnectTimeoutS = 2;
                     api.setStatus(JDA.Status.LOADING_SUBSYSTEMS);
-                    processingReady = true;
                     handleIdentifyRateLimit = false;
                     sessionId = content.getString("session_id");
                     break;
-                case "RESUMED":
-                    reconnectTimeoutS = 2;
-                    sentAuthInfo = true;
-                    if (!processingReady) {
-                        initiating = false;
-                        ready();
-                    } else {
-                        jda.setStatus(JDA.Status.LOADING_SUBSYSTEMS);
-                    }
+                case "GUILD_CREATE":
+                    new GuildCreateHandler(api).handle(responseTotal, raw);
                     break;
-                default:
-                    long guildId = content.getLong("guild_id", 0L);
-                    if (api.isUnavailable(guildId) && !type.equals("GUILD_CREATE") && !type.equals("GUILD_DELETE")) {
-                        break;
-                    }
-                    SocketHandler handler = handlers.get(type);
-                    if (handler != null) handler.handle(responseTotal, raw);
+                case "MESSAGE_CREATE":
+                    new MessageCreateHandler(api).handle(responseTotal, raw);
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -470,15 +424,6 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
         }
     }
 
-    @SuppressWarnings("unchecked")
-    public <T extends SocketHandler> T getHandler(String type) {
-        try {
-            return (T) handlers.get(type);
-        } catch (ClassCastException e) {
-            throw new IllegalStateException(e);
-        }
-    }
-
     private class StartingNode implements SessionController.SessionConnectNode {
         @Override
         public void run(boolean isLast) throws InterruptedException {
@@ -501,10 +446,7 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
         @Override
         public boolean equals(Object obj) {
             if (obj == this) return true;
-            if (!(obj instanceof StartingNode)) return false;
-            // StartingNode node = (StartingNode) obj;
-            // return node.getJDA().equals(getJDA());
-            return true;
+            return obj instanceof StartingNode;
         }
     }
 
@@ -530,10 +472,7 @@ public class WebSocketClient extends WebSocketAdapter implements WebSocketListen
         @Override
         public boolean equals(Object object) {
             if (object == this) return true;
-            if (!(object instanceof ReconnectNode)) return false;
-            // ReconnectNode node = (ReconnectNode) object;
-            // return node.getJDA().equals(getJDA());
-            return true;
+            return object instanceof ReconnectNode;
         }
     }
 }

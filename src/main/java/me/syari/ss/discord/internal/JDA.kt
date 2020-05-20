@@ -25,37 +25,27 @@ import java.util.function.Consumer
 import java.util.function.Supplier
 import javax.security.auth.login.LoginException
 
-class JDA(token: String, messageReceivedEvent: Consumer<MessageReceivedEvent>) {
-    protected val shutdownHook = Thread(Runnable { shutdown() }, "JDA Shutdown Hook")
+class JDA(token: String, private val messageReceivedEvent: Consumer<MessageReceivedEvent>) {
+    private val shutdownHook = Thread(Runnable { shutdown() }, "JDA Shutdown Hook")
     val entityBuilder = EntityBuilder(this)
     val eventCache = EventCache()
     val guildSetupController = GuildSetupController(this)
-    val token: String
-    protected val threadConfig = ThreadingConfig()
+    val token: String = "Bot $token"
+    private val threadConfig = ThreadingConfig()
     val sessionController = SessionController()
     val httpClient = OkHttpClient.Builder().build()
     val webSocketFactory = WebSocketFactory()
-    private val messageReceivedEvent: Consumer<MessageReceivedEvent>
     lateinit var client: WebSocketClient
-        protected set
+        private set
     val requester = Requester(this)
     var status = Status.INITIALIZING
         set(value) {
             synchronized(field) { field = value }
         }
-
     var responseTotal: Long = 0
-        protected set
+        private set
     var gatewayUrl: String? = null
-        protected set
-
-    fun chunkGuild(id: Long): Boolean {
-        return try {
-            true
-        } catch (e: Exception) {
-            true
-        }
-    }
+        private set
 
     @Throws(LoginException::class)
     fun login() {
@@ -68,7 +58,7 @@ class JDA(token: String, messageReceivedEvent: Consumer<MessageReceivedEvent>) {
         Runtime.getRuntime().addShutdownHook(shutdownHook)
     }
 
-    val gateway: String
+    private val gateway: String
         get() = sessionController.getGateway(this)
 
 
@@ -87,11 +77,8 @@ class JDA(token: String, messageReceivedEvent: Consumer<MessageReceivedEvent>) {
                 }
             }
         }
-        var userResponse = checkToken(login)
-        if (userResponse != null) return
-        userResponse = checkToken(login)
-        shutdownNow()
-        if (userResponse == null) throw LoginException("The provided token is invalid!")
+        checkToken(login)
+        return
     }
 
     @Throws(LoginException::class)
@@ -160,8 +147,7 @@ class JDA(token: String, messageReceivedEvent: Consumer<MessageReceivedEvent>) {
     fun shutdown() {
         if (status == Status.SHUTDOWN || status == Status.SHUTTING_DOWN) return
         status = Status.SHUTTING_DOWN
-        val client = client
-        client?.shutdown()
+        client.shutdown()
         shutdownInternals()
     }
 
@@ -220,8 +206,4 @@ class JDA(token: String, messageReceivedEvent: Consumer<MessageReceivedEvent>) {
         }
     }
 
-    init {
-        this.token = "Bot $token"
-        this.messageReceivedEvent = messageReceivedEvent
-    }
 }

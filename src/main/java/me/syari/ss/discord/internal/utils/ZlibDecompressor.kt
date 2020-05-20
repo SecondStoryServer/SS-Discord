@@ -1,7 +1,6 @@
 package me.syari.ss.discord.internal.utils
 
 import okhttp3.internal.and
-import org.jetbrains.annotations.Contract
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.lang.ref.SoftReference

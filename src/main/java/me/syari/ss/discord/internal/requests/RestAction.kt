@@ -14,24 +14,19 @@ import java.util.function.BiFunction
 import java.util.function.Consumer
 
 open class RestAction<T>(
-    val jda: JDA, private val route: Route?, private val handler: BiFunction<Response, Request<T>, T>?
+    val jda: JDA, private val route: Route, private val handler: BiFunction<Response, Request<T>, T>?
 ) {
-    constructor(api: JDA, route: Route?): this(api, route, null)
+    constructor(api: JDA, route: Route): this(api, route, null)
 
     fun queue() {
-        val route = finalizeRoute()
         val data = finalizeData()
-        jda.requester.request(
-            Request(
-                this, DEFAULT_SUCCESS, DEFAULT_FAILURE, true, data, route!!
-            )
-        )
+        val request = Request(this, DEFAULT_SUCCESS, DEFAULT_FAILURE, true, data, route)
+        jda.requester.request(request)
     }
 
     private fun submit(shouldQueue: Boolean): CompletableFuture<T> {
-        val route = finalizeRoute()
         val data = finalizeData()
-        return RestFuture(this, shouldQueue, data, route!!)
+        return RestFuture(this, shouldQueue, data, route)
     }
 
     fun complete(): T {
@@ -60,11 +55,11 @@ open class RestAction<T>(
         }
     }
 
-    protected open fun finalizeData(): RequestBody? {
+    open fun finalizeData(): RequestBody? {
         return null
     }
 
-    protected fun finalizeRoute(): Route? {
+    private fun finalizeRoute(): Route? {
         return route
     }
 
@@ -89,7 +84,7 @@ open class RestAction<T>(
     }
 
     companion object {
-        private val DEFAULT_SUCCESS = Consumer { o: Any? -> }
-        private val DEFAULT_FAILURE: Consumer<in Throwable> = Consumer { t: Throwable? -> }
+        private val DEFAULT_SUCCESS = Consumer { _: Any? -> }
+        private val DEFAULT_FAILURE: Consumer<in Throwable> = Consumer { }
     }
 }
