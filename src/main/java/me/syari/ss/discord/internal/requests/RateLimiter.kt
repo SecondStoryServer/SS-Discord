@@ -115,7 +115,7 @@ class RateLimiter(private val requester: Requester) {
                     return@Supplier bucket
                 }
                 if (hash == null) return@Supplier bucket!!
-                bucket!!.limit = Math.max(1L, parseLong(headers[LIMIT_HEADER])).toInt()
+                bucket!!.limit = 1L.coerceAtLeast(parseLong(headers[LIMIT_HEADER])).toInt()
                 bucket.remaining = parseLong(headers[REMAINING_HEADER]).toInt()
                 bucket.reset = now + parseDouble(headers[RESET_AFTER_HEADER])
                 return@Supplier bucket

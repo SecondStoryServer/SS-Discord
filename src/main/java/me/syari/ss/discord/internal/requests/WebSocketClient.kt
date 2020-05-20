@@ -10,7 +10,6 @@ import me.syari.ss.discord.api.SessionController
 import me.syari.ss.discord.api.SessionController.SessionConnectNode
 import me.syari.ss.discord.api.data.DataArray
 import me.syari.ss.discord.api.data.DataObject
-import me.syari.ss.discord.api.requests.CloseCode
 import me.syari.ss.discord.api.requests.CloseCode.Companion.from
 import me.syari.ss.discord.internal.JDA
 import me.syari.ss.discord.internal.handle.EventCache
@@ -24,7 +23,6 @@ import java.util.Queue
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.Future
 import java.util.concurrent.RejectedExecutionException
-import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.locks.ReentrantLock
@@ -33,12 +31,12 @@ import java.util.function.Supplier
 import java.util.zip.DataFormatException
 
 class WebSocketClient(val jDA: JDA): WebSocketAdapter(), WebSocketListener {
-    var socket: WebSocket? = null
+    private var socket: WebSocket? = null
     private var sessionId: String? = null
     private val readLock = Any()
     private val decompressor = ZlibDecompressor()
     val queueLock = ReentrantLock()
-    val executor: ScheduledExecutorService
+    val executor = jDA.gatewayPool
     private var ratelimitThread: WebSocketSendingThread? = null
 
     @Volatile
@@ -110,7 +108,7 @@ class WebSocketClient(val jDA: JDA): WebSocketAdapter(), WebSocketListener {
         if (socket != null) socket!!.sendClose(1000)
     }
 
-    fun close(code: Int, reason: String?) {
+    private fun close(code: Int, reason: String?) {
         if (socket != null) socket!!.sendClose(code, reason)
     }
 
@@ -236,7 +234,7 @@ class WebSocketClient(val jDA: JDA): WebSocketAdapter(), WebSocketListener {
         while (shouldReconnect) {
             jDA.status = JDA.Status.WAITING_TO_RECONNECT
             val delay = reconnectTimeoutS
-            reconnectTimeoutS = Math.min(reconnectTimeoutS shl 1, 900)
+            reconnectTimeoutS = (reconnectTimeoutS shl 1).coerceAtMost(900)
             Thread.sleep(delay * 1000.toLong())
             handleIdentifyRateLimit = false
             jDA.status = JDA.Status.ATTEMPTING_TO_RECONNECT
@@ -469,7 +467,6 @@ class WebSocketClient(val jDA: JDA): WebSocketAdapter(), WebSocketListener {
     }
 
     init {
-        executor = jDA.gatewayPool
         shouldReconnect = true
         connectNode = StartingNode().apply {
             try {

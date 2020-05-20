@@ -1,4 +1,3 @@
-import me.syari.ss.discord.api.MessageReceivedEvent
 import me.syari.ss.discord.internal.JDA
 import me.syari.ss.discord.internal.JDA.Companion.build
 import me.syari.ss.discord.internal.entities.TextChannel.Companion.get

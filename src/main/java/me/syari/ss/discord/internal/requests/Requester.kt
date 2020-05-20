@@ -2,10 +2,8 @@ package me.syari.ss.discord.internal.requests
 
 import me.syari.ss.discord.api.requests.Request
 import me.syari.ss.discord.internal.JDA
-import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.OkHttpClient
-import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 import okhttp3.internal.http.HttpMethod.requiresRequestBody
 import java.net.SocketException
@@ -27,7 +25,7 @@ class Requester(val jda: JDA) {
         return execute(apiRequest, false, handleOnRateLimit)
     }
 
-    fun execute(
+    private fun execute(
         apiRequest: Request<*>, retried: Boolean, handleOnRatelimit: Boolean
     ): Long? {
         val route = apiRequest.route
@@ -97,8 +95,8 @@ class Requester(val jda: JDA) {
     companion object {
         const val DISCORD_API_PREFIX = "https://discordapp.com/api/v6/"
         const val USER_AGENT = "SS-Discord"
-        val EMPTY_BODY = RequestBody.create(null, ByteArray(0))
-        val MEDIA_TYPE_JSON: MediaType = "application/json; charset=utf-8".toMediaType()
+        private val EMPTY_BODY = ByteArray(0).toRequestBody()
+        val MEDIA_TYPE_JSON = "application/json; charset=utf-8".toMediaType()
         private fun isRetry(ex: Throwable): Boolean {
             return ex is SocketException || ex is SocketTimeoutException || ex is SSLPeerUnverifiedException
         }

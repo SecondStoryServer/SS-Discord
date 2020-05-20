@@ -176,8 +176,6 @@ class JDA(token: String, private val messageReceivedEvent: MessageReceivedEvent.
     }
 
     companion object {
-        @JvmStatic
-        @Contract(pure = true)
         @Throws(LoginException::class)
         fun build(token: String, messageReceivedEvent: MessageReceivedEvent.() -> Unit): JDA {
             val jda = JDA(token, messageReceivedEvent)
