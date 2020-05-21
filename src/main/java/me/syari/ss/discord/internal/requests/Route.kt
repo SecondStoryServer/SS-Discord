@@ -1,7 +1,5 @@
 package me.syari.ss.discord.internal.requests
 
-import org.jetbrains.annotations.Contract
-
 class Route(val method: Method, val baseRoute: String, val route: String, val majorParameters: String) {
     constructor(method: Method, route: String): this(method, route, route, DEFAULT_MAJOR_PARAMETERS)
 

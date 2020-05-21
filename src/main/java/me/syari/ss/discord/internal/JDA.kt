@@ -17,7 +17,6 @@ import me.syari.ss.discord.internal.requests.Route.Companion.selfRoute
 import me.syari.ss.discord.internal.requests.WebSocketClient
 import me.syari.ss.discord.internal.utils.ThreadingConfig
 import okhttp3.OkHttpClient
-import org.jetbrains.annotations.Contract
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.ScheduledExecutorService

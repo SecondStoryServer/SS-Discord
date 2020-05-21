@@ -2,7 +2,6 @@ package me.syari.ss.discord.api.exceptions
 
 import me.syari.ss.discord.api.requests.ErrorResponse
 import me.syari.ss.discord.api.requests.Response
-import org.jetbrains.annotations.Contract
 
 class ErrorResponseException private constructor(
     response: Response?, code: Int, meaning: String

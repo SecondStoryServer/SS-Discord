@@ -21,7 +21,12 @@ class MessageCreateHandler(val jda: JDA): SocketHandler(jda) {
             return when (ex.message) {
                 EntityBuilder.MISSING_CHANNEL -> {
                     allContent?.let { allContent ->
-                        jda.eventCache.cache(EventCache.Type.CHANNEL, channelId, responseNumber, allContent) { responseTotal, dataObject ->
+                        jda.eventCache.cache(
+                            EventCache.Type.CHANNEL,
+                            channelId,
+                            responseNumber,
+                            allContent
+                        ) { responseTotal, dataObject ->
                             handle(responseTotal, dataObject)
                         }
                     }

@@ -104,29 +104,29 @@ class Response(private val rawResponse: Response?, val code: Int, val retryAfter
             }
         }
         attemptedParsing = true
-        if (body == null || rawResponse == null || rawResponse.body?.contentLength() == 0L) {
-            return null
-        }
-        val reader = BufferedReader(InputStreamReader(body))
-        return try {
-            reader.mark(1024)
-            parser.invoke(reader).apply {
-                anyData = this
-            }
-        } catch (ex1: Exception) {
-            try {
-                reader.reset()
-                fallbackString = readString(reader)
-                reader.close()
-            } catch (ex2: NullPointerException) {
-                ex2.printStackTrace()
-            } catch (ex2: IOException) {
-                ex2.printStackTrace()
-            }
-            if (opt && ex1 is ParsingException) {
-                null
-            } else {
-                throw IllegalStateException("An error occurred while parsing the response for a RestAction", ex1)
+        if (rawResponse == null || rawResponse.body?.contentLength() == 0L) return null
+        return body?.let { body ->
+            val reader = BufferedReader(InputStreamReader(body))
+            return try {
+                reader.mark(1024)
+                parser.invoke(reader).apply {
+                    anyData = this
+                }
+            } catch (ex1: Exception) {
+                try {
+                    reader.reset()
+                    fallbackString = readString(reader)
+                    reader.close()
+                } catch (ex2: NullPointerException) {
+                    ex2.printStackTrace()
+                } catch (ex2: IOException) {
+                    ex2.printStackTrace()
+                }
+                if (opt && ex1 is ParsingException) {
+                    null
+                } else {
+                    throw IllegalStateException("An error occurred while parsing the response for a RestAction", ex1)
+                }
             }
         }
     }

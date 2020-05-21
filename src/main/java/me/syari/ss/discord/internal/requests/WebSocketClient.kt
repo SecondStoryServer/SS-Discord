@@ -190,8 +190,8 @@ class WebSocketClient(val jDA: JDA): WebSocketAdapter(), WebSocketListener {
         }
         val closeCodeIsReconnect = closeCode == null || closeCode.isReconnect
         if (!shouldReconnect || !closeCodeIsReconnect || executor.isShutdown) {
-            if (ratelimitThread != null) {
-                ratelimitThread?.shutdown()
+            ratelimitThread?.apply {
+                shutdown()
                 ratelimitThread = null
             }
             decompressor.reset()
@@ -374,8 +374,7 @@ class WebSocketClient(val jDA: JDA): WebSocketAdapter(), WebSocketListener {
     override fun onBinaryMessage(
         websocket: WebSocket, binary: ByteArray
     ) {
-        var json: DataObject?
-        synchronized(readLock) { json = handleBinary(binary) }
+        val json = synchronized(readLock) { handleBinary(binary) }
         json?.let { handleEvent(it) }
     }
 

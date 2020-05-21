@@ -16,7 +16,8 @@ class RateLimiter(private val requester: Requester) {
     private val bucketLock = ReentrantLock()
     private val bucket: MutableMap<String, Bucket> = ConcurrentHashMap()
     private val rateLimitQueue: MutableMap<Bucket?, Future<*>> = ConcurrentHashMap()
-    private var cleanupWorker: Future<*>? = null
+    private lateinit var cleanupWorker: Future<*>
+
     fun init() {
         cleanupWorker = scheduler.scheduleAtFixedRate({ cleanup() }, 30, 30, TimeUnit.SECONDS)
     }
@@ -60,12 +61,11 @@ class RateLimiter(private val requester: Requester) {
     }
 
     fun shutdown() {
-        cleanupWorker?.cancel(false)
+        cleanupWorker.cancel(false)
     }
 
     fun getRateLimit(route: Route): Long {
-        val bucket = getBucket(route)
-        return bucket?.rateLimit ?: 0L
+        return getBucket(route)?.rateLimit ?: 0L
     }
 
     fun queueRequest(request: Request<*>) {
