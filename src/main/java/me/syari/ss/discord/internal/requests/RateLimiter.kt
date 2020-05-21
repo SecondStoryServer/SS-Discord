@@ -1,5 +1,6 @@
 package me.syari.ss.discord.internal.requests
 
+import me.syari.ss.discord.api.SessionController
 import me.syari.ss.discord.api.requests.Request
 import me.syari.ss.discord.internal.Discord
 import okhttp3.Response
@@ -135,7 +136,7 @@ object RateLimiter {
                 if (global) {
                     val retryAfterHeader = headers[RETRY_AFTER_HEADER]
                     val retryAfter = parseLong(retryAfterHeader)
-                    Discord.sessionController.setGlobalRatelimit(now + retryAfter)
+                    SessionController.setGlobalRatelimit(now + retryAfter)
                 } else if (response.code == 429) {
                     val retryAfterHeader = headers[RETRY_AFTER_HEADER]
                     val retryAfter = parseLong(retryAfterHeader)
@@ -206,7 +207,7 @@ object RateLimiter {
         val rateLimit: Long
             get() {
                 val now = System.currentTimeMillis()
-                val global = Discord.sessionController.getGlobalRatelimit()
+                val global = SessionController.getGlobalRatelimit()
                 if (now < global) return global - now
                 if (reset <= now) {
                     remaining = limit

@@ -2,80 +2,78 @@ package me.syari.ss.discord.api.requests
 
 import me.syari.ss.discord.api.data.DataObject
 
-enum class ErrorResponse(val code: Int, val meaning: String) {
-    UNKNOWN_ACCOUNT(10001, "Unknown Account"),
-    UNKNOWN_APPLICATION(10002, "Unknown Application"),
-    UNKNOWN_CHANNEL(10003, "Unknown Channel"),
-    UNKNOWN_GUILD(10004, "Unknown Guild"),
-    UNKNOWN_INTEGRATION(10005, "Unknown Integration"),
-    UNKNOWN_INVITE(10006, "Unknown Invite"),
-    UNKNOWN_MEMBER(10007, "Unknown Member"),
-    UNKNOWN_MESSAGE(10008, "Unknown Message"),
-    UNKNOWN_OVERRIDE(10009, "Unknown Override"),
-    UNKNOWN_PROVIDER(10010, "Unknown Provider"),
-    UNKNOWN_ROLE(10011, "Unknown Role"),
-    UNKNOWN_TOKEN(10012, "Unknown Token"),
-    UNKNOWN_USER(10013, "Unknown User"),
-    UNKNOWN_EMOJI(10014, "Unknown Emoji"),
-    UNKNOWN_WEBHOOK(10015, "Unknown Webhook"),
-    UNKNOWN_BAN(10026, "Unknown Ban"),
-    BOTS_NOT_ALLOWED(20001, "Bots cannot use this endpoint"),
-    ONLY_BOTS_ALLOWED(20002, "Only bots can use this endpoint"),
-    MAX_GUILDS(30001, "Maximum number of Guilds reached (100)"),
-    MAX_FRIENDS(30002, "Maximum number of Friends reached (1000)"),
-    MAX_MESSAGE_PINS(30003, "Maximum number of pinned messages reached (50)"),
-    MAX_USERS_PER_DM(30004, "Maximum number of recipients reached. (10)"),
-    MAX_ROLES_PER_GUILD(30005, "Maximum number of guild roles reached (250)"),
-    TOO_MANY_REACTIONS(30010, "Too many reactions"),
-    MAX_CHANNELS(30013, "Maximum number of guild channels reached (500)"),
-    UNAUTHORIZED(40001, "Unauthorized"),
-    USER_NOT_CONNECTED(40032, "Target user is not connected to voice."),
-    MISSING_ACCESS(50001, "Missing Access"),
-    INVALID_ACCOUNT_TYPE(50002, "Invalid Account Type"),
-    INVALID_DM_ACTION(50003, "Cannot execute action on a DM channel"),
-    EMBED_DISABLED(50004, "Widget Disabled"),
-    INVALID_AUTHOR_EDIT(50005, "Cannot edit a message authored by another user"),
-    EMPTY_MESSAGE(50006, "Cannot send an empty message"),
-    CANNOT_SEND_TO_USER(50007, "Cannot send messages to this user"),
-    CANNOT_MESSAGE_VC(50008, "Cannot send messages in a voice channel"),
-    VERIFICATION_ERROR(50009, "Channel verification level is too high"),
-    OAUTH_NOT_BOT(50010, "OAuth2 application does not have a bot"),
-    MAX_OAUTH_APPS(50011, "OAuth2 application limit reached"),
-    INVALID_OAUTH_STATE(50012, "Invalid OAuth state"),
-    MISSING_PERMISSIONS(50013, "Missing Permissions"),
-    INVALID_TOKEN(50014, "Invalid Authentication Token"),
-    NOTE_TOO_LONG(50015, "Note is too long"),
-    INVALID_BULK_DELETE(
-        50016,
-        "Provided too few or too many messages to delete. Must provided at least 2 and fewer than 100 messages to delete"
-    ),
-    INVALID_MFA_LEVEL(50017, "Provided MFA level was invalid."),
-    INVALID_PASSWORD(50018, "Provided password was invalid"),
-    INVALID_PIN(50019, "A message can only be pinned to the channel it was sent in"),
-    INVITE_CODE_INVALID(50020, "Invite code is either invalid or taken"),
-    INVALID_MESSAGE_TARGET(50021, "Cannot execute action on a system message"),
-    INVALID_OAUTH_ACCESS_TOKEN(50025, "Invalid OAuth2 access token"),
-    INVALID_WEBHOOK_TOKEN(50027, "Invalid Webhook Token"),
-    INVALID_BULK_DELETE_MESSAGE_AGE(50034, "A Message provided to bulk_delete was older than 2 weeks"),
-    INVALID_FORM_BODY(50035, "Invalid Form Body"),
-    INVITE_FOR_UNKNOWN_GUILD(50036, "An invite was accepted to a guild the application's bot is not in"),
-    INVALID_API_VERSION(50041, "Invalid API version"),
-    MFA_NOT_ENABLED(60003, "MFA auth required but not enabled"),
-    REACTION_BLOCKED(90001, "Reaction Blocked"),
-    RESOURCES_OVERLOADED(130000, "Resource overloaded"),
-    SERVER_ERROR(0, "Discord encountered an internal server error! Not good!");
-
+data class ErrorResponse(val code: Int, val meaning: String) {
     companion object {
+        private val errorCodeMap = mapOf(
+            10001 to "Unknown Account",
+            10002 to "Unknown Application",
+            10003 to "Unknown Channel",
+            10004 to "Unknown Guild",
+            10005 to "Unknown Integration",
+            10006 to "Unknown Invite",
+            10007 to "Unknown Member",
+            10008 to "Unknown Message",
+            10009 to "Unknown Override",
+            10010 to "Unknown Provider",
+            10011 to "Unknown Role",
+            10012 to "Unknown Token",
+            10013 to "Unknown User",
+            10014 to "Unknown Emoji",
+            10015 to "Unknown Webhook",
+            10026 to "Unknown Ban",
+            20001 to "Bots cannot use this endpoint",
+            20002 to "Only bots can use this endpoint",
+            30001 to "Maximum number of Guilds reached (100)",
+            30002 to "Maximum number of Friends reached (1000)",
+            30003 to "Maximum number of pinned messages reached (50)",
+            30004 to "Maximum number of recipients reached. (10)",
+            30005 to "Maximum number of guild roles reached (250)",
+            30010 to "Too many reactions",
+            30013 to "Maximum number of guild channels reached (500)",
+            40001 to "Unauthorized",
+            40032 to "Target user is not connected to voice.",
+            50001 to "Missing Access",
+            50002 to "Invalid Account Type",
+            50003 to "Cannot execute action on a DM channel",
+            50004 to "Widget Disabled",
+            50005 to "Cannot edit a message authored by another user",
+            50006 to "Cannot send an empty message",
+            50007 to "Cannot send messages to this user",
+            50008 to "Cannot send messages in a voice channel",
+            50009 to "Channel verification level is too high",
+            50010 to "OAuth2 application does not have a bot",
+            50011 to "OAuth2 application limit reached",
+            50012 to "Invalid OAuth state",
+            50013 to "Missing Permissions",
+            50014 to "Invalid Authentication Token",
+            50015 to "Note is too long",
+            50016 to "Provided too few or too many messages to delete. Must provided at least 2 and fewer than 100 messages to delete",
+            50017 to "Provided MFA level was invalid.",
+            50018 to "Provided password was invalid",
+            50019 to "A message can only be pinned to the channel it was sent in",
+            50020 to "Invite code is either invalid or taken",
+            50021 to "Cannot execute action on a system message",
+            50025 to "Invalid OAuth2 access token",
+            50027 to "Invalid Webhook Token",
+            50034 to "A Message provided to bulk_delete was older than 2 weeks",
+            50035 to "Invalid Form Body",
+            50036 to "An invite was accepted to a guild the application's bot is not in",
+            50041 to "Invalid API version",
+            60003 to "MFA auth required but not enabled",
+            90001 to "Reaction Blocked",
+            130000 to "Resource overloaded"
+        )
+
+        private val SERVER_ERROR = ErrorResponse(0, "Discord encountered an internal server error! Not good!")
+
         private fun fromCode(code: Int): ErrorResponse {
-            for (error in values()) {
-                if (code == error.code) return error
-            }
-            return SERVER_ERROR
+            return errorCodeMap[code]?.let { meaning ->
+                ErrorResponse(code, meaning)
+            } ?: SERVER_ERROR
         }
 
         fun fromJSON(dataObject: DataObject?): ErrorResponse {
             return if (dataObject == null || dataObject.isNull("code")) SERVER_ERROR else fromCode(dataObject.getInt("code"))
         }
     }
-
 }

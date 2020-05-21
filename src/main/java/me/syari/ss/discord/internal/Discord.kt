@@ -33,7 +33,6 @@ object Discord {
     }
 
     private val shutdownHook = Thread(Runnable { shutdown() }, "JDA Shutdown Hook")
-    val sessionController = SessionController()
     val httpClient = OkHttpClient.Builder().build()
     val webSocketFactory = WebSocketFactory()
     var status = Status.INITIALIZING
@@ -151,7 +150,7 @@ object Discord {
     }
 
     fun resetGatewayUrl() {
-        gatewayUrl = sessionController.getGateway()
+        gatewayUrl = SessionController.getGateway()
     }
 
     enum class Status(val isInit: Boolean) {

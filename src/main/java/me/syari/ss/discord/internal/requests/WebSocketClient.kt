@@ -72,7 +72,7 @@ object WebSocketClient: WebSocketAdapter(), WebSocketListener {
     fun init() {
         connectNode = StartingNode().apply {
             try {
-                Discord.sessionController.appendSession(this)
+                SessionController.appendSession(this)
             } catch (e: RuntimeException) {
                 Discord.status = Discord.Status.SHUTDOWN
                 throw e
@@ -130,7 +130,7 @@ object WebSocketClient: WebSocketAdapter(), WebSocketListener {
     fun shutdown() {
         shutdown = true
         shouldReconnect = false
-        connectNode?.let { Discord.sessionController.removeSession(it) }
+        connectNode?.let { SessionController.removeSession(it) }
         close(1000, "Shutting down")
     }
 
@@ -235,7 +235,7 @@ object WebSocketClient: WebSocketAdapter(), WebSocketListener {
         try {
             Discord.status = Discord.Status.RECONNECT_QUEUED
             connectNode = ReconnectNode().apply {
-                Discord.sessionController.appendSession(this)
+                SessionController.appendSession(this)
             }
         } catch (ex: IllegalStateException) {
             Discord.status = Discord.Status.SHUTDOWN

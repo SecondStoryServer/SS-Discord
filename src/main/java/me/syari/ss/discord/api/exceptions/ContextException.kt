@@ -3,7 +3,6 @@ package me.syari.ss.discord.api.exceptions
 import java.util.function.Consumer
 
 object ContextException: Exception() {
-    @JvmStatic
     fun from(acceptor: Consumer<in Throwable>): Consumer<Throwable> {
         return ContextConsumer(ContextException, acceptor)
     }

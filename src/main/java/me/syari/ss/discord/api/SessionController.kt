@@ -10,7 +10,9 @@ import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicLong
 
-class SessionController {
+object SessionController {
+    const val IDENTIFY_DELAY = 5
+
     private val lock = Any()
     private val connectQueue: Queue<SessionConnectNode> = ConcurrentLinkedQueue()
     private val globalRatelimit = AtomicLong(Long.MIN_VALUE)
@@ -52,7 +54,7 @@ class SessionController {
         }
     }
 
-    private inner class QueueWorker: Thread("SessionControllerAdapter-Worker") {
+    private class QueueWorker: Thread("SessionControllerAdapter-Worker") {
         private val delay = TimeUnit.SECONDS.toMillis(IDENTIFY_DELAY.toLong())
         override fun run() {
             try {
@@ -98,9 +100,5 @@ class SessionController {
     interface SessionConnectNode {
         @Throws(InterruptedException::class)
         fun run(isLast: Boolean)
-    }
-
-    companion object {
-        const val IDENTIFY_DELAY = 5
     }
 }
