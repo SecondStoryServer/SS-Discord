@@ -9,8 +9,9 @@ import java.util.zip.DataFormatException
 import java.util.zip.Inflater
 import java.util.zip.InflaterOutputStream
 
-class ZlibDecompressor {
-    private val maxBufferSize = 2048
+object ZlibDecompressor {
+    private const val maxBufferSize = 2048
+    private const val Z_SYNC_FLUSH = 0x0000FFFF
     private val inflater = Inflater()
     private var flushBuffer: ByteBuffer? = null
     private var decompressBuffer: SoftReference<ByteArrayOutputStream>? = null
@@ -99,9 +100,5 @@ class ZlibDecompressor {
                 buffer.reset()
             }
         }
-    }
-
-    companion object {
-        private const val Z_SYNC_FLUSH = 0x0000FFFF
     }
 }

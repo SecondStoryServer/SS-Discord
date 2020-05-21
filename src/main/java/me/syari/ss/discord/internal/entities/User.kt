@@ -1,8 +1,8 @@
 package me.syari.ss.discord.internal.entities
 
-import me.syari.ss.discord.internal.Discord
-
-class User(override val idLong: Long, val api: Discord, var name: String, val isBot: Boolean): WithId {
+class User(
+    override val idLong: Long, var name: String, val isBot: Boolean
+): WithId {
     companion object {
         private val userList = mutableMapOf<Long, User>()
 

@@ -10,12 +10,18 @@ import java.net.SocketException
 import java.net.SocketTimeoutException
 import javax.net.ssl.SSLPeerUnverifiedException
 
-class Requester {
-    val rateLimiter = RateLimiter(this)
+object Requester {
+    const val DISCORD_API_PREFIX = "https://discordapp.com/api/v6/"
+    const val USER_AGENT = "SS-Discord"
+    private val EMPTY_BODY = ByteArray(0).toRequestBody()
+    val MEDIA_TYPE_JSON = "application/json; charset=utf-8".toMediaType()
+    private fun isRetry(ex: Throwable): Boolean {
+        return ex is SocketException || ex is SocketTimeoutException || ex is SSLPeerUnverifiedException
+    }
 
     fun <T> request(apiRequest: Request<T>) {
         if (apiRequest.shouldQueue()) {
-            rateLimiter.queueRequest(apiRequest)
+            RateLimiter.queueRequest(apiRequest)
         } else {
             execute(apiRequest, true)
         }
@@ -29,7 +35,7 @@ class Requester {
         apiRequest: Request<*>, retried: Boolean, handleOnRatelimit: Boolean
     ): Long? {
         val route = apiRequest.route
-        var retryAfter: Long? = rateLimiter.getRateLimit(route)
+        var retryAfter: Long? = RateLimiter.getRateLimit(route)
         if (retryAfter != null && retryAfter > 0) {
             if (handleOnRatelimit) apiRequest.handleResponse(me.syari.ss.discord.api.requests.Response(retryAfter))
             return retryAfter
@@ -67,7 +73,7 @@ class Requester {
                 apiRequest.handleResponse(response)
                 return null
             }
-            retryAfter = rateLimiter.handleResponse(route, lastResponse)
+            retryAfter = RateLimiter.handleResponse(route, lastResponse)
             if (retryAfter == null) {
                 apiRequest.handleResponse(me.syari.ss.discord.api.requests.Response(lastResponse, -1))
             } else if (handleOnRatelimit) {
@@ -91,17 +97,6 @@ class Requester {
     }
 
     fun shutdown() {
-        rateLimiter.shutdown()
+        RateLimiter.shutdown()
     }
-
-    companion object {
-        const val DISCORD_API_PREFIX = "https://discordapp.com/api/v6/"
-        const val USER_AGENT = "SS-Discord"
-        private val EMPTY_BODY = ByteArray(0).toRequestBody()
-        val MEDIA_TYPE_JSON = "application/json; charset=utf-8".toMediaType()
-        private fun isRetry(ex: Throwable): Boolean {
-            return ex is SocketException || ex is SocketTimeoutException || ex is SSLPeerUnverifiedException
-        }
-    }
-
 }

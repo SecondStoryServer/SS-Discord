@@ -7,10 +7,10 @@ import java.util.EnumMap
 import java.util.LinkedList
 import java.util.concurrent.atomic.AtomicInteger
 
-class EventCache {
-    private val eventCache = EnumMap<Type, TLongObjectMap<MutableList<CacheNode>>>(
-        Type::class.java
-    )
+object EventCache {
+    const val TIMEOUT_AMOUNT: Long = 100
+
+    private val eventCache = EnumMap<Type, TLongObjectMap<MutableList<CacheNode>>>(Type::class.java)
 
     @Synchronized
     fun timeout(responseTotal: Long) {
@@ -73,9 +73,5 @@ class EventCache {
             callback.invoke(responseTotal, event)
         }
 
-    }
-
-    companion object {
-        const val TIMEOUT_AMOUNT: Long = 100
     }
 }

@@ -5,7 +5,6 @@ import me.syari.ss.discord.api.exceptions.RateLimitedException
 import me.syari.ss.discord.api.requests.Request
 import me.syari.ss.discord.api.requests.Response
 import me.syari.ss.discord.api.requests.RestFuture
-import me.syari.ss.discord.internal.Discord
 import me.syari.ss.discord.internal.requests.CallbackContext.Companion.isCallbackContext
 import okhttp3.RequestBody
 import java.util.concurrent.CompletableFuture
@@ -18,7 +17,7 @@ open class RestAction<T>(
     fun queue() {
         val data = finalizeData()
         val request = Request(this, DEFAULT_SUCCESS, DEFAULT_FAILURE, true, data, route)
-        Discord.requester.request(request)
+        Requester.request(request)
     }
 
     private fun submit(shouldQueue: Boolean): CompletableFuture<T> {

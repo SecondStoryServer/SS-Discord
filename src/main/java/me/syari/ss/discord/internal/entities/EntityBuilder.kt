@@ -2,13 +2,15 @@ package me.syari.ss.discord.internal.entities
 
 import gnu.trove.set.hash.TLongHashSet
 import me.syari.ss.discord.api.data.DataObject
-import me.syari.ss.discord.internal.Discord
 
-class EntityBuilder(private val api: Discord) {
+object EntityBuilder {
+    const val MISSING_CHANNEL = "MISSING_CHANNEL"
+    const val UNKNOWN_MESSAGE_TYPE = "UNKNOWN_MESSAGE_TYPE"
+
     fun createGuild(id: Long, guildData: DataObject): Guild {
         val name = guildData.getString("name", "")
         val allRole = guildData.getArray("roles")
-        val guild = Guild(api, id, name)
+        val guild = Guild(id, name)
         val roles = mutableMapOf<Long, Role>()
         for (i in 0 until allRole.length()) {
             val role = createRole(guild, allRole.getObject(i))
@@ -27,7 +29,7 @@ class EntityBuilder(private val api: Discord) {
         return User.get(id) {
             val name = userData.getString("username")
             val isBot = userData.getBoolean("bot", false)
-            User(id, api, name, isBot)
+            User(id, name, isBot)
         }
     }
 
@@ -110,10 +112,4 @@ class EntityBuilder(private val api: Discord) {
         val content = messageData.getString("content", "")
         return Message(id, channel, content, user, member)
     }
-
-    companion object {
-        const val MISSING_CHANNEL = "MISSING_CHANNEL"
-        const val UNKNOWN_MESSAGE_TYPE = "UNKNOWN_MESSAGE_TYPE"
-    }
-
 }

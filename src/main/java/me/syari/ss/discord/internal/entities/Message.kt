@@ -7,7 +7,6 @@ class Message(
     private val id: Long, val channel: TextChannel, private val content: String, val author: User, val member: Member?
 ) {
     private val mutex = Any()
-    val api = channel.api
     val guild = channel.guild
 
     val contentDisplay by lazy {

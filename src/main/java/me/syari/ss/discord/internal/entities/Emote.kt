@@ -1,6 +1,8 @@
 package me.syari.ss.discord.internal.entities
 
-class Emote(override val idLong: Long, val name: String, private val isAnimated: Boolean): WithId {
+class Emote(
+    override val idLong: Long, val name: String, private val isAnimated: Boolean
+): WithId {
     companion object {
         private val emoteList = mutableMapOf<Long, Emote>()
 

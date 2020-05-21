@@ -14,6 +14,7 @@ import me.syari.ss.discord.api.requests.CloseCode.Companion.from
 import me.syari.ss.discord.internal.Discord
 import me.syari.ss.discord.internal.handle.EventCache
 import me.syari.ss.discord.internal.handle.GuildCreateHandler
+import me.syari.ss.discord.internal.handle.GuildSetupController
 import me.syari.ss.discord.internal.handle.MessageCreateHandler
 import me.syari.ss.discord.internal.utils.ZlibDecompressor
 import java.io.IOException
@@ -30,13 +31,14 @@ import java.util.function.Consumer
 import java.util.function.Supplier
 import java.util.zip.DataFormatException
 
-class WebSocketClient: WebSocketAdapter(), WebSocketListener {
+object WebSocketClient: WebSocketAdapter(), WebSocketListener {
+    private const val DISCORD_GATEWAY_VERSION = 6
+    private const val INVALIDATE_REASON = "INVALIDATE_SESSION"
+
+    private val IDENTIFY_BACKOFF = TimeUnit.SECONDS.toMillis(SessionController.IDENTIFY_DELAY.toLong())
     private var socket: WebSocket? = null
     private var sessionId: String? = null
     private val readLock = Any()
-    private val decompressor = ZlibDecompressor()
-    val queueLock = ReentrantLock()
-    val executor = Discord.gatewayPool
     private var ratelimitThread: WebSocketSendingThread? = null
 
     @Volatile
@@ -44,8 +46,6 @@ class WebSocketClient: WebSocketAdapter(), WebSocketListener {
     private var initiating = false
     private var reconnectTimeoutS = 2
     private var identifyTime: Long = 0
-    val chunkSyncQueue: Queue<String> = ConcurrentLinkedQueue()
-    val ratelimitQueue: Queue<String> = ConcurrentLinkedQueue()
 
     @Volatile
     private var ratelimitResetTime: Long = 0
@@ -53,16 +53,35 @@ class WebSocketClient: WebSocketAdapter(), WebSocketListener {
 
     @Volatile
     private var shutdown = false
-    private var shouldReconnect: Boolean
+    private var shouldReconnect = true
     private var handleIdentifyRateLimit = false
     private var connected = false
-
-    @Volatile
-    var sentAuthInfo = false
     private var processingReady = true
 
     @Volatile
-    private var connectNode: SessionConnectNode?
+    private var connectNode: SessionConnectNode? = null
+
+    val executor = Discord.gatewayPool
+    val queueLock = ReentrantLock()
+    val chunkSyncQueue: Queue<String> = ConcurrentLinkedQueue()
+    val ratelimitQueue: Queue<String> = ConcurrentLinkedQueue()
+
+    @Volatile
+    var sentAuthInfo = false
+
+    fun init() {
+        connectNode = StartingNode().apply {
+            try {
+                Discord.sessionController.appendSession(this)
+            } catch (e: RuntimeException) {
+                Discord.status = Discord.Status.SHUTDOWN
+                throw e
+            } catch (e: Error) {
+                Discord.status = Discord.Status.SHUTDOWN
+                throw e
+            }
+        }
+    }
 
     fun ready() {
         if (initiating) {
@@ -99,12 +118,6 @@ class WebSocketClient: WebSocketAdapter(), WebSocketListener {
         }
     }
 
-    private fun setupSendingThread() {
-        ratelimitThread = WebSocketSendingThread(this).apply {
-            start()
-        }
-    }
-
     fun close() {
         socket?.sendClose(1000)
     }
@@ -123,7 +136,8 @@ class WebSocketClient: WebSocketAdapter(), WebSocketListener {
 
     @Synchronized
     private fun connect() {
-        if (Discord.status !== Discord.Status.ATTEMPTING_TO_RECONNECT) Discord.status = Discord.Status.CONNECTING_TO_WEBSOCKET
+        if (Discord.status !== Discord.Status.ATTEMPTING_TO_RECONNECT) Discord.status =
+            Discord.Status.CONNECTING_TO_WEBSOCKET
         if (shutdown) throw RejectedExecutionException("JDA is shutdown!")
         initiating = true
         val url = Discord.gatewayUrl + "?encoding=json&v=" + DISCORD_GATEWAY_VERSION + "&compress=zlib-stream"
@@ -194,10 +208,10 @@ class WebSocketClient: WebSocketAdapter(), WebSocketListener {
                 shutdown()
                 ratelimitThread = null
             }
-            decompressor.reset()
+            ZlibDecompressor.reset()
             Discord.shutdownInternals()
         } else {
-            synchronized(readLock) { decompressor.reset() }
+            synchronized(readLock) { ZlibDecompressor.reset() }
             if (isInvalidate) invalidate()
             try {
                 handleReconnect()
@@ -294,8 +308,8 @@ class WebSocketClient: WebSocketAdapter(), WebSocketListener {
         sessionId = null
         sentAuthInfo = false
         locked(Runnable { chunkSyncQueue.clear() })
-        Discord.eventCache.clear()
-        Discord.guildSetupController.clearCache()
+        EventCache.clear()
+        GuildSetupController.clearCache()
     }
 
     private val token: String
@@ -360,13 +374,13 @@ class WebSocketClient: WebSocketAdapter(), WebSocketListener {
                         Discord.status = Discord.Status.LOADING_SUBSYSTEMS
                     }
                 }
-                "GUILD_CREATE" -> GuildCreateHandler().handle(responseTotal, raw)
-                "MESSAGE_CREATE" -> MessageCreateHandler().handle(responseTotal, raw)
+                "GUILD_CREATE" -> GuildCreateHandler.handle(responseTotal, raw)
+                "MESSAGE_CREATE" -> MessageCreateHandler.handle(responseTotal, raw)
             }
         } catch (ex: Exception) {
             ex.printStackTrace()
         }
-        if (responseTotal % EventCache.TIMEOUT_AMOUNT == 0L) Discord.eventCache.timeout(responseTotal)
+        if (responseTotal % EventCache.TIMEOUT_AMOUNT == 0L) EventCache.timeout(responseTotal)
     }
 
     @Throws(DataFormatException::class)
@@ -381,7 +395,7 @@ class WebSocketClient: WebSocketAdapter(), WebSocketListener {
     private fun handleBinary(binary: ByteArray): DataObject? {
         val json: String?
         try {
-            json = decompressor.decompress(binary)
+            json = ZlibDecompressor.decompress(binary)
             if (json == null) return null
         } catch (ex: DataFormatException) {
             close(4000, "MALFORMED_PACKAGE")
@@ -416,11 +430,13 @@ class WebSocketClient: WebSocketAdapter(), WebSocketListener {
         }
     }
 
-    private inner class StartingNode: SessionConnectNode {
+    private class StartingNode: SessionConnectNode {
         @Throws(InterruptedException::class)
         override fun run(isLast: Boolean) {
             if (shutdown) return
-            setupSendingThread()
+            ratelimitThread = WebSocketSendingThread().apply {
+                start()
+            }
             connect()
             if (isLast) return
             try {
@@ -439,7 +455,7 @@ class WebSocketClient: WebSocketAdapter(), WebSocketListener {
         }
     }
 
-    private inner class ReconnectNode: SessionConnectNode {
+    private class ReconnectNode: SessionConnectNode {
         @Throws(InterruptedException::class)
         override fun run(isLast: Boolean) {
             if (shutdown) return
@@ -449,27 +465,6 @@ class WebSocketClient: WebSocketAdapter(), WebSocketListener {
                 Discord.awaitStatus(Discord.Status.LOADING_SUBSYSTEMS, Discord.Status.RECONNECT_QUEUED)
             } catch (ex: IllegalStateException) {
                 close()
-            }
-        }
-    }
-
-    companion object {
-        private const val DISCORD_GATEWAY_VERSION = 6
-        private const val INVALIDATE_REASON = "INVALIDATE_SESSION"
-        private val IDENTIFY_BACKOFF = TimeUnit.SECONDS.toMillis(SessionController.IDENTIFY_DELAY.toLong())
-    }
-
-    init {
-        shouldReconnect = true
-        connectNode = StartingNode().apply {
-            try {
-                Discord.sessionController.appendSession(this)
-            } catch (e: RuntimeException) {
-                Discord.status = Discord.Status.SHUTDOWN
-                throw e
-            } catch (e: Error) {
-                Discord.status = Discord.Status.SHUTDOWN
-                throw e
             }
         }
     }

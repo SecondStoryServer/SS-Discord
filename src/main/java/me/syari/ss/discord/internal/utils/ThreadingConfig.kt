@@ -6,7 +6,7 @@ import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.ScheduledThreadPoolExecutor
 import java.util.concurrent.TimeUnit
 
-class ThreadingConfig {
+object ThreadingConfig {
     lateinit var rateLimitPool: ScheduledExecutorService
         private set
     lateinit var gatewayPool: ScheduledExecutorService
@@ -34,11 +34,9 @@ class ThreadingConfig {
         }
     }
 
-    companion object {
-        fun newScheduler(
-            coreSize: Int, identifier: () -> String, baseName: String
-        ): ScheduledThreadPoolExecutor {
-            return ScheduledThreadPoolExecutor(coreSize, CountingThreadFactory(identifier, baseName))
-        }
+    private fun newScheduler(
+        coreSize: Int, identifier: () -> String, baseName: String
+    ): ScheduledThreadPoolExecutor {
+        return ScheduledThreadPoolExecutor(coreSize, CountingThreadFactory(identifier, baseName))
     }
 }

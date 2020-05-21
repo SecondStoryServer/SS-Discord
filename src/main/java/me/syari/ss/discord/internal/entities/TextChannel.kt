@@ -3,14 +3,15 @@ package me.syari.ss.discord.internal.entities
 import me.syari.ss.discord.api.data.DataObject
 import me.syari.ss.discord.api.requests.Request
 import me.syari.ss.discord.api.requests.Response
-import me.syari.ss.discord.internal.Discord
 import me.syari.ss.discord.internal.requests.Requester
 import me.syari.ss.discord.internal.requests.RestAction
 import me.syari.ss.discord.internal.requests.Route
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 
-class TextChannel(override val idLong: Long, val guild: Guild, val name: String): WithId, Comparable<TextChannel> {
+class TextChannel(
+    override val idLong: Long, val guild: Guild, val name: String
+): WithId, Comparable<TextChannel> {
     companion object {
         private const val MAX_CONTENT_LENGTH = 2000
 
@@ -28,8 +29,6 @@ class TextChannel(override val idLong: Long, val guild: Guild, val name: String)
         }
     }
 
-    val api: Discord = guild.api
-
     val asMention: String
         get() = "<#$idLong>"
 
@@ -41,7 +40,7 @@ class TextChannel(override val idLong: Long, val guild: Guild, val name: String)
             sendMessage(text.substring(2000))
             return
         }
-        val route = Route.getSendMessageRoute(id)
+        val route = Route.sendMessageRoute(id)
         val messageAction = MessageAction(route, this, text)
         messageAction.queue()
     }
@@ -74,7 +73,7 @@ class TextChannel(override val idLong: Long, val guild: Guild, val name: String)
         }
 
         override fun handleSuccess(response: Response, request: Request<Message>) {
-            val message = Discord.entityBuilder.createMessage(response.dataObject, channel)
+            val message = EntityBuilder.createMessage(response.dataObject, channel)
             request.onSuccess(message)
         }
     }

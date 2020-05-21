@@ -5,10 +5,11 @@ import gnu.trove.set.TLongSet
 import gnu.trove.set.hash.TLongHashSet
 import me.syari.ss.discord.api.data.DataArray
 import me.syari.ss.discord.api.data.DataObject
-import me.syari.ss.discord.internal.Discord
+import me.syari.ss.discord.internal.entities.EntityBuilder
+import me.syari.ss.discord.internal.requests.WebSocketClient
 import java.util.LinkedList
 
-class GuildSetupNode internal constructor(private val id: Long, private val controller: GuildSetupController) {
+class GuildSetupNode(private val id: Long) {
     private val cachedEvents: MutableList<DataObject> = LinkedList()
     private var members = TLongObjectHashMap<DataObject>()
     private var removedMembers: TLongSet? = null
@@ -51,12 +52,12 @@ class GuildSetupNode internal constructor(private val id: Long, private val cont
         val memberArray = notNulPartialGuild.getArray("members")
         if (memberArray.length() < expectedMemberCount && !requestedChunk) {
             updateStatus(GuildSetupController.Status.CHUNKING)
-            controller.addGuildForChunking(id)
+            GuildSetupController.addGuildForChunking(id)
             requestedChunk = true
         } else if (handleMemberChunk(memberArray) && !requestedChunk) {
             members.clear()
             updateStatus(GuildSetupController.Status.CHUNKING)
-            controller.addGuildForChunking(id)
+            GuildSetupController.addGuildForChunking(id)
             requestedChunk = true
         }
     }
@@ -79,7 +80,7 @@ class GuildSetupNode internal constructor(private val id: Long, private val cont
         cachedEvents.add(event)
         val cacheSize = cachedEvents.size
         if (2000 <= cacheSize && cacheSize % 1000 == 0 && status === GuildSetupController.Status.CHUNKING) {
-            controller.sendChunkRequest(id)
+            GuildSetupController.sendChunkRequest(id)
         }
     }
 
@@ -92,14 +93,14 @@ class GuildSetupNode internal constructor(private val id: Long, private val cont
             }
             removedMembers.clear()
         }
-        partialGuild?.let { Discord.entityBuilder.createGuild(id, it) }
+        partialGuild?.let { EntityBuilder.createGuild(id, it) }
         if (requestedChunk) {
-            controller.ready(id)
+            GuildSetupController.ready(id)
         } else {
-            controller.remove(id)
+            GuildSetupController.remove(id)
         }
         updateStatus(GuildSetupController.Status.READY)
-        Discord.client.handle(cachedEvents)
-        Discord.eventCache.playbackCache(EventCache.Type.GUILD, id)
+        WebSocketClient.handle(cachedEvents)
+        EventCache.playbackCache(EventCache.Type.GUILD, id)
     }
 }

@@ -8,10 +8,11 @@ import gnu.trove.set.TLongSet
 import gnu.trove.set.hash.TLongHashSet
 import me.syari.ss.discord.api.data.DataArray
 import me.syari.ss.discord.api.data.DataObject
-import me.syari.ss.discord.internal.Discord
+import me.syari.ss.discord.internal.requests.WebSocketClient
 import me.syari.ss.discord.internal.requests.WebSocketCode
 
-class GuildSetupController {
+object GuildSetupController {
+    private const val CHUNK_TIMEOUT = 10000
     private val setupNodes: TLongObjectMap<GuildSetupNode> = TLongObjectHashMap()
     private val chunkingGuilds: TLongSet = TLongHashSet()
     private val pendingChunks: TLongLongMap = TLongLongHashMap()
@@ -37,10 +38,9 @@ class GuildSetupController {
 
     fun ready(id: Long) {
         remove(id)
-        val client = Discord.client
         incompleteCount--
-        if (incompleteCount < 1 && !client.isReady) {
-            client.ready()
+        if (incompleteCount < 1 && !WebSocketClient.isReady) {
+            WebSocketClient.ready()
         } else {
             tryChunking()
         }
@@ -49,7 +49,7 @@ class GuildSetupController {
     fun onCreate(id: Long, obj: DataObject) {
         var node = setupNodes[id]
         if (node == null) {
-            node = GuildSetupNode(id, this)
+            node = GuildSetupNode(id)
             setupNodes.put(id, node)
         }
         node.handleCreate(obj)
@@ -85,7 +85,7 @@ class GuildSetupController {
                 pendingChunks.put(`object` as Long, timeout)
             }
         }
-        Discord.client.chunkOrSyncRequest(
+        WebSocketClient.chunkOrSyncRequest(
             DataObject.empty().put("op", WebSocketCode.MEMBER_CHUNK_REQUEST).put(
                 "d", DataObject.empty().put("guild_id", `object`).put("query", "").put("limit", 0)
             )
@@ -119,9 +119,4 @@ class GuildSetupController {
         BUILDING,
         READY
     }
-
-    companion object {
-        private const val CHUNK_TIMEOUT = 10000
-    }
-
 }

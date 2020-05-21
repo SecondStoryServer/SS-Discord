@@ -3,10 +3,10 @@ package me.syari.ss.discord.internal.requests
 import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit
 
-class WebSocketSendingThread(private val client: WebSocketClient): Runnable {
-    private val chunkSyncQueue = client.chunkSyncQueue
-    private val ratelimitQueue = client.ratelimitQueue
-    private val executor = client.executor
+class WebSocketSendingThread: Runnable {
+    private val chunkSyncQueue = WebSocketClient.chunkSyncQueue
+    private val ratelimitQueue = WebSocketClient.ratelimitQueue
+    private val executor = WebSocketClient.executor
     private var handle: Future<*>? = null
     private var needRateLimit = false
     private var attemptedToSend = false
@@ -23,7 +23,7 @@ class WebSocketSendingThread(private val client: WebSocketClient): Runnable {
     }
 
     override fun run() {
-        if (!client.sentAuthInfo) {
+        if (!WebSocketClient.sentAuthInfo) {
             if (shutdown) return
             handle = executor.schedule(this, 500, TimeUnit.MILLISECONDS)
             return
@@ -31,7 +31,7 @@ class WebSocketSendingThread(private val client: WebSocketClient): Runnable {
         try {
             attemptedToSend = false
             needRateLimit = false
-            client.queueLock.lockInterruptibly()
+            WebSocketClient.queueLock.lockInterruptibly()
             val chunkOrSyncRequest = chunkSyncQueue.peek()
             if (chunkOrSyncRequest != null) {
                 if (send(chunkOrSyncRequest)) chunkSyncQueue.remove()
@@ -48,12 +48,12 @@ class WebSocketSendingThread(private val client: WebSocketClient): Runnable {
         } catch (ex: InterruptedException) {
             ex.printStackTrace()
         } finally {
-            client.maybeUnlock()
+            WebSocketClient.maybeUnlock()
         }
     }
 
     private fun send(request: String): Boolean {
-        needRateLimit = !client.send(request, false)
+        needRateLimit = !WebSocketClient.send(request, false)
         attemptedToSend = true
         return !needRateLimit
     }

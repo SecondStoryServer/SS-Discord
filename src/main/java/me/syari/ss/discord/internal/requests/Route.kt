@@ -1,8 +1,11 @@
 package me.syari.ss.discord.internal.requests
 
-class Route(val method: Method, val baseRoute: String, val route: String, val majorParameters: String) {
-    constructor(method: Method, route: String): this(method, route, route, DEFAULT_MAJOR_PARAMETERS)
-
+class Route private constructor(
+    val method: Method,
+    val baseRoute: String,
+    val route: String = baseRoute,
+    val majorParameters: String = DEFAULT_MAJOR_PARAMETERS
+) {
     enum class Method {
         GET,
         POST
@@ -11,17 +14,17 @@ class Route(val method: Method, val baseRoute: String, val route: String, val ma
     companion object {
         private const val DEFAULT_MAJOR_PARAMETERS = "guild_id:channel_id:webhook_id"
 
-        val gatewayRoute: Route
+        val gatewayRoute
             get() = Route(
                 Method.GET, "gateway"
             )
 
-        val selfRoute: Route
+        val selfRoute
             get() = Route(
                 Method.GET, "users/@me"
             )
 
-        fun getSendMessageRoute(channelID: String): Route {
+        fun sendMessageRoute(channelID: String): Route {
             return Route(
                 Method.POST,
                 "channels/{channel_id}/messages",

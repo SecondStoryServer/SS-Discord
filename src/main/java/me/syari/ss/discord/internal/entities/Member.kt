@@ -1,6 +1,8 @@
 package me.syari.ss.discord.internal.entities
 
-class Member(val guild: Guild, val user: User): WithId {
+class Member(
+    val guild: Guild, val user: User
+): WithId {
     var nickname: String? = null
 
     val displayName: String

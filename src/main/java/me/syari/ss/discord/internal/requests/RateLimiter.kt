@@ -13,7 +13,35 @@ import java.util.concurrent.TimeUnit
 import java.util.concurrent.locks.ReentrantLock
 import java.util.function.Supplier
 
-class RateLimiter(private val requester: Requester) {
+object RateLimiter {
+    private const val RESET_AFTER_HEADER = "X-RateLimit-Reset-After"
+    private const val LIMIT_HEADER = "X-RateLimit-Limit"
+    private const val REMAINING_HEADER = "X-RateLimit-Remaining"
+    private const val GLOBAL_HEADER = "X-RateLimit-Global"
+    private const val HASH_HEADER = "X-RateLimit-Bucket"
+    private const val RETRY_AFTER_HEADER = "Retry-After"
+    private fun <E> locked(lock: ReentrantLock, task: Supplier<E>): E {
+        return try {
+            lock.lockInterruptibly()
+            task.get()
+        } catch (ex: InterruptedException) {
+            throw IllegalStateException(ex)
+        } finally {
+            if (lock.isHeldByCurrentThread) lock.unlock()
+        }
+    }
+
+    private fun locked(lock: ReentrantLock, task: Runnable) {
+        try {
+            lock.lockInterruptibly()
+            task.run()
+        } catch (e: InterruptedException) {
+            throw IllegalStateException(e)
+        } finally {
+            if (lock.isHeldByCurrentThread) lock.unlock()
+        }
+    }
+
     private val bucketLock = ReentrantLock()
     private val bucket: MutableMap<String, Bucket> = ConcurrentHashMap()
     private val rateLimitQueue: MutableMap<Bucket?, Future<*>> = ConcurrentHashMap()
@@ -166,7 +194,7 @@ class RateLimiter(private val requester: Requester) {
         return if (input == null) 0L else (input.toDouble() * 1000).toLong()
     }
 
-    private inner class Bucket(private val bucketId: String): Runnable {
+    private class Bucket(private val bucketId: String): Runnable {
         val requests: Queue<Request<*>> = ConcurrentLinkedQueue()
         var reset: Long = 0
         var remaining = 1
@@ -217,7 +245,7 @@ class RateLimiter(private val requester: Requester) {
                 }
                 if (isSkipped(iterator, request)) continue
                 try {
-                    if (requester.execute(request, false) == null) {
+                    if (Requester.execute(request, false) == null) {
                         iterator.remove()
                     } else {
                         break
@@ -234,35 +262,4 @@ class RateLimiter(private val requester: Requester) {
         }
 
     }
-
-    companion object {
-        private const val RESET_AFTER_HEADER = "X-RateLimit-Reset-After"
-        private const val LIMIT_HEADER = "X-RateLimit-Limit"
-        private const val REMAINING_HEADER = "X-RateLimit-Remaining"
-        private const val GLOBAL_HEADER = "X-RateLimit-Global"
-        private const val HASH_HEADER = "X-RateLimit-Bucket"
-        private const val RETRY_AFTER_HEADER = "Retry-After"
-        private fun <E> locked(lock: ReentrantLock, task: Supplier<E>): E {
-            return try {
-                lock.lockInterruptibly()
-                task.get()
-            } catch (ex: InterruptedException) {
-                throw IllegalStateException(ex)
-            } finally {
-                if (lock.isHeldByCurrentThread) lock.unlock()
-            }
-        }
-
-        private fun locked(lock: ReentrantLock, task: Runnable) {
-            try {
-                lock.lockInterruptibly()
-                task.run()
-            } catch (e: InterruptedException) {
-                throw IllegalStateException(e)
-            } finally {
-                if (lock.isHeldByCurrentThread) lock.unlock()
-            }
-        }
-    }
-
 }
