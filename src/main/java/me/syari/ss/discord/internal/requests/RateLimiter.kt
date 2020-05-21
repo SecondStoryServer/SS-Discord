@@ -30,7 +30,7 @@ class RateLimiter(private val requester: Requester) {
             while (entries.hasNext()) {
                 val entry = entries.next()
                 val bucket = entry.value
-                if (bucket.isUnlimited && bucket.requests.isEmpty() || bucket.requests.isEmpty() && bucket.reset <= now) {
+                if (bucket.isUnlimited && bucket.requests.isEmpty() || bucket.requests.isEmpty() && bucket.reset <= System.currentTimeMillis()) {
                     entries.remove()
                 }
             }
@@ -64,14 +64,14 @@ class RateLimiter(private val requester: Requester) {
     }
 
     fun getRateLimit(route: Route): Long {
-        val bucket = getBucket(route, false)
+        val bucket = getBucket(route)
         return bucket?.rateLimit ?: 0L
     }
 
     fun queueRequest(request: Request<*>) {
         locked(bucketLock, Runnable {
-            val bucket = getBucket(request.route, true)
-            bucket!!.enqueue(request)
+            val bucket = getBucketOrCreate(request.route)
+            bucket.enqueue(request)
             runBucket(bucket)
         })
     }
@@ -95,13 +95,13 @@ class RateLimiter(private val requester: Requester) {
     ): Bucket {
         return locked(bucketLock, Supplier<Bucket> {
             try {
-                var bucket = getBucket(route, true)
+                var bucket = getBucketOrCreate(route)
                 val headers = response.headers
                 val global = headers[GLOBAL_HEADER] != null
                 val hash = headers[HASH_HEADER]
-                val now = now
+                val now = System.currentTimeMillis()
                 if (hash != null) {
-                    bucket = getBucket(route, true)
+                    bucket = getBucketOrCreate(route)
                 }
                 if (global) {
                     val retryAfterHeader = headers[RETRY_AFTER_HEADER]
@@ -110,41 +110,48 @@ class RateLimiter(private val requester: Requester) {
                 } else if (response.code == 429) {
                     val retryAfterHeader = headers[RETRY_AFTER_HEADER]
                     val retryAfter = parseLong(retryAfterHeader)
-                    bucket!!.remaining = 0
+                    bucket.remaining = 0
                     bucket.reset = now + retryAfter
                     return@Supplier bucket
                 }
-                if (hash == null) return@Supplier bucket!!
-                bucket!!.limit = 1L.coerceAtLeast(parseLong(headers[LIMIT_HEADER])).toInt()
+                if (hash == null) return@Supplier bucket
+                bucket.limit = 1L.coerceAtLeast(parseLong(headers[LIMIT_HEADER])).toInt()
                 bucket.remaining = parseLong(headers[REMAINING_HEADER]).toInt()
                 bucket.reset = now + parseDouble(headers[RESET_AFTER_HEADER])
                 return@Supplier bucket
             } catch (e: Exception) {
-                return@Supplier getBucket(route, true)!!
+                return@Supplier getBucketOrCreate(route)
             }
         })
     }
 
     private fun getBucket(
-        route: Route, create: Boolean
+        route: Route
     ): Bucket? {
         return locked(bucketLock, Supplier {
             val bucketId = route.method.toString() + "/" + route.baseRoute + ":" + route.majorParameters
-            var bucket = bucket[bucketId]
-            if (bucket == null && create) {
-                this.bucket[bucketId] = Bucket(bucketId).also { bucket = it }
-            }
-            bucket
+            bucket[bucketId]
         })
     }
 
-    private fun runBucket(bucket: Bucket?) {
+    private fun getBucketOrCreate(
+        route: Route
+    ): Bucket {
+        return locked(bucketLock, Supplier {
+            val bucketId = route.method.toString() + "/" + route.baseRoute + ":" + route.majorParameters
+            bucket[bucketId] ?: Bucket(bucketId).also {
+                this.bucket[bucketId] = it
+            }
+        })
+    }
+
+    private fun runBucket(bucket: Bucket) {
         locked(bucketLock, Supplier {
             rateLimitQueue.computeIfAbsent(
                 bucket
             ) {
                 scheduler.schedule(
-                    bucket, bucket!!.rateLimit, TimeUnit.MILLISECONDS
+                    bucket, bucket.rateLimit, TimeUnit.MILLISECONDS
                 )
             }
         })
@@ -158,9 +165,6 @@ class RateLimiter(private val requester: Requester) {
         return if (input == null) 0L else (input.toDouble() * 1000).toLong()
     }
 
-    val now: Long
-        get() = System.currentTimeMillis()
-
     private inner class Bucket(private val bucketId: String): Runnable {
         val requests: Queue<Request<*>> = ConcurrentLinkedQueue()
         var reset: Long = 0
@@ -172,7 +176,7 @@ class RateLimiter(private val requester: Requester) {
 
         val rateLimit: Long
             get() {
-                val now = now
+                val now = System.currentTimeMillis()
                 val global = requester.jda.sessionController.getGlobalRatelimit()
                 if (now < global) return global - now
                 if (reset <= now) {
@@ -195,14 +199,13 @@ class RateLimiter(private val requester: Requester) {
         override fun run() {
             val iterator = requests.iterator()
             while (iterator.hasNext()) {
-                var rateLimit: Long? = rateLimit
-                if (0L < rateLimit!!) break
+                if (0L < rateLimit) break
                 val request = iterator.next()
                 if (isUnlimited) {
                     val shouldSkip = locked(bucketLock, Supplier {
-                        val bucket = getBucket(request.route, true)
+                        val bucket = getBucketOrCreate(request.route)
                         if (bucket !== this) {
-                            bucket!!.enqueue(request)
+                            bucket.enqueue(request)
                             iterator.remove()
                             runBucket(bucket)
                             return@Supplier true
@@ -213,8 +216,7 @@ class RateLimiter(private val requester: Requester) {
                 }
                 if (isSkipped(iterator, request)) continue
                 try {
-                    rateLimit = requester.execute(request, false)
-                    if (rateLimit == null) {
+                    if (requester.execute(request, false) == null) {
                         iterator.remove()
                     } else {
                         break

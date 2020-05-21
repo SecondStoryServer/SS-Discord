@@ -45,12 +45,14 @@ class Requester(val jda: JDA) {
         if (url.startsWith(DISCORD_API_PREFIX)) builder.header("authorization", jda.token)
         val request = builder.build()
         val responses = arrayOfNulls<Response>(4)
-        var lastResponse: Response? = null
+        var nullableLastResponse: Response? = null
         return try {
             var attempt = 0
+            var lastResponse: Response
             do {
                 val call = jda.httpClient.newCall(request)
                 lastResponse = call.execute()
+                nullableLastResponse = lastResponse
                 responses[attempt] = lastResponse
                 if (lastResponse.code < 500) break
                 attempt++
@@ -59,8 +61,8 @@ class Requester(val jda: JDA) {
                 } catch (ex: InterruptedException) {
                     ex.printStackTrace()
                 }
-            } while (attempt < 3 && lastResponse!!.code >= 500)
-            if (lastResponse!!.code >= 500) {
+            } while (attempt < 3 && 500 <= lastResponse.code)
+            if (500 <= lastResponse.code) {
                 val response = me.syari.ss.discord.api.requests.Response(lastResponse, -1)
                 apiRequest.handleResponse(response)
                 return null
@@ -74,11 +76,11 @@ class Requester(val jda: JDA) {
             retryAfter
         } catch (e: SocketTimeoutException) {
             if (!retried) return execute(apiRequest, true, handleOnRatelimit)
-            apiRequest.handleResponse(me.syari.ss.discord.api.requests.Response(lastResponse, e))
+            apiRequest.handleResponse(me.syari.ss.discord.api.requests.Response(nullableLastResponse, e))
             null
         } catch (e: Exception) {
             if (!retried && isRetry(e)) return execute(apiRequest, true, handleOnRatelimit)
-            apiRequest.handleResponse(me.syari.ss.discord.api.requests.Response(lastResponse, e))
+            apiRequest.handleResponse(me.syari.ss.discord.api.requests.Response(nullableLastResponse, e))
             null
         } finally {
             for (response in responses) {

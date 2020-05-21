@@ -19,7 +19,6 @@ data class CloseCode(private val meaning: String, val isReconnect: Boolean) {
             4011 to CloseCode("The session would have handled too many guilds - you are required to shard your connection in order to connect.", false)
         )
 
-        @JvmStatic
         fun from(code: Int): CloseCode? {
             return closeCodeMap[code]
         }

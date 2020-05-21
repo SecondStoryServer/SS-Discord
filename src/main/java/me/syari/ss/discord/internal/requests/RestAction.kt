@@ -45,10 +45,8 @@ open class RestAction<T>(
         } catch (e: Throwable) {
             if (e is ExecutionException) {
                 val t = e.cause
-                if (t is RateLimitedException) {
-                    throw (t as RateLimitedException?)!!
-                } else if (t is ErrorResponseException) {
-                    throw (t as ErrorResponseException?)!!
+                if (t is RateLimitedException || t is ErrorResponseException) {
+                    throw t
                 }
             }
             throw RuntimeException(e)

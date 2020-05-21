@@ -91,7 +91,7 @@ class WebSocketClient(val jDA: JDA): WebSocketAdapter(), WebSocketListener {
             ratelimitResetTime = now + 60000
         }
         return if (messagesSent.get() <= 115 || skipQueue && messagesSent.get() <= 119) {
-            socket!!.sendText(message)
+            socket?.sendText(message)
             messagesSent.getAndIncrement()
             true
         } else {
@@ -100,23 +100,24 @@ class WebSocketClient(val jDA: JDA): WebSocketAdapter(), WebSocketListener {
     }
 
     private fun setupSendingThread() {
-        ratelimitThread = WebSocketSendingThread(this)
-        ratelimitThread!!.start()
+        ratelimitThread = WebSocketSendingThread(this).apply {
+            start()
+        }
     }
 
     fun close() {
-        if (socket != null) socket!!.sendClose(1000)
+        socket?.sendClose(1000)
     }
 
     private fun close(code: Int, reason: String?) {
-        if (socket != null) socket!!.sendClose(code, reason)
+        socket?.sendClose(code, reason)
     }
 
     @Synchronized
     fun shutdown() {
         shutdown = true
         shouldReconnect = false
-        if (connectNode != null) jDA.sessionController.removeSession(connectNode!!)
+        connectNode?.let { jDA.sessionController.removeSession(it) }
         close(1000, "Shutting down")
     }
 
@@ -128,6 +129,7 @@ class WebSocketClient(val jDA: JDA): WebSocketAdapter(), WebSocketListener {
         val url = jDA.gatewayUrl + "?encoding=json&v=" + DISCORD_GATEWAY_VERSION + "&compress=zlib-stream"
         try {
             val socketFactory = jDA.webSocketFactory
+            val notNullSocket: WebSocket
             synchronized(socketFactory) {
                 val host = URI.create(url).host
                 if (host != null) {
@@ -135,9 +137,10 @@ class WebSocketClient(val jDA: JDA): WebSocketAdapter(), WebSocketListener {
                 } else {
                     socketFactory.serverNames = null
                 }
-                socket = socketFactory.createSocket(url)
+                notNullSocket = socketFactory.createSocket(url)
+                socket = notNullSocket
             }
-            socket!!.addHeader("Accept-Encoding", "gzip").addListener(this).connect()
+            notNullSocket.addHeader("Accept-Encoding", "gzip").addListener(this).connect()
         } catch (ex: IOException) {
             jDA.resetGatewayUrl()
             throw IllegalStateException(ex)
@@ -188,7 +191,7 @@ class WebSocketClient(val jDA: JDA): WebSocketAdapter(), WebSocketListener {
         val closeCodeIsReconnect = closeCode == null || closeCode.isReconnect
         if (!shouldReconnect || !closeCodeIsReconnect || executor.isShutdown) {
             if (ratelimitThread != null) {
-                ratelimitThread!!.shutdown()
+                ratelimitThread?.shutdown()
                 ratelimitThread = null
             }
             decompressor.reset()
@@ -296,7 +299,7 @@ class WebSocketClient(val jDA: JDA): WebSocketAdapter(), WebSocketListener {
     }
 
     private val token: String
-        private get() = jDA.token.substring("Bot ".length)
+        get() = jDA.token.substring("Bot ".length)
 
     private fun handleEvent(content: DataObject) {
         try {
@@ -373,7 +376,7 @@ class WebSocketClient(val jDA: JDA): WebSocketAdapter(), WebSocketListener {
     ) {
         var json: DataObject?
         synchronized(readLock) { json = handleBinary(binary) }
-        if (json != null) handleEvent(json!!)
+        json?.let { handleEvent(it) }
     }
 
     @Throws(DataFormatException::class)
@@ -455,8 +458,8 @@ class WebSocketClient(val jDA: JDA): WebSocketAdapter(), WebSocketListener {
             return Objects.hash("R", jDA)
         }
 
-        override fun equals(`object`: Any?): Boolean {
-            return if (`object` === this) true else `object` is ReconnectNode
+        override fun equals(other: Any?): Boolean {
+            return if (other === this) true else other is ReconnectNode
         }
     }
 
@@ -476,11 +479,7 @@ class WebSocketClient(val jDA: JDA): WebSocketAdapter(), WebSocketListener {
                 throw e
             } catch (e: Error) {
                 jDA.status = JDA.Status.SHUTDOWN
-                if (e is RuntimeException) {
-                    throw (e as RuntimeException)
-                } else {
-                    throw e
-                }
+                throw e
             }
         }
     }

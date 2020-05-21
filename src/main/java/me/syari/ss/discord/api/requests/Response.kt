@@ -33,7 +33,7 @@ class Response(private val rawResponse: Response?, val code: Int, val retryAfter
     @Throws(IOException::class)
     private fun getBody(response: Response): InputStream? {
         val encoding = response.header("content-encoding", "")
-        val data: InputStream = BufferedInputStream(response.body!!.byteStream())
+        val data = BufferedInputStream(response.body!!.byteStream())
         data.mark(256)
         try {
             if (encoding.equals("gzip", ignoreCase = true)) {
@@ -76,7 +76,7 @@ class Response(private val rawResponse: Response?, val code: Int, val retryAfter
         get() = code == 429
 
     override fun toString(): String {
-        return if (exception == null) "HTTPResponse[" + code + (if (this.anyData == null) "" else ", " + this.anyData.toString()) + ']' else "HTTPException[" + exception!!.message + ']'
+        return if (exception == null) "HTTPResponse[" + code + (if (this.anyData == null) "" else ", " + this.anyData.toString()) + ']' else "HTTPException[" + exception?.message + ']'
     }
 
     override fun close() {
@@ -104,7 +104,7 @@ class Response(private val rawResponse: Response?, val code: Int, val retryAfter
             }
         }
         attemptedParsing = true
-        if (body == null || rawResponse == null || rawResponse.body!!.contentLength() == 0L) {
+        if (body == null || rawResponse == null || rawResponse.body?.contentLength() == 0L) {
             return null
         }
         val reader = BufferedReader(InputStreamReader(body))

@@ -14,8 +14,6 @@ class ErrorResponseException private constructor(
     }
 
     companion object {
-        @JvmStatic
-        @Contract("_, _ -> new")
         fun create(
             errorResponse: ErrorResponse, response: Response
         ): ErrorResponseException {
@@ -24,7 +22,7 @@ class ErrorResponseException private constructor(
             var code = errorResponse.code
             if (response.isError && response.exception != null) {
                 code = response.code
-                meaning = response.exception!!.javaClass.name
+                meaning = response.exception?.javaClass?.name ?: "null"
             } else if (dataObject != null) {
                 val isNullCode = dataObject.isNull("code")
                 val isNullMessage = dataObject.isNull("message")

@@ -1,6 +1,5 @@
 package me.syari.ss.discord.internal.handle
 
-import gnu.trove.map.TLongObjectMap
 import gnu.trove.map.hash.TLongObjectHashMap
 import gnu.trove.set.TLongSet
 import gnu.trove.set.hash.TLongHashSet
@@ -11,7 +10,7 @@ import java.util.LinkedList
 
 class GuildSetupNode internal constructor(private val id: Long, private val controller: GuildSetupController) {
     private val cachedEvents: MutableList<DataObject> = LinkedList()
-    private var members: TLongObjectMap<DataObject>? = null
+    private var members = TLongObjectHashMap<DataObject>()
     private var removedMembers: TLongSet? = null
     private var partialGuild: DataObject? = null
     private var expectedMemberCount = 1
@@ -36,17 +35,31 @@ class GuildSetupNode internal constructor(private val id: Long, private val cont
         if (status !== this.status) this.status = status
     }
 
-    fun handleCreate(obj: DataObject) {
-        if (partialGuild == null) {
-            partialGuild = obj
-        } else {
-            for (key in obj.keys()) {
-                partialGuild!!.put(key, obj.opt(key).orElse(null))
+    fun handleCreate(dataObject: DataObject) {
+        val notNulPartialGuild = partialGuild?.apply {
+            for (key in dataObject.keys()) {
+                put(key, dataObject.opt(key).orElse(null))
             }
-        }
-        val unavailable = partialGuild!!.getBoolean("unavailable", false)
+        } ?: {
+            partialGuild = dataObject
+            dataObject
+        }.invoke()
+        val unavailable = notNulPartialGuild.getBoolean("unavailable", false)
         if (unavailable) return
-        ensureMembers()
+        expectedMemberCount = notNulPartialGuild.getInt("member_count")
+        members = TLongObjectHashMap(expectedMemberCount)
+        removedMembers = TLongHashSet()
+        val memberArray = notNulPartialGuild.getArray("members")
+        if (memberArray.length() < expectedMemberCount && !requestedChunk) {
+            updateStatus(GuildSetupController.Status.CHUNKING)
+            controller.addGuildForChunking(id)
+            requestedChunk = true
+        } else if (handleMemberChunk(memberArray) && !requestedChunk) {
+            members.clear()
+            updateStatus(GuildSetupController.Status.CHUNKING)
+            controller.addGuildForChunking(id)
+            requestedChunk = true
+        }
     }
 
     private fun handleMemberChunk(arr: DataArray): Boolean {
@@ -54,9 +67,9 @@ class GuildSetupNode internal constructor(private val id: Long, private val cont
         for (index in 0 until arr.length()) {
             val obj = arr.getObject(index)
             val id = obj.getObject("user").getLong("id")
-            members!!.put(id, obj)
+            members.put(id, obj)
         }
-        if (expectedMemberCount <= members!!.size()) {
+        if (expectedMemberCount <= members.size()) {
             completeSetup()
             return false
         }
@@ -73,12 +86,14 @@ class GuildSetupNode internal constructor(private val id: Long, private val cont
 
     private fun completeSetup() {
         updateStatus(GuildSetupController.Status.BUILDING)
-        val iterator = removedMembers!!.iterator()
-        while (iterator.hasNext()) {
-            members!!.remove(iterator.next())
+        removedMembers?.let { removedMembers ->
+            val iterator = removedMembers.iterator()
+            while (iterator.hasNext()) {
+                members.remove(iterator.next())
+            }
+            removedMembers.clear()
         }
-        removedMembers!!.clear()
-        api.entityBuilder.createGuild(id, partialGuild!!)
+        partialGuild?.let { api.entityBuilder.createGuild(id, it) }
         if (requestedChunk) {
             controller.ready(id)
         } else {
@@ -88,22 +103,4 @@ class GuildSetupNode internal constructor(private val id: Long, private val cont
         api.client.handle(cachedEvents)
         api.eventCache.playbackCache(EventCache.Type.GUILD, id)
     }
-
-    private fun ensureMembers() {
-        expectedMemberCount = partialGuild!!.getInt("member_count")
-        members = TLongObjectHashMap(expectedMemberCount)
-        removedMembers = TLongHashSet()
-        val memberArray = partialGuild!!.getArray("members")
-        if (memberArray.length() < expectedMemberCount && !requestedChunk) {
-            updateStatus(GuildSetupController.Status.CHUNKING)
-            controller.addGuildForChunking(id)
-            requestedChunk = true
-        } else if (handleMemberChunk(memberArray) && !requestedChunk) {
-            members?.clear()
-            updateStatus(GuildSetupController.Status.CHUNKING)
-            controller.addGuildForChunking(id)
-            requestedChunk = true
-        }
-    }
-
 }

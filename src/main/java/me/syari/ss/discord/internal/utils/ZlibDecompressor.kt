@@ -23,7 +23,7 @@ class ZlibDecompressor {
         return SoftReference(newDecompressBufferReferent())
     }
 
-    private fun getDecompressBuffer(): ByteArrayOutputStream? {
+    private fun getDecompressBuffer(): ByteArrayOutputStream {
         val notNullDecompressBuffer = decompressBuffer ?: {
             newDecompressBuffer().apply {
                 decompressBuffer = this
@@ -88,12 +88,12 @@ class ZlibDecompressor {
         try {
             InflaterOutputStream(buffer, inflater).use { decompressor ->
                 decompressor.write(dataAsMutable)
-                return buffer!!.toString("UTF-8")
+                return buffer.toString("UTF-8")
             }
         } catch (e: IOException) {
             throw (DataFormatException("Malformed").initCause(e) as DataFormatException)
         } finally {
-            if (maxBufferSize < buffer!!.size()) {
+            if (maxBufferSize < buffer.size()) {
                 decompressBuffer = newDecompressBuffer()
             } else {
                 buffer.reset()

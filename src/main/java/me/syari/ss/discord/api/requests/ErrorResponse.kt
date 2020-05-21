@@ -73,9 +73,8 @@ enum class ErrorResponse(val code: Int, val meaning: String) {
             return SERVER_ERROR
         }
 
-        @JvmStatic
-        fun fromJSON(obj: DataObject?): ErrorResponse {
-            return if (obj == null || obj.isNull("code")) SERVER_ERROR else fromCode(obj.getInt("code"))
+        fun fromJSON(dataObject: DataObject?): ErrorResponse {
+            return if (dataObject == null || dataObject.isNull("code")) SERVER_ERROR else fromCode(dataObject.getInt("code"))
         }
     }
 

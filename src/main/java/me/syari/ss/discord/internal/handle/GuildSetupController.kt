@@ -61,7 +61,9 @@ class GuildSetupController(val jda: JDA) {
 
     fun cacheEvent(guildId: Long, event: DataObject?) {
         val node = setupNodes[guildId]
-        node?.cacheEvent(event!!)
+        if (event != null) {
+            node?.cacheEvent(event)
+        }
     }
 
     fun clearCache() {

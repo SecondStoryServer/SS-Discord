@@ -18,13 +18,11 @@ class Route(val method: Method, val baseRoute: String, val route: String, val ma
                 Method.GET, "gateway"
             )
 
-        @JvmStatic
         val selfRoute: Route
             get() = Route(
                 Method.GET, "users/@me"
             )
 
-        @Contract(value = "_ -> new", pure = true)
         fun getSendMessageRoute(channelID: String): Route {
             return Route(
                 Method.POST,
