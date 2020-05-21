@@ -14,7 +14,7 @@ import java.util.function.BiFunction
 import java.util.function.Consumer
 
 open class RestAction<T>(
-    val jda: JDA, private val route: Route, private val handler: BiFunction<Response, Request<T>, T>?
+    val jda: JDA, private val route: Route, private val handler: ((Response, Request<T>) -> T)?
 ) {
     constructor(api: JDA, route: Route): this(api, route, null)
 
@@ -77,7 +77,7 @@ open class RestAction<T>(
         if (handler == null) {
             request.onSuccess(null)
         } else {
-            request.onSuccess(handler.apply(response, request))
+            request.onSuccess(handler.invoke(response, request))
         }
     }
 

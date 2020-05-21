@@ -30,13 +30,13 @@ import java.util.function.Consumer
 import java.util.function.Supplier
 import java.util.zip.DataFormatException
 
-class WebSocketClient(val jDA: JDA): WebSocketAdapter(), WebSocketListener {
+class WebSocketClient(val jda: JDA): WebSocketAdapter(), WebSocketListener {
     private var socket: WebSocket? = null
     private var sessionId: String? = null
     private val readLock = Any()
     private val decompressor = ZlibDecompressor()
     val queueLock = ReentrantLock()
-    val executor = jDA.gatewayPool
+    val executor = jda.gatewayPool
     private var ratelimitThread: WebSocketSendingThread? = null
 
     @Volatile
@@ -69,7 +69,7 @@ class WebSocketClient(val jDA: JDA): WebSocketAdapter(), WebSocketListener {
             initiating = false
             processingReady = false
         }
-        jDA.status = JDA.Status.CONNECTED
+        jda.status = JDA.Status.CONNECTED
     }
 
     val isReady: Boolean
@@ -117,18 +117,18 @@ class WebSocketClient(val jDA: JDA): WebSocketAdapter(), WebSocketListener {
     fun shutdown() {
         shutdown = true
         shouldReconnect = false
-        connectNode?.let { jDA.sessionController.removeSession(it) }
+        connectNode?.let { jda.sessionController.removeSession(it) }
         close(1000, "Shutting down")
     }
 
     @Synchronized
     private fun connect() {
-        if (jDA.status !== JDA.Status.ATTEMPTING_TO_RECONNECT) jDA.status = JDA.Status.CONNECTING_TO_WEBSOCKET
+        if (jda.status !== JDA.Status.ATTEMPTING_TO_RECONNECT) jda.status = JDA.Status.CONNECTING_TO_WEBSOCKET
         if (shutdown) throw RejectedExecutionException("JDA is shutdown!")
         initiating = true
-        val url = jDA.gatewayUrl + "?encoding=json&v=" + DISCORD_GATEWAY_VERSION + "&compress=zlib-stream"
+        val url = jda.gatewayUrl + "?encoding=json&v=" + DISCORD_GATEWAY_VERSION + "&compress=zlib-stream"
         try {
-            val socketFactory = jDA.webSocketFactory
+            val socketFactory = jda.webSocketFactory
             val notNullSocket: WebSocket
             synchronized(socketFactory) {
                 val host = URI.create(url).host
@@ -142,10 +142,10 @@ class WebSocketClient(val jDA: JDA): WebSocketAdapter(), WebSocketListener {
             }
             notNullSocket.addHeader("Accept-Encoding", "gzip").addListener(this).connect()
         } catch (ex: IOException) {
-            jDA.resetGatewayUrl()
+            jda.resetGatewayUrl()
             throw IllegalStateException(ex)
         } catch (ex: WebSocketException) {
-            jDA.resetGatewayUrl()
+            jda.resetGatewayUrl()
             throw IllegalStateException(ex)
         }
     }
@@ -158,7 +158,7 @@ class WebSocketClient(val jDA: JDA): WebSocketAdapter(), WebSocketListener {
     override fun onConnected(
         websocket: WebSocket, headers: Map<String, List<String>>
     ) {
-        jDA.status = JDA.Status.IDENTIFYING_SESSION
+        jda.status = JDA.Status.IDENTIFYING_SESSION
         connected = true
         messagesSent.set(0)
         ratelimitResetTime = System.currentTimeMillis() + 60000
@@ -177,7 +177,7 @@ class WebSocketClient(val jDA: JDA): WebSocketAdapter(), WebSocketListener {
     ) {
         sentAuthInfo = false
         connected = false
-        jDA.status = JDA.Status.DISCONNECTED
+        jda.status = JDA.Status.DISCONNECTED
         var isInvalidate = false
         keepAliveThread?.apply {
             cancel(false)
@@ -195,7 +195,7 @@ class WebSocketClient(val jDA: JDA): WebSocketAdapter(), WebSocketListener {
                 ratelimitThread = null
             }
             decompressor.reset()
-            jDA.shutdownInternals()
+            jda.shutdownInternals()
         } else {
             synchronized(readLock) { decompressor.reset() }
             if (isInvalidate) invalidate()
@@ -219,33 +219,33 @@ class WebSocketClient(val jDA: JDA): WebSocketAdapter(), WebSocketListener {
 
     private fun queueReconnect() {
         try {
-            jDA.status = JDA.Status.RECONNECT_QUEUED
+            jda.status = JDA.Status.RECONNECT_QUEUED
             connectNode = ReconnectNode().apply {
-                jDA.sessionController.appendSession(this)
+                jda.sessionController.appendSession(this)
             }
         } catch (ex: IllegalStateException) {
-            jDA.status = JDA.Status.SHUTDOWN
+            jda.status = JDA.Status.SHUTDOWN
         }
     }
 
     @Throws(InterruptedException::class)
     private fun reconnect() {
         if (shutdown) {
-            jDA.status = JDA.Status.SHUTDOWN
+            jda.status = JDA.Status.SHUTDOWN
             return
         }
         while (shouldReconnect) {
-            jDA.status = JDA.Status.WAITING_TO_RECONNECT
+            jda.status = JDA.Status.WAITING_TO_RECONNECT
             val delay = reconnectTimeoutS
             reconnectTimeoutS = (reconnectTimeoutS shl 1).coerceAtMost(900)
             Thread.sleep(delay * 1000.toLong())
             handleIdentifyRateLimit = false
-            jDA.status = JDA.Status.ATTEMPTING_TO_RECONNECT
+            jda.status = JDA.Status.ATTEMPTING_TO_RECONNECT
             try {
                 connect()
                 break
             } catch (ex: RejectedExecutionException) {
-                jDA.status = JDA.Status.SHUTDOWN
+                jda.status = JDA.Status.SHUTDOWN
                 return
             } catch (ex: RuntimeException) {
                 ex.printStackTrace()
@@ -261,7 +261,7 @@ class WebSocketClient(val jDA: JDA): WebSocketAdapter(), WebSocketListener {
 
     private fun sendKeepAlive() {
         val keepAlivePacket =
-            DataObject.empty().put("op", WebSocketCode.HEARTBEAT).put("d", jDA.responseTotal).toString()
+            DataObject.empty().put("op", WebSocketCode.HEARTBEAT).put("d", jda.responseTotal).toString()
         send(keepAlivePacket, true)
     }
 
@@ -279,27 +279,27 @@ class WebSocketClient(val jDA: JDA): WebSocketAdapter(), WebSocketListener {
         handleIdentifyRateLimit = true
         identifyTime = System.currentTimeMillis()
         sentAuthInfo = true
-        jDA.status = JDA.Status.AWAITING_LOGIN_CONFIRMATION
+        jda.status = JDA.Status.AWAITING_LOGIN_CONFIRMATION
     }
 
     private fun sendResume() {
         val resume = DataObject.empty().put("op", WebSocketCode.RESUME).put(
-            "d", DataObject.empty().put("session_id", sessionId).put("token", token).put("seq", jDA.responseTotal)
+            "d", DataObject.empty().put("session_id", sessionId).put("token", token).put("seq", jda.responseTotal)
         )
         send(resume.toString(), true)
-        jDA.status = JDA.Status.AWAITING_LOGIN_CONFIRMATION
+        jda.status = JDA.Status.AWAITING_LOGIN_CONFIRMATION
     }
 
     private fun invalidate() {
         sessionId = null
         sentAuthInfo = false
         locked(Runnable { chunkSyncQueue.clear() })
-        jDA.eventCache.clear()
-        jDA.guildSetupController.clearCache()
+        jda.eventCache.clear()
+        jda.guildSetupController.clearCache()
     }
 
     private val token: String
-        get() = jDA.token.substring("Bot ".length)
+        get() = jda.token.substring("Bot ".length)
 
     private fun handleEvent(content: DataObject) {
         try {
@@ -311,7 +311,7 @@ class WebSocketClient(val jDA: JDA): WebSocketAdapter(), WebSocketListener {
 
     private fun onEvent(content: DataObject) {
         val opCode = content.getInt("op")
-        if (!content.isNull("s")) jDA.setResponseTotal(content.getInt("s"))
+        if (!content.isNull("s")) jda.setResponseTotal(content.getInt("s"))
         when (opCode) {
             WebSocketCode.DISPATCH -> onDispatch(content)
             WebSocketCode.HEARTBEAT -> sendKeepAlive()
@@ -336,17 +336,17 @@ class WebSocketClient(val jDA: JDA): WebSocketAdapter(), WebSocketListener {
 
     private fun onDispatch(raw: DataObject) {
         val type = raw.getString("t")
-        val responseTotal = jDA.responseTotal
+        val responseTotal = jda.responseTotal
         if (raw["d"] !is Map<*, *>) {
             return
         }
         val content = raw.getObject("d")
-        val jda = jDA
+        val jda = jda
         try {
             when (type) {
                 "READY" -> {
                     reconnectTimeoutS = 2
-                    jDA.status = JDA.Status.LOADING_SUBSYSTEMS
+                    jda.status = JDA.Status.LOADING_SUBSYSTEMS
                     processingReady = true
                     handleIdentifyRateLimit = false
                     sessionId = content.getString("session_id")
@@ -361,8 +361,8 @@ class WebSocketClient(val jDA: JDA): WebSocketAdapter(), WebSocketListener {
                         jda.status = JDA.Status.LOADING_SUBSYSTEMS
                     }
                 }
-                "GUILD_CREATE" -> GuildCreateHandler(jDA).handle(responseTotal, raw)
-                "MESSAGE_CREATE" -> MessageCreateHandler(jDA).handle(responseTotal, raw)
+                "GUILD_CREATE" -> GuildCreateHandler(jda).handle(responseTotal, raw)
+                "MESSAGE_CREATE" -> MessageCreateHandler(jda).handle(responseTotal, raw)
             }
         } catch (ex: Exception) {
             ex.printStackTrace()
@@ -425,14 +425,14 @@ class WebSocketClient(val jDA: JDA): WebSocketAdapter(), WebSocketListener {
             connect()
             if (isLast) return
             try {
-                jDA.awaitStatus(JDA.Status.LOADING_SUBSYSTEMS, JDA.Status.RECONNECT_QUEUED)
+                jda.awaitStatus(JDA.Status.LOADING_SUBSYSTEMS, JDA.Status.RECONNECT_QUEUED)
             } catch (ex: IllegalStateException) {
                 close()
             }
         }
 
         override fun hashCode(): Int {
-            return Objects.hash("C", jDA)
+            return Objects.hash("C", jda)
         }
 
         override fun equals(other: Any?): Boolean {
@@ -447,14 +447,14 @@ class WebSocketClient(val jDA: JDA): WebSocketAdapter(), WebSocketListener {
             reconnect()
             if (isLast) return
             try {
-                jDA.awaitStatus(JDA.Status.LOADING_SUBSYSTEMS, JDA.Status.RECONNECT_QUEUED)
+                jda.awaitStatus(JDA.Status.LOADING_SUBSYSTEMS, JDA.Status.RECONNECT_QUEUED)
             } catch (ex: IllegalStateException) {
                 close()
             }
         }
 
         override fun hashCode(): Int {
-            return Objects.hash("R", jDA)
+            return Objects.hash("R", jda)
         }
 
         override fun equals(other: Any?): Boolean {
@@ -472,12 +472,12 @@ class WebSocketClient(val jDA: JDA): WebSocketAdapter(), WebSocketListener {
         shouldReconnect = true
         connectNode = StartingNode().apply {
             try {
-                jDA.sessionController.appendSession(this)
+                jda.sessionController.appendSession(this)
             } catch (e: RuntimeException) {
-                jDA.status = JDA.Status.SHUTDOWN
+                jda.status = JDA.Status.SHUTDOWN
                 throw e
             } catch (e: Error) {
-                jDA.status = JDA.Status.SHUTDOWN
+                jda.status = JDA.Status.SHUTDOWN
                 throw e
             }
         }
