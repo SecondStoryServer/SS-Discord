@@ -11,7 +11,7 @@ import me.syari.ss.discord.api.SessionController.SessionConnectNode
 import me.syari.ss.discord.api.data.DataArray
 import me.syari.ss.discord.api.data.DataObject
 import me.syari.ss.discord.api.requests.CloseCode.Companion.from
-import me.syari.ss.discord.internal.JDA
+import me.syari.ss.discord.internal.Discord
 import me.syari.ss.discord.internal.handle.EventCache
 import me.syari.ss.discord.internal.handle.GuildCreateHandler
 import me.syari.ss.discord.internal.handle.MessageCreateHandler
@@ -30,13 +30,13 @@ import java.util.function.Consumer
 import java.util.function.Supplier
 import java.util.zip.DataFormatException
 
-class WebSocketClient(val jda: JDA): WebSocketAdapter(), WebSocketListener {
+class WebSocketClient: WebSocketAdapter(), WebSocketListener {
     private var socket: WebSocket? = null
     private var sessionId: String? = null
     private val readLock = Any()
     private val decompressor = ZlibDecompressor()
     val queueLock = ReentrantLock()
-    val executor = jda.gatewayPool
+    val executor = Discord.gatewayPool
     private var ratelimitThread: WebSocketSendingThread? = null
 
     @Volatile
@@ -69,7 +69,7 @@ class WebSocketClient(val jda: JDA): WebSocketAdapter(), WebSocketListener {
             initiating = false
             processingReady = false
         }
-        jda.status = JDA.Status.CONNECTED
+        Discord.status = Discord.Status.CONNECTED
     }
 
     val isReady: Boolean
@@ -117,18 +117,18 @@ class WebSocketClient(val jda: JDA): WebSocketAdapter(), WebSocketListener {
     fun shutdown() {
         shutdown = true
         shouldReconnect = false
-        connectNode?.let { jda.sessionController.removeSession(it) }
+        connectNode?.let { Discord.sessionController.removeSession(it) }
         close(1000, "Shutting down")
     }
 
     @Synchronized
     private fun connect() {
-        if (jda.status !== JDA.Status.ATTEMPTING_TO_RECONNECT) jda.status = JDA.Status.CONNECTING_TO_WEBSOCKET
+        if (Discord.status !== Discord.Status.ATTEMPTING_TO_RECONNECT) Discord.status = Discord.Status.CONNECTING_TO_WEBSOCKET
         if (shutdown) throw RejectedExecutionException("JDA is shutdown!")
         initiating = true
-        val url = jda.gatewayUrl + "?encoding=json&v=" + DISCORD_GATEWAY_VERSION + "&compress=zlib-stream"
+        val url = Discord.gatewayUrl + "?encoding=json&v=" + DISCORD_GATEWAY_VERSION + "&compress=zlib-stream"
         try {
-            val socketFactory = jda.webSocketFactory
+            val socketFactory = Discord.webSocketFactory
             val notNullSocket: WebSocket
             synchronized(socketFactory) {
                 val host = URI.create(url).host
@@ -142,10 +142,10 @@ class WebSocketClient(val jda: JDA): WebSocketAdapter(), WebSocketListener {
             }
             notNullSocket.addHeader("Accept-Encoding", "gzip").addListener(this).connect()
         } catch (ex: IOException) {
-            jda.resetGatewayUrl()
+            Discord.resetGatewayUrl()
             throw IllegalStateException(ex)
         } catch (ex: WebSocketException) {
-            jda.resetGatewayUrl()
+            Discord.resetGatewayUrl()
             throw IllegalStateException(ex)
         }
     }
@@ -158,7 +158,7 @@ class WebSocketClient(val jda: JDA): WebSocketAdapter(), WebSocketListener {
     override fun onConnected(
         websocket: WebSocket, headers: Map<String, List<String>>
     ) {
-        jda.status = JDA.Status.IDENTIFYING_SESSION
+        Discord.status = Discord.Status.IDENTIFYING_SESSION
         connected = true
         messagesSent.set(0)
         ratelimitResetTime = System.currentTimeMillis() + 60000
@@ -177,7 +177,7 @@ class WebSocketClient(val jda: JDA): WebSocketAdapter(), WebSocketListener {
     ) {
         sentAuthInfo = false
         connected = false
-        jda.status = JDA.Status.DISCONNECTED
+        Discord.status = Discord.Status.DISCONNECTED
         var isInvalidate = false
         keepAliveThread?.apply {
             cancel(false)
@@ -195,7 +195,7 @@ class WebSocketClient(val jda: JDA): WebSocketAdapter(), WebSocketListener {
                 ratelimitThread = null
             }
             decompressor.reset()
-            jda.shutdownInternals()
+            Discord.shutdownInternals()
         } else {
             synchronized(readLock) { decompressor.reset() }
             if (isInvalidate) invalidate()
@@ -219,33 +219,33 @@ class WebSocketClient(val jda: JDA): WebSocketAdapter(), WebSocketListener {
 
     private fun queueReconnect() {
         try {
-            jda.status = JDA.Status.RECONNECT_QUEUED
+            Discord.status = Discord.Status.RECONNECT_QUEUED
             connectNode = ReconnectNode().apply {
-                jda.sessionController.appendSession(this)
+                Discord.sessionController.appendSession(this)
             }
         } catch (ex: IllegalStateException) {
-            jda.status = JDA.Status.SHUTDOWN
+            Discord.status = Discord.Status.SHUTDOWN
         }
     }
 
     @Throws(InterruptedException::class)
     private fun reconnect() {
         if (shutdown) {
-            jda.status = JDA.Status.SHUTDOWN
+            Discord.status = Discord.Status.SHUTDOWN
             return
         }
         while (shouldReconnect) {
-            jda.status = JDA.Status.WAITING_TO_RECONNECT
+            Discord.status = Discord.Status.WAITING_TO_RECONNECT
             val delay = reconnectTimeoutS
             reconnectTimeoutS = (reconnectTimeoutS shl 1).coerceAtMost(900)
             Thread.sleep(delay * 1000.toLong())
             handleIdentifyRateLimit = false
-            jda.status = JDA.Status.ATTEMPTING_TO_RECONNECT
+            Discord.status = Discord.Status.ATTEMPTING_TO_RECONNECT
             try {
                 connect()
                 break
             } catch (ex: RejectedExecutionException) {
-                jda.status = JDA.Status.SHUTDOWN
+                Discord.status = Discord.Status.SHUTDOWN
                 return
             } catch (ex: RuntimeException) {
                 ex.printStackTrace()
@@ -261,7 +261,7 @@ class WebSocketClient(val jda: JDA): WebSocketAdapter(), WebSocketListener {
 
     private fun sendKeepAlive() {
         val keepAlivePacket =
-            DataObject.empty().put("op", WebSocketCode.HEARTBEAT).put("d", jda.responseTotal).toString()
+            DataObject.empty().put("op", WebSocketCode.HEARTBEAT).put("d", Discord.responseTotal).toString()
         send(keepAlivePacket, true)
     }
 
@@ -279,27 +279,27 @@ class WebSocketClient(val jda: JDA): WebSocketAdapter(), WebSocketListener {
         handleIdentifyRateLimit = true
         identifyTime = System.currentTimeMillis()
         sentAuthInfo = true
-        jda.status = JDA.Status.AWAITING_LOGIN_CONFIRMATION
+        Discord.status = Discord.Status.AWAITING_LOGIN_CONFIRMATION
     }
 
     private fun sendResume() {
         val resume = DataObject.empty().put("op", WebSocketCode.RESUME).put(
-            "d", DataObject.empty().put("session_id", sessionId).put("token", token).put("seq", jda.responseTotal)
+            "d", DataObject.empty().put("session_id", sessionId).put("token", token).put("seq", Discord.responseTotal)
         )
         send(resume.toString(), true)
-        jda.status = JDA.Status.AWAITING_LOGIN_CONFIRMATION
+        Discord.status = Discord.Status.AWAITING_LOGIN_CONFIRMATION
     }
 
     private fun invalidate() {
         sessionId = null
         sentAuthInfo = false
         locked(Runnable { chunkSyncQueue.clear() })
-        jda.eventCache.clear()
-        jda.guildSetupController.clearCache()
+        Discord.eventCache.clear()
+        Discord.guildSetupController.clearCache()
     }
 
     private val token: String
-        get() = jda.token.substring("Bot ".length)
+        get() = Discord.token
 
     private fun handleEvent(content: DataObject) {
         try {
@@ -311,7 +311,7 @@ class WebSocketClient(val jda: JDA): WebSocketAdapter(), WebSocketListener {
 
     private fun onEvent(content: DataObject) {
         val opCode = content.getInt("op")
-        if (!content.isNull("s")) jda.setResponseTotal(content.getInt("s"))
+        if (!content.isNull("s")) Discord.setResponseTotal(content.getInt("s"))
         when (opCode) {
             WebSocketCode.DISPATCH -> onDispatch(content)
             WebSocketCode.HEARTBEAT -> sendKeepAlive()
@@ -336,17 +336,16 @@ class WebSocketClient(val jda: JDA): WebSocketAdapter(), WebSocketListener {
 
     private fun onDispatch(raw: DataObject) {
         val type = raw.getString("t")
-        val responseTotal = jda.responseTotal
+        val responseTotal = Discord.responseTotal
         if (raw["d"] !is Map<*, *>) {
             return
         }
         val content = raw.getObject("d")
-        val jda = jda
         try {
             when (type) {
                 "READY" -> {
                     reconnectTimeoutS = 2
-                    jda.status = JDA.Status.LOADING_SUBSYSTEMS
+                    Discord.status = Discord.Status.LOADING_SUBSYSTEMS
                     processingReady = true
                     handleIdentifyRateLimit = false
                     sessionId = content.getString("session_id")
@@ -358,16 +357,16 @@ class WebSocketClient(val jda: JDA): WebSocketAdapter(), WebSocketListener {
                         initiating = false
                         ready()
                     } else {
-                        jda.status = JDA.Status.LOADING_SUBSYSTEMS
+                        Discord.status = Discord.Status.LOADING_SUBSYSTEMS
                     }
                 }
-                "GUILD_CREATE" -> GuildCreateHandler(jda).handle(responseTotal, raw)
-                "MESSAGE_CREATE" -> MessageCreateHandler(jda).handle(responseTotal, raw)
+                "GUILD_CREATE" -> GuildCreateHandler().handle(responseTotal, raw)
+                "MESSAGE_CREATE" -> MessageCreateHandler().handle(responseTotal, raw)
             }
         } catch (ex: Exception) {
             ex.printStackTrace()
         }
-        if (responseTotal % EventCache.TIMEOUT_AMOUNT == 0L) jda.eventCache.timeout(responseTotal)
+        if (responseTotal % EventCache.TIMEOUT_AMOUNT == 0L) Discord.eventCache.timeout(responseTotal)
     }
 
     @Throws(DataFormatException::class)
@@ -425,14 +424,14 @@ class WebSocketClient(val jda: JDA): WebSocketAdapter(), WebSocketListener {
             connect()
             if (isLast) return
             try {
-                jda.awaitStatus(JDA.Status.LOADING_SUBSYSTEMS, JDA.Status.RECONNECT_QUEUED)
+                Discord.awaitStatus(Discord.Status.LOADING_SUBSYSTEMS, Discord.Status.RECONNECT_QUEUED)
             } catch (ex: IllegalStateException) {
                 close()
             }
         }
 
         override fun hashCode(): Int {
-            return Objects.hash("C", jda)
+            return Objects.hash("C", Discord)
         }
 
         override fun equals(other: Any?): Boolean {
@@ -447,18 +446,10 @@ class WebSocketClient(val jda: JDA): WebSocketAdapter(), WebSocketListener {
             reconnect()
             if (isLast) return
             try {
-                jda.awaitStatus(JDA.Status.LOADING_SUBSYSTEMS, JDA.Status.RECONNECT_QUEUED)
+                Discord.awaitStatus(Discord.Status.LOADING_SUBSYSTEMS, Discord.Status.RECONNECT_QUEUED)
             } catch (ex: IllegalStateException) {
                 close()
             }
-        }
-
-        override fun hashCode(): Int {
-            return Objects.hash("R", jda)
-        }
-
-        override fun equals(other: Any?): Boolean {
-            return if (other === this) true else other is ReconnectNode
         }
     }
 
@@ -472,12 +463,12 @@ class WebSocketClient(val jda: JDA): WebSocketAdapter(), WebSocketListener {
         shouldReconnect = true
         connectNode = StartingNode().apply {
             try {
-                jda.sessionController.appendSession(this)
+                Discord.sessionController.appendSession(this)
             } catch (e: RuntimeException) {
-                jda.status = JDA.Status.SHUTDOWN
+                Discord.status = Discord.Status.SHUTDOWN
                 throw e
             } catch (e: Error) {
-                jda.status = JDA.Status.SHUTDOWN
+                Discord.status = Discord.Status.SHUTDOWN
                 throw e
             }
         }

@@ -2,14 +2,13 @@ package me.syari.ss.discord.api
 
 import me.syari.ss.discord.api.requests.Request
 import me.syari.ss.discord.api.requests.Response
-import me.syari.ss.discord.internal.JDA
+import me.syari.ss.discord.internal.Discord
 import me.syari.ss.discord.internal.requests.RestAction
 import me.syari.ss.discord.internal.requests.Route
 import java.util.Queue
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicLong
-import java.util.function.BiFunction
 
 class SessionController {
     private val lock = Any()
@@ -36,9 +35,9 @@ class SessionController {
         globalRatelimit.set(ratelimit)
     }
 
-    fun getGateway(api: JDA): String {
+    fun getGateway(): String {
         val route = Route.gatewayRoute
-        return RestAction(api, route) { response: Response, _: Request<String> ->
+        return RestAction(route) { response: Response, _: Request<String> ->
             response.dataObject.getString("url")
         }.complete()
     }

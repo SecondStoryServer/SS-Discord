@@ -2,9 +2,9 @@ package me.syari.ss.discord.internal.entities
 
 import gnu.trove.set.hash.TLongHashSet
 import me.syari.ss.discord.api.data.DataObject
-import me.syari.ss.discord.internal.JDA
+import me.syari.ss.discord.internal.Discord
 
-class EntityBuilder(private val api: JDA) {
+class EntityBuilder(private val api: Discord) {
     fun createGuild(id: Long, guildData: DataObject): Guild {
         val name = guildData.getString("name", "")
         val allRole = guildData.getArray("roles")

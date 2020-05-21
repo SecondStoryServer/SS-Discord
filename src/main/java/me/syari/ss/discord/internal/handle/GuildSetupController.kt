@@ -8,10 +8,10 @@ import gnu.trove.set.TLongSet
 import gnu.trove.set.hash.TLongHashSet
 import me.syari.ss.discord.api.data.DataArray
 import me.syari.ss.discord.api.data.DataObject
-import me.syari.ss.discord.internal.JDA
+import me.syari.ss.discord.internal.Discord
 import me.syari.ss.discord.internal.requests.WebSocketCode
 
-class GuildSetupController(val jda: JDA) {
+class GuildSetupController {
     private val setupNodes: TLongObjectMap<GuildSetupNode> = TLongObjectHashMap()
     private val chunkingGuilds: TLongSet = TLongHashSet()
     private val pendingChunks: TLongLongMap = TLongLongHashMap()
@@ -37,7 +37,7 @@ class GuildSetupController(val jda: JDA) {
 
     fun ready(id: Long) {
         remove(id)
-        val client = jda.client
+        val client = Discord.client
         incompleteCount--
         if (incompleteCount < 1 && !client.isReady) {
             client.ready()
@@ -85,7 +85,7 @@ class GuildSetupController(val jda: JDA) {
                 pendingChunks.put(`object` as Long, timeout)
             }
         }
-        jda.client.chunkOrSyncRequest(
+        Discord.client.chunkOrSyncRequest(
             DataObject.empty().put("op", WebSocketCode.MEMBER_CHUNK_REQUEST).put(
                 "d", DataObject.empty().put("guild_id", `object`).put("query", "").put("limit", 0)
             )

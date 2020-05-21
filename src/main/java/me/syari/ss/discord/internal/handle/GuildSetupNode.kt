@@ -5,7 +5,7 @@ import gnu.trove.set.TLongSet
 import gnu.trove.set.hash.TLongHashSet
 import me.syari.ss.discord.api.data.DataArray
 import me.syari.ss.discord.api.data.DataObject
-import me.syari.ss.discord.internal.JDA
+import me.syari.ss.discord.internal.Discord
 import java.util.LinkedList
 
 class GuildSetupNode internal constructor(private val id: Long, private val controller: GuildSetupController) {
@@ -16,7 +16,6 @@ class GuildSetupNode internal constructor(private val id: Long, private val cont
     private var expectedMemberCount = 1
     private var requestedChunk = false
     private var status = GuildSetupController.Status.INIT
-    private val api: JDA = controller.jda
 
     override fun toString(): String {
         return "GuildSetupNode[$id|$status]{expectedMemberCount=$expectedMemberCount, requestedChunk=$requestedChunk}"
@@ -93,14 +92,14 @@ class GuildSetupNode internal constructor(private val id: Long, private val cont
             }
             removedMembers.clear()
         }
-        partialGuild?.let { api.entityBuilder.createGuild(id, it) }
+        partialGuild?.let { Discord.entityBuilder.createGuild(id, it) }
         if (requestedChunk) {
             controller.ready(id)
         } else {
             controller.remove(id)
         }
         updateStatus(GuildSetupController.Status.READY)
-        api.client.handle(cachedEvents)
-        api.eventCache.playbackCache(EventCache.Type.GUILD, id)
+        Discord.client.handle(cachedEvents)
+        Discord.eventCache.playbackCache(EventCache.Type.GUILD, id)
     }
 }

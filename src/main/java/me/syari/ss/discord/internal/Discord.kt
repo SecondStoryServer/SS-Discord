@@ -22,19 +22,29 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.ScheduledExecutorService
 import javax.security.auth.login.LoginException
 
-class JDA private constructor(token: String, private val messageReceivedEvent: MessageReceivedEvent.() -> Unit) {
+object Discord {
+    internal lateinit var token: String
+    private lateinit var messageReceivedEvent: Discord.(MessageReceivedEvent) -> Unit
+
+    @Throws(LoginException::class)
+    fun init(token: String, messageReceivedEvent: Discord.(MessageReceivedEvent) -> Unit) {
+        this.token = token
+        this.messageReceivedEvent = messageReceivedEvent
+        status = Status.INITIALIZED
+        login()
+    }
+
     private val shutdownHook = Thread(Runnable { shutdown() }, "JDA Shutdown Hook")
     private val threadConfig = ThreadingConfig()
     val entityBuilder = EntityBuilder(this)
     val eventCache = EventCache()
-    val guildSetupController = GuildSetupController(this)
-    val token: String = "Bot $token"
+    val guildSetupController = GuildSetupController()
     val sessionController = SessionController()
     val httpClient = OkHttpClient.Builder().build()
     val webSocketFactory = WebSocketFactory()
     lateinit var client: WebSocketClient
         private set
-    val requester = Requester(this)
+    val requester = Requester()
     var status = Status.INITIALIZING
         set(value) {
             synchronized(field) { field = value }
@@ -51,13 +61,13 @@ class JDA private constructor(token: String, private val messageReceivedEvent: M
         resetGatewayUrl()
         status = Status.LOGGING_IN
         verifyToken()
-        client = WebSocketClient(this)
+        client = WebSocketClient()
         Runtime.getRuntime().addShutdownHook(shutdownHook)
     }
 
     @Throws(LoginException::class)
     fun verifyToken() {
-        val login = object: RestAction<DataObject>(this@JDA, selfRoute) {
+        val login = object: RestAction<DataObject>(selfRoute) {
             override fun handleResponse(
                 response: Response, request: Request<DataObject>
             ) {
@@ -129,7 +139,7 @@ class JDA private constructor(token: String, private val messageReceivedEvent: M
     }
 
     fun callMessageReceiveEvent(message: Message) {
-        messageReceivedEvent.invoke(MessageReceivedEvent(message))
+        messageReceivedEvent.invoke(this, MessageReceivedEvent(message))
     }
 
     @Synchronized
@@ -150,7 +160,7 @@ class JDA private constructor(token: String, private val messageReceivedEvent: M
     }
 
     fun resetGatewayUrl() {
-        gatewayUrl = sessionController.getGateway(this)
+        gatewayUrl = sessionController.getGateway()
     }
 
     enum class Status(val isInit: Boolean) {
@@ -169,15 +179,5 @@ class JDA private constructor(token: String, private val messageReceivedEvent: M
         SHUTTING_DOWN(false),
         SHUTDOWN(false);
 
-    }
-
-    companion object {
-        @Throws(LoginException::class)
-        fun build(token: String, messageReceivedEvent: MessageReceivedEvent.() -> Unit): JDA {
-            return JDA(token, messageReceivedEvent).apply {
-                status = Status.INITIALIZED
-                login()
-            }
-        }
     }
 }

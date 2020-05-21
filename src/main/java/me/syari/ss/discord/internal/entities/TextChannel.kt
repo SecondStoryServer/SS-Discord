@@ -3,7 +3,7 @@ package me.syari.ss.discord.internal.entities
 import me.syari.ss.discord.api.data.DataObject
 import me.syari.ss.discord.api.requests.Request
 import me.syari.ss.discord.api.requests.Response
-import me.syari.ss.discord.internal.JDA
+import me.syari.ss.discord.internal.Discord
 import me.syari.ss.discord.internal.requests.Requester
 import me.syari.ss.discord.internal.requests.RestAction
 import me.syari.ss.discord.internal.requests.Route
@@ -28,7 +28,7 @@ class TextChannel(override val idLong: Long, val guild: Guild, val name: String)
         }
     }
 
-    val api: JDA = guild.api
+    val api: Discord = guild.api
 
     val asMention: String
         get() = "<#$idLong>"
@@ -42,7 +42,7 @@ class TextChannel(override val idLong: Long, val guild: Guild, val name: String)
             return
         }
         val route = Route.getSendMessageRoute(id)
-        val messageAction = MessageAction(api, route, this, text)
+        val messageAction = MessageAction(route, this, text)
         messageAction.queue()
     }
 
@@ -65,8 +65,8 @@ class TextChannel(override val idLong: Long, val guild: Guild, val name: String)
     }
 
     private class MessageAction(
-        val api: JDA, route: Route, private val channel: TextChannel, private val content: String
-    ): RestAction<Message>(api, route) {
+        route: Route, private val channel: TextChannel, private val content: String
+    ): RestAction<Message>(route) {
         override fun finalizeData(): RequestBody {
             return DataObject.empty().apply {
                 put("content", content)
@@ -74,7 +74,7 @@ class TextChannel(override val idLong: Long, val guild: Guild, val name: String)
         }
 
         override fun handleSuccess(response: Response, request: Request<Message>) {
-            val message = api.entityBuilder.createMessage(response.dataObject, channel)
+            val message = Discord.entityBuilder.createMessage(response.dataObject, channel)
             request.onSuccess(message)
         }
     }

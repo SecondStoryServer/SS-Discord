@@ -1,23 +1,22 @@
-import me.syari.ss.discord.internal.JDA
-import me.syari.ss.discord.internal.JDA.Companion.build
+import me.syari.ss.discord.internal.Discord
+import me.syari.ss.discord.internal.Discord.init
 import me.syari.ss.discord.internal.entities.TextChannel.Companion.get
 import javax.security.auth.login.LoginException
 
 object MessageListenerExample {
-    private var jda: JDA? = null
     private var sendMessageCount = 0
     private const val token = DiscordToken.BOT_TOKEN
 
     @JvmStatic
     fun main(args: Array<String>) {
         try {
-            jda = build(token) {
-                val authorUser = author
+            init(token) { event ->
+                val authorUser = event.author
                 if (!authorUser.isBot) {
-                    val authorMember = member ?: return@build
+                    val authorMember = event.member ?: return@init
                     val name = authorMember.displayName
-                    val message = message.contentDisplay
-                    val channel = channel
+                    val message = event.message.contentDisplay
+                    val channel = event.channel
                     channel.sendMessage(
                         "Chat -> $name: $message\r\nGetTextChannel -> " + (get(
                             710828174686027790L
@@ -27,11 +26,11 @@ object MessageListenerExample {
                     sendMessageCount++
                     if (sendMessageCount == 2) {
                         println(">> Shutdown")
-                        jda?.shutdown()
+                        shutdown()
                     }
                 }
             }
-            jda?.awaitReady()
+            Discord.awaitReady()
         } catch (e: LoginException) {
             e.printStackTrace()
         } catch (e: InterruptedException) {

@@ -1,7 +1,7 @@
 package me.syari.ss.discord.internal.requests
 
 import me.syari.ss.discord.api.requests.Request
-import me.syari.ss.discord.internal.JDA
+import me.syari.ss.discord.internal.Discord
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
@@ -10,7 +10,7 @@ import java.net.SocketException
 import java.net.SocketTimeoutException
 import javax.net.ssl.SSLPeerUnverifiedException
 
-class Requester(val jda: JDA) {
+class Requester {
     val rateLimiter = RateLimiter(this)
 
     fun <T> request(apiRequest: Request<T>) {
@@ -42,7 +42,7 @@ class Requester(val jda: JDA) {
         if (body == null && requiresRequestBody(method)) body = EMPTY_BODY
         builder.method(method, body).header("X-RateLimit-Precision", "millisecond").header("user-agent", USER_AGENT)
             .header("accept-encoding", "gzip")
-        if (url.startsWith(DISCORD_API_PREFIX)) builder.header("authorization", jda.token)
+        if (url.startsWith(DISCORD_API_PREFIX)) builder.header("authorization", "Bot ${Discord.token}")
         val request = builder.build()
         val responses = arrayOfNulls<Response>(4)
         var nullableLastResponse: Response? = null
@@ -50,7 +50,7 @@ class Requester(val jda: JDA) {
             var attempt = 0
             var lastResponse: Response
             do {
-                val call = jda.httpClient.newCall(request)
+                val call = Discord.httpClient.newCall(request)
                 lastResponse = call.execute()
                 nullableLastResponse = lastResponse
                 responses[attempt] = lastResponse

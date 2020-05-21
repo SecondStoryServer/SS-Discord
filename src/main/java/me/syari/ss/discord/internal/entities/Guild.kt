@@ -1,9 +1,9 @@
 package me.syari.ss.discord.internal.entities
 
-import me.syari.ss.discord.internal.JDA
+import me.syari.ss.discord.internal.Discord
 
 class Guild(
-    val api: JDA, override val idLong: Long, private val name: String
+    val api: Discord, override val idLong: Long, private val name: String
 ): WithId {
     companion object {
         private val guildList = mutableMapOf<Long, Guild>()

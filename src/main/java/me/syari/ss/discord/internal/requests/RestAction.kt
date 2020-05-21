@@ -5,23 +5,20 @@ import me.syari.ss.discord.api.exceptions.RateLimitedException
 import me.syari.ss.discord.api.requests.Request
 import me.syari.ss.discord.api.requests.Response
 import me.syari.ss.discord.api.requests.RestFuture
-import me.syari.ss.discord.internal.JDA
+import me.syari.ss.discord.internal.Discord
 import me.syari.ss.discord.internal.requests.CallbackContext.Companion.isCallbackContext
 import okhttp3.RequestBody
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ExecutionException
-import java.util.function.BiFunction
 import java.util.function.Consumer
 
 open class RestAction<T>(
-    val jda: JDA, private val route: Route, private val handler: ((Response, Request<T>) -> T)?
+    private val route: Route, private val handler: ((Response, Request<T>) -> T)? = null
 ) {
-    constructor(api: JDA, route: Route): this(api, route, null)
-
     fun queue() {
         val data = finalizeData()
         val request = Request(this, DEFAULT_SUCCESS, DEFAULT_FAILURE, true, data, route)
-        jda.requester.request(request)
+        Discord.requester.request(request)
     }
 
     private fun submit(shouldQueue: Boolean): CompletableFuture<T> {

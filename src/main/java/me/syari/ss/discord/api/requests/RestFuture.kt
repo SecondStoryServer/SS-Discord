@@ -1,5 +1,6 @@
 package me.syari.ss.discord.api.requests
 
+import me.syari.ss.discord.internal.Discord
 import me.syari.ss.discord.internal.requests.RestAction
 import me.syari.ss.discord.internal.requests.Route
 import okhttp3.RequestBody
@@ -24,6 +25,6 @@ class RestFuture<T>(
             data,
             route
         )
-        restAction.jda.requester.request(request)
+        Discord.requester.request(request)
     }
 }

@@ -6,7 +6,7 @@ import me.syari.ss.discord.api.exceptions.ContextException.from
 import me.syari.ss.discord.api.exceptions.ErrorResponseException.Companion.create
 import me.syari.ss.discord.api.exceptions.RateLimitedException
 import me.syari.ss.discord.api.requests.ErrorResponse.Companion.fromJSON
-import me.syari.ss.discord.internal.JDA
+import me.syari.ss.discord.internal.Discord
 import me.syari.ss.discord.internal.requests.CallbackContext
 import me.syari.ss.discord.internal.requests.RestAction
 import me.syari.ss.discord.internal.requests.Route
@@ -22,7 +22,6 @@ class Request<T>(
     val route: Route
 ) {
     private var onFailure: Consumer<in Throwable>? = null
-    private val api: JDA
     private val localReason = ThreadLocalReason.current
     var isCanceled = false
         private set
@@ -33,12 +32,11 @@ class Request<T>(
         } else {
             onFailure?.let { from(it) }
         }
-        this.api = restAction.jda
     }
 
     fun onSuccess(successObj: T?) {
         if (successObj == null) return
-        api.callbackPool.execute {
+        Discord.callbackPool.execute {
             try {
                 ThreadLocalReason.closable(localReason)
                     .use { CallbackContext.instance.use { onSuccess.accept(successObj) } }
@@ -57,7 +55,7 @@ class Request<T>(
     }
 
     fun onFailure(failException: Throwable) {
-        api.callbackPool.execute {
+        Discord.callbackPool.execute {
             try {
                 ThreadLocalReason.closable(localReason).use {
                     CallbackContext.instance.use { onFailure?.accept(failException) }

@@ -1,9 +1,9 @@
 package me.syari.ss.discord.internal.handle
 
 import me.syari.ss.discord.api.data.DataObject
-import me.syari.ss.discord.internal.JDA
+import me.syari.ss.discord.internal.Discord
 
-abstract class SocketHandler(private val jda: JDA) {
+abstract class SocketHandler {
     var responseNumber: Long = 0
     var allContent: DataObject? = null
 
@@ -12,7 +12,7 @@ abstract class SocketHandler(private val jda: JDA) {
         allContent = dataObject
         responseNumber = responseTotal
         val guildId = handleInternally(dataObject.getObject("d"))
-        if (guildId != null) jda.guildSetupController.cacheEvent(guildId, dataObject)
+        if (guildId != null) Discord.guildSetupController.cacheEvent(guildId, dataObject)
         allContent = null
     }
 
