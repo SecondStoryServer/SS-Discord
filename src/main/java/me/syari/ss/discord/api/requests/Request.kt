@@ -10,6 +10,7 @@ import me.syari.ss.discord.internal.Discord
 import me.syari.ss.discord.internal.requests.CallbackContext
 import me.syari.ss.discord.internal.requests.RestAction
 import me.syari.ss.discord.internal.requests.Route
+import me.syari.ss.discord.internal.utils.ThreadingConfig
 import okhttp3.RequestBody
 import java.util.function.Consumer
 
@@ -36,7 +37,7 @@ class Request<T>(
 
     fun onSuccess(successObj: T?) {
         if (successObj == null) return
-        Discord.callbackPool.execute {
+        ThreadingConfig.callbackPool.execute {
             try {
                 ThreadLocalReason.closable(localReason)
                     .use { CallbackContext.instance.use { onSuccess.accept(successObj) } }
@@ -55,7 +56,7 @@ class Request<T>(
     }
 
     fun onFailure(failException: Throwable) {
-        Discord.callbackPool.execute {
+        ThreadingConfig.callbackPool.execute {
             try {
                 ThreadLocalReason.closable(localReason).use {
                     CallbackContext.instance.use { onFailure?.accept(failException) }

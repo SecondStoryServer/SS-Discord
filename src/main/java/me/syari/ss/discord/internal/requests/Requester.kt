@@ -11,8 +11,7 @@ import java.net.SocketTimeoutException
 import javax.net.ssl.SSLPeerUnverifiedException
 
 object Requester {
-    const val DISCORD_API_PREFIX = "https://discordapp.com/api/v6/"
-    const val USER_AGENT = "SS-Discord"
+    private const val DISCORD_API_PREFIX = "https://discordapp.com/api/v6/"
     private val EMPTY_BODY = ByteArray(0).toRequestBody()
     val MEDIA_TYPE_JSON = "application/json; charset=utf-8".toMediaType()
     private fun isRetry(ex: Throwable): Boolean {
@@ -46,8 +45,7 @@ object Requester {
         val method = apiRequest.route.method.toString()
         var body = apiRequest.getBody()
         if (body == null && requiresRequestBody(method)) body = EMPTY_BODY
-        builder.method(method, body).header("X-RateLimit-Precision", "millisecond").header("user-agent", USER_AGENT)
-            .header("accept-encoding", "gzip")
+        builder.method(method, body).header("X-RateLimit-Precision", "millisecond").header("user-agent", "SS-Discord").header("accept-encoding", "gzip")
         if (url.startsWith(DISCORD_API_PREFIX)) builder.header("authorization", "Bot ${Discord.token}")
         val request = builder.build()
         val responses = arrayOfNulls<Response>(4)

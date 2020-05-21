@@ -13,12 +13,12 @@ object ThreadingConfig {
         private set
     val callbackPool: ExecutorService = ForkJoinPool.commonPool()
 
-    fun init(identifier: () -> String) {
+    fun init() {
         rateLimitPool = newScheduler(
-            5, identifier, "RateLimit"
+            5, "RateLimit"
         )
         gatewayPool = newScheduler(
-            1, identifier, "Gateway"
+            1, "Gateway"
         )
     }
 
@@ -35,8 +35,8 @@ object ThreadingConfig {
     }
 
     private fun newScheduler(
-        coreSize: Int, identifier: () -> String, baseName: String
+        coreSize: Int, baseName: String
     ): ScheduledThreadPoolExecutor {
-        return ScheduledThreadPoolExecutor(coreSize, CountingThreadFactory(identifier, baseName))
+        return ScheduledThreadPoolExecutor(coreSize, CountingThreadFactory(baseName))
     }
 }

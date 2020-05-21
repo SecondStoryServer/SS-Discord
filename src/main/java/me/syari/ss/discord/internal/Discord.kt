@@ -16,23 +16,22 @@ import me.syari.ss.discord.internal.requests.WebSocketClient
 import me.syari.ss.discord.internal.utils.ThreadingConfig
 import okhttp3.OkHttpClient
 import java.util.concurrent.ExecutionException
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.ScheduledExecutorService
 import javax.security.auth.login.LoginException
 
 object Discord {
     internal lateinit var token: String
     private lateinit var messageReceivedEvent: Discord.(MessageReceivedEvent) -> Unit
 
-    @Throws(LoginException::class)
+    @Throws(LoginException::class, InterruptedException::class)
     fun init(token: String, messageReceivedEvent: Discord.(MessageReceivedEvent) -> Unit) {
         this.token = token
         this.messageReceivedEvent = messageReceivedEvent
         status = Status.INITIALIZED
         login()
+        awaitStatus(Status.CONNECTED)
     }
 
-    private val shutdownHook = Thread(Runnable { shutdown() }, "JDA Shutdown Hook")
+    private val shutdownHook = Thread(Runnable { shutdown() }, "SS-Discord Shutdown Hook")
     val httpClient = OkHttpClient.Builder().build()
     val webSocketFactory = WebSocketFactory()
     var status = Status.INITIALIZING
@@ -45,8 +44,8 @@ object Discord {
         private set
 
     @Throws(LoginException::class)
-    fun login() {
-        ThreadingConfig.init { "JDA" }
+    private fun login() {
+        ThreadingConfig.init()
         RateLimiter.init()
         resetGatewayUrl()
         status = Status.LOGGING_IN
@@ -56,7 +55,7 @@ object Discord {
     }
 
     @Throws(LoginException::class)
-    fun verifyToken() {
+    private fun verifyToken() {
         val login = object: RestAction<DataObject>(selfRoute) {
             override fun handleResponse(
                 response: Response, request: Request<DataObject>
@@ -106,20 +105,6 @@ object Discord {
         }
     }
 
-    @Throws(InterruptedException::class)
-    fun awaitReady() {
-        awaitStatus(Status.CONNECTED)
-    }
-
-    val rateLimitPool: ScheduledExecutorService
-        get() = ThreadingConfig.rateLimitPool
-
-    val gatewayPool: ScheduledExecutorService
-        get() = ThreadingConfig.gatewayPool
-
-    val callbackPool: ExecutorService
-        get() = ThreadingConfig.callbackPool
-
     @Synchronized
     fun shutdown() {
         if (status == Status.SHUTDOWN || status == Status.SHUTTING_DOWN) return
@@ -167,7 +152,6 @@ object Discord {
         WAITING_TO_RECONNECT(false),
         ATTEMPTING_TO_RECONNECT(false),
         SHUTTING_DOWN(false),
-        SHUTDOWN(false);
-
+        SHUTDOWN(false)
     }
 }

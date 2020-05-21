@@ -16,6 +16,7 @@ import me.syari.ss.discord.internal.handle.EventCache
 import me.syari.ss.discord.internal.handle.GuildCreateHandler
 import me.syari.ss.discord.internal.handle.GuildSetupController
 import me.syari.ss.discord.internal.handle.MessageCreateHandler
+import me.syari.ss.discord.internal.utils.ThreadingConfig
 import me.syari.ss.discord.internal.utils.ZlibDecompressor
 import java.io.IOException
 import java.net.URI
@@ -61,7 +62,7 @@ object WebSocketClient: WebSocketAdapter(), WebSocketListener {
     @Volatile
     private var connectNode: SessionConnectNode? = null
 
-    val executor = Discord.gatewayPool
+    val executor = ThreadingConfig.gatewayPool
     val queueLock = ReentrantLock()
     val chunkSyncQueue: Queue<String> = ConcurrentLinkedQueue()
     val ratelimitQueue: Queue<String> = ConcurrentLinkedQueue()
@@ -138,7 +139,7 @@ object WebSocketClient: WebSocketAdapter(), WebSocketListener {
     private fun connect() {
         if (Discord.status !== Discord.Status.ATTEMPTING_TO_RECONNECT) Discord.status =
             Discord.Status.CONNECTING_TO_WEBSOCKET
-        if (shutdown) throw RejectedExecutionException("JDA is shutdown!")
+        if (shutdown) throw RejectedExecutionException("SS-Discord is shutdown!")
         initiating = true
         val url = Discord.gatewayUrl + "?encoding=json&v=" + DISCORD_GATEWAY_VERSION + "&compress=zlib-stream"
         try {
@@ -281,7 +282,7 @@ object WebSocketClient: WebSocketAdapter(), WebSocketListener {
 
     private fun sendIdentify() {
         val connectionProperties =
-            DataObject.empty().put("\$os", System.getProperty("os.name")).put("\$browser", "JDA").put("\$device", "JDA")
+            DataObject.empty().put("\$os", System.getProperty("os.name")).put("\$browser", "SS-Discord").put("\$device", "SS-Discord")
                 .put("\$referring_domain", "").put("\$referrer", "")
         val payload = DataObject.empty().put("token", token).put("properties", connectionProperties)
             .put("v", DISCORD_GATEWAY_VERSION).put("guild_subscriptions", true).put("large_threshold", 250)

@@ -1,6 +1,5 @@
 package me.syari.ss.discord.api.requests
 
-import me.syari.ss.discord.internal.Discord
 import me.syari.ss.discord.internal.requests.Requester
 import me.syari.ss.discord.internal.requests.RestAction
 import me.syari.ss.discord.internal.requests.Route

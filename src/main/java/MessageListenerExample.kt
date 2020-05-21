@@ -30,7 +30,6 @@ object MessageListenerExample {
                     }
                 }
             }
-            Discord.awaitReady()
         } catch (e: LoginException) {
             e.printStackTrace()
         } catch (e: InterruptedException) {

@@ -3,6 +3,7 @@ package me.syari.ss.discord.internal.requests
 import me.syari.ss.discord.api.SessionController
 import me.syari.ss.discord.api.requests.Request
 import me.syari.ss.discord.internal.Discord
+import me.syari.ss.discord.internal.utils.ThreadingConfig
 import okhttp3.Response
 import java.util.Queue
 import java.util.concurrent.CancellationException
@@ -53,7 +54,7 @@ object RateLimiter {
     }
 
     private val scheduler: ScheduledExecutorService
-        get() = Discord.rateLimitPool
+        get() = ThreadingConfig.rateLimitPool
 
     private fun cleanup() {
         locked(bucketLock, Runnable {

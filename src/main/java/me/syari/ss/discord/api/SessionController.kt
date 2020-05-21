@@ -2,7 +2,6 @@ package me.syari.ss.discord.api
 
 import me.syari.ss.discord.api.requests.Request
 import me.syari.ss.discord.api.requests.Response
-import me.syari.ss.discord.internal.Discord
 import me.syari.ss.discord.internal.requests.RestAction
 import me.syari.ss.discord.internal.requests.Route
 import java.util.Queue
