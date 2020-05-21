@@ -91,8 +91,8 @@ object ZlibDecompressor {
                 decompressor.write(dataAsMutable)
                 return buffer.toString("UTF-8")
             }
-        } catch (e: IOException) {
-            throw (DataFormatException("Malformed").initCause(e) as DataFormatException)
+        } catch (ex: IOException) {
+            throw (DataFormatException("Malformed").initCause(ex) as DataFormatException)
         } finally {
             if (maxBufferSize < buffer.size()) {
                 decompressBuffer = newDecompressBuffer()

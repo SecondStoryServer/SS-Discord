@@ -87,9 +87,9 @@ object SessionController {
                     if (delay > 0) {
                         sleep(delay)
                     }
-                } catch (e: IllegalStateException) {
+                } catch (ex: IllegalStateException) {
                     appendSession(node)
-                } catch (e: InterruptedException) {
+                } catch (ex: InterruptedException) {
                     appendSession(node)
                 }
             }

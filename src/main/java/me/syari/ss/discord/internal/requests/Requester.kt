@@ -1,10 +1,10 @@
 package me.syari.ss.discord.internal.requests
 
 import me.syari.ss.discord.api.requests.Request
+import me.syari.ss.discord.api.requests.Response
 import me.syari.ss.discord.internal.Discord
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
-import okhttp3.Response
 import okhttp3.internal.http.HttpMethod.requiresRequestBody
 import java.net.SocketException
 import java.net.SocketTimeoutException
@@ -14,9 +14,6 @@ object Requester {
     private const val DISCORD_API_PREFIX = "https://discordapp.com/api/v6/"
     private val EMPTY_BODY = ByteArray(0).toRequestBody()
     val MEDIA_TYPE_JSON = "application/json; charset=utf-8".toMediaType()
-    private fun isRetry(ex: Throwable): Boolean {
-        return ex is SocketException || ex is SocketTimeoutException || ex is SSLPeerUnverifiedException
-    }
 
     fun <T> request(apiRequest: Request<T>) {
         if (apiRequest.shouldQueue()) {
@@ -36,7 +33,7 @@ object Requester {
         val route = apiRequest.route
         var retryAfter: Long? = RateLimiter.getRateLimit(route)
         if (retryAfter != null && retryAfter > 0) {
-            if (handleOnRatelimit) apiRequest.handleResponse(me.syari.ss.discord.api.requests.Response(retryAfter))
+            if (handleOnRatelimit) apiRequest.handleResponse(Response(retryAfter))
             return retryAfter
         }
         val builder = okhttp3.Request.Builder()
@@ -48,11 +45,11 @@ object Requester {
         builder.method(method, body).header("X-RateLimit-Precision", "millisecond").header("user-agent", "SS-Discord").header("accept-encoding", "gzip")
         if (url.startsWith(DISCORD_API_PREFIX)) builder.header("authorization", "Bot ${Discord.token}")
         val request = builder.build()
-        val responses = arrayOfNulls<Response>(4)
-        var nullableLastResponse: Response? = null
+        val responses = arrayOfNulls<okhttp3.Response>(4)
+        var nullableLastResponse: okhttp3.Response? = null
         return try {
             var attempt = 0
-            var lastResponse: Response
+            var lastResponse: okhttp3.Response
             do {
                 val call = Discord.httpClient.newCall(request)
                 lastResponse = call.execute()
@@ -67,29 +64,30 @@ object Requester {
                 }
             } while (attempt < 3 && 500 <= lastResponse.code)
             if (500 <= lastResponse.code) {
-                val response = me.syari.ss.discord.api.requests.Response(lastResponse, -1)
+                val response = Response(lastResponse, -1)
                 apiRequest.handleResponse(response)
                 return null
             }
             retryAfter = RateLimiter.handleResponse(route, lastResponse)
             if (retryAfter == null) {
-                apiRequest.handleResponse(me.syari.ss.discord.api.requests.Response(lastResponse, -1))
+                apiRequest.handleResponse(Response(lastResponse, -1))
             } else if (handleOnRatelimit) {
-                apiRequest.handleResponse(me.syari.ss.discord.api.requests.Response(lastResponse, retryAfter))
+                apiRequest.handleResponse(Response(lastResponse, retryAfter))
             }
             retryAfter
-        } catch (e: SocketTimeoutException) {
+        } catch (ex: SocketTimeoutException) {
             if (!retried) return execute(apiRequest, true, handleOnRatelimit)
-            apiRequest.handleResponse(me.syari.ss.discord.api.requests.Response(nullableLastResponse, e))
+            apiRequest.handleResponse(Response(nullableLastResponse, ex))
             null
-        } catch (e: Exception) {
-            if (!retried && isRetry(e)) return execute(apiRequest, true, handleOnRatelimit)
-            apiRequest.handleResponse(me.syari.ss.discord.api.requests.Response(nullableLastResponse, e))
+        } catch (ex: Exception) {
+            if (!retried && (ex is SocketException || ex is SocketTimeoutException || ex is SSLPeerUnverifiedException)) {
+                return execute(apiRequest, true, handleOnRatelimit)
+            }
+            apiRequest.handleResponse(Response(nullableLastResponse, ex))
             null
         } finally {
             for (response in responses) {
-                if (response == null) break
-                response.close()
+                response?.close()
             }
         }
     }

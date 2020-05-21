@@ -72,8 +72,8 @@ public class DataArray implements Iterable<Object> {
     public String toString() {
         try {
             return mapper.writeValueAsString(data);
-        } catch (JsonProcessingException e) {
-            throw new IllegalStateException(e);
+        } catch (JsonProcessingException ex) {
+            throw new IllegalStateException(ex);
         }
     }
 

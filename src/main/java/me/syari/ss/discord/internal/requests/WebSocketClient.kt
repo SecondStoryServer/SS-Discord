@@ -74,12 +74,12 @@ object WebSocketClient: WebSocketAdapter(), WebSocketListener {
         connectNode = StartingNode().apply {
             try {
                 SessionController.appendSession(this)
-            } catch (e: RuntimeException) {
+            } catch (ex: RuntimeException) {
                 Discord.status = Discord.Status.SHUTDOWN
-                throw e
-            } catch (e: Error) {
+                throw ex
+            } catch (ex: Error) {
                 Discord.status = Discord.Status.SHUTDOWN
-                throw e
+                throw ex
             }
         }
     }
@@ -216,7 +216,7 @@ object WebSocketClient: WebSocketAdapter(), WebSocketListener {
             if (isInvalidate) invalidate()
             try {
                 handleReconnect()
-            } catch (e: InterruptedException) {
+            } catch (ex: InterruptedException) {
                 invalidate()
                 queueReconnect()
             }

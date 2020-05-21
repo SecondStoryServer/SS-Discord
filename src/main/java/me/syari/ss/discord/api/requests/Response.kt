@@ -30,6 +30,9 @@ class Response(private val rawResponse: Response?, val code: Int, val retryAfter
         this.exception = exception
     }
 
+    constructor(retryAfter: Long): this(null, 429, retryAfter)
+    constructor(response: Response, retryAfter: Long): this(response, response.code, retryAfter)
+
     @Throws(IOException::class)
     private fun getBody(response: Response): InputStream? {
         val encoding = response.header("content-encoding", "")
@@ -50,9 +53,6 @@ class Response(private val rawResponse: Response?, val code: Int, val retryAfter
         }
         return data
     }
-
-    constructor(retryAfter: Long): this(null, 429, retryAfter)
-    constructor(response: Response, retryAfter: Long): this(response, response.code, retryAfter)
 
     val dataObject: DataObject
         get() = parseBody(DataObject::class.java, JSON_SERIALIZE_OBJECT) ?: throw IllegalStateException()

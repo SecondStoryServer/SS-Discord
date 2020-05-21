@@ -28,8 +28,8 @@ open class RestAction<T>(
     fun complete(): T {
         return try {
             complete(true)
-        } catch (e: RateLimitedException) {
-            throw AssertionError(e)
+        } catch (ex: RateLimitedException) {
+            throw AssertionError(ex)
         }
     }
 
@@ -38,14 +38,14 @@ open class RestAction<T>(
         check(!isCallbackContext) { "Preventing use of complete() in callback threads! This operation can be a deadlock cause" }
         return try {
             submit(shouldQueue).get()
-        } catch (e: Throwable) {
-            if (e is ExecutionException) {
-                val t = e.cause
+        } catch (ex: Throwable) {
+            if (ex is ExecutionException) {
+                val t = ex.cause
                 if (t is RateLimitedException || t is ErrorResponseException) {
                     throw t
                 }
             }
-            throw RuntimeException(e)
+            throw RuntimeException(ex)
         }
     }
 
