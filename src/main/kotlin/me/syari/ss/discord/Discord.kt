@@ -21,6 +21,7 @@ object Discord {
     internal lateinit var token: String
     private lateinit var messageReceivedEvent: Discord.(MessageReceivedEvent) -> Unit
 
+    @Throws(LoginException::class, InterruptedException::class)
     fun init(token: String, messageReceivedEvent: Discord.(MessageReceivedEvent) -> Unit) {
         Discord.token = token
         Discord.messageReceivedEvent = messageReceivedEvent
