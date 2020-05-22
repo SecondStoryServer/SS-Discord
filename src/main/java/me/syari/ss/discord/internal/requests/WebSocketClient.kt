@@ -1,6 +1,5 @@
 package me.syari.ss.discord.internal.requests
 
-import com.neovisionaries.ws.client.ThreadType
 import com.neovisionaries.ws.client.WebSocket
 import com.neovisionaries.ws.client.WebSocketAdapter
 import com.neovisionaries.ws.client.WebSocketException
@@ -33,21 +32,18 @@ import java.util.zip.DataFormatException
 object WebSocketClient: WebSocketAdapter(), WebSocketListener {
     private const val DISCORD_GATEWAY_VERSION = 6
     private const val INVALIDATE_REASON = "INVALIDATE_SESSION"
-
     private val IDENTIFY_BACKOFF = TimeUnit.SECONDS.toMillis(SessionController.IDENTIFY_DELAY.toLong())
     private var socket: WebSocket? = null
     private var sessionId: String? = null
     private val readLock = Any()
     private var ratelimitThread: WebSocketSendingThread? = null
-
-    @Volatile
     private var keepAliveThread: Future<*>? = null
     private var initiating = false
     private var reconnectTimeoutS = 2
     private var identifyTime: Long = 0
 
     @Volatile
-    private var ratelimitResetTime: Long = 0
+    private var ratelimitResetTime = 0L
     private val messagesSent = AtomicInteger(0)
 
     @Volatile
@@ -161,11 +157,6 @@ object WebSocketClient: WebSocketAdapter(), WebSocketListener {
             Discord.resetGatewayUrl()
             throw IllegalStateException(ex)
         }
-    }
-
-    override fun onThreadStarted(
-        websocket: WebSocket, threadType: ThreadType, thread: Thread
-    ) {
     }
 
     override fun onConnected(
@@ -325,20 +316,9 @@ object WebSocketClient: WebSocketAdapter(), WebSocketListener {
     private fun invalidate() {
         sessionId = null
         sentAuthInfo = false
-        locked(Runnable { chunkSyncQueue.clear() })
+        locked { chunkSyncQueue.clear() }
         EventCache.clear()
         GuildSetupController.clearCache()
-    }
-
-    private fun locked(task: Runnable) {
-        try {
-            queueLock.lockInterruptibly()
-            task.run()
-        } catch (ex: InterruptedException) {
-            ex.printStackTrace()
-        } finally {
-            maybeUnlock()
-        }
     }
 
     private val token: String

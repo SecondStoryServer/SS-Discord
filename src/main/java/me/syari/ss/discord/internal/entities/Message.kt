@@ -110,12 +110,7 @@ class Message(
     companion object {
         private fun parseSnowflake(input: String): Long {
             return try {
-                if (input.startsWith("-")) {
-                    println("pass")
-                    input.toLong()
-                } else {
-                    java.lang.Long.parseUnsignedLong(input)
-                }
+                input.toLong()
             } catch (ex: NumberFormatException) {
                 throw NumberFormatException("The specified ID is not a valid snowflake ($input). Expecting a valid long value!")
             }

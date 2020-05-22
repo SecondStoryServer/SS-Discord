@@ -188,6 +188,7 @@ object RateLimiter {
         var reset: Long = 0
         var remaining = 1
         var limit = 1
+
         fun enqueue(request: Request<*>) {
             requests.add(request)
         }
