@@ -7,6 +7,7 @@ import me.syari.ss.discord.api.data.DataArray
 import me.syari.ss.discord.api.data.DataContainer
 import me.syari.ss.discord.internal.entities.EntityBuilder
 import me.syari.ss.discord.internal.requests.WebSocketClient
+import java.lang.Long.hashCode
 
 class GuildSetupNode(private val id: Long) {
     private val cachedEvents = mutableListOf<DataContainer>()
@@ -22,7 +23,7 @@ class GuildSetupNode(private val id: Long) {
     }
 
     override fun hashCode(): Int {
-        return java.lang.Long.hashCode(id)
+        return hashCode(id)
     }
 
     override fun equals(other: Any?): Boolean {

@@ -1,5 +1,7 @@
 package me.syari.ss.discord.internal.entities
 
+import java.lang.Long.hashCode
+
 class Guild(
     override val idLong: Long, private val name: String
 ): WithId {
@@ -67,7 +69,7 @@ class Guild(
     }
 
     override fun hashCode(): Int {
-        return java.lang.Long.hashCode(idLong)
+        return hashCode(idLong)
     }
 
     override fun toString(): String {

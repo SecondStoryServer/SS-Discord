@@ -1,5 +1,7 @@
 package me.syari.ss.discord.internal.entities
 
+import java.lang.Long.hashCode
+
 class Emote(
     override val idLong: Long, val name: String, private val isAnimated: Boolean
 ): WithId {
@@ -29,7 +31,7 @@ class Emote(
     }
 
     override fun hashCode(): Int {
-        return java.lang.Long.hashCode(idLong)
+        return hashCode(idLong)
     }
 
     override fun toString(): String {

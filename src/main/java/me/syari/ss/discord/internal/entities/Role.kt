@@ -1,5 +1,7 @@
 package me.syari.ss.discord.internal.entities
 
+import java.lang.Long.hashCode
+
 class Role(
     override val idLong: Long, val name: String
 ): WithId {
@@ -28,7 +30,7 @@ class Role(
     }
 
     override fun hashCode(): Int {
-        return java.lang.Long.hashCode(idLong)
+        return hashCode(idLong)
     }
 
     override fun toString(): String {

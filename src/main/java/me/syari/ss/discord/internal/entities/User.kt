@@ -1,5 +1,7 @@
 package me.syari.ss.discord.internal.entities
 
+import java.lang.Long.hashCode
+
 class User(
     override val idLong: Long, var name: String, val isBot: Boolean
 ): WithId {
@@ -26,7 +28,7 @@ class User(
     }
 
     override fun hashCode(): Int {
-        return java.lang.Long.hashCode(idLong)
+        return hashCode(idLong)
     }
 
     override fun toString(): String {

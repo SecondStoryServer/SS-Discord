@@ -6,13 +6,11 @@ import me.syari.ss.discord.internal.utils.ThreadingConfig
 import okhttp3.Response
 import java.util.Queue
 import java.util.concurrent.CancellationException
-import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.Future
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.locks.ReentrantLock
-import java.util.function.Supplier
 
 object RateLimiter {
     private const val RESET_AFTER_HEADER = "X-RateLimit-Reset-After"
@@ -21,31 +19,21 @@ object RateLimiter {
     private const val GLOBAL_HEADER = "X-RateLimit-Global"
     private const val HASH_HEADER = "X-RateLimit-Bucket"
     private const val RETRY_AFTER_HEADER = "Retry-After"
-    private fun <E> locked(lock: ReentrantLock, task: Supplier<E>): E {
+
+    private fun <E> locked(task: () -> E): E {
         return try {
-            lock.lockInterruptibly()
-            task.get()
+            bucketLock.lockInterruptibly()
+            task.invoke()
         } catch (ex: InterruptedException) {
             throw IllegalStateException(ex)
         } finally {
-            if (lock.isHeldByCurrentThread) lock.unlock()
-        }
-    }
-
-    private fun locked(lock: ReentrantLock, task: Runnable) {
-        try {
-            lock.lockInterruptibly()
-            task.run()
-        } catch (e: InterruptedException) {
-            throw IllegalStateException(e)
-        } finally {
-            if (lock.isHeldByCurrentThread) lock.unlock()
+            if (bucketLock.isHeldByCurrentThread) bucketLock.unlock()
         }
     }
 
     private val bucketLock = ReentrantLock()
-    private val bucket: MutableMap<String, Bucket> = ConcurrentHashMap()
-    private val rateLimitQueue: MutableMap<Bucket?, Future<*>> = ConcurrentHashMap()
+    private val bucket = mutableMapOf<String, Bucket>()
+    private val rateLimitQueue = mutableMapOf<Bucket?, Future<*>>()
     private lateinit var cleanupWorker: Future<*>
 
     fun init() {
@@ -56,7 +44,7 @@ object RateLimiter {
         get() = ThreadingConfig.rateLimitPool
 
     private fun cleanup() {
-        locked(bucketLock, Runnable {
+        locked {
             val entries: MutableIterator<Map.Entry<String, Bucket>> = bucket.entries.iterator()
             while (entries.hasNext()) {
                 val entry = entries.next()
@@ -65,7 +53,7 @@ object RateLimiter {
                     entries.remove()
                 }
             }
-        })
+        }
     }
 
     private fun isSkipped(
@@ -99,11 +87,11 @@ object RateLimiter {
     }
 
     fun queueRequest(request: Request<*>) {
-        locked(bucketLock, Runnable {
+        locked {
             val bucket = getBucketOrCreate(request.route)
             bucket.enqueue(request)
             runBucket(bucket)
-        })
+        }
     }
 
     fun handleResponse(route: Route, response: Response): Long? {
@@ -123,7 +111,7 @@ object RateLimiter {
     private fun updateBucket(
         route: Route, response: Response
     ): Bucket {
-        return locked(bucketLock, Supplier<Bucket> {
+        return locked() {
             try {
                 var bucket = getBucketOrCreate(route)
                 val headers = response.headers
@@ -142,41 +130,41 @@ object RateLimiter {
                     val retryAfter = parseLong(retryAfterHeader)
                     bucket.remaining = 0
                     bucket.reset = now + retryAfter
-                    return@Supplier bucket
+                    return@locked bucket
                 }
-                if (hash == null) return@Supplier bucket
+                if (hash == null) return@locked bucket
                 bucket.limit = 1L.coerceAtLeast(parseLong(headers[LIMIT_HEADER])).toInt()
                 bucket.remaining = parseLong(headers[REMAINING_HEADER]).toInt()
                 bucket.reset = now + parseDouble(headers[RESET_AFTER_HEADER])
-                return@Supplier bucket
+                return@locked bucket
             } catch (e: Exception) {
-                return@Supplier getBucketOrCreate(route)
+                return@locked getBucketOrCreate(route)
             }
-        })
+        }
     }
 
     private fun getBucket(
         route: Route
     ): Bucket? {
-        return locked(bucketLock, Supplier {
+        return locked() {
             val bucketId = route.method.toString() + "/" + route.baseRoute + ":" + route.majorParameters
             bucket[bucketId]
-        })
+        }
     }
 
     private fun getBucketOrCreate(
         route: Route
     ): Bucket {
-        return locked(bucketLock, Supplier {
+        return locked() {
             val bucketId = route.method.toString() + "/" + route.baseRoute + ":" + route.majorParameters
             bucket[bucketId] ?: Bucket(bucketId).also {
                 this.bucket[bucketId] = it
             }
-        })
+        }
     }
 
     private fun runBucket(bucket: Bucket) {
-        locked(bucketLock, Supplier {
+        locked() {
             rateLimitQueue.computeIfAbsent(
                 bucket
             ) {
@@ -184,7 +172,7 @@ object RateLimiter {
                     bucket, bucket.rateLimit, TimeUnit.MILLISECONDS
                 )
             }
-        })
+        }
     }
 
     private fun parseLong(input: String?): Long {
@@ -220,10 +208,10 @@ object RateLimiter {
             get() = bucketId.startsWith("unlimited")
 
         private fun backoff() {
-            locked(bucketLock, Runnable {
+            locked {
                 rateLimitQueue.remove(this)
                 if (!requests.isEmpty()) runBucket(this)
-            })
+            }
         }
 
         override fun run() {
@@ -232,16 +220,17 @@ object RateLimiter {
                 if (0L < rateLimit) break
                 val request = iterator.next()
                 if (isUnlimited) {
-                    val shouldSkip = locked(bucketLock, Supplier {
+                    val shouldSkip = locked() {
                         val bucket = getBucketOrCreate(request.route)
                         if (bucket !== this) {
                             bucket.enqueue(request)
                             iterator.remove()
                             runBucket(bucket)
-                            return@Supplier true
+                            true
+                        } else {
+                            false
                         }
-                        false
-                    })
+                    }
                     if (shouldSkip) continue
                 }
                 if (isSkipped(iterator, request)) continue

@@ -1,5 +1,6 @@
 package me.syari.ss.discord.internal.entities
 
+import java.lang.Long.hashCode
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
@@ -90,7 +91,7 @@ class Message(
     }
 
     override fun hashCode(): Int {
-        return java.lang.Long.hashCode(id)
+        return hashCode(id)
     }
 
     override fun toString(): String {
