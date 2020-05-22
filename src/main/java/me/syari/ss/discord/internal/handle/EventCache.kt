@@ -2,7 +2,7 @@ package me.syari.ss.discord.internal.handle
 
 import gnu.trove.map.TLongObjectMap
 import gnu.trove.map.hash.TLongObjectHashMap
-import me.syari.ss.discord.api.data.DataObject
+import me.syari.ss.discord.api.data.DataContainer
 import java.util.EnumMap
 import java.util.LinkedList
 import java.util.concurrent.atomic.AtomicInteger
@@ -34,7 +34,7 @@ object EventCache {
 
     @Synchronized
     fun cache(
-        type: Type, triggerId: Long, responseTotal: Long, event: DataObject, handler: (Long, DataObject) -> Unit
+        type: Type, triggerId: Long, responseTotal: Long, event: DataContainer, handler: (Long, DataContainer) -> Unit
     ) {
         val triggerCache = eventCache.computeIfAbsent(type) { TLongObjectHashMap() }
         var items = triggerCache[triggerId]
@@ -67,7 +67,7 @@ object EventCache {
     }
 
     private class CacheNode(
-        val responseTotal: Long, private val event: DataObject, private val callback: (Long, DataObject) -> Unit
+        val responseTotal: Long, private val event: DataContainer, private val callback: (Long, DataContainer) -> Unit
     ) {
         fun execute() {
             callback.invoke(responseTotal, event)

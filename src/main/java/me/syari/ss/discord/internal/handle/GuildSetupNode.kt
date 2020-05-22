@@ -4,16 +4,16 @@ import gnu.trove.map.hash.TLongObjectHashMap
 import gnu.trove.set.TLongSet
 import gnu.trove.set.hash.TLongHashSet
 import me.syari.ss.discord.api.data.DataArray
-import me.syari.ss.discord.api.data.DataObject
+import me.syari.ss.discord.api.data.DataContainer
 import me.syari.ss.discord.internal.entities.EntityBuilder
 import me.syari.ss.discord.internal.requests.WebSocketClient
 import java.util.LinkedList
 
 class GuildSetupNode(private val id: Long) {
-    private val cachedEvents: MutableList<DataObject> = LinkedList()
-    private var members = TLongObjectHashMap<DataObject>()
+    private val cachedEvents: MutableList<DataContainer> = LinkedList()
+    private var members = TLongObjectHashMap<DataContainer>()
     private var removedMembers: TLongSet? = null
-    private var partialGuild: DataObject? = null
+    private var partialGuild: DataContainer? = null
     private var expectedMemberCount = 1
     private var requestedChunk = false
     private var status = GuildSetupController.Status.INIT
@@ -35,9 +35,9 @@ class GuildSetupNode(private val id: Long) {
         if (status !== this.status) this.status = status
     }
 
-    fun handleCreate(dataObject: DataObject) {
+    fun handleCreate(dataObject: DataContainer) {
         val notNulPartialGuild = partialGuild?.apply {
-            for (key in dataObject.keys()) {
+            for (key in dataObject.keys) {
                 put(key, dataObject.get(key))
             }
         } ?: {
@@ -76,7 +76,7 @@ class GuildSetupNode(private val id: Long) {
         return true
     }
 
-    fun cacheEvent(event: DataObject) {
+    fun cacheEvent(event: DataContainer) {
         cachedEvents.add(event)
         val cacheSize = cachedEvents.size
         if (2000 <= cacheSize && cacheSize % 1000 == 0 && status === GuildSetupController.Status.CHUNKING) {

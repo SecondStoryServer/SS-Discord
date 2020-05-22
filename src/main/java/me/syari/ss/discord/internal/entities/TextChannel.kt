@@ -1,6 +1,6 @@
 package me.syari.ss.discord.internal.entities
 
-import me.syari.ss.discord.api.data.DataObject
+import me.syari.ss.discord.api.data.DataContainer
 import me.syari.ss.discord.api.requests.Request
 import me.syari.ss.discord.api.requests.Response
 import me.syari.ss.discord.internal.requests.Requester
@@ -67,7 +67,7 @@ class TextChannel(
         route: Route, private val channel: TextChannel, private val content: String
     ): RestAction<Message>(route) {
         override fun finalizeData(): RequestBody {
-            return DataObject.empty().apply {
+            return DataContainer().apply {
                 put("content", content)
             }.toString().toRequestBody(Requester.MEDIA_TYPE_JSON)
         }

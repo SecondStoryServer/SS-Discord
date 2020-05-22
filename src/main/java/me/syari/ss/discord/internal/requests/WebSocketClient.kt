@@ -9,7 +9,7 @@ import com.neovisionaries.ws.client.WebSocketListener
 import me.syari.ss.discord.api.SessionController
 import me.syari.ss.discord.api.SessionController.SessionConnectNode
 import me.syari.ss.discord.api.data.DataArray
-import me.syari.ss.discord.api.data.DataObject
+import me.syari.ss.discord.api.data.DataContainer
 import me.syari.ss.discord.api.requests.CloseCode.Companion.from
 import me.syari.ss.discord.internal.Discord
 import me.syari.ss.discord.internal.handle.EventCache
@@ -95,11 +95,11 @@ object WebSocketClient: WebSocketAdapter(), WebSocketListener {
     val isReady: Boolean
         get() = !initiating
 
-    fun handle(events: List<DataObject>) {
-        events.forEach(Consumer { raw: DataObject -> onDispatch(raw) })
+    fun handle(events: List<DataContainer>) {
+        events.forEach(Consumer { raw: DataContainer -> onDispatch(raw) })
     }
 
-    fun chunkOrSyncRequest(request: DataObject) {
+    fun chunkOrSyncRequest(request: DataContainer) {
         locked(Supplier { chunkSyncQueue.add(request.toString()) })
     }
 
@@ -185,21 +185,21 @@ object WebSocketClient: WebSocketAdapter(), WebSocketListener {
     }
 
     private fun sendIdentify() {
-        val connectionProperties = DataObject.empty().apply {
+        val connectionProperties = DataContainer().apply {
             put("\$os", System.getProperty("os.name"))
             put("\$browser", "SS-Discord")
             put("\$device", "SS-Discord")
             put("\$referring_domain", "")
             put("\$referrer", "")
         }
-        val payload = DataObject.empty().apply {
+        val payload = DataContainer().apply {
             put("token", token)
             put("properties", connectionProperties)
             put("v", DISCORD_GATEWAY_VERSION)
             put("guild_subscriptions", true)
             put("large_threshold", 250)
         }
-        val identify = DataObject.empty().apply {
+        val identify = DataContainer().apply {
             put("op", WebSocketCode.IDENTIFY)
             put("d", payload)
         }
@@ -212,9 +212,9 @@ object WebSocketClient: WebSocketAdapter(), WebSocketListener {
     }
 
     private fun sendResume() {
-        val resume = DataObject.empty().apply {
+        val resume = DataContainer().apply {
             put("op", WebSocketCode.RESUME)
-            put("d", DataObject.empty().apply {
+            put("d", DataContainer().apply {
                 put("session_id", sessionId)
                 put("token", token)
                 put("seq", Discord.responseTotal.toLong())
@@ -314,7 +314,7 @@ object WebSocketClient: WebSocketAdapter(), WebSocketListener {
     }
 
     private fun sendKeepAlive() {
-        val keepAlivePacket = DataObject.empty().apply {
+        val keepAlivePacket = DataContainer().apply {
             put("op", WebSocketCode.HEARTBEAT)
             put("d", Discord.responseTotal.toLong()).toString()
         }.toString()
@@ -343,7 +343,7 @@ object WebSocketClient: WebSocketAdapter(), WebSocketListener {
     private val token: String
         get() = Discord.token
 
-    private fun onDispatch(raw: DataObject) {
+    private fun onDispatch(raw: DataContainer) {
         val type = raw.getStringOrThrow("t")
         val responseTotal = Discord.responseTotal.toLong()
         if (raw.get("d") !is Map<*, *>) return
@@ -389,17 +389,17 @@ object WebSocketClient: WebSocketAdapter(), WebSocketListener {
     }
 
     @Throws(DataFormatException::class)
-    private fun handleBinary(binary: ByteArray): DataObject? {
+    private fun handleBinary(binary: ByteArray): DataContainer? {
         val json = try {
             ZlibDecompressor.decompress(binary) ?: return null
         } catch (ex: DataFormatException) {
             close(4000, "MALFORMED_PACKAGE")
             throw ex
         }
-        return DataObject.fromJson(json)
+        return DataContainer.fromJson(json)
     }
 
-    private fun onEvent(content: DataObject) {
+    private fun onEvent(content: DataContainer) {
         val opCode = content.getIntOrThrow("op")
         content.getInt("s")?.let { Discord.responseTotal = it }
         when (opCode) {

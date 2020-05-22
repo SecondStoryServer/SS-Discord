@@ -7,7 +7,7 @@ import gnu.trove.map.hash.TLongObjectHashMap
 import gnu.trove.set.TLongSet
 import gnu.trove.set.hash.TLongHashSet
 import me.syari.ss.discord.api.data.DataArray
-import me.syari.ss.discord.api.data.DataObject
+import me.syari.ss.discord.api.data.DataContainer
 import me.syari.ss.discord.internal.requests.WebSocketClient
 import me.syari.ss.discord.internal.requests.WebSocketCode
 
@@ -46,7 +46,7 @@ object GuildSetupController {
         }
     }
 
-    fun onCreate(id: Long, obj: DataObject) {
+    fun onCreate(id: Long, obj: DataContainer) {
         var node = setupNodes[id]
         if (node == null) {
             node = GuildSetupNode(id)
@@ -59,7 +59,7 @@ object GuildSetupController {
         return setupNodes.containsKey(id)
     }
 
-    fun cacheEvent(guildId: Long, event: DataObject?) {
+    fun cacheEvent(guildId: Long, event: DataContainer?) {
         val node = setupNodes[guildId]
         if (event != null) {
             node.cacheEvent(event)
@@ -85,9 +85,9 @@ object GuildSetupController {
                 pendingChunks.put(`object` as Long, timeout)
             }
         }
-        WebSocketClient.chunkOrSyncRequest(DataObject.empty().apply {
+        WebSocketClient.chunkOrSyncRequest(DataContainer().apply {
             put("op", WebSocketCode.MEMBER_CHUNK_REQUEST)
-            put("d", DataObject.empty().apply {
+            put("d", DataContainer().apply {
                 put("guild_id", `object`)
                 put("query", "")
                 put("limit", 0)

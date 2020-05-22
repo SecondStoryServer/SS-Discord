@@ -38,7 +38,7 @@ public class DataArray implements Iterable<Object> {
 
     @NotNull
     @SuppressWarnings("unchecked")
-    public DataObject getObject(int index) {
+    public DataContainer getObject(int index) {
         Map<String, Object> child = null;
         try {
             child = get(Map.class, index, null, null);
@@ -46,8 +46,8 @@ public class DataArray implements Iterable<Object> {
             ex.printStackTrace();
         }
         if (child == null)
-            throw valueError(index, "DataObject");
-        return new DataObject(new DataContainer(child));
+            throw valueError(index, "DataContainer");
+        return new DataContainer(child);
     }
 
     public long getLong(int index) {
@@ -59,8 +59,8 @@ public class DataArray implements Iterable<Object> {
 
     @NotNull
     public DataArray add(@Nullable Object value) {
-        if (value instanceof DataObject)
-            data.add(((DataObject) value).toData().getData());
+        if (value instanceof DataContainer)
+            data.add(((DataContainer) value).getData());
         else if (value instanceof DataArray)
             data.add(((DataArray) value).data);
         else

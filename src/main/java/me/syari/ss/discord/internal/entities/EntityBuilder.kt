@@ -1,13 +1,13 @@
 package me.syari.ss.discord.internal.entities
 
 import gnu.trove.set.hash.TLongHashSet
-import me.syari.ss.discord.api.data.DataObject
+import me.syari.ss.discord.api.data.DataContainer
 
 object EntityBuilder {
     const val MISSING_CHANNEL = "MISSING_CHANNEL"
     const val UNKNOWN_MESSAGE_TYPE = "UNKNOWN_MESSAGE_TYPE"
 
-    fun createGuild(id: Long, guildData: DataObject): Guild {
+    fun createGuild(id: Long, guildData: DataContainer): Guild {
         val name = guildData.getString("name") ?: ""
         val allRole = guildData.getArrayOrThrow("roles")
         val guild = Guild(id, name)
@@ -24,7 +24,7 @@ object EntityBuilder {
         return guild
     }
 
-    private fun createUser(userData: DataObject): User {
+    private fun createUser(userData: DataContainer): User {
         val id = userData.getLongOrThrow("id")
         return User.get(id) {
             val name = userData.getStringOrThrow("username")
@@ -33,7 +33,7 @@ object EntityBuilder {
         }
     }
 
-    private fun createMember(guild: Guild, memberData: DataObject): Member {
+    private fun createMember(guild: Guild, memberData: DataContainer): Member {
         val user = createUser(memberData.getContainerOrThrow("user"))
         val member = guild.getMemberOrPut(user) { Member(guild, user) }
         if (memberData.contains("nick")) {
@@ -46,7 +46,7 @@ object EntityBuilder {
         return member
     }
 
-    private fun createTextChannel(guild: Guild, channelData: DataObject) {
+    private fun createTextChannel(guild: Guild, channelData: DataContainer) {
         val channelId = channelData.getLongOrThrow("id")
         val name = channelData.getStringOrThrow("name")
         val textChannel = TextChannel(channelId, guild, name)
@@ -54,7 +54,7 @@ object EntityBuilder {
     }
 
     private fun createRole(
-        guild: Guild, roleData: DataObject
+        guild: Guild, roleData: DataContainer
     ): Role {
         val id = roleData.getLongOrThrow("id")
         return guild.getRoleOrPut(id) {
@@ -64,7 +64,7 @@ object EntityBuilder {
     }
 
     fun createMessage(
-        messageData: DataObject, channel: TextChannel
+        messageData: DataContainer, channel: TextChannel
     ): Message {
         val id = messageData.getLongOrThrow("id")
         val authorData = messageData.getContainerOrThrow("author")

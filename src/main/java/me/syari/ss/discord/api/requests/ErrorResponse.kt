@@ -1,6 +1,6 @@
 package me.syari.ss.discord.api.requests
 
-import me.syari.ss.discord.api.data.DataObject
+import me.syari.ss.discord.api.data.DataContainer
 
 data class ErrorResponse(val code: Int, val meaning: String) {
     companion object {
@@ -74,7 +74,7 @@ data class ErrorResponse(val code: Int, val meaning: String) {
             } ?: SERVER_ERROR
         }
 
-        fun fromJSON(dataObject: DataObject?): ErrorResponse {
+        fun fromJSON(dataObject: DataContainer?): ErrorResponse {
             return fromCode(dataObject?.getInt("code"))
         }
     }

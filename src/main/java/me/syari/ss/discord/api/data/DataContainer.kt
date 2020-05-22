@@ -52,6 +52,34 @@ class DataContainer(init: Map<String, Any?> = emptyMap()) {
     }
 
     @Suppress("UNCHECKED_CAST")
+    fun getContainer(key: String): DataContainer? {
+        return try {
+            get(key, Map::class) as Map<String, Any?>
+        } catch (ex: ClassCastException){
+            ex.printStackTrace()
+            null
+        }?.let { DataContainer(it) }
+    }
+
+    fun getContainerOrThrow(key: String): DataContainer {
+        return getContainer(key) ?: orThrow(key, "DataContainer")
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun getArray(key: String): DataArray? {
+        return try {
+            get(key, List::class) as List<Any>
+        } catch (ex: ClassCastException){
+            ex.printStackTrace()
+            null
+        }?.let { DataArray(it) }
+    }
+
+    fun getArrayOrThrow(key: String): DataArray {
+        return getArray(key) ?: orThrow(key, "DataArray")
+    }
+
+    @Suppress("UNCHECKED_CAST")
     private fun <T: Any> get(
         key: String, type: KClass<T>, stringParse: ((String) -> T)? = null, numberParse: ((Number) -> T)? = null
     ): T? {
@@ -64,14 +92,20 @@ class DataContainer(init: Map<String, Any?> = emptyMap()) {
         }
     }
 
+    fun put(key: String, value: Any?){
+        data[key] = when(value){
+            is DataContainer -> value.data
+            is DataArray -> value.data
+            else -> value
+        }
+    }
+
     private fun orThrow(key: String, typeName: String): Nothing {
         throw IllegalStateException("Unable to resolve value with key $key to type $typeName: ${data[key]}")
     }
 
-    fun debug() {
-        println()
-        println(data)
-        println()
+    override fun toString(): String {
+        return gson.toJson(data)
     }
 
     companion object {

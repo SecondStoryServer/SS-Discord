@@ -1,13 +1,13 @@
 package me.syari.ss.discord.internal.handle
 
-import me.syari.ss.discord.api.data.DataObject
+import me.syari.ss.discord.api.data.DataContainer
 
 abstract class SocketHandler {
     var responseNumber: Long = 0
-    var allContent: DataObject? = null
+    var allContent: DataContainer? = null
 
     @Synchronized
-    fun handle(responseTotal: Long, dataObject: DataObject) {
+    fun handle(responseTotal: Long, dataObject: DataContainer) {
         allContent = dataObject
         responseNumber = responseTotal
         val guildId = handleInternally(dataObject.getContainerOrThrow("d"))
@@ -15,5 +15,5 @@ abstract class SocketHandler {
         allContent = null
     }
 
-    abstract fun handleInternally(content: DataObject): Long?
+    abstract fun handleInternally(content: DataContainer): Long?
 }

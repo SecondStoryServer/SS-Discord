@@ -3,7 +3,7 @@ package me.syari.ss.discord.internal
 import com.neovisionaries.ws.client.WebSocketFactory
 import me.syari.ss.discord.api.MessageReceivedEvent
 import me.syari.ss.discord.api.SessionController
-import me.syari.ss.discord.api.data.DataObject
+import me.syari.ss.discord.api.data.DataContainer
 import me.syari.ss.discord.api.exceptions.RateLimitedException
 import me.syari.ss.discord.api.requests.Request
 import me.syari.ss.discord.api.requests.Response
@@ -55,9 +55,9 @@ object Discord {
 
     @Throws(LoginException::class)
     private fun verifyToken() {
-        val login = object: RestAction<DataObject>(selfRoute) {
+        val login = (object: RestAction<DataContainer>(selfRoute) {
             override fun handleResponse(
-                response: Response, request: Request<DataObject>
+                response: Response, request: Request<DataContainer>
             ) {
                 when {
                     response.isOk -> request.onSuccess(response.dataObject)
@@ -66,13 +66,14 @@ object Discord {
                     else -> request.onFailure(LoginException("When verifying the authenticity of the provided token, Discord returned an unknown response:\n$response"))
                 }
             }
+        }).also {
+            checkToken(it)
         }
-        checkToken(login)
     }
 
     @Throws(LoginException::class)
-    private fun checkToken(login: RestAction<DataObject>): DataObject {
-        val userResponse: DataObject
+    private fun checkToken(login: RestAction<DataContainer>): DataContainer {
+        val userResponse: DataContainer
         userResponse = try {
             login.complete()
         } catch (ex: RuntimeException) {

@@ -1,12 +1,12 @@
 package me.syari.ss.discord.internal.handle
 
-import me.syari.ss.discord.api.data.DataObject
+import me.syari.ss.discord.api.data.DataContainer
 import me.syari.ss.discord.internal.Discord
 import me.syari.ss.discord.internal.entities.EntityBuilder
 import me.syari.ss.discord.internal.entities.TextChannel
 
 object MessageCreateHandler: SocketHandler() {
-    override fun handleInternally(content: DataObject): Long? {
+    override fun handleInternally(content: DataContainer): Long? {
         println(">> MessageCreateHandler")
         if (content.getIntOrThrow("type") != 0) return null
         val guildId = content.getLong("guild_id")

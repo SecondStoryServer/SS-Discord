@@ -1,6 +1,6 @@
 package me.syari.ss.discord.api.requests
 
-import me.syari.ss.discord.api.data.DataObject
+import me.syari.ss.discord.api.data.DataContainer
 import me.syari.ss.discord.api.exceptions.ParsingException
 import okhttp3.Response
 import java.io.BufferedInputStream
@@ -54,11 +54,11 @@ class Response(private val rawResponse: Response?, val code: Int, val retryAfter
         return data
     }
 
-    val dataObject: DataObject
-        get() = parseBody(DataObject::class.java, JSON_SERIALIZE_OBJECT) ?: throw IllegalStateException()
+    val dataObject: DataContainer
+        get() = parseBody(DataContainer::class.java, JSON_SERIALIZE_OBJECT) ?: throw IllegalStateException()
 
-    fun optObject(): DataObject? {
-        return parseBody(true, DataObject::class.java, JSON_SERIALIZE_OBJECT)
+    fun optObject(): DataContainer? {
+        return parseBody(true, DataContainer::class.java, JSON_SERIALIZE_OBJECT)
     }
 
     val string: String
@@ -133,7 +133,7 @@ class Response(private val rawResponse: Response?, val code: Int, val retryAfter
 
     companion object {
         const val ERROR_CODE = -1
-        val JSON_SERIALIZE_OBJECT = { stream: BufferedReader -> DataObject.fromJson(stream) }
+        val JSON_SERIALIZE_OBJECT = { stream: BufferedReader -> DataContainer.fromJson(stream) }
     }
 
     init {
