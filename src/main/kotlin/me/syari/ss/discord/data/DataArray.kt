@@ -17,7 +17,7 @@ class DataArray(init: List<Any?> = emptyList()): Iterable<Any?> {
     @Suppress("UNCHECKED_CAST")
     private fun getContainer(index: Int): DataContainer? {
         return try {
-            get(index, Map::class) as Map<String, Any?>
+            get(index, Map::class) as? Map<String, Any?>
         } catch (ex: ClassCastException) {
             ex.printStackTrace()
             null

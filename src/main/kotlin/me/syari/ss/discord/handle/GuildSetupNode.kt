@@ -15,7 +15,7 @@ class GuildSetupNode(private val id: Long) {
     private var removedMembers: TLongSet? = null
     private var partialGuild: DataContainer? = null
     private var expectedMemberCount = 1
-    private var requestedChunk = false
+    private var requestedChunk = true
     private var status = GuildSetupController.Status.INIT
 
     override fun toString(): String {

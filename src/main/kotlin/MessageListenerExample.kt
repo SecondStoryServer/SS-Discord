@@ -1,5 +1,6 @@
+import me.syari.ss.discord.Discord
 import me.syari.ss.discord.Discord.init
-import me.syari.ss.discord.entities.TextChannel.Companion.get
+import me.syari.ss.discord.entities.TextChannel
 import javax.security.auth.login.LoginException
 
 object MessageListenerExample {
@@ -17,7 +18,7 @@ object MessageListenerExample {
                     val message = event.message.contentDisplay
                     val channel = event.channel
                     channel.sendMessage(
-                        "Chat -> $name: $message\r\nGetTextChannel -> " + (get(
+                        "Chat -> $name: $message\r\nGetTextChannel -> " + (TextChannel.get(
                             710828174686027790L
                         ) != null)
                     )
@@ -28,6 +29,8 @@ object MessageListenerExample {
                     }
                 }
             }
+            Discord.awaitReady()
+            TextChannel.get(710828174686027790L)?.sendMessage("Login") ?: println("notFound")
         } catch (e: LoginException) {
             e.printStackTrace()
         } catch (e: InterruptedException) {

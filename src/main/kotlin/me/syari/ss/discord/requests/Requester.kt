@@ -14,7 +14,7 @@ object Requester {
     val MEDIA_TYPE_JSON = "application/json; charset=utf-8".toMediaType()
 
     fun <T> request(apiRequest: Request<T>) {
-        if (apiRequest.shouldQueue()) {
+        if (apiRequest.shouldQueue) {
             RateLimiter.queueRequest(apiRequest)
         } else {
             execute(apiRequest, true)
@@ -38,7 +38,7 @@ object Requester {
         val url = DISCORD_API_PREFIX + route.route
         builder.url(url)
         val method = apiRequest.route.method.toString()
-        var body = apiRequest.getBody()
+        var body = apiRequest.body
         if (body == null && requiresRequestBody(method)) body = EMPTY_BODY
         builder.method(method, body).header("X-RateLimit-Precision", "millisecond").header("user-agent", "SS-Discord")
             .header("accept-encoding", "gzip")

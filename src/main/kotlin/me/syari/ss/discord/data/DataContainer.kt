@@ -54,7 +54,7 @@ class DataContainer(init: Map<String, Any?> = emptyMap()) {
     @Suppress("UNCHECKED_CAST")
     fun getContainer(key: String): DataContainer? {
         return try {
-            get(key, Map::class) as Map<String, Any?>
+            get(key, Map::class) as? Map<String, Any?>
         } catch (ex: ClassCastException) {
             ex.printStackTrace()
             null
@@ -68,7 +68,7 @@ class DataContainer(init: Map<String, Any?> = emptyMap()) {
     @Suppress("UNCHECKED_CAST")
     fun getArray(key: String): DataArray? {
         return try {
-            get(key, List::class) as List<Any>
+            get(key, List::class) as? List<Any>
         } catch (ex: ClassCastException) {
             ex.printStackTrace()
             null

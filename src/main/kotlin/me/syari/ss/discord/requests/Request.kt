@@ -10,8 +10,8 @@ class Request<T>(
     private val restAction: RestAction<T>,
     private val onSuccess: (T) -> Unit,
     private val onFailure: ((Throwable) -> Unit)?,
-    private val shouldQueue: Boolean,
-    private val body: RequestBody?,
+    val shouldQueue: Boolean,
+    val body: RequestBody?,
     val route: Route
 ) {
     private val localReason = ThreadLocalReason.current
@@ -58,14 +58,6 @@ class Request<T>(
                 t.printStackTrace()
             }
         }
-    }
-
-    fun getBody(): RequestBody? {
-        return body
-    }
-
-    fun shouldQueue(): Boolean {
-        return shouldQueue
     }
 
     fun cancel() {

@@ -21,13 +21,14 @@ object Discord {
     internal lateinit var token: String
     private lateinit var messageReceivedEvent: Discord.(MessageReceivedEvent) -> Unit
 
-    @Throws(LoginException::class, InterruptedException::class)
     fun init(token: String, messageReceivedEvent: Discord.(MessageReceivedEvent) -> Unit) {
         Discord.token = token
         Discord.messageReceivedEvent = messageReceivedEvent
-        status =
-            Status.INITIALIZED
+        status = Status.INITIALIZED
         login()
+    }
+
+    fun awaitReady(){
         awaitStatus(Status.CONNECTED)
     }
 
@@ -47,8 +48,7 @@ object Discord {
         ThreadingConfig.init()
         RateLimiter.init()
         resetGatewayUrl()
-        status =
-            Status.LOGGING_IN
+        status = Status.LOGGING_IN
         verifyToken()
         WebSocketClient.init()
         Runtime.getRuntime().addShutdownHook(shutdownHook)
@@ -67,9 +67,8 @@ object Discord {
     }
 
     @Throws(LoginException::class)
-    private fun checkToken(run: (Response, Request<DataContainer>) -> Unit): DataContainer {
-        val userResponse: DataContainer
-        userResponse = try {
+    private fun checkToken(run: (Response, Request<DataContainer>) -> Unit) {
+        try {
             object: RestAction<DataContainer>(selfRoute) {
                 override fun handleResponse(response: Response, request: Request<DataContainer>) {
                     run.invoke(response, request)
@@ -84,7 +83,6 @@ object Discord {
                 throw ex
             }
         }
-        return userResponse
     }
 
     @Throws(InterruptedException::class)
@@ -92,11 +90,10 @@ object Discord {
         status: Status, vararg failOn: Status
     ) {
         require(status.isInit) { "Cannot await the status $status as it is not part of the login cycle!" }
-        if (status == Status.CONNECTED) return
-        val failStatus = listOf(*failOn)
-        while (!status.isInit || status.ordinal < status.ordinal) {
-            check(status != Status.SHUTDOWN) { "Was shutdown trying to await status" }
-            if (failStatus.contains(status)) {
+        if (this.status == Status.CONNECTED) return
+        while (!this.status.isInit || this.status.ordinal < status.ordinal) {
+            check(this.status != Status.SHUTDOWN) { "Was shutdown trying to await status" }
+            if (failOn.contains(this.status)) {
                 return
             } else {
                 Thread.sleep(50)
@@ -107,8 +104,7 @@ object Discord {
     @Synchronized
     fun shutdown() {
         if (status == Status.SHUTDOWN || status == Status.SHUTTING_DOWN) return
-        status =
-            Status.SHUTTING_DOWN
+        status = Status.SHUTTING_DOWN
         WebSocketClient.shutdown()
         shutdownInternals()
     }
@@ -127,8 +123,7 @@ object Discord {
         } catch (ex: Exception) {
             ex.printStackTrace()
         }
-        status =
-            Status.SHUTDOWN
+        status = Status.SHUTDOWN
     }
 
     fun resetGatewayUrl() {
