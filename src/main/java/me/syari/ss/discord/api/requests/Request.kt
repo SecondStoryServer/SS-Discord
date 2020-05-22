@@ -54,7 +54,7 @@ class Request<T>(
                                 cause = cause.cause
                             }
                             cause?.initCause(Exception())
-                            onFailure?.invoke(failException)
+                            onFailure.invoke(failException)
                         }
                     }
                 }

@@ -111,7 +111,7 @@ object RateLimiter {
     private fun updateBucket(
         route: Route, response: Response
     ): Bucket {
-        return locked() {
+        return locked {
             try {
                 var bucket = getBucketOrCreate(route)
                 val headers = response.headers
@@ -146,7 +146,7 @@ object RateLimiter {
     private fun getBucket(
         route: Route
     ): Bucket? {
-        return locked() {
+        return locked {
             val bucketId = route.method.toString() + "/" + route.baseRoute + ":" + route.majorParameters
             bucket[bucketId]
         }
@@ -155,7 +155,7 @@ object RateLimiter {
     private fun getBucketOrCreate(
         route: Route
     ): Bucket {
-        return locked() {
+        return locked {
             val bucketId = route.method.toString() + "/" + route.baseRoute + ":" + route.majorParameters
             bucket[bucketId] ?: Bucket(bucketId).also {
                 this.bucket[bucketId] = it
@@ -164,7 +164,7 @@ object RateLimiter {
     }
 
     private fun runBucket(bucket: Bucket) {
-        locked() {
+        locked {
             rateLimitQueue.computeIfAbsent(
                 bucket
             ) {
@@ -221,7 +221,7 @@ object RateLimiter {
                 if (0L < rateLimit) break
                 val request = iterator.next()
                 if (isUnlimited) {
-                    val shouldSkip = locked() {
+                    val shouldSkip = locked {
                         val bucket = getBucketOrCreate(request.route)
                         if (bucket !== this) {
                             bucket.enqueue(request)

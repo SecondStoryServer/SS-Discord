@@ -55,27 +55,25 @@ object Discord {
 
     @Throws(LoginException::class)
     private fun verifyToken() {
-        val login = (object: RestAction<DataContainer>(selfRoute) {
-            override fun handleResponse(
-                response: Response, request: Request<DataContainer>
-            ) {
-                when {
-                    response.isOk -> request.onSuccess(response.dataObject)
-                    response.isRateLimit -> request.onFailure(RateLimitedException(request.route, response.retryAfter))
-                    response.code == 401 -> request.onSuccess(null)
-                    else -> request.onFailure(LoginException("When verifying the authenticity of the provided token, Discord returned an unknown response:\n$response"))
-                }
+        checkToken { response, request ->
+            when {
+                response.isOk -> request.onSuccess(response.dataObject)
+                response.isRateLimit -> request.onFailure(RateLimitedException(request.route, response.retryAfter))
+                response.code == 401 -> request.onSuccess(null)
+                else -> request.onFailure(LoginException("When verifying the authenticity of the provided token, Discord returned an unknown response:\n$response"))
             }
-        }).also {
-            checkToken(it)
         }
     }
 
     @Throws(LoginException::class)
-    private fun checkToken(login: RestAction<DataContainer>): DataContainer {
+    private fun checkToken(run: (Response, Request<DataContainer>) -> Unit): DataContainer {
         val userResponse: DataContainer
         userResponse = try {
-            login.complete()
+            object: RestAction<DataContainer>(selfRoute) {
+                override fun handleResponse(response: Response, request: Request<DataContainer>) {
+                    run.invoke(response, request)
+                }
+            }.complete()
         } catch (ex: RuntimeException) {
             val cause = ex.cause
             val throwable = if (cause is ExecutionException) cause.cause else null
