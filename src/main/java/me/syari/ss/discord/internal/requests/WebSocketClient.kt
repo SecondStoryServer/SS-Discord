@@ -28,8 +28,6 @@ import java.util.concurrent.RejectedExecutionException
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.locks.ReentrantLock
-import java.util.function.Consumer
-import java.util.function.Supplier
 import java.util.zip.DataFormatException
 
 object WebSocketClient: WebSocketAdapter(), WebSocketListener {
@@ -96,11 +94,11 @@ object WebSocketClient: WebSocketAdapter(), WebSocketListener {
         get() = !initiating
 
     fun handle(events: List<DataContainer>) {
-        events.forEach(Consumer { raw: DataContainer -> onDispatch(raw) })
+        events.forEach { onDispatch(it) }
     }
 
     fun chunkOrSyncRequest(request: DataContainer) {
-        locked(Supplier { chunkSyncQueue.add(request.toString()) })
+        locked { chunkSyncQueue.add(request.toString()) }
     }
 
     fun send(message: String?, skipQueue: Boolean): Boolean {
@@ -429,10 +427,10 @@ object WebSocketClient: WebSocketAdapter(), WebSocketListener {
         if (queueLock.isHeldByCurrentThread) queueLock.unlock()
     }
 
-    private fun <T> locked(task: Supplier<T>) {
+    private fun <T> locked(task: () -> T) {
         try {
             queueLock.lockInterruptibly()
-            task.get()
+            task.invoke()
         } catch (ex: InterruptedException) {
             ex.printStackTrace()
         } finally {

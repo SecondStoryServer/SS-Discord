@@ -5,7 +5,6 @@ import me.syari.ss.discord.internal.requests.RestAction
 import me.syari.ss.discord.internal.requests.Route
 import okhttp3.RequestBody
 import java.util.concurrent.CompletableFuture
-import java.util.function.Consumer
 
 class RestFuture<T>(
     restAction: RestAction<T>, shouldQueue: Boolean, data: RequestBody?, route: Route
@@ -19,8 +18,8 @@ class RestFuture<T>(
     init {
         request = Request(
             restAction,
-            Consumer { value: T -> complete(value) },
-            Consumer { ex: Throwable -> completeExceptionally(ex) },
+            { complete(it) },
+            { completeExceptionally(it) },
             shouldQueue,
             data,
             route

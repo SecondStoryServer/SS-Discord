@@ -55,7 +55,7 @@ class DataContainer(init: Map<String, Any?> = emptyMap()) {
     fun getContainer(key: String): DataContainer? {
         return try {
             get(key, Map::class) as Map<String, Any?>
-        } catch (ex: ClassCastException){
+        } catch (ex: ClassCastException) {
             ex.printStackTrace()
             null
         }?.let { DataContainer(it) }
@@ -69,7 +69,7 @@ class DataContainer(init: Map<String, Any?> = emptyMap()) {
     fun getArray(key: String): DataArray? {
         return try {
             get(key, List::class) as List<Any>
-        } catch (ex: ClassCastException){
+        } catch (ex: ClassCastException) {
             ex.printStackTrace()
             null
         }?.let { DataArray(it) }
@@ -85,8 +85,8 @@ class DataContainer(init: Map<String, Any?> = emptyMap()) {
         return convertType(key, get(key), type, stringParse, numberParse)
     }
 
-    fun put(key: String, value: Any?){
-        data[key] = when(value){
+    fun put(key: String, value: Any?) {
+        data[key] = when (value) {
             is DataContainer -> value.data
             is DataArray -> value.data
             else -> value

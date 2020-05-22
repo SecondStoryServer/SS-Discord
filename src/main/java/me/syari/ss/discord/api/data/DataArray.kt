@@ -18,7 +18,7 @@ class DataArray(init: List<Any?> = emptyList()): Iterable<Any?> {
     private fun getContainer(index: Int): DataContainer? {
         return try {
             get(index, Map::class) as Map<String, Any?>
-        } catch (ex: ClassCastException){
+        } catch (ex: ClassCastException) {
             ex.printStackTrace()
             null
         }?.let { DataContainer(it) }
@@ -38,13 +38,13 @@ class DataArray(init: List<Any?> = emptyList()): Iterable<Any?> {
 
     private fun <T: Any> get(
         index: Int, type: KClass<T>, stringParse: ((String) -> T)? = null, numberParse: ((Number) -> T)? = null
-    ) :T? {
+    ): T? {
         return convertType(index.toString(), get(index), type, stringParse, numberParse)
     }
 
-    fun add(value: Any?){
+    fun add(value: Any?) {
         data.add(
-            when(value){
+            when (value) {
                 is DataContainer -> value.data
                 is DataArray -> value.data
                 else -> value

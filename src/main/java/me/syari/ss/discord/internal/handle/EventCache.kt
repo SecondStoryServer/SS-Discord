@@ -3,14 +3,12 @@ package me.syari.ss.discord.internal.handle
 import gnu.trove.map.TLongObjectMap
 import gnu.trove.map.hash.TLongObjectHashMap
 import me.syari.ss.discord.api.data.DataContainer
-import java.util.EnumMap
-import java.util.LinkedList
 import java.util.concurrent.atomic.AtomicInteger
 
 object EventCache {
     const val TIMEOUT_AMOUNT: Long = 100
 
-    private val eventCache = EnumMap<Type, TLongObjectMap<MutableList<CacheNode>>>(Type::class.java)
+    private val eventCache = mutableMapOf<Type, TLongObjectMap<MutableList<CacheNode>>>()
 
     @Synchronized
     fun timeout(responseTotal: Long) {
@@ -39,7 +37,7 @@ object EventCache {
         val triggerCache = eventCache.computeIfAbsent(type) { TLongObjectHashMap() }
         var items = triggerCache[triggerId]
         if (items == null) {
-            items = LinkedList()
+            items = mutableListOf()
             triggerCache.put(triggerId, items)
         }
         items.add(CacheNode(responseTotal, event, handler))

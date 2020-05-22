@@ -9,14 +9,13 @@ import me.syari.ss.discord.internal.requests.CallbackContext.Companion.isCallbac
 import okhttp3.RequestBody
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ExecutionException
-import java.util.function.Consumer
 
 open class RestAction<T>(
     private val route: Route, private val handler: ((Response, Request<T>) -> T)? = null
 ) {
     fun queue() {
         val data = finalizeData()
-        val request = Request(this, DEFAULT_SUCCESS, DEFAULT_FAILURE, true, data, route)
+        val request = Request(this, { } , { }, true, data, route)
         Requester.request(request)
     }
 
@@ -75,10 +74,5 @@ open class RestAction<T>(
         } else {
             request.onSuccess(handler.invoke(response, request))
         }
-    }
-
-    companion object {
-        private val DEFAULT_SUCCESS = Consumer { _: Any? -> }
-        private val DEFAULT_FAILURE: Consumer<in Throwable> = Consumer { }
     }
 }

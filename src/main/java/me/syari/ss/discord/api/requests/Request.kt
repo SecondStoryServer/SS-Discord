@@ -1,8 +1,6 @@
 package me.syari.ss.discord.api.requests
 
 import me.syari.ss.discord.api.ThreadLocalReason
-import me.syari.ss.discord.api.exceptions.ContextException.ContextConsumer
-import me.syari.ss.discord.api.exceptions.ContextException.from
 import me.syari.ss.discord.api.exceptions.ErrorResponseException.Companion.create
 import me.syari.ss.discord.api.exceptions.RateLimitedException
 import me.syari.ss.discord.api.requests.ErrorResponse.Companion.fromJSON
@@ -11,35 +9,26 @@ import me.syari.ss.discord.internal.requests.RestAction
 import me.syari.ss.discord.internal.requests.Route
 import me.syari.ss.discord.internal.utils.ThreadingConfig
 import okhttp3.RequestBody
-import java.util.function.Consumer
 
 class Request<T>(
     private val restAction: RestAction<T>,
-    private val onSuccess: Consumer<in T>,
-    onFailure: Consumer<in Throwable>?,
+    private val onSuccess: (T) -> Unit,
+    private val onFailure: ((Throwable) -> Unit)?,
     private val shouldQueue: Boolean,
     private val body: RequestBody?,
     val route: Route
 ) {
-    private var onFailure: Consumer<in Throwable>? = null
     private val localReason = ThreadLocalReason.current
     var isCanceled = false
         private set
-
-    init {
-        this.onFailure = if (onFailure is ContextConsumer) {
-            onFailure
-        } else {
-            onFailure?.let { from(it) }
-        }
-    }
 
     fun onSuccess(successObj: T?) {
         if (successObj == null) return
         ThreadingConfig.callbackPool.execute {
             try {
-                ThreadLocalReason.closable(localReason)
-                    .use { CallbackContext.instance.use { onSuccess.accept(successObj) } }
+                ThreadLocalReason.closable(localReason).use {
+                    CallbackContext.instance.use { onSuccess.invoke(successObj) }
+                }
             } catch (ex: Throwable) {
                 ex.printStackTrace()
             }
@@ -58,7 +47,16 @@ class Request<T>(
         ThreadingConfig.callbackPool.execute {
             try {
                 ThreadLocalReason.closable(localReason).use {
-                    CallbackContext.instance.use { onFailure?.accept(failException) }
+                    CallbackContext.instance.use {
+                        onFailure?.let {
+                            var cause: Throwable? = failException
+                            while (cause?.cause != null) {
+                                cause = cause.cause
+                            }
+                            cause?.initCause(Exception())
+                            onFailure?.invoke(failException)
+                        }
+                    }
                 }
             } catch (t: Throwable) {
                 t.printStackTrace()

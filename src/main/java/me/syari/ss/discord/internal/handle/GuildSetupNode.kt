@@ -7,10 +7,9 @@ import me.syari.ss.discord.api.data.DataArray
 import me.syari.ss.discord.api.data.DataContainer
 import me.syari.ss.discord.internal.entities.EntityBuilder
 import me.syari.ss.discord.internal.requests.WebSocketClient
-import java.util.LinkedList
 
 class GuildSetupNode(private val id: Long) {
-    private val cachedEvents: MutableList<DataContainer> = LinkedList()
+    private val cachedEvents = mutableListOf<DataContainer>()
     private var members = TLongObjectHashMap<DataContainer>()
     private var removedMembers: TLongSet? = null
     private var partialGuild: DataContainer? = null
