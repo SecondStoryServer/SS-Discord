@@ -97,16 +97,16 @@ object GuildSetupController {
 
     private fun tryChunking() {
         if (chunkingGuilds.size() >= 50) {
-            val subset = DataArray.empty()
+            val subset = DataArray()
             val it = chunkingGuilds.iterator()
-            while (subset.length() < 50) {
+            while (subset.size < 50) {
                 subset.add(it.next())
                 it.remove()
             }
             sendChunkRequest(subset)
         }
         if (incompleteCount > 0 && chunkingGuilds.size() >= incompleteCount) {
-            val array = DataArray.empty()
+            val array = DataArray()
             chunkingGuilds.forEach { guild: Long ->
                 array.add(guild)
                 true

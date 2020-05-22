@@ -50,7 +50,7 @@ class GuildSetupNode(private val id: Long) {
         members = TLongObjectHashMap(expectedMemberCount)
         removedMembers = TLongHashSet()
         val memberArray = notNulPartialGuild.getArrayOrThrow("members")
-        if (memberArray.length() < expectedMemberCount && !requestedChunk) {
+        if (memberArray.size < expectedMemberCount && !requestedChunk) {
             updateStatus(GuildSetupController.Status.CHUNKING)
             GuildSetupController.addGuildForChunking(id)
             requestedChunk = true
@@ -64,8 +64,8 @@ class GuildSetupNode(private val id: Long) {
 
     private fun handleMemberChunk(arr: DataArray): Boolean {
         if (partialGuild == null) return true
-        for (index in 0 until arr.length()) {
-            val obj = arr.getObject(index)
+        for (index in 0 until arr.size) {
+            val obj = arr.getContainerOrThrow(index)
             val id = obj.getContainerOrThrow("user").getLongOrThrow("id")
             members.put(id, obj)
         }

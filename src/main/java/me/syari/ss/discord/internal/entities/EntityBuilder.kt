@@ -12,13 +12,13 @@ object EntityBuilder {
         val allRole = guildData.getArrayOrThrow("roles")
         val guild = Guild(id, name)
         val roles = mutableMapOf<Long, Role>()
-        for (i in 0 until allRole.length()) {
-            val role = createRole(guild, allRole.getObject(i))
+        for (i in 0 until allRole.size) {
+            val role = createRole(guild, allRole.getContainerOrThrow(i))
             roles[role.idLong] = role
         }
         val allChannel = guildData.getArrayOrThrow("channels")
-        for (i in 0 until allChannel.length()) {
-            val channelData = allChannel.getObject(i)
+        for (i in 0 until allChannel.size) {
+            val channelData = allChannel.getContainerOrThrow(i)
             createTextChannel(guild, channelData)
         }
         return guild
@@ -86,16 +86,16 @@ object EntityBuilder {
         val mentionedRoles = TLongHashSet()
         val roleMentionArray = messageData.getArray("mention_roles")
         if (roleMentionArray != null) {
-            for (i in 0 until roleMentionArray.length()) {
-                mentionedRoles.add(roleMentionArray.getLong(i))
+            for (i in 0 until roleMentionArray.size) {
+                mentionedRoles.add(roleMentionArray.getLongOrThrow(i))
             }
         }
         val mentionedUsersList = mutableListOf<User>()
         val mentionedMembersList = mutableListOf<Member>()
         val userMentions = messageData.getArray("mentions")
         if (userMentions != null) {
-            for (i in 0 until userMentions.length()) {
-                val mentionData = userMentions.getObject(i)
+            for (i in 0 until userMentions.size) {
+                val mentionData = userMentions.getContainerOrThrow(i)
                 val mentionedMemberData = mentionData.getContainer("member")
                 if (mentionedMemberData != null) {
                     mentionData.remove("member")

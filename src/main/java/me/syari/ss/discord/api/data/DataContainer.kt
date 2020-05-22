@@ -79,17 +79,10 @@ class DataContainer(init: Map<String, Any?> = emptyMap()) {
         return getArray(key) ?: orThrow(key, "DataArray")
     }
 
-    @Suppress("UNCHECKED_CAST")
     private fun <T: Any> get(
         key: String, type: KClass<T>, stringParse: ((String) -> T)? = null, numberParse: ((Number) -> T)? = null
     ): T? {
-        val value = get(key) ?: return null
-        return when {
-            type.isInstance(value) -> value as T
-            numberParse != null && value is Number -> numberParse.invoke(value)
-            stringParse != null && value is String -> stringParse.invoke(value)
-            else -> throw ParsingException("Cannot parse value for $key into type ${type.qualifiedName}: $value instance of ${value::class.qualifiedName}")
-        }
+        return convertType(key, get(key), type, stringParse, numberParse)
     }
 
     fun put(key: String, value: Any?){
@@ -105,7 +98,7 @@ class DataContainer(init: Map<String, Any?> = emptyMap()) {
     }
 
     override fun toString(): String {
-        return gson.toJson(data)
+        return toJson(data)
     }
 
     companion object {
@@ -121,6 +114,24 @@ class DataContainer(init: Map<String, Any?> = emptyMap()) {
         fun fromJson(reader: Reader): DataContainer {
             val data = gson.fromJson(reader, Map::class.java) as Map<String, Any?>
             return DataContainer(data)
+        }
+
+        internal fun toJson(data: Any): String {
+            return gson.toJson(data)
+        }
+
+        @Suppress("UNCHECKED_CAST")
+        internal fun <T: Any> convertType(
+            at: String, value: Any?, type: KClass<T>, stringParse: ((String) -> T)?, numberParse: ((Number) -> T)?
+        ): T? {
+            return value?.let {
+                when {
+                    type.isInstance(value) -> value as T
+                    stringParse != null && value is String -> stringParse.invoke(value)
+                    numberParse != null && value is Number -> numberParse.invoke(value)
+                    else -> throw ParsingException("Cannot parse value for $at into type ${type.qualifiedName}: $value instance of ${value::class.qualifiedName}")
+                }
+            }
         }
     }
 }

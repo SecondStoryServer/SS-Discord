@@ -203,7 +203,10 @@ object WebSocketClient: WebSocketAdapter(), WebSocketListener {
             put("op", WebSocketCode.IDENTIFY)
             put("d", payload)
         }
-        payload.put("shard", DataArray.empty().add(0).add(1))
+        payload.put("shard", DataArray().apply {
+            add(0)
+            add(1)
+        })
         send(identify.toString(), true)
         handleIdentifyRateLimit = true
         identifyTime = System.currentTimeMillis()
