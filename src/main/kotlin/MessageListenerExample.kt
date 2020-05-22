@@ -1,5 +1,5 @@
-import me.syari.ss.discord.internal.Discord.init
-import me.syari.ss.discord.internal.entities.TextChannel.Companion.get
+import me.syari.ss.discord.Discord.init
+import me.syari.ss.discord.entities.TextChannel.Companion.get
 import javax.security.auth.login.LoginException
 
 object MessageListenerExample {
@@ -24,7 +24,6 @@ object MessageListenerExample {
                 } else {
                     sendMessageCount++
                     if (sendMessageCount == 2) {
-                        println(">> Shutdown")
                         shutdown()
                     }
                 }
