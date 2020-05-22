@@ -19,9 +19,9 @@ object MessageListenerExample {
                     val name = authorMember.displayName
                     val message = event.message.contentDisplay
                     val channel = event.channel
-                    channel.sendMessage("Chat -> $name: $message")
-                } else {
+                    channel.sendMessage("$name: $message")
                     sendMessageCount++
+                } else {
                     if (sendMessageCount == 2) {
                         shutdown()
                     }
