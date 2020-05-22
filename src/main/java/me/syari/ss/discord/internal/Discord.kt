@@ -38,8 +38,7 @@ object Discord {
         set(value) {
             synchronized(field) { field = value }
         }
-    var responseTotal: Long = 0
-        private set
+    var responseTotal: Int = 0
     var gatewayUrl: String? = null
         private set
 
@@ -128,10 +127,6 @@ object Discord {
             ex.printStackTrace()
         }
         status = Status.SHUTDOWN
-    }
-
-    fun setResponseTotal(responseTotal: Int) {
-        this.responseTotal = responseTotal.toLong()
     }
 
     fun resetGatewayUrl() {

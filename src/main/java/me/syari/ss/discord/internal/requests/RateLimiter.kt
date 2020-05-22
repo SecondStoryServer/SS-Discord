@@ -2,7 +2,6 @@ package me.syari.ss.discord.internal.requests
 
 import me.syari.ss.discord.api.SessionController
 import me.syari.ss.discord.api.requests.Request
-import me.syari.ss.discord.internal.Discord
 import me.syari.ss.discord.internal.utils.ThreadingConfig
 import okhttp3.Response
 import java.util.Queue

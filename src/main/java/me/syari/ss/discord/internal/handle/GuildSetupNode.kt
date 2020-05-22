@@ -38,18 +38,18 @@ class GuildSetupNode(private val id: Long) {
     fun handleCreate(dataObject: DataObject) {
         val notNulPartialGuild = partialGuild?.apply {
             for (key in dataObject.keys()) {
-                put(key, dataObject.opt(key).orElse(null))
+                put(key, dataObject.get(key))
             }
         } ?: {
             partialGuild = dataObject
             dataObject
         }.invoke()
-        val unavailable = notNulPartialGuild.getBoolean("unavailable", false)
+        val unavailable = notNulPartialGuild.getBoolean("unavailable") ?: false
         if (unavailable) return
-        expectedMemberCount = notNulPartialGuild.getInt("member_count")
+        expectedMemberCount = notNulPartialGuild.getIntOrThrow("member_count")
         members = TLongObjectHashMap(expectedMemberCount)
         removedMembers = TLongHashSet()
-        val memberArray = notNulPartialGuild.getArray("members")
+        val memberArray = notNulPartialGuild.getArrayOrThrow("members")
         if (memberArray.length() < expectedMemberCount && !requestedChunk) {
             updateStatus(GuildSetupController.Status.CHUNKING)
             GuildSetupController.addGuildForChunking(id)
@@ -66,7 +66,7 @@ class GuildSetupNode(private val id: Long) {
         if (partialGuild == null) return true
         for (index in 0 until arr.length()) {
             val obj = arr.getObject(index)
-            val id = obj.getObject("user").getLong("id")
+            val id = obj.getContainerOrThrow("user").getLongOrThrow("id")
             members.put(id, obj)
         }
         if (expectedMemberCount <= members.size()) {

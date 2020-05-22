@@ -39,7 +39,7 @@ object SessionController {
     fun getGateway(): String {
         val route = Route.gatewayRoute
         return RestAction(route) { response: Response, _: Request<String> ->
-            response.dataObject.getString("url")
+            response.dataObject.getStringOrThrow("url")
         }.complete()
     }
 

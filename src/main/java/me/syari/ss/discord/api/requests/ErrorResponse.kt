@@ -66,14 +66,16 @@ data class ErrorResponse(val code: Int, val meaning: String) {
 
         private val SERVER_ERROR = ErrorResponse(0, "Discord encountered an internal server error! Not good!")
 
-        private fun fromCode(code: Int): ErrorResponse {
-            return errorCodeMap[code]?.let { meaning ->
-                ErrorResponse(code, meaning)
+        private fun fromCode(code: Int?): ErrorResponse {
+            return code?.let {
+                errorCodeMap[code]?.let { meaning ->
+                    ErrorResponse(code, meaning)
+                }
             } ?: SERVER_ERROR
         }
 
         fun fromJSON(dataObject: DataObject?): ErrorResponse {
-            return if (dataObject == null || dataObject.isNull("code")) SERVER_ERROR else fromCode(dataObject.getInt("code"))
+            return fromCode(dataObject?.getInt("code"))
         }
     }
 }

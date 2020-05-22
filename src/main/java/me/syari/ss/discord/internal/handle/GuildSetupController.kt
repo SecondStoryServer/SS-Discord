@@ -85,11 +85,14 @@ object GuildSetupController {
                 pendingChunks.put(`object` as Long, timeout)
             }
         }
-        WebSocketClient.chunkOrSyncRequest(
-            DataObject.empty().put("op", WebSocketCode.MEMBER_CHUNK_REQUEST).put(
-                "d", DataObject.empty().put("guild_id", `object`).put("query", "").put("limit", 0)
-            )
-        )
+        WebSocketClient.chunkOrSyncRequest(DataObject.empty().apply {
+            put("op", WebSocketCode.MEMBER_CHUNK_REQUEST)
+            put("d", DataObject.empty().apply {
+                put("guild_id", `object`)
+                put("query", "")
+                put("limit", 0)
+            })
+        })
     }
 
     private fun tryChunking() {

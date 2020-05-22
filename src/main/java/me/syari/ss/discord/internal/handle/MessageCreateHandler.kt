@@ -8,12 +8,12 @@ import me.syari.ss.discord.internal.entities.TextChannel
 object MessageCreateHandler: SocketHandler() {
     override fun handleInternally(content: DataObject): Long? {
         println(">> MessageCreateHandler")
-        if (content.getInt("type") != 0) return null
-        if (!content.isNull("guild_id")) {
-            val guildId = content.getLong("guild_id")
-            if (GuildSetupController.isLocked(guildId)) return guildId
+        if (content.getIntOrThrow("type") != 0) return null
+        val guildId = content.getLong("guild_id")
+        if (guildId != null && GuildSetupController.isLocked(guildId)) {
+            return guildId
         }
-        val channelId = content.getLong("channel_id")
+        val channelId = content.getLongOrThrow("channel_id")
         val channel = TextChannel.get(channelId) ?: return null
         val message = try {
             EntityBuilder.createMessage(content, channel)

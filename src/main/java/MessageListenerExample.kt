@@ -1,4 +1,3 @@
-import me.syari.ss.discord.internal.Discord
 import me.syari.ss.discord.internal.Discord.init
 import me.syari.ss.discord.internal.entities.TextChannel.Companion.get
 import javax.security.auth.login.LoginException

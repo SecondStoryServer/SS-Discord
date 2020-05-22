@@ -2,7 +2,6 @@ package me.syari.ss.discord.internal.utils
 
 import java.util.concurrent.ThreadFactory
 import java.util.concurrent.atomic.AtomicLong
-import java.util.function.Supplier
 
 class CountingThreadFactory(private val specifier: String): ThreadFactory {
     private val count = AtomicLong(1)

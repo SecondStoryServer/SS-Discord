@@ -8,15 +8,15 @@ object EntityBuilder {
     const val UNKNOWN_MESSAGE_TYPE = "UNKNOWN_MESSAGE_TYPE"
 
     fun createGuild(id: Long, guildData: DataObject): Guild {
-        val name = guildData.getString("name", "")
-        val allRole = guildData.getArray("roles")
+        val name = guildData.getString("name") ?: ""
+        val allRole = guildData.getArrayOrThrow("roles")
         val guild = Guild(id, name)
         val roles = mutableMapOf<Long, Role>()
         for (i in 0 until allRole.length()) {
             val role = createRole(guild, allRole.getObject(i))
             roles[role.idLong] = role
         }
-        val allChannel = guildData.getArray("channels")
+        val allChannel = guildData.getArrayOrThrow("channels")
         for (i in 0 until allChannel.length()) {
             val channelData = allChannel.getObject(i)
             createTextChannel(guild, channelData)
@@ -25,20 +25,20 @@ object EntityBuilder {
     }
 
     private fun createUser(userData: DataObject): User {
-        val id = userData.getLong("id")
+        val id = userData.getLongOrThrow("id")
         return User.get(id) {
-            val name = userData.getString("username")
-            val isBot = userData.getBoolean("bot", false)
+            val name = userData.getStringOrThrow("username")
+            val isBot = userData.getBoolean("bot") ?: false
             User(id, name, isBot)
         }
     }
 
     private fun createMember(guild: Guild, memberData: DataObject): Member {
-        val user = createUser(memberData.getObject("user"))
+        val user = createUser(memberData.getContainerOrThrow("user"))
         val member = guild.getMemberOrPut(user) { Member(guild, user) }
-        if (memberData.hasKey("nick")) {
+        if (memberData.contains("nick")) {
             val lastNickName = member.nickname
-            val nickName = memberData.getString("nick", null)
+            val nickName = memberData.getString("nick")
             if (nickName != lastNickName) {
                 member.nickname = nickName
             }
@@ -47,8 +47,8 @@ object EntityBuilder {
     }
 
     private fun createTextChannel(guild: Guild, channelData: DataObject) {
-        val channelId = channelData.getLong("id")
-        val name = channelData.getString("name")
+        val channelId = channelData.getLongOrThrow("id")
+        val name = channelData.getStringOrThrow("name")
         val textChannel = TextChannel(channelId, guild, name)
         guild.addTextChannel(channelId, textChannel)
     }
@@ -56,9 +56,9 @@ object EntityBuilder {
     private fun createRole(
         guild: Guild, roleData: DataObject
     ): Role {
-        val id = roleData.getLong("id")
+        val id = roleData.getLongOrThrow("id")
         return guild.getRoleOrPut(id) {
-            val name = roleData.getString("name")
+            val name = roleData.getStringOrThrow("name")
             Role(id, name)
         }
     }
@@ -66,50 +66,52 @@ object EntityBuilder {
     fun createMessage(
         messageData: DataObject, channel: TextChannel
     ): Message {
-        val id = messageData.getLong("id")
-        val authorData = messageData.getObject("author")
+        val id = messageData.getLongOrThrow("id")
+        val authorData = messageData.getContainerOrThrow("author")
         val guild = channel.guild
         val member = guild.getMemberOrPut(id) {
-            val memberData = messageData.getObject("member")
+            val memberData = messageData.getContainerOrThrow("member")
             memberData.put("user", authorData)
             createMember(guild, memberData)
         }
-        val fromWebhook = messageData.hasKey("webhook_id")
+        val fromWebhook = messageData.contains("webhook_id")
         val user = member.user
         if (!fromWebhook) {
             val lastName = user.name
-            val name = authorData.getString("username")
+            val name = authorData.getStringOrThrow("username")
             if (name != lastName) {
                 user.name = name
             }
         }
         val mentionedRoles = TLongHashSet()
-        val roleMentionArray = messageData.optArray("mention_roles")
-        roleMentionArray.ifPresent { array ->
-            for (i in 0 until array.length()) {
-                mentionedRoles.add(array.getLong(i))
+        val roleMentionArray = messageData.getArray("mention_roles")
+        if (roleMentionArray != null) {
+            for (i in 0 until roleMentionArray.length()) {
+                mentionedRoles.add(roleMentionArray.getLong(i))
             }
         }
         val mentionedUsersList = mutableListOf<User>()
         val mentionedMembersList = mutableListOf<Member>()
         val userMentions = messageData.getArray("mentions")
-        for (i in 0 until userMentions.length()) {
-            val mentionData = userMentions.getObject(i)
-            if (mentionData.isNull("member")) {
-                val mentionedUser = createUser(mentionData)
-                mentionedUsersList.add(mentionedUser)
-                val mentionedMember = guild.getMember(mentionedUser)
-                if (mentionedMember != null) mentionedMembersList.add(mentionedMember)
-            } else {
-                val mentionedMemberData = mentionData.getObject("member")
-                mentionData.remove("member")
-                mentionedMemberData.put("user", mentionData)
-                val mentionedMember = createMember(guild, mentionedMemberData)
-                mentionedMembersList.add(mentionedMember)
-                mentionedUsersList.add(mentionedMember.user)
+        if (userMentions != null) {
+            for (i in 0 until userMentions.length()) {
+                val mentionData = userMentions.getObject(i)
+                val mentionedMemberData = mentionData.getContainer("member")
+                if (mentionedMemberData != null) {
+                    mentionData.remove("member")
+                    mentionedMemberData.put("user", mentionData)
+                    val mentionedMember = createMember(guild, mentionedMemberData)
+                    mentionedMembersList.add(mentionedMember)
+                    mentionedUsersList.add(mentionedMember.user)
+                } else {
+                    val mentionedUser = createUser(mentionData)
+                    mentionedUsersList.add(mentionedUser)
+                    val mentionedMember = guild.getMember(mentionedUser)
+                    if (mentionedMember != null) mentionedMembersList.add(mentionedMember)
+                }
             }
         }
-        val content = messageData.getString("content", "")
+        val content = messageData.getString("content") ?: ""
         return Message(id, channel, content, user, member)
     }
 }

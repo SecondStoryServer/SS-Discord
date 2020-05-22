@@ -6,7 +6,7 @@ import me.syari.ss.discord.internal.entities.Guild.Companion.contains
 object GuildCreateHandler: SocketHandler() {
     override fun handleInternally(content: DataObject): Long? {
         println(">> GuildCreateHandler")
-        val id = content.getLong("id")
+        val id = content.getLongOrThrow("id")
         if (!contains(id)) GuildSetupController.onCreate(id, content)
         return null
     }

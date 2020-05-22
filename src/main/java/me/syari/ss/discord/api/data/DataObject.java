@@ -3,165 +3,151 @@ package me.syari.ss.discord.api.data;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.databind.type.MapType;
 import me.syari.ss.discord.api.exceptions.ParsingException;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
 import java.io.Reader;
 import java.util.*;
 import java.util.function.Function;
-import java.util.function.UnaryOperator;
 
 public class DataObject {
     private static final ObjectMapper mapper = new ObjectMapper();
     private static final SimpleModule module = new SimpleModule();
-    private static final MapType mapType;
 
     static {
         module.addAbstractTypeMapping(Map.class, HashMap.class);
         module.addAbstractTypeMapping(List.class, ArrayList.class);
         mapper.registerModule(module);
-        mapType = mapper.getTypeFactory().constructRawMapType(HashMap.class);
     }
 
-    final Map<String, Object> data;
+    final DataContainer container;
 
-    DataObject(@NotNull Map<String, Object> data) {
-        this.data = data;
+    public Map<String, Object> getData() {
+        return container.getData();
+    }
+
+    DataObject(@NotNull DataContainer container) {
+        this.container = container;
     }
 
     @NotNull
     public static DataObject empty() {
-        return new DataObject(new HashMap<>());
+        return new DataObject(new DataContainer());
     }
 
     @NotNull
     public static DataObject fromJson(@NotNull String json) {
-        try {
-            Map<String, Object> map = mapper.readValue(json, mapType);
-            return new DataObject(map);
-        } catch (IOException ex) {
-            throw new ParsingException(ex);
-        }
+        DataContainer container = DataContainer.Companion.fromJson(json);
+        return new DataObject(container);
     }
 
     @NotNull
     public static DataObject fromJson(@NotNull Reader stream) {
-        try {
-            Map<String, Object> map = mapper.readValue(stream, mapType);
-            return new DataObject(map);
-        } catch (IOException ex) {
-            throw new ParsingException(ex);
-        }
+        DataContainer container = DataContainer.Companion.fromJson(stream);
+        return new DataObject(container);
     }
 
-    public boolean hasKey(@NotNull String key) {
-        return data.containsKey(key);
-    }
-
-    public boolean isNull(@NotNull String key) {
-        return data.get(key) == null;
+    public boolean contains(@NotNull String key) {
+        return container.contains(key);
     }
 
     @NotNull
-    public DataObject getObject(@NotNull String key) {
-        return optObject(key).orElseThrow(() -> valueError(key, "DataObject"));
+    public DataObject getContainerOrThrow(@NotNull String key) {
+        DataObject value = getContainer(key);
+        if (value == null) throw valueError(key, "DataObject");
+        return value;
     }
 
-    @NotNull
+    @Nullable
     @SuppressWarnings("unchecked")
-    public Optional<DataObject> optObject(@NotNull String key) {
+    public DataObject getContainer(@NotNull String key) {
         Map<String, Object> child = null;
         try {
             child = (Map<String, Object>) get(Map.class, key);
         } catch (ClassCastException ex) {
             ex.printStackTrace();
         }
-        return child == null ? Optional.empty() : Optional.of(new DataObject(child));
+        return child != null ? new DataObject(new DataContainer(child)) : null;
     }
 
     @NotNull
-    public DataArray getArray(@NotNull String key) {
-        return optArray(key).orElseThrow(() -> valueError(key, "DataArray"));
+    public DataArray getArrayOrThrow(@NotNull String key) {
+        DataArray value = getArray(key);
+        if (value == null) throw valueError(key, "DataArray");
+        return value;
     }
 
-    @NotNull
+    @Nullable
     @SuppressWarnings("unchecked")
-    public Optional<DataArray> optArray(@NotNull String key) {
+    public DataArray getArray(@NotNull String key) {
         List<Object> child = null;
         try {
             child = (List<Object>) get(List.class, key);
         } catch (ClassCastException ex) {
             ex.printStackTrace();
         }
-        return child == null ? Optional.empty() : Optional.of(new DataArray(child));
+        return child != null ? new DataArray(child) : null;
     }
 
-    @NotNull
-    public Optional<Object> opt(@NotNull String key) {
-        return Optional.ofNullable(data.get(key));
-    }
-
-    @NotNull
+    @Nullable
     public Object get(@NotNull String key) {
-        Object value = data.get(key);
-        if (value == null) throw valueError(key, "any");
-        return value;
+        return container.get(key);
+    }
+
+    @Nullable
+    public String getString(@NotNull String key) {
+        return container.getString(key);
     }
 
     @NotNull
-    public String getString(@NotNull String key) {
-        String value = getString(key, null);
-        if (value == null) throw valueError(key, "String");
-        return value;
+    public String getStringOrThrow(@NotNull String key) {
+        return container.getStringOrThrow(key);
     }
 
-    public String getString(@NotNull String key, @Nullable String defaultValue) {
-        String value = get(String.class, key, UnaryOperator.identity(), String::valueOf);
-        return value == null ? defaultValue : value;
+    @Nullable
+    public Boolean getBoolean(@NotNull String key) {
+        return container.getBoolean(key);
     }
 
-    public boolean getBoolean(@NotNull String key, boolean defaultValue) {
-        Boolean value = get(Boolean.class, key, Boolean::parseBoolean, null);
-        return value == null ? defaultValue : value;
+    @Nullable
+    public Long getLong(@NotNull String key) {
+        return container.getLong(key);
     }
 
-    public long getLong(@NotNull String key) {
-        Long value = get(Long.class, key, Long::parseLong, Number::longValue);
-        if (value == null) throw valueError(key, "long");
-        return value;
+    public long getLongOrThrow(@NotNull String key) {
+        return container.getLongOrThrow(key);
     }
 
-    public int getInt(@NotNull String key) {
-        Integer value = get(Integer.class, key, Integer::parseInt, Number::intValue);
-        if (value == null) throw valueError(key, "int");
-        return value;
+    @Nullable
+    public Integer getInt(@NotNull String key) {
+        return container.getInt(key);
+    }
+
+    public int getIntOrThrow(@NotNull String key) {
+        return container.getIntOrThrow(key);
     }
 
     public void remove(@NotNull String key) {
-        data.remove(key);
+        container.remove(key);
     }
 
-    @NotNull
-    public DataObject put(@NotNull String key, @Nullable Object value) {
-        if (value instanceof DataObject) data.put(key, ((DataObject) value).toData().data);
-        else if (value instanceof DataArray) data.put(key, ((DataArray) value).data);
-        else data.put(key, value);
-        return this;
+    public void put(@NotNull String key, @Nullable Object value) {
+        if (value instanceof DataObject) getData().put(key, ((DataObject) value).toData().getData());
+        else if (value instanceof DataArray) getData().put(key, ((DataArray) value).data);
+        else getData().put(key, value);
     }
 
     @NotNull
     public Set<String> keys() {
-        return data.keySet();
+        return container.getKeys();
     }
 
     @Override
     public String toString() {
         try {
-            return mapper.writeValueAsString(data);
+            return mapper.writeValueAsString(getData());
         } catch (JsonProcessingException ex) {
             throw new ParsingException(ex);
         }
@@ -175,7 +161,7 @@ public class DataObject {
     @Contract("_, _ -> new")
     private @NotNull
     ParsingException valueError(String key, String expectedType) {
-        return new ParsingException("Unable to resolve value with key " + key + " to type " + expectedType + ": " + data.get(key));
+        return new ParsingException("Unable to resolve value with key " + key + " to type " + expectedType + ": " + getData().get(key));
     }
 
     @Nullable
@@ -185,7 +171,7 @@ public class DataObject {
 
     @Nullable
     private <T> T get(@NotNull Class<T> type, @NotNull String key, @Nullable Function<String, T> stringParse, @Nullable Function<Number, T> numberParse) {
-        Object value = data.get(key);
+        Object value = getData().get(key);
         if (value == null) return null;
         if (type.isAssignableFrom(value.getClass())) return type.cast(value);
         if (value instanceof Number && numberParse != null) return numberParse.apply((Number) value);

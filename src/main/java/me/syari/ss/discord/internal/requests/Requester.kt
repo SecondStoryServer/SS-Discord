@@ -42,7 +42,8 @@ object Requester {
         val method = apiRequest.route.method.toString()
         var body = apiRequest.getBody()
         if (body == null && requiresRequestBody(method)) body = EMPTY_BODY
-        builder.method(method, body).header("X-RateLimit-Precision", "millisecond").header("user-agent", "SS-Discord").header("accept-encoding", "gzip")
+        builder.method(method, body).header("X-RateLimit-Precision", "millisecond").header("user-agent", "SS-Discord")
+            .header("accept-encoding", "gzip")
         if (url.startsWith(DISCORD_API_PREFIX)) builder.header("authorization", "Bot ${Discord.token}")
         val request = builder.build()
         val responses = arrayOfNulls<okhttp3.Response>(4)

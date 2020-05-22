@@ -184,6 +184,46 @@ object WebSocketClient: WebSocketAdapter(), WebSocketListener {
         }
     }
 
+    private fun sendIdentify() {
+        val connectionProperties = DataObject.empty().apply {
+            put("\$os", System.getProperty("os.name"))
+            put("\$browser", "SS-Discord")
+            put("\$device", "SS-Discord")
+            put("\$referring_domain", "")
+            put("\$referrer", "")
+        }
+        val payload = DataObject.empty().apply {
+            put("token", token)
+            put("properties", connectionProperties)
+            put("v", DISCORD_GATEWAY_VERSION)
+            put("guild_subscriptions", true)
+            put("large_threshold", 250)
+        }
+        val identify = DataObject.empty().apply {
+            put("op", WebSocketCode.IDENTIFY)
+            put("d", payload)
+        }
+        payload.put("shard", DataArray.empty().add(0).add(1))
+        send(identify.toString(), true)
+        handleIdentifyRateLimit = true
+        identifyTime = System.currentTimeMillis()
+        sentAuthInfo = true
+        Discord.status = Discord.Status.AWAITING_LOGIN_CONFIRMATION
+    }
+
+    private fun sendResume() {
+        val resume = DataObject.empty().apply {
+            put("op", WebSocketCode.RESUME)
+            put("d", DataObject.empty().apply {
+                put("session_id", sessionId)
+                put("token", token)
+                put("seq", Discord.responseTotal.toLong())
+            })
+        }
+        send(resume.toString(), true)
+        Discord.status = Discord.Status.AWAITING_LOGIN_CONFIRMATION
+    }
+
     override fun onDisconnected(
         websocket: WebSocket,
         serverCloseFrame: WebSocketFrame,
@@ -269,40 +309,16 @@ object WebSocketClient: WebSocketAdapter(), WebSocketListener {
     }
 
     private fun setupKeepAlive(timeout: Long) {
-        keepAliveThread = executor.scheduleAtFixedRate(
-            { if (connected) sendKeepAlive() }, 0, timeout, TimeUnit.MILLISECONDS
-        )
+        keepAliveThread =
+            executor.scheduleAtFixedRate({ if (connected) sendKeepAlive() }, 0, timeout, TimeUnit.MILLISECONDS)
     }
 
     private fun sendKeepAlive() {
-        val keepAlivePacket =
-            DataObject.empty().put("op", WebSocketCode.HEARTBEAT).put("d", Discord.responseTotal).toString()
+        val keepAlivePacket = DataObject.empty().apply {
+            put("op", WebSocketCode.HEARTBEAT)
+            put("d", Discord.responseTotal.toLong()).toString()
+        }.toString()
         send(keepAlivePacket, true)
-    }
-
-    private fun sendIdentify() {
-        val connectionProperties =
-            DataObject.empty().put("\$os", System.getProperty("os.name")).put("\$browser", "SS-Discord").put("\$device", "SS-Discord")
-                .put("\$referring_domain", "").put("\$referrer", "")
-        val payload = DataObject.empty().put("token", token).put("properties", connectionProperties)
-            .put("v", DISCORD_GATEWAY_VERSION).put("guild_subscriptions", true).put("large_threshold", 250)
-        val identify = DataObject.empty().put("op", WebSocketCode.IDENTIFY).put("d", payload)
-        payload.put(
-            "shard", DataArray.empty().add(0).add(1)
-        )
-        send(identify.toString(), true)
-        handleIdentifyRateLimit = true
-        identifyTime = System.currentTimeMillis()
-        sentAuthInfo = true
-        Discord.status = Discord.Status.AWAITING_LOGIN_CONFIRMATION
-    }
-
-    private fun sendResume() {
-        val resume = DataObject.empty().put("op", WebSocketCode.RESUME).put(
-            "d", DataObject.empty().put("session_id", sessionId).put("token", token).put("seq", Discord.responseTotal)
-        )
-        send(resume.toString(), true)
-        Discord.status = Discord.Status.AWAITING_LOGIN_CONFIRMATION
     }
 
     private fun invalidate() {
@@ -313,49 +329,25 @@ object WebSocketClient: WebSocketAdapter(), WebSocketListener {
         GuildSetupController.clearCache()
     }
 
+    private fun locked(task: Runnable) {
+        try {
+            queueLock.lockInterruptibly()
+            task.run()
+        } catch (ex: InterruptedException) {
+            ex.printStackTrace()
+        } finally {
+            maybeUnlock()
+        }
+    }
+
     private val token: String
         get() = Discord.token
 
-    private fun handleEvent(content: DataObject) {
-        try {
-            onEvent(content)
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-        }
-    }
-
-    private fun onEvent(content: DataObject) {
-        val opCode = content.getInt("op")
-        if (!content.isNull("s")) Discord.setResponseTotal(content.getInt("s"))
-        when (opCode) {
-            WebSocketCode.DISPATCH -> onDispatch(content)
-            WebSocketCode.HEARTBEAT -> sendKeepAlive()
-            WebSocketCode.RECONNECT -> close(4000, "OP 7: RECONNECT")
-            WebSocketCode.INVALIDATE_SESSION -> {
-                handleIdentifyRateLimit =
-                    handleIdentifyRateLimit && System.currentTimeMillis() - identifyTime < IDENTIFY_BACKOFF
-                sentAuthInfo = false
-                val isResume = content.getBoolean("d", false)
-                val closeCode = if (isResume) 4000 else 1000
-                if (!isResume) {
-                    invalidate()
-                }
-                close(closeCode, INVALIDATE_REASON)
-            }
-            WebSocketCode.HELLO -> {
-                val data = content.getObject("d")
-                setupKeepAlive(data.getLong("heartbeat_interval"))
-            }
-        }
-    }
-
     private fun onDispatch(raw: DataObject) {
-        val type = raw.getString("t")
-        val responseTotal = Discord.responseTotal
-        if (raw["d"] !is Map<*, *>) {
-            return
-        }
-        val content = raw.getObject("d")
+        val type = raw.getStringOrThrow("t")
+        val responseTotal = Discord.responseTotal.toLong()
+        if (raw.get("d") !is Map<*, *>) return
+        val content = raw.getContainerOrThrow("d")
         try {
             when (type) {
                 "READY" -> {
@@ -363,7 +355,7 @@ object WebSocketClient: WebSocketAdapter(), WebSocketListener {
                     Discord.status = Discord.Status.LOADING_SUBSYSTEMS
                     processingReady = true
                     handleIdentifyRateLimit = false
-                    sessionId = content.getString("session_id")
+                    sessionId = content.getStringOrThrow("session_id")
                 }
                 "RESUMED" -> {
                     reconnectTimeoutS = 2
@@ -388,16 +380,18 @@ object WebSocketClient: WebSocketAdapter(), WebSocketListener {
     override fun onBinaryMessage(
         websocket: WebSocket, binary: ByteArray
     ) {
-        val json = synchronized(readLock) { handleBinary(binary) }
-        json?.let { handleEvent(it) }
+        val json = synchronized(readLock) { handleBinary(binary) } ?: return
+        try {
+            onEvent(json)
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
     }
 
     @Throws(DataFormatException::class)
     private fun handleBinary(binary: ByteArray): DataObject? {
-        val json: String?
-        try {
-            json = ZlibDecompressor.decompress(binary)
-            if (json == null) return null
+        val json = try {
+            ZlibDecompressor.decompress(binary) ?: return null
         } catch (ex: DataFormatException) {
             close(4000, "MALFORMED_PACKAGE")
             throw ex
@@ -405,19 +399,31 @@ object WebSocketClient: WebSocketAdapter(), WebSocketListener {
         return DataObject.fromJson(json)
     }
 
-    fun maybeUnlock() {
-        if (queueLock.isHeldByCurrentThread) queueLock.unlock()
+    private fun onEvent(content: DataObject) {
+        val opCode = content.getIntOrThrow("op")
+        content.getInt("s")?.let { Discord.responseTotal = it }
+        when (opCode) {
+            WebSocketCode.DISPATCH -> onDispatch(content)
+            WebSocketCode.HEARTBEAT -> sendKeepAlive()
+            WebSocketCode.RECONNECT -> close(4000, "OP 7: RECONNECT")
+            WebSocketCode.INVALIDATE_SESSION -> {
+                handleIdentifyRateLimit =
+                    handleIdentifyRateLimit && System.currentTimeMillis() - identifyTime < IDENTIFY_BACKOFF
+                sentAuthInfo = false
+                val isResume = content.getBoolean("d") ?: false
+                val closeCode = if (isResume) 4000 else 1000
+                if (!isResume) invalidate()
+                close(closeCode, INVALIDATE_REASON)
+            }
+            WebSocketCode.HELLO -> {
+                val data = content.getContainerOrThrow("d")
+                setupKeepAlive(data.getLongOrThrow("heartbeat_interval"))
+            }
+        }
     }
 
-    private fun locked(task: Runnable) {
-        try {
-            queueLock.lockInterruptibly()
-            task.run()
-        } catch (ex: InterruptedException) {
-            ex.printStackTrace()
-        } finally {
-            maybeUnlock()
-        }
+    fun maybeUnlock() {
+        if (queueLock.isHeldByCurrentThread) queueLock.unlock()
     }
 
     private fun <T> locked(task: Supplier<T>) {

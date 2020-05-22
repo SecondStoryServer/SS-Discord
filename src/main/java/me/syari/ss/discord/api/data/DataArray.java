@@ -47,7 +47,7 @@ public class DataArray implements Iterable<Object> {
         }
         if (child == null)
             throw valueError(index, "DataObject");
-        return new DataObject(child);
+        return new DataObject(new DataContainer(child));
     }
 
     public long getLong(int index) {
@@ -60,7 +60,7 @@ public class DataArray implements Iterable<Object> {
     @NotNull
     public DataArray add(@Nullable Object value) {
         if (value instanceof DataObject)
-            data.add(((DataObject) value).toData().data);
+            data.add(((DataObject) value).toData().getData());
         else if (value instanceof DataArray)
             data.add(((DataArray) value).data);
         else

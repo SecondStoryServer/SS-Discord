@@ -16,6 +16,7 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:4.7.1")
     implementation("net.sf.trove4j:trove4j:3.0.3")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.11.0")
+    implementation("com.google.code.gson:gson:2.8.0")
 }
 
 tasks {

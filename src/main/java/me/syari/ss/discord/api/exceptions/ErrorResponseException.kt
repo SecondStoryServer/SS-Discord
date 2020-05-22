@@ -23,11 +23,11 @@ class ErrorResponseException private constructor(
                 code = response.code
                 meaning = response.exception?.javaClass?.name ?: "null"
             } else if (dataObject != null) {
-                val isNullCode = dataObject.isNull("code")
-                val isNullMessage = dataObject.isNull("message")
-                if (!isNullCode || !isNullMessage) {
-                    if (!isNullCode) code = dataObject.getInt("code")
-                    if (!isNullMessage) meaning = dataObject.getString("message")
+                val nullableCode = dataObject.getInt("code")
+                val nullableMessage = dataObject.getString("message")
+                if (nullableCode != null || nullableMessage != null) {
+                    if (nullableCode != null) code = nullableCode
+                    if (nullableMessage != null) meaning = nullableMessage
                 } else {
                     code = response.code
                     meaning = dataObject.toString()

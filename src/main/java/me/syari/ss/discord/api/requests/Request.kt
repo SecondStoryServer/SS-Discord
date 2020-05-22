@@ -6,7 +6,6 @@ import me.syari.ss.discord.api.exceptions.ContextException.from
 import me.syari.ss.discord.api.exceptions.ErrorResponseException.Companion.create
 import me.syari.ss.discord.api.exceptions.RateLimitedException
 import me.syari.ss.discord.api.requests.ErrorResponse.Companion.fromJSON
-import me.syari.ss.discord.internal.Discord
 import me.syari.ss.discord.internal.requests.CallbackContext
 import me.syari.ss.discord.internal.requests.RestAction
 import me.syari.ss.discord.internal.requests.Route

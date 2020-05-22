@@ -10,7 +10,7 @@ abstract class SocketHandler {
     fun handle(responseTotal: Long, dataObject: DataObject) {
         allContent = dataObject
         responseNumber = responseTotal
-        val guildId = handleInternally(dataObject.getObject("d"))
+        val guildId = handleInternally(dataObject.getContainerOrThrow("d"))
         if (guildId != null) GuildSetupController.cacheEvent(guildId, dataObject)
         allContent = null
     }
