@@ -16,7 +16,7 @@ class Message(
             for (user in mentionedUser) {
                 val member = guild.getMember(user)
                 val name = member?.displayName ?: user.name
-                contentDisplay = contentDisplay.replace("<@!?${user.id}>", "@$name")
+                contentDisplay = contentDisplay.replace("<@!?${user.id}>".toRegex(), "@$name")
             }
             for (emote in emotes) {
                 contentDisplay = contentDisplay.replace(emote.asMention, ":${emote.name}:")
@@ -26,6 +26,9 @@ class Message(
             }
             for (mentionedRole in mentionedRoles) {
                 contentDisplay = contentDisplay.replace(mentionedRole.asMention, "@${mentionedRole.name}")
+            }
+            for (replace in replaceMap) {
+                contentDisplay = contentDisplay.replace(replace.key, replace.value)
             }
             contentDisplay
         }
@@ -115,6 +118,11 @@ class Message(
                 throw NumberFormatException("The specified ID is not a valid snowflake ($input). Expecting a valid long value!")
             }
         }
+
+        private val replaceMap = mapOf(
+            "@here" to "\\@here",
+            "@everyone" to "\\@everyone"
+        )
     }
 
 }
