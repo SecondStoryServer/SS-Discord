@@ -153,7 +153,7 @@ object RateLimiter {
         route: Route
     ): Bucket {
         return locked {
-            val bucketId = route.method.toString() + "/" + route.baseRoute + ":" + route.majorParameters
+            val bucketId = "${route.method}/${route.baseRoute}:${route.majorParameters}"
             bucket[bucketId] ?: Bucket(bucketId).also {
                 this.bucket[bucketId] = it
             }

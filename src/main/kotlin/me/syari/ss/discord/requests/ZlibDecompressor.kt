@@ -98,11 +98,10 @@ object ZlibDecompressor {
                 return buffer.toString("UTF-8")
             }
         } catch (ex: IOException) {
-            throw (DataFormatException("Malformed").initCause(ex) as DataFormatException)
+            throw DataFormatException("Malformed").initCause(ex) as DataFormatException
         } finally {
             if (maxBufferSize < buffer.size()) {
-                decompressBuffer =
-                    newDecompressBuffer()
+                decompressBuffer = newDecompressBuffer()
             } else {
                 buffer.reset()
             }

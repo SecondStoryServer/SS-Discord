@@ -17,12 +17,12 @@ class Request<T>(
     var isCanceled = false
         private set
 
-    fun onSuccess(successObj: T?) {
-        if (successObj == null) return
+    fun onSuccess(successObject: T?) {
+        if (successObject == null) return
         ThreadConfig.callbackPool.execute {
             try {
                 ThreadLocalReason.closable(localReason).use {
-                    CallbackContext.instance.use { onSuccess.invoke(successObj) }
+                    CallbackContext.instance.use { onSuccess.invoke(successObject) }
                 }
             } catch (ex: Throwable) {
                 ex.printStackTrace()

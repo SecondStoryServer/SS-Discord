@@ -72,7 +72,7 @@ object SessionController {
         }
 
         private fun processQueue() {
-            var isMultiple = connectQueue.size > 1
+            var isMultiple = 1 < connectQueue.size
             while (!connectQueue.isEmpty()) {
                 val node = connectQueue.poll()
                 try {
