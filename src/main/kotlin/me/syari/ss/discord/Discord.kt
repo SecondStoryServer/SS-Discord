@@ -1,24 +1,22 @@
 package me.syari.ss.discord
 
-import com.neovisionaries.ws.client.WebSocketFactory
 import me.syari.ss.discord.data.DataContainer
+import me.syari.ss.discord.entities.Message
 import me.syari.ss.discord.exceptions.RateLimitedException
+import me.syari.ss.discord.requests.RateLimiter
 import me.syari.ss.discord.requests.Request
 import me.syari.ss.discord.requests.Response
-import me.syari.ss.discord.entities.Message
-import me.syari.ss.discord.requests.RateLimiter
-import me.syari.ss.discord.requests.Requester
 import me.syari.ss.discord.requests.RestAction
 import me.syari.ss.discord.requests.Route.Companion.selfRoute
 import me.syari.ss.discord.requests.SessionController
 import me.syari.ss.discord.requests.WebSocketClient
-import me.syari.ss.discord.utils.ThreadingConfig
-import okhttp3.OkHttpClient
+import me.syari.ss.discord.requests.ThreadConfig
 import java.util.concurrent.ExecutionException
 import javax.security.auth.login.LoginException
 
 object Discord {
     internal lateinit var token: String
+        private set
     private lateinit var messageReceivedEvent: Discord.(MessageReceivedEvent) -> Unit
 
     @Throws(LoginException::class, InterruptedException::class)
@@ -33,20 +31,17 @@ object Discord {
         awaitStatus(Status.CONNECTED)
     }
 
-    private val shutdownHook = Thread(Runnable { shutdown() }, "SS-Discord Shutdown Hook")
-    val httpClient = OkHttpClient.Builder().build()
-    val webSocketFactory = WebSocketFactory()
+    private val shutdownHook = Thread({ shutdown() }, "SS-Discord Shutdown Hook")
     var status = Status.INITIALIZING
         set(value) {
             synchronized(field) { field = value }
         }
-    var responseTotal: Int = 0
     var gatewayUrl: String? = null
         private set
 
     @Throws(LoginException::class)
     private fun login() {
-        ThreadingConfig.init()
+        ThreadConfig.init()
         RateLimiter.init()
         resetGatewayUrl()
         status = Status.LOGGING_IN
@@ -117,8 +112,8 @@ object Discord {
     @Synchronized
     fun shutdownInternals() {
         if (status == Status.SHUTDOWN) return
-        Requester.shutdown()
-        ThreadingConfig.shutdown()
+        RateLimiter.shutdown()
+        ThreadConfig.shutdown()
         try {
             Runtime.getRuntime().removeShutdownHook(shutdownHook)
         } catch (ex: Exception) {
@@ -128,7 +123,7 @@ object Discord {
     }
 
     fun resetGatewayUrl() {
-        gatewayUrl = SessionController.getGateway()
+        gatewayUrl = SessionController.gateway
     }
 
     enum class Status(val isInit: Boolean) {

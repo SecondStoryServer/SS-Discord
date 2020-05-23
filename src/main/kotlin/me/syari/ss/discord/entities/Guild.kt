@@ -1,8 +1,6 @@
 package me.syari.ss.discord.entities
 
-import java.lang.Long.hashCode
-
-class Guild(
+data class Guild(
     override val idLong: Long, private val name: String
 ): WithId {
     companion object {
@@ -61,19 +59,4 @@ class Guild(
     fun getRole(id: Long): Role? {
         return roleCache[id]
     }
-
-    override fun equals(other: Any?): Boolean {
-        if (other === this) return true
-        if (other !is Guild) return false
-        return idLong == other.idLong
-    }
-
-    override fun hashCode(): Int {
-        return hashCode(idLong)
-    }
-
-    override fun toString(): String {
-        return "Guild:$name($id)"
-    }
-
 }

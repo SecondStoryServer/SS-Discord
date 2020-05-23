@@ -1,4 +1,4 @@
-package me.syari.ss.discord.utils
+package me.syari.ss.discord.requests
 
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.ForkJoinPool
@@ -6,7 +6,7 @@ import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.ScheduledThreadPoolExecutor
 import java.util.concurrent.TimeUnit
 
-object ThreadingConfig {
+object ThreadConfig {
     lateinit var rateLimitPool: ScheduledExecutorService
         private set
     lateinit var gatewayPool: ScheduledExecutorService
@@ -36,7 +36,7 @@ object ThreadingConfig {
 
     private fun newScheduler(
         coreSize: Int, baseName: String
-    ): ScheduledThreadPoolExecutor {
-        return ScheduledThreadPoolExecutor(coreSize, CountingThreadFactory(baseName))
-    }
+    ) = ScheduledThreadPoolExecutor(coreSize,
+        CountingThreadFactory(baseName)
+    )
 }

@@ -2,8 +2,8 @@ package me.syari.ss.discord.entities
 
 import me.syari.ss.discord.data.DataContainer
 import me.syari.ss.discord.requests.Request
-import me.syari.ss.discord.requests.Response
 import me.syari.ss.discord.requests.Requester
+import me.syari.ss.discord.requests.Response
 import me.syari.ss.discord.requests.RestAction
 import me.syari.ss.discord.requests.Route
 import okhttp3.RequestBody

@@ -1,7 +1,7 @@
 package me.syari.ss.discord.handle
 
-import me.syari.ss.discord.data.DataContainer
 import me.syari.ss.discord.Discord
+import me.syari.ss.discord.data.DataContainer
 import me.syari.ss.discord.entities.EntityBuilder
 import me.syari.ss.discord.entities.TextChannel
 
@@ -18,17 +18,7 @@ object MessageCreateHandler: SocketHandler() {
             EntityBuilder.createMessage(content, channel)
         } catch (ex: IllegalArgumentException) {
             return when (ex.message) {
-                EntityBuilder.MISSING_CHANNEL -> {
-                    allContent?.let { allContent ->
-                        EventCache.cache(
-                            EventCache.Type.CHANNEL, channelId, responseNumber, allContent
-                        ) { responseTotal, dataObject ->
-                            handle(responseTotal, dataObject)
-                        }
-                    }
-                    null
-                }
-                EntityBuilder.UNKNOWN_MESSAGE_TYPE -> {
+                EntityBuilder.MISSING_CHANNEL, EntityBuilder.UNKNOWN_MESSAGE_TYPE -> {
                     null
                 }
                 else -> {

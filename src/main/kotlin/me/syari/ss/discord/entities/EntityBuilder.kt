@@ -112,6 +112,6 @@ object EntityBuilder {
             }
         }
         val content = messageData.getString("content") ?: ""
-        return Message(id, channel, content, user, member)
+        return Message(channel, content, user, member)
     }
 }

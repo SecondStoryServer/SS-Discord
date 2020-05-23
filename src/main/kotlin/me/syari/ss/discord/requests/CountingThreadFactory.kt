@@ -1,4 +1,4 @@
-package me.syari.ss.discord.utils
+package me.syari.ss.discord.requests
 
 import java.util.concurrent.ThreadFactory
 import java.util.concurrent.atomic.AtomicLong

@@ -1,4 +1,4 @@
-package me.syari.ss.discord.utils
+package me.syari.ss.discord.requests
 
 import okhttp3.internal.and
 import java.io.ByteArrayOutputStream
@@ -25,7 +25,8 @@ object ZlibDecompressor {
     }
 
     private fun getDecompressBuffer(): ByteArrayOutputStream {
-        val notNullDecompressBuffer = decompressBuffer ?: {
+        val notNullDecompressBuffer = decompressBuffer
+            ?: {
             newDecompressBuffer().apply {
                 decompressBuffer = this
             }
@@ -43,7 +44,8 @@ object ZlibDecompressor {
 
     private fun isFlush(data: ByteArray): Boolean {
         if (data.size < 4) return false
-        val suffix = getIntBigEndian(data, data.size - 4)
+        val suffix =
+            getIntBigEndian(data, data.size - 4)
         return suffix == Z_SYNC_FLUSH
     }
 
@@ -61,7 +63,11 @@ object ZlibDecompressor {
         }.invoke()
         if (notNullFlushBuffer.capacity() < data.size + notNullFlushBuffer.position()) {
             notNullFlushBuffer.flip()
-            flushBuffer = reallocate(notNullFlushBuffer, (notNullFlushBuffer.capacity() + data.size) * 2)
+            flushBuffer =
+                reallocate(
+                    notNullFlushBuffer,
+                    (notNullFlushBuffer.capacity() + data.size) * 2
+                )
         }
         notNullFlushBuffer.put(data)
     }
@@ -82,7 +88,7 @@ object ZlibDecompressor {
                 val arr = flushBuffer.array()
                 dataAsMutable = ByteArray(flushBuffer.position())
                 System.arraycopy(arr, 0, dataAsMutable, 0, dataAsMutable.size)
-                this.flushBuffer = null
+                ZlibDecompressor.flushBuffer = null
             }
         }
         val buffer = getDecompressBuffer()
@@ -95,7 +101,8 @@ object ZlibDecompressor {
             throw (DataFormatException("Malformed").initCause(ex) as DataFormatException)
         } finally {
             if (maxBufferSize < buffer.size()) {
-                decompressBuffer = newDecompressBuffer()
+                decompressBuffer =
+                    newDecompressBuffer()
             } else {
                 buffer.reset()
             }

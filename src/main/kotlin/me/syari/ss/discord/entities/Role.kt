@@ -1,8 +1,6 @@
 package me.syari.ss.discord.entities
 
-import java.lang.Long.hashCode
-
-class Role(
+data class Role(
     override val idLong: Long, val name: String
 ): WithId {
     companion object {
@@ -22,18 +20,4 @@ class Role(
     }
 
     val asMention = "<@&$idLong>"
-
-    override fun equals(other: Any?): Boolean {
-        if (other === this) return true
-        if (other !is Role) return false
-        return idLong == other.idLong
-    }
-
-    override fun hashCode(): Int {
-        return hashCode(idLong)
-    }
-
-    override fun toString(): String {
-        return "Role:$name($idLong)"
-    }
 }

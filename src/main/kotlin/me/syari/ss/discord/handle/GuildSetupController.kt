@@ -9,10 +9,10 @@ import gnu.trove.set.hash.TLongHashSet
 import me.syari.ss.discord.data.DataArray
 import me.syari.ss.discord.data.DataContainer
 import me.syari.ss.discord.requests.WebSocketClient
-import me.syari.ss.discord.requests.WebSocketCode
 
 object GuildSetupController {
     private const val CHUNK_TIMEOUT = 10000
+    private const val MEMBER_CHUNK_REQUEST = 8
     private val setupNodes: TLongObjectMap<GuildSetupNode> = TLongObjectHashMap()
     private val chunkingGuilds: TLongSet = TLongHashSet()
     private val pendingChunks: TLongLongMap = TLongLongHashMap()
@@ -86,7 +86,7 @@ object GuildSetupController {
             }
         }
         WebSocketClient.chunkOrSyncRequest(DataContainer().apply {
-            put("op", WebSocketCode.MEMBER_CHUNK_REQUEST)
+            put("op", MEMBER_CHUNK_REQUEST)
             put("d", DataContainer().apply {
                 put("guild_id", `object`)
                 put("query", "")
@@ -96,7 +96,7 @@ object GuildSetupController {
     }
 
     private fun tryChunking() {
-        if (chunkingGuilds.size() >= 50) {
+        if (50 <= chunkingGuilds.size()) {
             val subset = DataArray()
             val it = chunkingGuilds.iterator()
             while (subset.size < 50) {
@@ -105,7 +105,7 @@ object GuildSetupController {
             }
             sendChunkRequest(subset)
         }
-        if (incompleteCount > 0 && chunkingGuilds.size() >= incompleteCount) {
+        if(incompleteCount in 1..chunkingGuilds.size()) {
             val array = DataArray()
             chunkingGuilds.forEach { guild: Long ->
                 array.add(guild)

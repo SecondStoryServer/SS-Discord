@@ -3,22 +3,19 @@ package me.syari.ss.discord.requests
 import com.neovisionaries.ws.client.WebSocket
 import com.neovisionaries.ws.client.WebSocketAdapter
 import com.neovisionaries.ws.client.WebSocketException
+import com.neovisionaries.ws.client.WebSocketFactory
 import com.neovisionaries.ws.client.WebSocketFrame
 import com.neovisionaries.ws.client.WebSocketListener
-import me.syari.ss.discord.requests.SessionController.SessionConnectNode
+import me.syari.ss.discord.Discord
 import me.syari.ss.discord.data.DataArray
 import me.syari.ss.discord.data.DataContainer
-import me.syari.ss.discord.requests.CloseCode.Companion.from
-import me.syari.ss.discord.Discord
-import me.syari.ss.discord.handle.EventCache
 import me.syari.ss.discord.handle.GuildCreateHandler
 import me.syari.ss.discord.handle.GuildSetupController
 import me.syari.ss.discord.handle.MessageCreateHandler
-import me.syari.ss.discord.utils.ThreadingConfig
-import me.syari.ss.discord.utils.ZlibDecompressor
+import me.syari.ss.discord.requests.CloseCode.Companion.from
+import me.syari.ss.discord.requests.SessionController.SessionConnectNode
 import java.io.IOException
 import java.net.URI
-import java.util.Objects
 import java.util.Queue
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.Future
@@ -31,6 +28,14 @@ import java.util.zip.DataFormatException
 object WebSocketClient: WebSocketAdapter(), WebSocketListener {
     private const val DISCORD_GATEWAY_VERSION = 6
     private const val INVALIDATE_REASON = "INVALIDATE_SESSION"
+    private const val DISPATCH = 0
+    private const val HEARTBEAT = 1
+    private const val IDENTIFY = 2
+    private const val RESUME = 6
+    private const val RECONNECT = 7
+    private const val INVALIDATE_SESSION = 9
+    private const val HELLO = 10
+    private val webSocketFactory = WebSocketFactory()
     private val IDENTIFY_BACKOFF = TimeUnit.SECONDS.toMillis(SessionController.IDENTIFY_DELAY.toLong())
     private var socket: WebSocket? = null
     private var sessionId: String? = null
@@ -40,22 +45,17 @@ object WebSocketClient: WebSocketAdapter(), WebSocketListener {
     private var initiating = false
     private var reconnectTimeoutS = 2
     private var identifyTime: Long = 0
-
-    @Volatile
-    private var ratelimitResetTime = 0L
+    @Volatile private var ratelimitResetTime = 0L
     private val messagesSent = AtomicInteger(0)
-
-    @Volatile
-    private var shutdown = false
+    @Volatile private var shutdown = false
     private var shouldReconnect = true
     private var handleIdentifyRateLimit = false
     private var connected = false
     private var processingReady = true
+    @Volatile private var connectNode: SessionConnectNode? = null
+    private var responseTotal = 0
 
-    @Volatile
-    private var connectNode: SessionConnectNode? = null
-
-    val executor = ThreadingConfig.gatewayPool
+    val executor = ThreadConfig.gatewayPool
     val queueLock = ReentrantLock()
     val chunkSyncQueue: Queue<String> = ConcurrentLinkedQueue()
     val ratelimitQueue: Queue<String> = ConcurrentLinkedQueue()
@@ -136,7 +136,7 @@ object WebSocketClient: WebSocketAdapter(), WebSocketListener {
         initiating = true
         val url = Discord.gatewayUrl + "?encoding=json&v=" + DISCORD_GATEWAY_VERSION + "&compress=zlib-stream"
         try {
-            val socketFactory = Discord.webSocketFactory
+            val socketFactory = webSocketFactory
             val notNullSocket: WebSocket
             synchronized(socketFactory) {
                 val host = URI.create(url).host
@@ -181,14 +181,14 @@ object WebSocketClient: WebSocketAdapter(), WebSocketListener {
             put("\$referrer", "")
         }
         val payload = DataContainer().apply {
-            put("token", token)
+            put("token", Discord.token)
             put("properties", connectionProperties)
             put("v", DISCORD_GATEWAY_VERSION)
             put("guild_subscriptions", true)
             put("large_threshold", 250)
         }
         val identify = DataContainer().apply {
-            put("op", WebSocketCode.IDENTIFY)
+            put("op", IDENTIFY)
             put("d", payload)
         }
         payload.put("shard", DataArray().apply {
@@ -204,11 +204,11 @@ object WebSocketClient: WebSocketAdapter(), WebSocketListener {
 
     private fun sendResume() {
         val resume = DataContainer().apply {
-            put("op", WebSocketCode.RESUME)
+            put("op", RESUME)
             put("d", DataContainer().apply {
                 put("session_id", sessionId)
-                put("token", token)
-                put("seq", Discord.responseTotal.toLong())
+                put("token", Discord.token)
+                put("seq", responseTotal.toLong())
             })
         }
         send(resume.toString(), true)
@@ -306,8 +306,8 @@ object WebSocketClient: WebSocketAdapter(), WebSocketListener {
 
     private fun sendKeepAlive() {
         val keepAlivePacket = DataContainer().apply {
-            put("op", WebSocketCode.HEARTBEAT)
-            put("d", Discord.responseTotal.toLong()).toString()
+            put("op", HEARTBEAT)
+            put("d", responseTotal.toLong()).toString()
         }.toString()
         send(keepAlivePacket, true)
     }
@@ -316,16 +316,12 @@ object WebSocketClient: WebSocketAdapter(), WebSocketListener {
         sessionId = null
         sentAuthInfo = false
         locked { chunkSyncQueue.clear() }
-        EventCache.clear()
         GuildSetupController.clearCache()
     }
 
-    private val token: String
-        get() = Discord.token
-
     private fun onDispatch(raw: DataContainer) {
         val type = raw.getStringOrThrow("t")
-        val responseTotal = Discord.responseTotal.toLong()
+        val responseTotal = responseTotal.toLong()
         if (raw.get("d") !is Map<*, *>) return
         val content = raw.getContainerOrThrow("d")
         try {
@@ -347,13 +343,12 @@ object WebSocketClient: WebSocketAdapter(), WebSocketListener {
                         Discord.status = Discord.Status.LOADING_SUBSYSTEMS
                     }
                 }
-                "GUILD_CREATE" -> GuildCreateHandler.handle(responseTotal, raw)
-                "MESSAGE_CREATE" -> MessageCreateHandler.handle(responseTotal, raw)
+                "GUILD_CREATE" -> GuildCreateHandler.handle(raw)
+                "MESSAGE_CREATE" -> MessageCreateHandler.handle(raw)
             }
         } catch (ex: Exception) {
             ex.printStackTrace()
         }
-        if (responseTotal % EventCache.TIMEOUT_AMOUNT == 0L) EventCache.timeout(responseTotal)
     }
 
     @Throws(DataFormatException::class)
@@ -381,12 +376,12 @@ object WebSocketClient: WebSocketAdapter(), WebSocketListener {
 
     private fun onEvent(content: DataContainer) {
         val opCode = content.getIntOrThrow("op")
-        content.getInt("s")?.let { Discord.responseTotal = it }
+        content.getInt("s")?.let { responseTotal = it }
         when (opCode) {
-            WebSocketCode.DISPATCH -> onDispatch(content)
-            WebSocketCode.HEARTBEAT -> sendKeepAlive()
-            WebSocketCode.RECONNECT -> close(4000, "OP 7: RECONNECT")
-            WebSocketCode.INVALIDATE_SESSION -> {
+            DISPATCH -> onDispatch(content)
+            HEARTBEAT -> sendKeepAlive()
+            RECONNECT -> close(4000, "OP 7: RECONNECT")
+            INVALIDATE_SESSION -> {
                 handleIdentifyRateLimit =
                     handleIdentifyRateLimit && System.currentTimeMillis() - identifyTime < IDENTIFY_BACKOFF
                 sentAuthInfo = false
@@ -395,7 +390,7 @@ object WebSocketClient: WebSocketAdapter(), WebSocketListener {
                 if (!isResume) invalidate()
                 close(closeCode, INVALIDATE_REASON)
             }
-            WebSocketCode.HELLO -> {
+            HELLO -> {
                 val data = content.getContainerOrThrow("d")
                 setupKeepAlive(data.getLongOrThrow("heartbeat_interval"))
             }
@@ -431,14 +426,6 @@ object WebSocketClient: WebSocketAdapter(), WebSocketListener {
             } catch (ex: IllegalStateException) {
                 close()
             }
-        }
-
-        override fun hashCode(): Int {
-            return Objects.hash("C", Discord)
-        }
-
-        override fun equals(other: Any?): Boolean {
-            return if (other === this) true else other is StartingNode
         }
     }
 

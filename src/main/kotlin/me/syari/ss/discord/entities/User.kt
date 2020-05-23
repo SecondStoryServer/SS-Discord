@@ -1,8 +1,6 @@
 package me.syari.ss.discord.entities
 
-import java.lang.Long.hashCode
-
-class User(
+data class User(
     override val idLong: Long, var name: String, val isBot: Boolean
 ): WithId {
     companion object {
@@ -19,19 +17,5 @@ class User(
 
     init {
         userList[idLong] = this
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (other === this) return true
-        if (other !is User) return false
-        return idLong == other.idLong
-    }
-
-    override fun hashCode(): Int {
-        return hashCode(idLong)
-    }
-
-    override fun toString(): String {
-        return "User:$name($idLong)"
     }
 }

@@ -2,6 +2,7 @@ package me.syari.ss.discord.requests
 
 import me.syari.ss.discord.Discord
 import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.internal.http.HttpMethod.requiresRequestBody
 import java.net.SocketException
@@ -10,6 +11,7 @@ import javax.net.ssl.SSLPeerUnverifiedException
 
 object Requester {
     private const val DISCORD_API_PREFIX = "https://discordapp.com/api/v6/"
+    private val httpClient = OkHttpClient.Builder().build()
     private val EMPTY_BODY = ByteArray(0).toRequestBody()
     val MEDIA_TYPE_JSON = "application/json; charset=utf-8".toMediaType()
 
@@ -30,7 +32,7 @@ object Requester {
     ): Long? {
         val route = apiRequest.route
         var retryAfter: Long? = RateLimiter.getRateLimit(route)
-        if (retryAfter != null && retryAfter > 0) {
+        if (retryAfter != null && 0 < retryAfter) {
             if (handleOnRatelimit) apiRequest.handleResponse(Response(retryAfter))
             return retryAfter
         }
@@ -40,8 +42,12 @@ object Requester {
         val method = apiRequest.route.method.toString()
         var body = apiRequest.body
         if (body == null && requiresRequestBody(method)) body = EMPTY_BODY
-        builder.method(method, body).header("X-RateLimit-Precision", "millisecond").header("user-agent", "SS-Discord")
-            .header("accept-encoding", "gzip")
+        builder.apply {
+            method(method, body)
+            header("X-RateLimit-Precision", "millisecond")
+            header("user-agent", "SS-Discord")
+            header("accept-encoding", "gzip")
+        }
         if (url.startsWith(DISCORD_API_PREFIX)) builder.header("authorization", "Bot ${Discord.token}")
         val request = builder.build()
         val responses = arrayOfNulls<okhttp3.Response>(4)
@@ -50,7 +56,7 @@ object Requester {
             var attempt = 0
             var lastResponse: okhttp3.Response
             do {
-                val call = Discord.httpClient.newCall(request)
+                val call = httpClient.newCall(request)
                 lastResponse = call.execute()
                 nullableLastResponse = lastResponse
                 responses[attempt] = lastResponse
@@ -89,9 +95,5 @@ object Requester {
                 response?.close()
             }
         }
-    }
-
-    fun shutdown() {
-        RateLimiter.shutdown()
     }
 }

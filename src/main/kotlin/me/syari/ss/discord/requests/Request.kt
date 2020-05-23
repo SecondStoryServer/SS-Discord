@@ -3,7 +3,6 @@ package me.syari.ss.discord.requests
 import me.syari.ss.discord.exceptions.ErrorResponseException.Companion.create
 import me.syari.ss.discord.exceptions.RateLimitedException
 import me.syari.ss.discord.requests.ErrorResponse.Companion.fromJSON
-import me.syari.ss.discord.utils.ThreadingConfig
 import okhttp3.RequestBody
 
 class Request<T>(
@@ -20,7 +19,7 @@ class Request<T>(
 
     fun onSuccess(successObj: T?) {
         if (successObj == null) return
-        ThreadingConfig.callbackPool.execute {
+        ThreadConfig.callbackPool.execute {
             try {
                 ThreadLocalReason.closable(localReason).use {
                     CallbackContext.instance.use { onSuccess.invoke(successObj) }
@@ -40,7 +39,7 @@ class Request<T>(
     }
 
     fun onFailure(failException: Throwable) {
-        ThreadingConfig.callbackPool.execute {
+        ThreadConfig.callbackPool.execute {
             try {
                 ThreadLocalReason.closable(localReason).use {
                     CallbackContext.instance.use {

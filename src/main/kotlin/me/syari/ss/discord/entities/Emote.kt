@@ -1,8 +1,6 @@
 package me.syari.ss.discord.entities
 
-import java.lang.Long.hashCode
-
-class Emote(
+data class Emote(
     override val idLong: Long, val name: String, private val isAnimated: Boolean
 ): WithId {
     companion object {
@@ -23,18 +21,4 @@ class Emote(
 
     val asMention: String
         get() = (if (isAnimated) "<a:" else "<:") + name + ":" + id + ">"
-
-    override fun equals(other: Any?): Boolean {
-        if (other === this) return true
-        if (other !is Emote) return false
-        return idLong == other.idLong && name == other.name
-    }
-
-    override fun hashCode(): Int {
-        return hashCode(idLong)
-    }
-
-    override fun toString(): String {
-        return "Emote:$name($idLong)"
-    }
 }

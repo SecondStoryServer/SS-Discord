@@ -6,21 +6,21 @@ import java.util.concurrent.CompletableFuture
 class RestFuture<T>(
     restAction: RestAction<T>, shouldQueue: Boolean, data: RequestBody?, route: Route
 ): CompletableFuture<T>() {
-    private val request: Request<T>?
+    private val request: Request<T> = Request(
+        restAction,
+        { complete(it) },
+        { completeExceptionally(it) },
+        shouldQueue,
+        data,
+        route
+    )
+
     override fun cancel(mayInterrupt: Boolean): Boolean {
-        request?.cancel()
+        request.cancel()
         return !isDone && !isCancelled && super.cancel(mayInterrupt)
     }
 
     init {
-        request = Request(
-            restAction,
-            { complete(it) },
-            { completeExceptionally(it) },
-            shouldQueue,
-            data,
-            route
-        )
         Requester.request(request)
     }
 }

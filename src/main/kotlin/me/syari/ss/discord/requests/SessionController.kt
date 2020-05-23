@@ -10,7 +10,7 @@ object SessionController {
 
     private val lock = Any()
     private val connectQueue: Queue<SessionConnectNode> = ConcurrentLinkedQueue()
-    private val globalRatelimit = AtomicLong(Long.MIN_VALUE)
+    private val globalRatelimitInternal = AtomicLong(Long.MIN_VALUE)
     private var workerHandle: Thread? = null
     private var lastConnect = 0L
 
@@ -24,20 +24,19 @@ object SessionController {
         connectQueue.remove(node)
     }
 
-    fun getGlobalRatelimit(): Long {
-        return globalRatelimit.get()
-    }
+    var globalRatelimit: Long
+        get() = globalRatelimitInternal.get()
+        set(value) {
+            globalRatelimitInternal.set(value)
+        }
 
-    fun setGlobalRatelimit(ratelimit: Long) {
-        globalRatelimit.set(ratelimit)
-    }
-
-    fun getGateway(): String {
-        val route = Route.gatewayRoute
-        return RestAction(route) { response: Response, _: Request<String> ->
-            response.dataObject.getStringOrThrow("url")
-        }.complete()
-    }
+    val gateway: String
+        get() {
+            val route = Route.gatewayRoute
+            return RestAction<String>(route) { response, _ ->
+                response.dataObject.getStringOrThrow("url")
+            }.complete()
+        }
 
     private fun runWorker() {
         synchronized(lock) {

@@ -7,7 +7,6 @@ import me.syari.ss.discord.data.DataArray
 import me.syari.ss.discord.data.DataContainer
 import me.syari.ss.discord.entities.EntityBuilder
 import me.syari.ss.discord.requests.WebSocketClient
-import java.lang.Long.hashCode
 
 class GuildSetupNode(private val id: Long) {
     private val cachedEvents = mutableListOf<DataContainer>()
@@ -17,19 +16,6 @@ class GuildSetupNode(private val id: Long) {
     private var expectedMemberCount = 1
     private var requestedChunk = true
     private var status = GuildSetupController.Status.INIT
-
-    override fun toString(): String {
-        return "GuildSetupNode[$id|$status]{expectedMemberCount=$expectedMemberCount, requestedChunk=$requestedChunk}"
-    }
-
-    override fun hashCode(): Int {
-        return hashCode(id)
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (other !is GuildSetupNode) return false
-        return other.id == id
-    }
 
     private fun updateStatus(status: GuildSetupController.Status) {
         if (status !== this.status) this.status = status
@@ -101,6 +87,5 @@ class GuildSetupNode(private val id: Long) {
         }
         updateStatus(GuildSetupController.Status.READY)
         WebSocketClient.handle(cachedEvents)
-        EventCache.playbackCache(EventCache.Type.GUILD, id)
     }
 }

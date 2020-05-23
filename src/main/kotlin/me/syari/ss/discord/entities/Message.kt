@@ -1,20 +1,21 @@
 package me.syari.ss.discord.entities
 
-import java.lang.Long.hashCode
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 class Message(
-    private val id: Long, val channel: TextChannel, private val content: String, val author: User, val member: Member?
+    val channel: TextChannel,
+    private val content: String,
+    val author: User,
+    val member: Member?
 ) {
     private val mutex = Any()
-    val guild = channel.guild
 
     val contentDisplay by lazy {
         synchronized(mutex) {
             var contentDisplay = content
             for (user in mentionedUser) {
-                val member = guild.getMember(user)
+                val member = channel.guild.getMember(user)
                 val name = member?.displayName ?: user.name
                 contentDisplay = contentDisplay.replace("<@!?${user.id}>".toRegex(), "@$name")
             }
@@ -54,7 +55,7 @@ class Message(
     private val mentionedRoles by lazy {
         processMentions(MentionType.ROLE) { matcher ->
             val roleId = parseSnowflake(matcher.group(1))
-            guild.getRole(roleId)
+            channel.guild.getRole(roleId)
         }
     }
 
@@ -85,20 +86,6 @@ class Message(
             }
         }
         return list
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (other === this) return true
-        if (other !is Message) return false
-        return id == other.id
-    }
-
-    override fun hashCode(): Int {
-        return hashCode(id)
-    }
-
-    override fun toString(): String {
-        return String.format("Message:$author:%.20s($id)", this)
     }
 
     private enum class MentionType(regex: String) {

@@ -1,6 +1,5 @@
 package me.syari.ss.discord.requests
 
-import me.syari.ss.discord.utils.ThreadingConfig
 import okhttp3.Response
 import java.util.Queue
 import java.util.concurrent.CancellationException
@@ -39,7 +38,7 @@ object RateLimiter {
     }
 
     private val scheduler: ScheduledExecutorService
-        get() = ThreadingConfig.rateLimitPool
+        get() = ThreadConfig.rateLimitPool
 
     private fun cleanup() {
         locked {
@@ -122,7 +121,7 @@ object RateLimiter {
                 if (global) {
                     val retryAfterHeader = headers[RETRY_AFTER_HEADER]
                     val retryAfter = parseLong(retryAfterHeader)
-                    SessionController.setGlobalRatelimit(now + retryAfter)
+                    SessionController.globalRatelimit = now + retryAfter
                 } else if (response.code == 429) {
                     val retryAfterHeader = headers[RETRY_AFTER_HEADER]
                     val retryAfter = parseLong(retryAfterHeader)
@@ -194,7 +193,7 @@ object RateLimiter {
         val rateLimit: Long
             get() {
                 val now = System.currentTimeMillis()
-                val global = SessionController.getGlobalRatelimit()
+                val global = SessionController.globalRatelimit
                 if (now < global) return global - now
                 if (reset <= now) {
                     remaining = limit
