@@ -1,3 +1,3 @@
 package me.syari.ss.discord.exceptions
 
-class ParsingException(message: String?): IllegalStateException(message)
+class ParsingException internal constructor(message: String?): IllegalStateException(message)

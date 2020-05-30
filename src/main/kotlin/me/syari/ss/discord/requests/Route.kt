@@ -1,6 +1,6 @@
 package me.syari.ss.discord.requests
 
-class Route private constructor(
+internal class Route private constructor(
     val method: Method,
     val baseRoute: String,
     val route: String = baseRoute,

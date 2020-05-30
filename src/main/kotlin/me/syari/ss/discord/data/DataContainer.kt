@@ -5,7 +5,7 @@ import me.syari.ss.discord.exceptions.ParsingException
 import java.io.Reader
 import kotlin.reflect.KClass
 
-class DataContainer(init: Map<String, Any?> = emptyMap()) {
+internal class DataContainer(init: Map<String, Any?> = emptyMap()) {
     val data = init.toMutableMap()
 
     val keys

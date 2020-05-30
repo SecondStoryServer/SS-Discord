@@ -8,7 +8,7 @@ import me.syari.ss.discord.data.DataContainer
 import me.syari.ss.discord.entities.EntityBuilder
 import me.syari.ss.discord.requests.WebSocketClient
 
-class GuildSetupNode(private val id: Long) {
+internal class GuildSetupNode(private val id: Long) {
     private val cachedEvents = mutableListOf<DataContainer>()
     private var members = TLongObjectHashMap<DataContainer>()
     private var removedMembers: TLongSet? = null

@@ -1,6 +1,6 @@
 package me.syari.ss.discord.requests
 
-data class CloseCode(private val meaning: String, val isReconnect: Boolean) {
+internal data class CloseCode(private val meaning: String, val isReconnect: Boolean) {
     companion object {
         private val closeCodeMap = mapOf(
             1000 to CloseCode("The connection was closed gracefully or your heartbeats timed out.", true),

@@ -1,6 +1,6 @@
 package me.syari.ss.discord.requests
 
-class CallbackContext private constructor(): AutoCloseable {
+internal class CallbackContext private constructor(): AutoCloseable {
     override fun close() {
         callback.set(false)
     }

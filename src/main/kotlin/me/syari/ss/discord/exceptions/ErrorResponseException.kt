@@ -12,7 +12,7 @@ class ErrorResponseException private constructor(
         }
     }
 
-    companion object {
+    internal companion object {
         fun create(
             errorResponse: ErrorResponse, response: Response
         ): ErrorResponseException {

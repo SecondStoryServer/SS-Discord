@@ -5,7 +5,7 @@ import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicLong
 
-object SessionController {
+internal object SessionController {
     const val IDENTIFY_DELAY = 5
 
     private val lock = Any()

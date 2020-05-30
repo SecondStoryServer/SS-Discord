@@ -5,7 +5,7 @@ import me.syari.ss.discord.exceptions.RateLimitedException
 import me.syari.ss.discord.requests.ErrorResponse.Companion.fromJSON
 import okhttp3.RequestBody
 
-class Request<T>(
+internal class Request<T>(
     private val restAction: RestAction<T>,
     private val onSuccess: (T) -> Unit,
     private val onFailure: ((Throwable) -> Unit)?,

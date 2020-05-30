@@ -16,7 +16,7 @@ import java.util.zip.Inflater
 import java.util.zip.InflaterInputStream
 import java.util.zip.ZipException
 
-class Response(private val rawResponse: Response?, val code: Int, val retryAfter: Long): Closeable {
+internal class Response(private val rawResponse: Response?, val code: Int, val retryAfter: Long): Closeable {
     private var body: InputStream?
     private var fallbackString: String? = null
     private var anyData: Any? = null

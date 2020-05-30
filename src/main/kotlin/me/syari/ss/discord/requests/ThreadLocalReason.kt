@@ -1,6 +1,6 @@
 package me.syari.ss.discord.requests
 
-class ThreadLocalReason private constructor() {
+internal class ThreadLocalReason private constructor() {
     class Closable(reason: String?): AutoCloseable {
         private val previous = current
 

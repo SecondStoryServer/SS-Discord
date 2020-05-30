@@ -3,7 +3,7 @@ package me.syari.ss.discord.requests
 import okhttp3.RequestBody
 import java.util.concurrent.CompletableFuture
 
-class RestFuture<T>(
+internal class RestFuture<T>(
     restAction: RestAction<T>, shouldQueue: Boolean, data: RequestBody?, route: Route
 ): CompletableFuture<T>() {
     private val request: Request<T> = Request(

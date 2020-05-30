@@ -9,7 +9,7 @@ import java.net.SocketException
 import java.net.SocketTimeoutException
 import javax.net.ssl.SSLPeerUnverifiedException
 
-object Requester {
+internal object Requester {
     private const val DISCORD_API_PREFIX = "https://discordapp.com/api/v6/"
     private val httpClient = OkHttpClient.Builder().build()
     private val EMPTY_BODY = ByteArray(0).toRequestBody()

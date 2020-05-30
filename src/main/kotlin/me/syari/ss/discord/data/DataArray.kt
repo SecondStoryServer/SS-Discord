@@ -4,7 +4,7 @@ import me.syari.ss.discord.data.DataContainer.Companion.convertType
 import me.syari.ss.discord.data.DataContainer.Companion.toJson
 import kotlin.reflect.KClass
 
-class DataArray(init: List<Any?> = emptyList()): Iterable<Any?> {
+internal class DataArray(init: List<Any?> = emptyList()): Iterable<Any?> {
     val data = init.toMutableList()
 
     val size

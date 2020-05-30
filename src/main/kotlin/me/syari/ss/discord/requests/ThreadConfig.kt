@@ -6,7 +6,7 @@ import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.ScheduledThreadPoolExecutor
 import java.util.concurrent.TimeUnit
 
-object ThreadConfig {
+internal object ThreadConfig {
     lateinit var rateLimitPool: ScheduledExecutorService
         private set
     lateinit var gatewayPool: ScheduledExecutorService

@@ -3,7 +3,7 @@ package me.syari.ss.discord.entities
 import gnu.trove.set.hash.TLongHashSet
 import me.syari.ss.discord.data.DataContainer
 
-object EntityBuilder {
+internal object EntityBuilder {
     const val MISSING_CHANNEL = "MISSING_CHANNEL"
     const val UNKNOWN_MESSAGE_TYPE = "UNKNOWN_MESSAGE_TYPE"
 

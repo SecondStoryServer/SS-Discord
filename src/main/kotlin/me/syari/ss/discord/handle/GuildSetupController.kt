@@ -10,7 +10,7 @@ import me.syari.ss.discord.data.DataArray
 import me.syari.ss.discord.data.DataContainer
 import me.syari.ss.discord.requests.WebSocketClient
 
-object GuildSetupController {
+internal object GuildSetupController {
     private const val CHUNK_TIMEOUT = 10000
     private const val MEMBER_CHUNK_REQUEST = 8
     private val setupNodes: TLongObjectMap<GuildSetupNode> = TLongObjectHashMap()

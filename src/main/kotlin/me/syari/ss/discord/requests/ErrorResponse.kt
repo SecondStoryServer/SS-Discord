@@ -2,7 +2,7 @@ package me.syari.ss.discord.requests
 
 import me.syari.ss.discord.data.DataContainer
 
-data class ErrorResponse(val code: Int, val meaning: String) {
+internal data class ErrorResponse(val code: Int, val meaning: String) {
     companion object {
         private val errorCodeMap = mapOf(
             10001 to "Unknown Account",

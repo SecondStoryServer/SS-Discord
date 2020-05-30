@@ -7,7 +7,7 @@ import okhttp3.RequestBody
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ExecutionException
 
-open class RestAction<T>(
+internal open class RestAction<T>(
     private val route: Route, private val handler: ((Response, Request<T>) -> T)? = null
 ) {
     fun queue() {

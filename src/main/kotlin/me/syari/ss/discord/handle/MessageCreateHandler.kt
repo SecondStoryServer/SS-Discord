@@ -5,7 +5,7 @@ import me.syari.ss.discord.data.DataContainer
 import me.syari.ss.discord.entities.EntityBuilder
 import me.syari.ss.discord.entities.TextChannel
 
-object MessageCreateHandler: SocketHandler() {
+internal object MessageCreateHandler: SocketHandler() {
     override fun handleInternally(content: DataContainer): Long? {
         if (content.getIntOrThrow("type") != 0) return null
         val guildId = content.getLong("guild_id")

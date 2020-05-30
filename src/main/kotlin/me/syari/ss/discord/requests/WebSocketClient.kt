@@ -25,7 +25,7 @@ import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.locks.ReentrantLock
 import java.util.zip.DataFormatException
 
-object WebSocketClient: WebSocketAdapter(), WebSocketListener {
+internal object WebSocketClient: WebSocketAdapter(), WebSocketListener {
     private const val DISCORD_GATEWAY_VERSION = 6
     private const val INVALIDATE_REASON = "INVALIDATE_SESSION"
     private const val DISPATCH = 0

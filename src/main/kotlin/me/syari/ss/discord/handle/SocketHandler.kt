@@ -2,7 +2,7 @@ package me.syari.ss.discord.handle
 
 import me.syari.ss.discord.data.DataContainer
 
-abstract class SocketHandler {
+internal abstract class SocketHandler {
     @Synchronized
     fun handle(dataObject: DataContainer) {
         val guildId = handleInternally(dataObject.getContainerOrThrow("d"))

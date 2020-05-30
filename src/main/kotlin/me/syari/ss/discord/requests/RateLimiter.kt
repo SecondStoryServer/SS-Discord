@@ -9,7 +9,7 @@ import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.locks.ReentrantLock
 
-object RateLimiter {
+internal object RateLimiter {
     private const val RESET_AFTER_HEADER = "X-RateLimit-Reset-After"
     private const val LIMIT_HEADER = "X-RateLimit-Limit"
     private const val REMAINING_HEADER = "X-RateLimit-Remaining"
