@@ -6,8 +6,8 @@ import java.util.regex.Pattern
 class Message(
     val channel: TextChannel,
     val content: String,
-    val author: User,
-    val member: Member?
+    val authorUser: User,
+    val authorMember: Member?
 ) {
     private val mutex = Any()
 

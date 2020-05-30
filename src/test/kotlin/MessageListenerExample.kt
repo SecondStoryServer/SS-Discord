@@ -13,7 +13,7 @@ object MessageListenerExample {
         try {
             println("init")
             init(token) { event ->
-                val authorUser = event.author
+                val authorUser = event.user
                 if (!authorUser.isBot) {
                     val authorMember = event.member ?: return@init
                     val name = authorMember.displayName
