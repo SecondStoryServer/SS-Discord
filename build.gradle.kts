@@ -6,17 +6,23 @@ plugins {
 group = "me.syari.ss.discord"
 version = "1.0"
 
+val ssMavenRepoURL: String by extra
+
 repositories {
     mavenCentral()
     jcenter()
     maven {
         url = uri("https://papermc.io/repo/repository/maven-public/")
     }
+    maven {
+        url = uri(ssMavenRepoURL)
+    }
 }
 
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("com.destroystokyo.paper:paper-api:1.15.2-R0.1-SNAPSHOT")
+    implementation("me.syari.ss.core:SS-Core:2.9")
     implementation("com.google.code.gson:gson:2.8.0")
     compileOnly("com.neovisionaries:nv-websocket-client:2.9")
     compileOnly("com.squareup.okhttp3:okhttp:4.7.1")

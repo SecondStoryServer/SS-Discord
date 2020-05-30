@@ -17,7 +17,7 @@ object MessageListenerExample {
                 if (!authorUser.isBot) {
                     val authorMember = event.member ?: return@init
                     val name = authorMember.displayName
-                    val message = event.message.contentDisplay
+                    val message = event.contentDisplay
                     val channel = event.channel
                     channel.sendMessage("$name: $message")
                     sendMessageCount++

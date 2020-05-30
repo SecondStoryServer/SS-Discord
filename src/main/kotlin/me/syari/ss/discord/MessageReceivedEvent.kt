@@ -1,16 +1,11 @@
 package me.syari.ss.discord
 
-import me.syari.ss.discord.entities.Member
 import me.syari.ss.discord.entities.Message
-import me.syari.ss.discord.entities.TextChannel
-import me.syari.ss.discord.entities.User
 
-class MessageReceivedEvent(val message: Message) {
-    val channel: TextChannel = message.channel
-
-    val author: User
-        get() = message.author
-
-    val member: Member?
-        get() = message.member
+class MessageReceivedEvent(message: Message) {
+    val channel = message.channel
+    val author = message.author
+    val member = message.member
+    val content = message.content
+    val contentDisplay = message.contentDisplay
 }

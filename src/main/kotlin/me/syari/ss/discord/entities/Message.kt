@@ -5,7 +5,7 @@ import java.util.regex.Pattern
 
 class Message(
     val channel: TextChannel,
-    private val content: String,
+    val content: String,
     val author: User,
     val member: Member?
 ) {
