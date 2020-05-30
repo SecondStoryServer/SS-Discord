@@ -6,7 +6,7 @@ import javax.security.auth.login.LoginException
 object MessageListenerExample {
     private var sendMessageCount = 0
     private const val token = DiscordToken.BOT_TOKEN
-    private const val testChannel = 710828174686027790L
+    private const val testChannel = 716202262417899562L
 
     @JvmStatic
     fun main(args: Array<String>) {
