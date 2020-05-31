@@ -11,7 +11,7 @@ import okhttp3.RequestBody.Companion.toRequestBody
 
 class TextChannel(
     override val idLong: Long, val guild: Guild, val name: String
-): WithId {
+): WithId, Mentionable {
     companion object {
         private const val MAX_CONTENT_LENGTH = 2000
 
@@ -29,8 +29,9 @@ class TextChannel(
         }
     }
 
-    val asMention: String
-        get() = "<#$idLong>"
+    override val asMention = "<#$idLong>"
+
+    override val asDisplay = "#$name"
 
     fun sendMessage(text: String) {
         val length = text.length

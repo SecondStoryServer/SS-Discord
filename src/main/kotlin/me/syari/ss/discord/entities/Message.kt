@@ -19,14 +19,8 @@ class Message(
                 val name = member?.displayName ?: user.name
                 contentDisplay = contentDisplay.replace("<@!?${user.id}>".toRegex(), "@$name")
             }
-            for (emote in emotes) {
-                contentDisplay = contentDisplay.replace(emote.asMention, ":${emote.name}:")
-            }
-            for (mentionedChannel in mentionedChannels) {
-                contentDisplay = contentDisplay.replace(mentionedChannel.asMention, "#${mentionedChannel.name}")
-            }
-            for (mentionedRole in mentionedRoles) {
-                contentDisplay = contentDisplay.replace(mentionedRole.asMention, "@${mentionedRole.name}")
+            for (simpleMention in emotes + mentionedChannels + mentionedRoles) {
+                contentDisplay = contentDisplay.replace(simpleMention.asMention, simpleMention.asDisplay)
             }
             for (replace in replaceMap) {
                 contentDisplay = contentDisplay.replace(replace.key, replace.value)

@@ -2,7 +2,7 @@ package me.syari.ss.discord.entities
 
 internal data class Emote(
     override val idLong: Long, val name: String, private val isAnimated: Boolean
-): WithId {
+): WithId, Mentionable {
     companion object {
         private val emoteList = mutableMapOf<Long, Emote>()
 
@@ -19,6 +19,7 @@ internal data class Emote(
         emoteList[idLong] = this
     }
 
-    val asMention: String
-        get() = (if (isAnimated) "<a:" else "<:") + name + ":" + id + ">"
+    override val asMention = "${if (isAnimated) "<a:" else "<:"}$name:$id>"
+
+    override val asDisplay = ":$name:"
 }

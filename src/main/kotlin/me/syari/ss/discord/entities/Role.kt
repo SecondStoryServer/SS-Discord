@@ -2,7 +2,7 @@ package me.syari.ss.discord.entities
 
 data class Role(
     override val idLong: Long, val name: String
-): WithId {
+): WithId, Mentionable {
     companion object {
         private val roleList = mutableListOf<Role>()
 
@@ -19,5 +19,7 @@ data class Role(
         add(this)
     }
 
-    val asMention = "<@&$idLong>"
+    override val asMention = "<@&$idLong>"
+
+    override val asDisplay = "@$name"
 }
