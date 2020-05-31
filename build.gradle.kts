@@ -1,12 +1,16 @@
 plugins {
     kotlin("jvm") version "1.3.72"
     id("net.minecrell.plugin-yml.bukkit") version "0.3.0"
+    `maven-publish`
 }
 
 group = "me.syari.ss.discord"
 version = "1.0"
 
 val ssMavenRepoURL: String by extra
+val ssMavenRepoUploadURL: String by extra
+val ssMavenRepoUploadUser: String by extra
+val ssMavenRepoUploadPassword: String by extra
 
 repositories {
     mavenCentral()
@@ -51,4 +55,27 @@ val jar by tasks.getting(Jar::class) {
     from(configurations.compileOnly.get().map {
         if (it.isDirectory) it else zipTree(it)
     })
+}
+
+val sourceJar by tasks.registering(Jar::class) {
+    archiveClassifier.set("sources")
+    from(sourceSets.main.get().allJava.srcDirs)
+}
+
+publishing {
+    repositories {
+        maven {
+            url = uri(ssMavenRepoUploadURL)
+            credentials {
+                username = ssMavenRepoUploadUser
+                password = ssMavenRepoUploadPassword
+            }
+        }
+    }
+    publications {
+        create<MavenPublication>("maven") {
+            from(components["java"])
+            artifact(sourceJar.get())
+        }
+    }
 }
