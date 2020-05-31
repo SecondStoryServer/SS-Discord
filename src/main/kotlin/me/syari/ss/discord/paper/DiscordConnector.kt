@@ -15,6 +15,7 @@ object DiscordConnector: OnEnable {
                 Discord.init(token){ event ->
                     DiscordMessageReceiveEvent(event).callEvent()
                 }
+                Discord.awaitReady()
             }
         }
     }
