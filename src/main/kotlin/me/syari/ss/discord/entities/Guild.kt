@@ -38,16 +38,8 @@ data class Guild(
         return memberCache.getOrPut(id, run)
     }
 
-    private fun getMember(id: Long): Member? {
+    fun getMember(id: Long): Member? {
         return memberCache[id]
-    }
-
-    fun getMemberOrPut(user: User, run: () -> Member): Member {
-        return getMemberOrPut(user.idLong, run)
-    }
-
-    fun getMember(user: User): Member? {
-        return getMember(user.idLong)
     }
 
     private val roleCache = mutableMapOf<Long, Role>()

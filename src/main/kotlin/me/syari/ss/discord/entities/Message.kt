@@ -15,7 +15,7 @@ class Message(
         synchronized(mutex) {
             var contentDisplay = content
             for (user in mentionedUser) {
-                val member = channel.guild.getMember(user)
+                val member = channel.guild.getMember(user.idLong)
                 val name = member?.displayName ?: user.name
                 contentDisplay = contentDisplay.replace("<@!?${user.id}>".toRegex(), "@$name")
             }

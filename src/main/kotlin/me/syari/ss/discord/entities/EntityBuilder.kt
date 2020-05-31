@@ -35,7 +35,7 @@ internal object EntityBuilder {
 
     private fun createMember(guild: Guild, memberData: DataContainer): Member {
         val user = createUser(memberData.getContainerOrThrow("user"))
-        val member = guild.getMemberOrPut(user) { Member(guild, user) }
+        val member = guild.getMemberOrPut(user.idLong) { Member(guild, user) }
         if (memberData.contains("nick")) {
             val lastNickName = member.nickname
             val nickName = memberData.getString("nick")
@@ -106,7 +106,7 @@ internal object EntityBuilder {
                 } else {
                     val mentionedUser = createUser(mentionData)
                     mentionedUsersList.add(mentionedUser)
-                    val mentionedMember = guild.getMember(mentionedUser)
+                    val mentionedMember = guild.getMember(mentionedUser.idLong)
                     if (mentionedMember != null) mentionedMembersList.add(mentionedMember)
                 }
             }

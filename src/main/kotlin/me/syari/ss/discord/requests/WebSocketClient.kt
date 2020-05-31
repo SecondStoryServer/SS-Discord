@@ -321,7 +321,6 @@ internal object WebSocketClient: WebSocketAdapter(), WebSocketListener {
 
     private fun onDispatch(raw: DataContainer) {
         val type = raw.getStringOrThrow("t")
-        val responseTotal = responseTotal.toLong()
         if (raw.get("d") !is Map<*, *>) return
         val content = raw.getContainerOrThrow("d")
         try {
