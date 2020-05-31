@@ -17,6 +17,7 @@ import javax.security.auth.login.LoginException
 object Discord {
     internal lateinit var token: String
         private set
+
     private lateinit var messageReceivedEvent: Discord.(MessageReceivedEvent) -> Unit
 
     @Throws(LoginException::class, InterruptedException::class)
@@ -32,11 +33,13 @@ object Discord {
     }
 
     private val shutdownHook = Thread({ shutdown() }, "SS-Discord Shutdown Hook")
+
     var status = Status.INITIALIZING
-        set(value) {
+        internal set(value) {
             synchronized(field) { field = value }
         }
-    var gatewayUrl: String? = null
+
+    internal var gatewayUrl: String? = null
         private set
 
     @Throws(LoginException::class)
@@ -105,12 +108,12 @@ object Discord {
         shutdownInternals()
     }
 
-    fun callMessageReceiveEvent(message: Message) {
+    internal fun callMessageReceiveEvent(message: Message) {
         messageReceivedEvent.invoke(this, MessageReceivedEvent(message))
     }
 
     @Synchronized
-    fun shutdownInternals() {
+    internal fun shutdownInternals() {
         if (status == Status.SHUTDOWN) return
         RateLimiter.shutdown()
         ThreadConfig.shutdown()
@@ -122,7 +125,7 @@ object Discord {
         status = Status.SHUTDOWN
     }
 
-    fun resetGatewayUrl() {
+    internal fun resetGatewayUrl() {
         gatewayUrl = SessionController.gateway
     }
 
