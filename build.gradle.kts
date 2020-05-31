@@ -26,7 +26,7 @@ repositories {
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation("com.destroystokyo.paper:paper-api:1.15.2-R0.1-SNAPSHOT")
-    implementation("me.syari.ss.core:SS-Core:2.9")
+    implementation("me.syari.ss.core:SS-Core:2.10")
     implementation("com.google.code.gson:gson:2.8.0")
     compileOnly("com.neovisionaries:nv-websocket-client:2.9")
     compileOnly("com.squareup.okhttp3:okhttp:4.7.1"){

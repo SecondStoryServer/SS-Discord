@@ -10,7 +10,7 @@ import me.syari.ss.discord.Main.Companion.discordPlugin
 
 object DiscordConnector: OnEnable {
     override fun onEnable() {
-        config(discordPlugin, console, "config.yml"){
+        config(discordPlugin, console, "config.yml", default = mapOf("bot_token" to "")){
             val token = get("bot_token", ConfigDataType.STRING)
             if(token != null){
                 Discord.init(token){ event ->
