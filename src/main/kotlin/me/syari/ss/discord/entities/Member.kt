@@ -5,9 +5,9 @@ data class Member(
 ): WithId {
     var nickname: String? = null
 
-    val displayName: String
+    val displayName
         get() = (if (nickname != null) nickname else user.name) ?: "null"
 
-    override val idLong: Long
+    override val idLong
         get() = user.idLong
 }

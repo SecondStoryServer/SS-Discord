@@ -37,7 +37,7 @@ internal object RateLimiter {
         cleanupWorker = scheduler.scheduleAtFixedRate({ cleanup() }, 30, 30, TimeUnit.SECONDS)
     }
 
-    private val scheduler: ScheduledExecutorService
+    private val scheduler
         get() = ThreadConfig.rateLimitPool
 
     private fun cleanup() {

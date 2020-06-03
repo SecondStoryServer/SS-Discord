@@ -54,25 +54,25 @@ internal class Response(private val rawResponse: Response?, val code: Int, val r
         return data
     }
 
-    val dataObject: DataContainer
+    val dataObject
         get() = parseBody(DataContainer::class.java, JSON_SERIALIZE_OBJECT) ?: throw IllegalStateException()
 
     fun optObject(): DataContainer? {
         return parseBody(true, DataContainer::class.java, JSON_SERIALIZE_OBJECT)
     }
 
-    val string: String
+    val string
         get() = parseBody(String::class.java) { reader ->
             readString(reader)
         } ?: fallbackString ?: "N/A"
 
-    val isError: Boolean
+    val isError
         get() = code == ERROR_CODE
 
-    val isOk: Boolean
+    val isOk
         get() = code in 200..299
 
-    val isRateLimit: Boolean
+    val isRateLimit
         get() = code == 429
 
     override fun toString(): String {

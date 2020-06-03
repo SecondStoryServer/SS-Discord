@@ -44,11 +44,11 @@ internal class Request<T>(
                 ThreadLocalReason.closable(localReason).use {
                     CallbackContext.instance.use {
                         onFailure?.let {
-                            var cause: Throwable? = failException
-                            while (cause?.cause != null) {
-                                cause = cause.cause
+                            var cause = failException
+                            while (cause.cause != null) {
+                                cause = cause.cause!!
                             }
-                            cause?.initCause(Exception())
+                            cause.initCause(Exception())
                             onFailure.invoke(failException)
                         }
                     }

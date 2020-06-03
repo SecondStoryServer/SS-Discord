@@ -44,7 +44,7 @@ internal object WebSocketClient: WebSocketAdapter(), WebSocketListener {
     private var keepAliveThread: Future<*>? = null
     private var initiating = false
     private var reconnectTimeoutS = 2
-    private var identifyTime: Long = 0
+    private var identifyTime = 0L
     @Volatile
     private var ratelimitResetTime = 0L
     private val messagesSent = AtomicInteger(0)
@@ -60,8 +60,8 @@ internal object WebSocketClient: WebSocketAdapter(), WebSocketListener {
 
     val executor = ThreadConfig.gatewayPool
     val queueLock = ReentrantLock()
-    val chunkSyncQueue: Queue<String> = ConcurrentLinkedQueue()
-    val ratelimitQueue: Queue<String> = ConcurrentLinkedQueue()
+    val chunkSyncQueue = ConcurrentLinkedQueue<String>()
+    val ratelimitQueue = ConcurrentLinkedQueue<String>()
 
     @Volatile
     var sentAuthInfo = false
@@ -88,15 +88,11 @@ internal object WebSocketClient: WebSocketAdapter(), WebSocketListener {
         Discord.status = Discord.Status.CONNECTED
     }
 
-    val isReady: Boolean
+    val isReady
         get() = !initiating
 
     fun handle(events: List<DataContainer>) {
         events.forEach { onDispatch(it) }
-    }
-
-    fun chunkOrSyncRequest(request: DataContainer) {
-        locked { chunkSyncQueue.add(request.toString()) }
     }
 
     fun send(message: String?, skipQueue: Boolean): Boolean {

@@ -9,7 +9,7 @@ internal object SessionController {
     const val IDENTIFY_DELAY = 5
 
     private val lock = Any()
-    private val connectQueue: Queue<SessionConnectNode> = ConcurrentLinkedQueue()
+    private val connectQueue = ConcurrentLinkedQueue<SessionConnectNode>()
     private val globalRatelimitInternal = AtomicLong(Long.MIN_VALUE)
     private var workerHandle: Thread? = null
     private var lastConnect = 0L
