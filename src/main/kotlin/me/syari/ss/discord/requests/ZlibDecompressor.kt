@@ -47,12 +47,6 @@ internal object ZlibDecompressor {
         return suffix == Z_SYNC_FLUSH
     }
 
-    private fun reallocate(original: ByteBuffer?, length: Int): ByteBuffer {
-        val buffer = ByteBuffer.allocate(length)
-        buffer.put(original)
-        return buffer
-    }
-
     private fun buffer(data: ByteArray) {
         val notNullFlushBuffer = flushBuffer ?: {
             ByteBuffer.allocate(data.size * 2).apply {
@@ -61,9 +55,10 @@ internal object ZlibDecompressor {
         }.invoke()
         if (notNullFlushBuffer.capacity() < data.size + notNullFlushBuffer.position()) {
             notNullFlushBuffer.flip()
-            flushBuffer = reallocate(
-                notNullFlushBuffer, (notNullFlushBuffer.capacity() + data.size) * 2
-            )
+            val length = (notNullFlushBuffer.capacity() + data.size) * 2
+            flushBuffer = ByteBuffer.allocate(length).apply {
+                put(notNullFlushBuffer)
+            }
         }
         notNullFlushBuffer.put(data)
     }
