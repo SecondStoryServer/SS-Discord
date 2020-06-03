@@ -13,17 +13,7 @@ internal object GuildSetupController {
     private val unavailableGuilds = mutableSetOf<Long>()
     private var incompleteCount = 0
 
-    fun addGuildForChunking(id: Long) {
-        if (incompleteCount <= 0) {
-            sendChunkRequest(id)
-        } else {
-            incompleteCount++
-            chunkingGuilds.add(id)
-            tryChunking()
-        }
-    }
-
-    fun remove(id: Long) {
+    private fun remove(id: Long) {
         unavailableGuilds.remove(id)
         setupNodes.remove(id)
         chunkingGuilds.remove(id)
@@ -44,7 +34,7 @@ internal object GuildSetupController {
         var node = setupNodes[id]
         if (node == null) {
             node = GuildSetupNode(id)
-            setupNodes.put(id, node)
+            setupNodes[id] = node
         }
         node.handleCreate(obj)
     }
@@ -57,21 +47,21 @@ internal object GuildSetupController {
         synchronized(pendingChunks) { pendingChunks.clear() }
     }
 
-    private fun sendChunkRequest(`object`: Any) {
+    private fun sendChunkRequest(any: Any) {
         val timeout = System.currentTimeMillis() + CHUNK_TIMEOUT
         synchronized(pendingChunks) {
-            if (`object` is DataArray) {
-                for (o in `object`) {
-                    pendingChunks.put(o as Long, timeout)
+            if (any is DataArray) {
+                for (o in any) {
+                    pendingChunks[o as Long] = timeout
                 }
             } else {
-                pendingChunks.put(`object` as Long, timeout)
+                pendingChunks[any as Long] = timeout
             }
         }
         WebSocketClient.chunkOrSyncRequest(DataContainer().apply {
             put("op", MEMBER_CHUNK_REQUEST)
             put("d", DataContainer().apply {
-                put("guild_id", `object`)
+                put("guild_id", any)
                 put("query", "")
                 put("limit", 0)
             })
@@ -96,12 +86,5 @@ internal object GuildSetupController {
             chunkingGuilds.clear()
             sendChunkRequest(array)
         }
-    }
-
-    enum class Status {
-        INIT,
-        CHUNKING,
-        BUILDING,
-        READY
     }
 }
