@@ -49,10 +49,6 @@ internal open class RestAction<T>(
         return null
     }
 
-    private fun finalizeRoute(): Route? {
-        return route
-    }
-
     open fun handleResponse(
         response: Response, request: Request<T>
     ) {
