@@ -11,12 +11,6 @@ internal class GuildSetupNode(private val id: Long) {
     private val removedMembers = mutableSetOf<Long>()
     private var partialGuild: DataContainer? = null
     private var expectedMemberCount = 1
-    private var requestedChunk = true
-    private var status = GuildSetupController.Status.INIT
-
-    private fun updateStatus(status: GuildSetupController.Status) {
-        if (status !== this.status) this.status = status
-    }
 
     fun handleCreate(dataObject: DataContainer) {
         val notNulPartialGuild = partialGuild?.apply {
@@ -32,16 +26,7 @@ internal class GuildSetupNode(private val id: Long) {
         expectedMemberCount = notNulPartialGuild.getIntOrThrow("member_count")
         removedMembers.clear()
         val memberArray = notNulPartialGuild.getArrayOrThrow("members")
-        if (memberArray.size < expectedMemberCount && !requestedChunk) {
-            updateStatus(GuildSetupController.Status.CHUNKING)
-            GuildSetupController.addGuildForChunking(id)
-            requestedChunk = true
-        } else if (handleMemberChunk(memberArray) && !requestedChunk) {
-            members.clear()
-            updateStatus(GuildSetupController.Status.CHUNKING)
-            GuildSetupController.addGuildForChunking(id)
-            requestedChunk = true
-        }
+        handleMemberChunk(memberArray)
     }
 
     private fun handleMemberChunk(arr: DataArray): Boolean {
@@ -59,7 +44,6 @@ internal class GuildSetupNode(private val id: Long) {
     }
 
     private fun completeSetup() {
-        updateStatus(GuildSetupController.Status.BUILDING)
         val iterator = removedMembers.iterator()
         while (iterator.hasNext()) {
             members.remove(iterator.next())
@@ -67,7 +51,6 @@ internal class GuildSetupNode(private val id: Long) {
         removedMembers.clear()
         partialGuild?.let { EntityBuilder.createGuild(id, it) }
         GuildSetupController.ready(id)
-        updateStatus(GuildSetupController.Status.READY)
         WebSocketClient.handle(cachedEvents)
     }
 }
