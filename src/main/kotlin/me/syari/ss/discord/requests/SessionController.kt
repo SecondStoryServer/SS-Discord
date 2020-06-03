@@ -1,6 +1,5 @@
 package me.syari.ss.discord.requests
 
-import java.util.Queue
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicLong
@@ -42,8 +41,8 @@ internal object SessionController {
         synchronized(lock) {
             if (workerHandle == null) {
                 workerHandle = QueueWorker().apply {
-                        start()
-                    }
+                    start()
+                }
             }
         }
     }

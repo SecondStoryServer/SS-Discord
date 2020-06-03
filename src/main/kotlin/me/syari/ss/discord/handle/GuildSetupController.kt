@@ -18,7 +18,7 @@ internal object GuildSetupController {
     }
 
     fun onCreate(id: Long, obj: DataContainer) {
-        val node = setupNodes.getOrPut(id){ GuildSetupNode(id) }
+        val node = setupNodes.getOrPut(id) { GuildSetupNode(id) }
         node.handleCreate(obj)
     }
 

@@ -16,7 +16,6 @@ import me.syari.ss.discord.requests.CloseCode.Companion.from
 import me.syari.ss.discord.requests.SessionController.SessionConnectNode
 import java.io.IOException
 import java.net.URI
-import java.util.Queue
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.Future
 import java.util.concurrent.RejectedExecutionException
@@ -45,15 +44,18 @@ internal object WebSocketClient: WebSocketAdapter(), WebSocketListener {
     private var initiating = false
     private var reconnectTimeoutS = 2
     private var identifyTime = 0L
+
     @Volatile
     private var ratelimitResetTime = 0L
     private val messagesSent = AtomicInteger(0)
+
     @Volatile
     private var shutdown = false
     private var shouldReconnect = true
     private var handleIdentifyRateLimit = false
     private var connected = false
     private var processingReady = true
+
     @Volatile
     private var connectNode: SessionConnectNode? = null
     private var responseTotal = 0
