@@ -9,8 +9,8 @@ import me.syari.ss.discord.requests.Response
 import me.syari.ss.discord.requests.RestAction
 import me.syari.ss.discord.requests.Route.Companion.selfRoute
 import me.syari.ss.discord.requests.SessionController
-import me.syari.ss.discord.requests.WebSocketClient
 import me.syari.ss.discord.requests.ThreadConfig
+import me.syari.ss.discord.requests.WebSocketClient
 import java.util.concurrent.ExecutionException
 import javax.security.auth.login.LoginException
 
@@ -28,7 +28,7 @@ object Discord {
         login()
     }
 
-    fun awaitReady(){
+    fun awaitReady() {
         awaitStatus(Status.CONNECTED)
     }
 

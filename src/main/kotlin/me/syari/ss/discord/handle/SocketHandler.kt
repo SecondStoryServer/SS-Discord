@@ -5,9 +5,8 @@ import me.syari.ss.discord.data.DataContainer
 internal abstract class SocketHandler {
     @Synchronized
     fun handle(dataObject: DataContainer) {
-        val guildId = handleInternally(dataObject.getContainerOrThrow("d"))
-        if (guildId != null) GuildSetupController.cacheEvent(guildId, dataObject)
+        handleInternally(dataObject.getContainerOrThrow("d"))
     }
 
-    abstract fun handleInternally(content: DataContainer): Long?
+    abstract fun handleInternally(content: DataContainer)
 }

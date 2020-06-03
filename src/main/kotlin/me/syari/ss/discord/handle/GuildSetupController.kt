@@ -55,17 +55,6 @@ internal object GuildSetupController {
         node.handleCreate(obj)
     }
 
-    fun isLocked(id: Long): Boolean {
-        return setupNodes.containsKey(id)
-    }
-
-    fun cacheEvent(guildId: Long, event: DataContainer?) {
-        val node = setupNodes[guildId]
-        if (event != null) {
-            node.cacheEvent(event)
-        }
-    }
-
     fun clearCache() {
         setupNodes.clear()
         chunkingGuilds.clear()
@@ -74,7 +63,7 @@ internal object GuildSetupController {
         synchronized(pendingChunks) { pendingChunks.clear() }
     }
 
-    fun sendChunkRequest(`object`: Any) {
+    private fun sendChunkRequest(`object`: Any) {
         val timeout = System.currentTimeMillis() + CHUNK_TIMEOUT
         synchronized(pendingChunks) {
             if (`object` is DataArray) {
@@ -105,7 +94,7 @@ internal object GuildSetupController {
             }
             sendChunkRequest(subset)
         }
-        if(incompleteCount in 1..chunkingGuilds.size()) {
+        if (incompleteCount in 1..chunkingGuilds.size()) {
             val array = DataArray()
             chunkingGuilds.forEach { guild: Long ->
                 array.add(guild)

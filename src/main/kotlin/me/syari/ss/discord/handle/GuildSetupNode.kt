@@ -62,14 +62,6 @@ internal class GuildSetupNode(private val id: Long) {
         return true
     }
 
-    fun cacheEvent(event: DataContainer) {
-        cachedEvents.add(event)
-        val cacheSize = cachedEvents.size
-        if (2000 <= cacheSize && cacheSize % 1000 == 0 && status === GuildSetupController.Status.CHUNKING) {
-            GuildSetupController.sendChunkRequest(id)
-        }
-    }
-
     private fun completeSetup() {
         updateStatus(GuildSetupController.Status.BUILDING)
         removedMembers?.let { removedMembers ->

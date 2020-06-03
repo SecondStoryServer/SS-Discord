@@ -36,7 +36,7 @@ internal object ThreadConfig {
 
     private fun newScheduler(
         coreSize: Int, baseName: String
-    ) = ScheduledThreadPoolExecutor(coreSize,
-        CountingThreadFactory(baseName)
+    ) = ScheduledThreadPoolExecutor(
+        coreSize, CountingThreadFactory(baseName)
     )
 }

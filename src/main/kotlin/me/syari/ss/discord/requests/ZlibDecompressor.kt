@@ -25,8 +25,7 @@ internal object ZlibDecompressor {
     }
 
     private fun getDecompressBuffer(): ByteArrayOutputStream {
-        val notNullDecompressBuffer = decompressBuffer
-            ?: {
+        val notNullDecompressBuffer = decompressBuffer ?: {
             newDecompressBuffer().apply {
                 decompressBuffer = this
             }
@@ -44,8 +43,7 @@ internal object ZlibDecompressor {
 
     private fun isFlush(data: ByteArray): Boolean {
         if (data.size < 4) return false
-        val suffix =
-            getIntBigEndian(data, data.size - 4)
+        val suffix = getIntBigEndian(data, data.size - 4)
         return suffix == Z_SYNC_FLUSH
     }
 
@@ -63,11 +61,9 @@ internal object ZlibDecompressor {
         }.invoke()
         if (notNullFlushBuffer.capacity() < data.size + notNullFlushBuffer.position()) {
             notNullFlushBuffer.flip()
-            flushBuffer =
-                reallocate(
-                    notNullFlushBuffer,
-                    (notNullFlushBuffer.capacity() + data.size) * 2
-                )
+            flushBuffer = reallocate(
+                notNullFlushBuffer, (notNullFlushBuffer.capacity() + data.size) * 2
+            )
         }
         notNullFlushBuffer.put(data)
     }

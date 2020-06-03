@@ -45,14 +45,17 @@ internal object WebSocketClient: WebSocketAdapter(), WebSocketListener {
     private var initiating = false
     private var reconnectTimeoutS = 2
     private var identifyTime: Long = 0
-    @Volatile private var ratelimitResetTime = 0L
+    @Volatile
+    private var ratelimitResetTime = 0L
     private val messagesSent = AtomicInteger(0)
-    @Volatile private var shutdown = false
+    @Volatile
+    private var shutdown = false
     private var shouldReconnect = true
     private var handleIdentifyRateLimit = false
     private var connected = false
     private var processingReady = true
-    @Volatile private var connectNode: SessionConnectNode? = null
+    @Volatile
+    private var connectNode: SessionConnectNode? = null
     private var responseTotal = 0
 
     val executor = ThreadConfig.gatewayPool

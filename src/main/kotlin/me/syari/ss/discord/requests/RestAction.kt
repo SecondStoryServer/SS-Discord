@@ -12,7 +12,7 @@ internal open class RestAction<T>(
 ) {
     fun queue() {
         val data = finalizeData()
-        val request = Request(this, { } , { }, true, data, route)
+        val request = Request(this, { }, { }, true, data, route)
         Requester.request(request)
     }
 

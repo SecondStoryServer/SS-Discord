@@ -4,10 +4,7 @@ import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 class Message(
-    val channel: TextChannel,
-    val content: String,
-    val authorUser: User,
-    val authorMember: Member?
+    val channel: TextChannel, val content: String, val authorUser: User, val authorMember: Member?
 ) {
     private val mutex = Any()
 
@@ -101,8 +98,7 @@ class Message(
         }
 
         private val replaceMap = mapOf(
-            "@here" to "\\@here",
-            "@everyone" to "\\@everyone"
+            "@here" to "\\@here", "@everyone" to "\\@everyone"
         )
     }
 

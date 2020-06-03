@@ -41,10 +41,9 @@ internal object SessionController {
     private fun runWorker() {
         synchronized(lock) {
             if (workerHandle == null) {
-                workerHandle = QueueWorker()
-                    .apply {
-                    start()
-                }
+                workerHandle = QueueWorker().apply {
+                        start()
+                    }
             }
         }
     }
