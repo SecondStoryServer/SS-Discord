@@ -8,7 +8,6 @@ import me.syari.ss.discord.requests.WebSocketClient
 internal class GuildSetupNode(private val id: Long) {
     private val cachedEvents = mutableListOf<DataContainer>()
     private var members = mutableMapOf<Long, DataContainer>()
-    private val removedMembers = mutableSetOf<Long>()
     private var partialGuild: DataContainer? = null
     private var expectedMemberCount = 1
 
@@ -24,7 +23,6 @@ internal class GuildSetupNode(private val id: Long) {
         val unavailable = notNulPartialGuild.getBoolean("unavailable") ?: false
         if (unavailable) return
         expectedMemberCount = notNulPartialGuild.getIntOrThrow("member_count")
-        removedMembers.clear()
         val memberArray = notNulPartialGuild.getArrayOrThrow("members")
         handleMemberChunk(memberArray)
     }
@@ -44,11 +42,6 @@ internal class GuildSetupNode(private val id: Long) {
     }
 
     private fun completeSetup() {
-        val iterator = removedMembers.iterator()
-        while (iterator.hasNext()) {
-            members.remove(iterator.next())
-        }
-        removedMembers.clear()
         partialGuild?.let { EntityBuilder.createGuild(id, it) }
         GuildSetupController.ready(id)
         WebSocketClient.handle(cachedEvents)
