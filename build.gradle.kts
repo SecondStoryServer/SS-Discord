@@ -32,10 +32,8 @@ dependencies {
     compileOnly("com.squareup.okhttp3:okhttp:4.7.1"){
         exclude("org.jetbrains.kotlin")
     }
-    compileOnly("net.sf.trove4j:trove4j:3.0.3")
     testRuntimeOnly("com.neovisionaries:nv-websocket-client:2.9")
     testRuntimeOnly("com.squareup.okhttp3:okhttp:4.7.1")
-    testRuntimeOnly("net.sf.trove4j:trove4j:3.0.3")
 }
 
 tasks {

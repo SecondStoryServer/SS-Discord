@@ -1,8 +1,5 @@
 package me.syari.ss.discord.handle
 
-import gnu.trove.map.hash.TLongObjectHashMap
-import gnu.trove.set.TLongSet
-import gnu.trove.set.hash.TLongHashSet
 import me.syari.ss.discord.data.DataArray
 import me.syari.ss.discord.data.DataContainer
 import me.syari.ss.discord.entities.EntityBuilder
@@ -10,8 +7,8 @@ import me.syari.ss.discord.requests.WebSocketClient
 
 internal class GuildSetupNode(private val id: Long) {
     private val cachedEvents = mutableListOf<DataContainer>()
-    private var members = TLongObjectHashMap<DataContainer>()
-    private var removedMembers: TLongSet? = null
+    private var members = mutableMapOf<Long, DataContainer>()
+    private val removedMembers = mutableSetOf<Long>()
     private var partialGuild: DataContainer? = null
     private var expectedMemberCount = 1
     private var requestedChunk = true
@@ -33,8 +30,7 @@ internal class GuildSetupNode(private val id: Long) {
         val unavailable = notNulPartialGuild.getBoolean("unavailable") ?: false
         if (unavailable) return
         expectedMemberCount = notNulPartialGuild.getIntOrThrow("member_count")
-        members = TLongObjectHashMap(expectedMemberCount)
-        removedMembers = TLongHashSet()
+        removedMembers.clear()
         val memberArray = notNulPartialGuild.getArrayOrThrow("members")
         if (memberArray.size < expectedMemberCount && !requestedChunk) {
             updateStatus(GuildSetupController.Status.CHUNKING)
@@ -53,9 +49,9 @@ internal class GuildSetupNode(private val id: Long) {
         for (index in 0 until arr.size) {
             val obj = arr.getContainerOrThrow(index)
             val id = obj.getContainerOrThrow("user").getLongOrThrow("id")
-            members.put(id, obj)
+            members[id] = obj
         }
-        if (expectedMemberCount <= members.size()) {
+        if (expectedMemberCount <= members.size) {
             completeSetup()
             return false
         }
@@ -64,19 +60,13 @@ internal class GuildSetupNode(private val id: Long) {
 
     private fun completeSetup() {
         updateStatus(GuildSetupController.Status.BUILDING)
-        removedMembers?.let { removedMembers ->
-            val iterator = removedMembers.iterator()
-            while (iterator.hasNext()) {
-                members.remove(iterator.next())
-            }
-            removedMembers.clear()
+        val iterator = removedMembers.iterator()
+        while (iterator.hasNext()) {
+            members.remove(iterator.next())
         }
+        removedMembers.clear()
         partialGuild?.let { EntityBuilder.createGuild(id, it) }
-        if (requestedChunk) {
-            GuildSetupController.ready(id)
-        } else {
-            GuildSetupController.remove(id)
-        }
+        GuildSetupController.ready(id)
         updateStatus(GuildSetupController.Status.READY)
         WebSocketClient.handle(cachedEvents)
     }

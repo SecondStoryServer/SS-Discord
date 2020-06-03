@@ -1,6 +1,5 @@
 package me.syari.ss.discord.entities
 
-import gnu.trove.set.hash.TLongHashSet
 import me.syari.ss.discord.data.DataContainer
 
 internal object EntityBuilder {
@@ -83,7 +82,7 @@ internal object EntityBuilder {
                 user.name = name
             }
         }
-        val mentionedRoles = TLongHashSet()
+        val mentionedRoles = mutableSetOf<Long>()
         val roleMentionArray = messageData.getArray("mention_roles")
         if (roleMentionArray != null) {
             for (i in 0 until roleMentionArray.size) {
