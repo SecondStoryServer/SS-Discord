@@ -13,11 +13,11 @@ object DiscordConnector: OnEnable {
         config(discordPlugin, console, "config.yml", default = mapOf("bot_token" to "")) {
             val token = get("bot_token", ConfigDataType.STRING)
             if (token != null) {
-                // KtDiscord.login(token) { event ->
-                //     run(discordPlugin) {
-                //         DiscordMessageReceiveEvent(event).callEvent()
-                //     }
-                // }
+                KtDiscord.loginAsync(token) { event ->
+                    run(discordPlugin) {
+                        DiscordMessageReceiveEvent(event).callEvent()
+                    }
+                }
             }
         }
     }
