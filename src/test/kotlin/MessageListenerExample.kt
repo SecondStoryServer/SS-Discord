@@ -1,39 +1,32 @@
-import me.syari.ss.discord.Discord
-import me.syari.ss.discord.Discord.init
-import me.syari.ss.discord.entities.TextChannel
+import me.syari.discord.KtDiscord
+import me.syari.discord.entity.api.TextChannel
 import javax.security.auth.login.LoginException
 
-object MessageListenerExample {
-    private var sendMessageCount = 0
-    private const val token = DiscordToken.BOT_TOKEN
-    private const val testChannel = 716202262417899562L
+private var sendMessageCount = 0
+private const val token = DiscordToken.BOT_TOKEN
+private const val testChannel = 716202262417899562L
 
-    @JvmStatic
-    fun main(args: Array<String>) {
-        try {
-            println("init")
-            init(token) { event ->
-                val authorUser = event.user
-                if (!authorUser.isBot) {
-                    val authorMember = event.member ?: return@init
-                    val name = authorMember.displayName
-                    val message = event.contentDisplay
-                    val channel = event.channel
-                    channel.sendMessage("$name: $message")
-                    sendMessageCount++
-                } else {
-                    if (sendMessageCount == 2) {
-                        shutdown()
-                    }
-                }
+suspend fun main() {
+    try {
+        println("init")
+        KtDiscord.login(token) {
+            val author = it.member
+            if (!author.isBot) {
+                val name = author.displayName
+                val message = it.contentDisplay
+                val channel = it.channel
+                channel.send("$name: $message")
+                sendMessageCount++
+            } else {
+                // if (sendMessageCount == 2) {
+                //     shutdown()
+                // }
             }
-        } catch (e: LoginException) {
-            e.printStackTrace()
-        } catch (e: InterruptedException) {
-            e.printStackTrace()
         }
-        println("awaitReady")
-        Discord.awaitReady()
-        TextChannel.get(testChannel)?.sendMessage("Login") ?: println("notFound")
+    } catch (e: LoginException) {
+        e.printStackTrace()
+    } catch (e: InterruptedException) {
+        e.printStackTrace()
     }
+    TextChannel.get(testChannel)?.send("Login") ?: println("notFound")
 }

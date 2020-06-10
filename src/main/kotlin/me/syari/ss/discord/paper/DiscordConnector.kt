@@ -5,7 +5,7 @@ import me.syari.ss.core.auto.OnEnable
 import me.syari.ss.core.config.CreateConfig.config
 import me.syari.ss.core.config.dataType.ConfigDataType
 import me.syari.ss.core.scheduler.CreateScheduler.run
-import me.syari.ss.discord.Discord
+import me.syari.discord.KtDiscord
 import me.syari.ss.discord.Main.Companion.discordPlugin
 
 object DiscordConnector: OnEnable {
@@ -13,12 +13,11 @@ object DiscordConnector: OnEnable {
         config(discordPlugin, console, "config.yml", default = mapOf("bot_token" to "")) {
             val token = get("bot_token", ConfigDataType.STRING)
             if (token != null) {
-                Discord.init(token) { event ->
-                    run(discordPlugin) {
-                        DiscordMessageReceiveEvent(event).callEvent()
-                    }
-                }
-                Discord.awaitReady()
+                // KtDiscord.login(token) { event ->
+                //     run(discordPlugin) {
+                //         DiscordMessageReceiveEvent(event).callEvent()
+                //     }
+                // }
             }
         }
     }
