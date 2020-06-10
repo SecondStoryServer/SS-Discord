@@ -8,7 +8,6 @@ private const val testChannel = 716202262417899562L
 
 suspend fun main() {
     try {
-        println("init")
         KtDiscord.login(token) {
             val author = it.member
             if (!author.isBot) {
