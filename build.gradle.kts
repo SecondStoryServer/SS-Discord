@@ -27,7 +27,9 @@ dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation("com.destroystokyo.paper:paper-api:1.15.2-R0.1-SNAPSHOT")
     implementation("me.syari.ss.core:SS-Core:3.0")
-    implementation("me.syari.discord:KtDiscord:1.0")
+    compileOnly("me.syari.discord:KtDiscord:1.0") {
+        exclude("org.jetbrains.kotlin")
+    }
 }
 
 tasks {
