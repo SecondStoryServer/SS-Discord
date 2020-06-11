@@ -29,6 +29,8 @@ dependencies {
     implementation("me.syari.ss.core:SS-Core:3.0")
     compileOnly("me.syari.discord:KtDiscord:1.0") {
         exclude("org.jetbrains.kotlin")
+        exclude("org.slf4j")
+        exclude("com.google.code.gson")
     }
 }
 
