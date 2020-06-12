@@ -49,10 +49,12 @@ bukkit {
     apiVersion = "1.15"
 }
 
-val jar by tasks.getting(Jar::class) {
-    from(configurations.compileOnly.get().map {
-        if (it.isDirectory) it else zipTree(it)
-    })
+val jar by tasks.getting(Jar::class)
+
+val fatJar by tasks.registering(Jar::class) {
+    archiveFileName.set("${project.name}-${project.version}-fat.jar")
+    from(configurations.compileOnly.get().map { if (it.isDirectory) it else zipTree(it) })
+    with(jar)
 }
 
 val sourceJar by tasks.registering(Jar::class) {
