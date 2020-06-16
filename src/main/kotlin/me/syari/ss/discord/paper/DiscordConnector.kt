@@ -1,11 +1,11 @@
 package me.syari.ss.discord.paper
 
+import me.syari.discord.KtDiscord
 import me.syari.ss.core.Main.Companion.console
 import me.syari.ss.core.auto.OnEnable
 import me.syari.ss.core.config.CreateConfig.config
 import me.syari.ss.core.config.dataType.ConfigDataType
 import me.syari.ss.core.scheduler.CreateScheduler.run
-import me.syari.discord.KtDiscord
 import me.syari.ss.discord.Main.Companion.discordPlugin
 
 object DiscordConnector: OnEnable {
