@@ -25,7 +25,7 @@ repositories {
 
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
-    implementation("com.destroystokyo.paper:paper-api:1.15.2-R0.1-SNAPSHOT")
+    implementation("com.destroystokyo.paper:paper-api:1.16.1-R0.1-SNAPSHOT")
     implementation("me.syari.ss.core:SS-Core:3.0")
     compileOnly("me.syari.discord:KtDiscord:1.0") {
         exclude("org.jetbrains.kotlin")
@@ -46,7 +46,7 @@ bukkit {
     main = "$group.Main"
     author = "sya_ri"
     depend = listOf("SS-Core")
-    apiVersion = "1.15"
+    apiVersion = "1.16"
 }
 
 val jar by tasks.getting(Jar::class)
