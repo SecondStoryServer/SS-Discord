@@ -1,11 +1,11 @@
 plugins {
-    kotlin("jvm") version "1.3.72"
+    kotlin("jvm") version "1.4.0"
     id("net.minecrell.plugin-yml.bukkit") version "0.3.0"
     `maven-publish`
 }
 
 group = "me.syari.ss.discord"
-version = "2.0"
+version = "2.0.1"
 
 val ssMavenRepoURL: String by extra
 val ssMavenRepoUploadURL: String by extra
@@ -25,9 +25,9 @@ repositories {
 
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
-    implementation("com.destroystokyo.paper:paper-api:1.16.1-R0.1-SNAPSHOT")
-    implementation("me.syari.ss.core:SS-Core:3.0")
-    compileOnly("me.syari.discord:KtDiscord:1.0") {
+    implementation("com.destroystokyo.paper:paper-api:1.16.2-R0.1-SNAPSHOT")
+    implementation("me.syari.ss.core:SS-Core:3.1.1")
+    compileOnly("me.syari.discord:KtDiscord:1.0.1") {
         exclude("org.jetbrains.kotlin")
         exclude("org.slf4j")
         exclude("com.google.code.gson")
