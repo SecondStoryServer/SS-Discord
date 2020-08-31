@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "me.syari.ss.discord"
-version = "2.0.1"
+version = "2.0.2"
 
 val ssMavenRepoURL: String by extra
 val ssMavenRepoUploadURL: String by extra
